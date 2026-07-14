@@ -1,0 +1,69 @@
+<nav
+  class="sticky top-0 z-50 w-full backdrop-blur-lg bg-white/80 border-b border-gray-200/50 shadow-sm"
+>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center h-20">
+      <!-- Logo -->
+      <div
+        routerLink="/"
+        class="flex items-center gap-1 cursor-pointer select-none transition-all duration-200 hover:scale-[1.02]"
+      >
+        <img src="/logo.png" alt="Pharma Link Logo" class="h-12 md:h-14 w-auto object-contain" />
+
+        <div class="leading-none">
+          <span class="text-2xl md:text-3xl font-extrabold tracking-tight">
+            <span class="text-blue-600">Pharma</span>
+            <span class="ml-2 text-emerald-500">Link</span>
+          </span>
+        </div>
+      </div>
+      <!-- Desktop Navigation -->
+      <div class="hidden md:flex items-center space-x-8">
+        <a
+          routerLink="/"
+          routerLinkActive="text-blue-600 font-semibold"
+          [routerLinkActiveOptions]="{ exact: true }"
+          class="text-gray-600 hover:text-blue-600 font-medium transition-colors duration-200"
+          >Home</a
+        >
+        <a
+          routerLink="/products"
+          routerLinkActive="text-blue-600 font-semibold"
+          class="text-gray-600 hover:text-blue-600 font-medium transition-colors duration-200"
+          >Products</a
+        >
+        <a
+          routerLink="/services"
+          routerLinkActive="text-blue-600 font-semibold"
+          class="text-gray-600 hover:text-blue-600 font-medium transition-colors duration-200"
+          >Services</a
+        >
+        <a
+          routerLink="/contact"
+          routerLinkActive="text-blue-600 font-semibold"
+          class="text-gray-600 hover:text-blue-600 font-medium transition-colors duration-200"
+          >Contact</a
+        >
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="hidden md:flex items-center space-x-4">
+        <button pButton label="Log in" class="p-button-text p-button-plain font-semibold"></button>
+        <button
+          pButton
+          label="Sign up"
+          class="p-button-rounded shadow-md hover:shadow-lg transition-all"
+        ></button>
+      </div>
+
+      <!-- Mobile menu button -->
+      <div class="md:hidden flex items-center">
+        <button
+          class="text-gray-600 hover:text-blue-600 focus:outline-none p-2 rounded-lg hover:bg-blue-50 transition-colors"
+        >
+          <i class="pi pi-bars text-2xl"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</nav>

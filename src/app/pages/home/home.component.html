@@ -1,0 +1,94 @@
+<div class="min-h-screen bg-slate-100 p-10">
+  <h1 class="text-5xl font-extrabold text-blue-700 mb-10">PharmaLink UI Test</h1>
+
+  <div class="grid md:grid-cols-2 gap-8">
+    <!-- Tailwind -->
+    <div class="bg-white rounded-xl shadow-lg p-8 space-y-6">
+      <h2 class="text-3xl font-bold text-green-600">Tailwind Test</h2>
+
+      <button
+        class="bg-green-600 hover:bg-green-700 transition text-white px-6 py-3 rounded-lg shadow"
+      >
+        Tailwind Button
+      </button>
+
+      <input
+        class="w-full border rounded-lg p-3 focus:ring-4 focus:ring-blue-300"
+        placeholder="Search medicine..."
+      />
+
+      <div class="grid grid-cols-3 gap-4">
+        <div class="bg-red-300 rounded-lg p-6 text-center font-bold">1</div>
+
+        <div class="bg-yellow-300 rounded-lg p-6 text-center font-bold">2</div>
+
+        <div class="bg-green-300 rounded-lg p-6 text-center font-bold">3</div>
+      </div>
+    </div>
+
+    <!-- PrimeNG -->
+    <p-card header="PrimeNG Test">
+      <div class="flex flex-col gap-5">
+        <button pButton label="Primary Button"></button>
+
+        <button pButton severity="success" label="Success"></button>
+
+        <button pButton severity="danger" label="Delete"></button>
+
+        <input pInputText placeholder="Prime Input" />
+
+        <p-tag value="Available" severity="success"> </p-tag>
+
+        <p-progressBar [value]="70"> </p-progressBar>
+
+        <p-avatar label="ZH" shape="circle"> </p-avatar>
+      </div>
+    </p-card>
+  </div>
+
+  <p-divider></p-divider>
+
+  <div class="flex gap-5 mt-8">
+    <button pButton icon="pi pi-check" label="Accept"></button>
+
+    <div class="p-10 space-y-8">
+      <h1 class="text-5xl font-bold text-blue-600">PharmaLink UI Test</h1>
+
+      <div class="flex gap-3 flex-wrap">
+        <button pButton label="Primary"></button>
+
+        <button pButton severity="secondary" label="Secondary"></button>
+
+        <button pButton severity="success" label="Success"></button>
+
+        <button pButton severity="danger" label="Danger"></button>
+
+        <button pButton severity="info" label="Info"></button>
+
+        <button pButton severity="help" label="Help"></button>
+
+        <button pButton severity="contrast" label="Contrast"></button>
+      </div>
+
+      <input pInputText class="w-96" placeholder="Search medicine..." />
+
+      <p-progressBar [value]="75"></p-progressBar>
+
+      <p-tag value="Available" severity="success"></p-tag>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-3xl font-bold text-indigo-700">Tailwind Utilities</h2>
+
+    <div class="mt-6 flex flex-wrap gap-4">
+      <div class="bg-blue-500 text-white rounded-full px-5 py-2">Blue</div>
+
+      <div class="bg-purple-500 text-white rounded-full px-5 py-2">Purple</div>
+
+      <div class="bg-pink-500 text-white rounded-full px-5 py-2">Pink</div>
+
+      <div class="bg-orange-500 text-white rounded-full px-5 py-2">Orange</div>
+    </div>
+  </div>
+</div>
