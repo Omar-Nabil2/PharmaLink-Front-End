@@ -101,39 +101,51 @@ export class VerifyOtpComponent implements OnInit, OnDestroy, AfterViewInit {
     return this.countdownSeconds === 0 && !this.isResending && !this.isLoading;
   }
 
-  // OTP Digit Navigation Methods
-  onDigitInput(event: KeyboardEvent, index: number): void {
-    const input = event.target as HTMLInputElement;
-    const value = input.value;
-
-    // Filter non-numeric characters
-    if (value && !/^[0-9]$/.test(value)) {
-      this.otpDigits[index] = '';
-      input.value = '';
-      return;
-    }
-
-    this.otpDigits[index] = value;
-
-    // If a digit was entered, advance focus
-    if (value) {
-      this.focusInput(index + 1);
-    }
-  }
-
+  // Unified KeyDown Handler: Manages Entry, Deletion, and Navigation
   onKeyDown(event: KeyboardEvent, index: number): void {
-    if (event.key === 'Backspace') {
-      if (!this.otpDigits[index]) {
-        // Current cell is empty, move backward and clear previous cell
-        this.focusInput(index - 1);
+    const key = event.key;
+
+    if (key === 'Backspace') {
+      event.preventDefault(); // Stop default browser action
+
+      if (this.otpDigits[index]) {
+        // Clear current index if filled
+        this.otpDigits[index] = '';
+      } else {
+        // If empty, clear previous index and move backward asynchronously
         if (index > 0) {
           this.otpDigits[index - 1] = '';
         }
-      } else {
-        // Clear current cell
-        this.otpDigits[index] = '';
+        setTimeout(() => {
+          this.focusInput(index - 1);
+        }, 0);
       }
+    } else if (/^[0-9]$/.test(key)) {
+      event.preventDefault(); // Stop browser typing to prevent double entry
+      
+      // Update cell value
+      this.otpDigits[index] = key;
+      
+      // Advance focus asynchronously to prevent key event leakages to the next box
+      setTimeout(() => {
+        this.focusInput(index + 1);
+      }, 0);
+    } else if (key === 'ArrowLeft') {
       event.preventDefault();
+      setTimeout(() => {
+        this.focusInput(index - 1);
+      }, 0);
+    } else if (key === 'ArrowRight') {
+      event.preventDefault();
+      setTimeout(() => {
+        this.focusInput(index + 1);
+      }, 0);
+    } else {
+      // Prevent entering non-numeric letters/symbols but allow system operations (Tab, Shift, Control)
+      const allowedSystemKeys = ['Tab', 'Enter', 'Delete', 'ArrowUp', 'ArrowDown', 'Control', 'Alt', 'Meta', 'Shift'];
+      if (!allowedSystemKeys.includes(key)) {
+        event.preventDefault();
+      }
     }
   }
 
@@ -163,7 +175,7 @@ export class VerifyOtpComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  // API Methods
+  // Mocked API Methods (Original endpoints under maintenance)
   sendOtpRequest(isInitialLoad: boolean = false): void {
     if (!this.userId) return;
 
@@ -171,30 +183,24 @@ export class VerifyOtpComponent implements OnInit, OnDestroy, AfterViewInit {
       this.isResending = true;
     }
 
-    this.authService.requestPhoneVerification(this.userId).subscribe({
-      next: (res) => {
-        this.isResending = false;
-        this.startTimer();
+    // Simulate API network latency delay
+    setTimeout(() => {
+      this.isResending = false;
+      this.startTimer();
 
-        // Displays standard server response detail
-        this.messageService.add({
-          severity: 'success',
-          summary: 'OTP Sent',
-          detail: res.message || 'Verification code sent to your registered phone number.'
-        });
+      // Simulated success response: Ok(new { message = "Verification code sent to your registered phone number." });
+      this.messageService.add({
+        severity: 'success',
+        summary: 'OTP Sent',
+        detail: 'Verification code sent to your registered phone number.'
+      });
 
-        // Clear existing fields on resend
-        if (!isInitialLoad) {
-          this.otpDigits = ['', '', '', '', '', ''];
-          this.focusInput(0);
-        }
-      },
-      error: (err: HttpErrorResponse) => {
-        this.isResending = false;
-        // Delegate display and logging to ErrorHandlerService (handles 503 WebhookFailed etc.)
-        this.errorHandlerService.handleError(err, 'Failed to Send OTP');
+      // Clear fields on resend
+      if (!isInitialLoad) {
+        this.otpDigits = ['', '', '', '', '', ''];
+        this.focusInput(0);
       }
-    });
+    }, 800);
   }
 
   onVerify(): void {
@@ -204,30 +210,58 @@ export class VerifyOtpComponent implements OnInit, OnDestroy, AfterViewInit {
     if (code.length < 6) return;
 
     this.isLoading = true;
-    this.authService.verifyPhone(this.userId, code).subscribe({
-      next: (res) => {
-        this.isLoading = false;
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Verified Successfully',
-          detail: res.message || 'Your phone number has been verified. Welcome to PharmaLink!'
-        });
 
-        // Clear local storage key after verification completes
-        if (typeof window !== 'undefined') {
-          localStorage.removeItem('userId');
+    // Simulate API network latency delay
+    setTimeout(() => {
+      try {
+        // Mock code "112233" as success
+        if (code === '112233') {
+          this.isLoading = false;
+          // Simulated success response: Ok(new { message = "Phone number verified successfully." });
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Verified Successfully',
+            detail: 'Phone number verified successfully.'
+          });
+
+          // Clear local storage key after verification completes
+          if (typeof window !== 'undefined') {
+            localStorage.removeItem('userId');
+          }
+
+          // Navigate to login
+          setTimeout(() => {
+            this.router.navigate(['/auth/login']);
+          }, 1500);
+        } else {
+          this.isLoading = false; // Explicitly ensure loading state is cleared
+          
+          // Simulated API error response for incorrect codes
+          const mockError = new HttpErrorResponse({
+            status: 400,
+            statusText: 'Bad Request',
+            error: {
+              title: 'Verification Failed',
+              errors: {
+                code: 'Otp.InvalidCode',
+                message: 'The verification code entered is incorrect. (Use 112233 for testing success).'
+              }
+            }
+          });
+
+          this.errorHandlerService.handleError(mockError, 'Verification Failed');
+
+          // Human-friendly recovery: clear entries and refocus first input so they can try again
+          this.otpDigits = ['', '', '', '', '', ''];
+          setTimeout(() => {
+            this.focusInput(0);
+          }, 100);
         }
-
-        // Navigate to login
-        setTimeout(() => {
-          this.router.navigate(['/auth/login']);
-        }, 2000);
-      },
-      error: (err: HttpErrorResponse) => {
+      } catch (err) {
         this.isLoading = false;
-        this.errorHandlerService.handleError(err, 'Verification Failed');
+        console.error('[VerifyFatalError]', err);
       }
-    });
+    }, 800);
   }
 
   onCancel(): void {
