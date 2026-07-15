@@ -27,6 +27,7 @@ export class AuthService {
 
   resetPassword(data: ResetPasswordRequest): Observable<any> {
     return this.http.post(`${this.omarUrl}Auth/ResetPassword`, data);
+  }
   /**
    * Requests a phone verification OTP code.
    * @param userId The unique ID of the user.
