@@ -1,1 +1,271 @@
-<p>register works!</p>
+<div class="bg-white rounded-2xl shadow-xl border border-slate-100 p-8 space-y-6">
+  <!-- Title Header -->
+  <div class="text-center space-y-2">
+    <h2 class="text-3xl font-extrabold tracking-tight text-slate-950">
+      Create Account
+    </h2>
+    <p class="text-sm text-slate-500">
+      Register as a Patient to start managing your health connections
+    </p>
+  </div>
+
+  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="space-y-5">
+    <!-- Full Name Field -->
+    <div class="space-y-1">
+      <label for="fullName" class="block text-xs font-semibold text-slate-700 tracking-wider uppercase">
+        Full Name
+      </label>
+      <div class="relative">
+        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+          <i class="pi pi-user text-sm"></i>
+        </span>
+        <input
+          id="fullName"
+          type="text"
+          pInputText
+          formControlName="fullName"
+          placeholder="Enter your full name"
+          class="w-full pl-9 pr-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition duration-200 text-sm placeholder:text-slate-400/80"
+          [ngClass]="{
+            'border-red-500 focus:ring-red-50 focus:border-red-500 bg-red-50/10':
+              (f['fullName'].touched || f['fullName'].dirty) && (f['fullName'].invalid || f['fullName'].errors?.['serverError'])
+          }"
+        />
+      </div>
+      <!-- Validation Error -->
+      <div *ngIf="(f['fullName'].touched || f['fullName'].dirty) && f['fullName'].invalid" class="text-xs text-red-500 flex items-center gap-1.5 mt-1">
+        <i class="pi pi-exclamation-circle text-[10px]"></i>
+        <span *ngIf="f['fullName'].errors?.['required']">Full name is required.</span>
+        <span *ngIf="f['fullName'].errors?.['maxlength']">Full name must not exceed 100 characters.</span>
+      </div>
+      <!-- Server Side Validation Error -->
+      <div *ngIf="f['fullName'].errors?.['serverError']" class="text-xs text-red-500 flex items-center gap-1.5 mt-1">
+        <i class="pi pi-exclamation-circle text-[10px]"></i>
+        <span>{{ f['fullName'].errors?.['serverError'] }}</span>
+      </div>
+    </div>
+
+    <!-- Email Address Field -->
+    <div class="space-y-1">
+      <label for="email" class="block text-xs font-semibold text-slate-700 tracking-wider uppercase">
+        Email Address
+      </label>
+      <div class="relative">
+        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+          <i class="pi pi-envelope text-sm"></i>
+        </span>
+        <input
+          id="email"
+          type="email"
+          pInputText
+          formControlName="email"
+          placeholder="name@example.com"
+          class="w-full pl-9 pr-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition duration-200 text-sm placeholder:text-slate-400/80"
+          [ngClass]="{
+            'border-red-500 focus:ring-red-50 focus:border-red-500 bg-red-50/10':
+              (f['email'].touched || f['email'].dirty) && (f['email'].invalid || f['email'].errors?.['serverError'])
+          }"
+        />
+      </div>
+      <!-- Validation Error -->
+      <div *ngIf="(f['email'].touched || f['email'].dirty) && f['email'].invalid" class="text-xs text-red-500 flex items-center gap-1.5 mt-1">
+        <i class="pi pi-exclamation-circle text-[10px]"></i>
+        <span *ngIf="f['email'].errors?.['required']">Email address is required.</span>
+        <span *ngIf="f['email'].errors?.['email']">A valid email address is required.</span>
+        <span *ngIf="f['email'].errors?.['maxlength']">Email must not exceed 256 characters.</span>
+      </div>
+      <!-- Server Side Validation Error -->
+      <div *ngIf="f['email'].errors?.['serverError']" class="text-xs text-red-500 flex items-center gap-1.5 mt-1">
+        <i class="pi pi-exclamation-circle text-[10px]"></i>
+        <span>{{ f['email'].errors?.['serverError'] }}</span>
+      </div>
+    </div>
+
+    <!-- Phone Number Field -->
+    <div class="space-y-1">
+      <label for="phoneNumber" class="block text-xs font-semibold text-slate-700 tracking-wider uppercase">
+        Phone Number
+      </label>
+      <div class="relative">
+        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+          <i class="pi pi-phone text-sm"></i>
+        </span>
+        <input
+          id="phoneNumber"
+          type="tel"
+          pInputText
+          formControlName="phoneNumber"
+          placeholder="01xxxxxxxxx"
+          class="w-full pl-9 pr-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition duration-200 text-sm placeholder:text-slate-400/80"
+          [ngClass]="{
+            'border-red-500 focus:ring-red-50 focus:border-red-500 bg-red-50/10':
+              (f['phoneNumber'].touched || f['phoneNumber'].dirty) && (f['phoneNumber'].invalid || f['phoneNumber'].errors?.['serverError'])
+          }"
+        />
+      </div>
+      <!-- Validation Error -->
+      <div *ngIf="(f['phoneNumber'].touched || f['phoneNumber'].dirty) && f['phoneNumber'].invalid" class="text-xs text-red-500 flex items-center gap-1.5 mt-1">
+        <i class="pi pi-exclamation-circle text-[10px]"></i>
+        <span *ngIf="f['phoneNumber'].errors?.['required']">Phone number is required.</span>
+        <span *ngIf="f['phoneNumber'].errors?.['pattern']">Invalid Egyptian phone number.</span>
+      </div>
+      <!-- Server Side Validation Error -->
+      <div *ngIf="f['phoneNumber'].errors?.['serverError']" class="text-xs text-red-500 flex items-center gap-1.5 mt-1">
+        <i class="pi pi-exclamation-circle text-[10px]"></i>
+        <span>{{ f['phoneNumber'].errors?.['serverError'] }}</span>
+      </div>
+    </div>
+
+    <!-- Password Field -->
+    <div class="space-y-1">
+      <label for="password" class="block text-xs font-semibold text-slate-700 tracking-wider uppercase">
+        Password
+      </label>
+      <div class="relative">
+        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+          <i class="pi pi-lock text-sm"></i>
+        </span>
+        <input
+          id="password"
+          [type]="showPassword ? 'text' : 'password'"
+          pInputText
+          formControlName="password"
+          placeholder="••••••••"
+          class="w-full pl-9 pr-10 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition duration-200 text-sm placeholder:text-slate-400/80"
+          [ngClass]="{
+            'border-red-500 focus:ring-red-50 focus:border-red-500 bg-red-50/10':
+              (f['password'].touched || f['password'].dirty) && (f['password'].invalid || f['password'].errors?.['serverError'])
+          }"
+        />
+        <button
+          type="button"
+          (click)="showPassword = !showPassword"
+          class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 transition"
+        >
+          <i class="pi text-sm" [ngClass]="showPassword ? 'pi-eye-slash' : 'pi-eye'"></i>
+        </button>
+      </div>
+
+      <!-- Real-time Password Checklist -->
+      <div *ngIf="passwordValue()" class="mt-2.5 p-3.5 bg-slate-50 border border-slate-100 rounded-xl space-y-2">
+        <p class="text-xs font-bold text-slate-600">Password Requirements:</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-3 gap-y-1.5 text-xs">
+          <!-- Rule 1: Min 8 Char -->
+          <div class="flex items-center gap-1.5">
+            <i class="pi text-[10px] transition-all"
+               [ngClass]="{
+                 'pi-check text-emerald-600 font-bold': checkPasswordRule('length'),
+                 'pi-times text-red-500': !checkPasswordRule('length')
+               }"></i>
+            <span [ngClass]="checkPasswordRule('length') ? 'text-emerald-600 font-medium' : 'text-red-500'">At least 8 characters</span>
+          </div>
+          <!-- Rule 2: Uppercase -->
+          <div class="flex items-center gap-1.5">
+            <i class="pi text-[10px] transition-all"
+               [ngClass]="{
+                 'pi-check text-emerald-600 font-bold': checkPasswordRule('upper'),
+                 'pi-times text-red-500': !checkPasswordRule('upper')
+               }"></i>
+            <span [ngClass]="checkPasswordRule('upper') ? 'text-emerald-600 font-medium' : 'text-red-500'">One uppercase letter</span>
+          </div>
+          <!-- Rule 3: Lowercase -->
+          <div class="flex items-center gap-1.5">
+            <i class="pi text-[10px] transition-all"
+               [ngClass]="{
+                 'pi-check text-emerald-600 font-bold': checkPasswordRule('lower'),
+                 'pi-times text-red-500': !checkPasswordRule('lower')
+               }"></i>
+            <span [ngClass]="checkPasswordRule('lower') ? 'text-emerald-600 font-medium' : 'text-red-500'">One lowercase letter</span>
+          </div>
+          <!-- Rule 4: Digit -->
+          <div class="flex items-center gap-1.5">
+            <i class="pi text-[10px] transition-all"
+               [ngClass]="{
+                 'pi-check text-emerald-600 font-bold': checkPasswordRule('digit'),
+                 'pi-times text-red-500': !checkPasswordRule('digit')
+               }"></i>
+            <span [ngClass]="checkPasswordRule('digit') ? 'text-emerald-600 font-medium' : 'text-red-500'">One numeric digit</span>
+          </div>
+          <!-- Rule 5: Special -->
+          <div class="flex items-center gap-1.5 sm:col-span-2">
+            <i class="pi text-[10px] transition-all"
+               [ngClass]="{
+                 'pi-check text-emerald-600 font-bold': checkPasswordRule('special'),
+                 'pi-times text-red-500': !checkPasswordRule('special')
+               }"></i>
+            <span [ngClass]="checkPasswordRule('special') ? 'text-emerald-600 font-medium' : 'text-red-500'">One special character (e.g. &#64;, $, !)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Server Side Validation Error -->
+      <div *ngIf="f['password'].errors?.['serverError']" class="text-xs text-red-500 flex items-center gap-1.5 mt-1">
+        <i class="pi pi-exclamation-circle text-[10px]"></i>
+        <span>{{ f['password'].errors?.['serverError'] }}</span>
+      </div>
+    </div>
+
+    <!-- Confirm Password Field -->
+    <div class="space-y-1">
+      <label for="confirmPassword" class="block text-xs font-semibold text-slate-700 tracking-wider uppercase">
+        Confirm Password
+      </label>
+      <div class="relative">
+        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+          <i class="pi pi-lock text-sm"></i>
+        </span>
+        <input
+          id="confirmPassword"
+          [type]="showConfirmPassword ? 'text' : 'password'"
+          pInputText
+          formControlName="confirmPassword"
+          placeholder="••••••••"
+          class="w-full pl-9 pr-10 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition duration-200 text-sm placeholder:text-slate-400/80"
+          [ngClass]="{
+            'border-red-500 focus:ring-red-50 focus:border-red-500 bg-red-50/10':
+              (f['confirmPassword'].touched || f['confirmPassword'].dirty) && (f['confirmPassword'].invalid || f['confirmPassword'].errors?.['serverError'])
+          }"
+        />
+        <button
+          type="button"
+          (click)="showConfirmPassword = !showConfirmPassword"
+          class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 transition"
+        >
+          <i class="pi text-sm" [ngClass]="showConfirmPassword ? 'pi-eye-slash' : 'pi-eye'"></i>
+        </button>
+      </div>
+      <!-- Validation Error -->
+      <div *ngIf="(f['confirmPassword'].touched || f['confirmPassword'].dirty) && f['confirmPassword'].invalid" class="text-xs text-red-500 flex items-center gap-1.5 mt-1">
+        <i class="pi pi-exclamation-circle text-[10px]"></i>
+        <span *ngIf="f['confirmPassword'].errors?.['required']">Confirm password is required.</span>
+        <span *ngIf="f['confirmPassword'].errors?.['mismatch']">Passwords do not match.</span>
+      </div>
+      <!-- Server Side Validation Error -->
+      <div *ngIf="f['confirmPassword'].errors?.['serverError']" class="text-xs text-red-500 flex items-center gap-1.5 mt-1">
+        <i class="pi pi-exclamation-circle text-[10px]"></i>
+        <span>{{ f['confirmPassword'].errors?.['serverError'] }}</span>
+      </div>
+    </div>
+
+    <!-- Submit Button with loading lock -->
+    <button
+      pButton
+      type="submit"
+      [disabled]="isLoading || registerForm.invalid"
+      class="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-blue-100 font-bold transition duration-200 flex justify-center items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed disabled:from-slate-400 disabled:to-slate-400 disabled:bg-none"
+    >
+      <i *ngIf="isLoading" class="pi pi-spin pi-spinner text-sm"></i>
+      <span>{{ isLoading ? 'Creating Account...' : 'Register' }}</span>
+    </button>
+  </form>
+
+  <!-- Login Link -->
+  <div class="text-center pt-2">
+    <p class="text-sm text-slate-500">
+      Already have an account?
+      <a routerLink="/auth/login" class="text-blue-600 hover:text-blue-700 font-semibold transition hover:underline">
+        Sign In
+      </a>
+    </p>
+  </div>
+</div>
