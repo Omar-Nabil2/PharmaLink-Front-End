@@ -28,3 +28,14 @@ export interface ApiErrorResponse {
   instance?: string;
   [key: string]: any;
 }
+
+
+export interface ForgotPasswordRequest {
+  email: string;
+}
+
+export interface ResetPasswordRequest {
+  email: string;
+  password: string;
+  token: string;
+}
