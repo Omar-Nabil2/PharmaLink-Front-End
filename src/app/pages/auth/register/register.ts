@@ -8,6 +8,7 @@ import { PasswordModule } from 'primeng/password';
 import { MessageService } from 'primeng/api';
 import { AuthService } from '../../../core/services/auth.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { ErrorHandlerService } from '../../../core/services/error-handler.service';
 
 @Component({
   selector: 'app-register',
@@ -33,7 +34,8 @@ export class Register implements OnInit {
     private readonly fb: FormBuilder,
     private readonly authService: AuthService,
     private readonly router: Router,
-    private readonly messageService: MessageService
+    private readonly messageService: MessageService,
+    private readonly errorHandlerService: ErrorHandlerService
   ) {}
 
   ngOnInit(): void {
@@ -147,44 +149,53 @@ export class Register implements OnInit {
         }, 1500);
       },
       error: (err: HttpErrorResponse) => {
-        this.isLoading = false;
+        try {
+          this.isLoading = false;
 
-        // Check if backend returned validation error response (400)
-        if (err.status === 400 && err.error && err.error.errors) {
-          const validationErrors = err.error.errors;
+          let errorBody = err.error;
+          if (typeof errorBody === 'string') {
+            try {
+              errorBody = JSON.parse(errorBody);
+            } catch (e) {
+              // Not a JSON string
+            }
+          }
 
-          Object.keys(validationErrors).forEach((field) => {
-            // Convert PascalCase backend field names to camelCase frontend ones
-            const camelField = field.charAt(0).toLowerCase() + field.slice(1);
-            const control = this.registerForm.get(camelField);
+          if (errorBody && errorBody.errors) {
+            const errors = errorBody.errors;
 
-            if (control) {
-              // Set custom backend validation error on control
-              control.setErrors({ serverError: validationErrors[field][0] });
+            if (typeof errors.message === 'string') {
+              // Schema 2: Conflict / User mistakes (e.g. { errors: { code: "...", message: "..." } })
+              const errorCode = errors.code || '';
+              const errorMessage = errors.message;
+
+              if (errorCode.includes('Email')) {
+                this.registerForm.get('email')?.setErrors({ serverError: errorMessage });
+              } else if (errorCode.includes('Phone')) {
+                this.registerForm.get('phoneNumber')?.setErrors({ serverError: errorMessage });
+              }
             } else {
-              // Fallback to toast notification if control not found
-              this.messageService.add({
-                severity: 'error',
-                summary: 'Validation Error',
-                detail: `${field}: ${validationErrors[field].join(', ')}`
+              // Schema 1: Field validation dictionary (e.g. { errors: { Email: ["..."], ... } })
+              Object.keys(errors).forEach((field) => {
+                const camelField = field.charAt(0).toLowerCase() + field.slice(1);
+                const control = this.registerForm.get(camelField);
+
+                if (control) {
+                  const messages = errors[field];
+                  const errorMsg = Array.isArray(messages) ? messages[0] : messages;
+                  // Set custom backend validation error on control
+                  control.setErrors({ serverError: errorMsg });
+                }
               });
             }
-          });
+          }
 
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Registration Failed',
-            detail: err.error.title || 'Please correct the validation errors.'
-          });
-        } else {
-          // General HTTP / Server error
-          const title = err.error?.title || 'Error';
-          const detail = err.error?.detail || err.message || 'An unexpected error occurred. Please try again.';
-          this.messageService.add({
-            severity: 'error',
-            summary: title,
-            detail: detail
-          });
+          // Delegate toast messaging and console logging to ErrorHandlerService
+          this.errorHandlerService.handleError(err, 'Registration Failed');
+        } catch (fatalErr) {
+          // Safeguard: Ensure button transitions out of loading state even on fatal js exceptions
+          this.isLoading = false;
+          console.error('[RegisterFatalError]', fatalErr);
         }
       }
     });
