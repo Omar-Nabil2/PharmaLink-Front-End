@@ -1,16 +1,78 @@
-<div class="bg-white rounded-2xl shadow-xl p-8 border border-gray-100 text-center space-y-6">
-  <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mx-auto">
-    <i class="pi pi-envelope text-3xl"></i>
+<div class="bg-white rounded-2xl shadow-xl border border-slate-100 p-8 space-y-6">
+  <!-- Header Text -->
+  <div class="space-y-3">
+    <h2 class="text-3xl font-extrabold tracking-tight text-slate-900">
+      OTP verification
+    </h2>
+    <p class="text-sm text-slate-500 leading-relaxed">
+      Please enter the OTP (One-Time Password) sent to your registered email/phone number to complete your verification.
+    </p>
   </div>
-  <div class="space-y-2">
-    <h2 class="text-2xl font-bold text-gray-900">OTP Verification</h2>
-    <p class="text-sm text-gray-500">A verification code has been sent. Please check your contact information.</p>
+
+  <!-- Digit Inputs -->
+  <div class="flex gap-2 justify-between py-2">
+    <input
+      *ngFor="let digit of otpDigits; let i = index; let last = last"
+      #digitInput
+      type="text"
+      inputmode="numeric"
+      pattern="[0-9]*"
+      maxLength="1"
+      [disabled]="isLoading || isResending"
+      [value]="otpDigits[i]"
+      (keyup)="onDigitInput($event, i)"
+      (keydown)="onKeyDown($event, i)"
+      (paste)="onPaste($event)"
+      class="w-11 h-11 sm:w-12 sm:h-12 text-center text-xl font-bold border border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition duration-200 bg-slate-50/50"
+      [ngClass]="{
+        'border-blue-500 focus:ring-blue-100': otpDigits[i] !== ''
+      }"
+    />
   </div>
-  <div class="p-6 bg-slate-50 rounded-xl text-left border border-slate-100">
-    <span class="text-xs font-semibold text-gray-400 block mb-1">LOCAL STORAGE USER ID:</span>
-    <code class="text-xs text-blue-600 break-all font-mono">
-      {{ localStorageUserId }}
-    </code>
+
+  <!-- Timer & Resend Options -->
+  <div class="flex justify-between items-center text-xs">
+    <!-- Countdown Timer -->
+    <span class="text-slate-500 font-medium">
+      Remaining time: <span class="text-blue-600 font-bold">{{ formattedTime }}</span>
+    </span>
+
+    <!-- Resend Link -->
+    <span class="text-slate-500">
+      Didn't got the code? 
+      <button
+        type="button"
+        (click)="sendOtpRequest()"
+        [disabled]="!canResend"
+        class="text-blue-600 font-bold hover:text-blue-700 hover:underline disabled:opacity-40 disabled:no-underline disabled:cursor-not-allowed bg-transparent border-none p-0 cursor-pointer transition duration-150"
+      >
+        Resend
+      </button>
+    </span>
   </div>
-  <p class="text-xs text-gray-400">Waiting for OTP implementation specification.</p>
+
+  <!-- Action Buttons -->
+  <div class="space-y-3 pt-2">
+    <!-- Verify Button (Pill Design) -->
+    <button
+      pButton
+      type="button"
+      (click)="onVerify()"
+      [disabled]="isLoading || isResending || !isCodeComplete"
+      class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-full font-bold transition duration-200 flex justify-center items-center gap-2 disabled:opacity-50 disabled:bg-slate-400 disabled:cursor-not-allowed border-none cursor-pointer text-sm shadow-sm"
+    >
+      <i *ngIf="isLoading" class="pi pi-spin pi-spinner text-xs"></i>
+      <span>Verify</span>
+    </button>
+
+    <!-- Cancel Button (Pill Outlined Design) -->
+    <button
+      type="button"
+      (click)="onCancel()"
+      [disabled]="isLoading || isResending"
+      class="w-full py-3 bg-white border border-blue-500 hover:bg-blue-50 text-blue-600 rounded-full font-bold transition duration-200 flex justify-center items-center border-solid cursor-pointer text-sm"
+    >
+      Cancel
+    </button>
+  </div>
 </div>

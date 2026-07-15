@@ -25,6 +25,7 @@ export class ErrorHandlerService {
         title = 'Connection Failed';
         message = "We're having trouble reaching our servers. Check your internet connection or try again shortly.";
       } else {
+        // Attempt to parse string errors (in case headers or interceptors didn't parse JSON)
         let errorBody = error.error;
         if (typeof errorBody === 'string') {
           try {
@@ -34,56 +35,75 @@ export class ErrorHandlerService {
           }
         }
 
+        const isAccessError = error.status === 401 || error.status === 403;
+
         if (errorBody) {
           title = errorBody.title || title;
           errors = errorBody.errors;
 
-          if (errorBody.errors) {
-            const errDetails = errorBody.errors;
-            if (typeof errDetails.message === 'string') {
-              // Schema 2: User mistake/Conflict (e.g. email already exists)
-              type = ErrorType.UserError;
-              title = errorBody.title || 'Action Blocked';
-              message = errDetails.message;
+          if (errors && typeof errors.message === 'string') {
+            // Treat as UserError if the server explicitly provided a code/message structure, regardless of status code (e.g. 503 WebhookFailed)
+            type = ErrorType.UserError;
+            message = errors.message;
+          } else if (isAccessError) {
+            // Treat access errors without a custom code/message block as UserError
+            type = ErrorType.UserError;
+            title = errorBody.title || (error.status === 401 ? 'Sign In Required' : 'Access Denied');
+            
+            if (errorBody.detail) {
+              message = errorBody.detail;
+            } else if (errorBody.message) {
+              message = errorBody.message;
+            } else if (errorBody.error && typeof errorBody.error === 'string') {
+              message = errorBody.error;
+            } else if (typeof errorBody === 'string') {
+              message = errorBody;
             } else {
-              // Schema 1: Validation
-              type = ErrorType.ValidationError;
-              title = errorBody.title || 'Check Form Details';
-              
-              const errorList: string[] = [];
-              Object.keys(errDetails).forEach((key) => {
-                const messages = errDetails[key];
-                if (Array.isArray(messages)) {
-                  errorList.push(...messages);
-                } else if (typeof messages === 'string') {
-                  errorList.push(messages);
-                }
-              });
-              
-              message = errorList.length > 0 
-                ? errorList[0] 
-                : 'Some form details are incorrect. Please verify and try again.';
+              message = error.status === 401
+                ? 'Please sign in first so we can verify who you are.'
+                : "It looks like you don't have access to do that. Please contact support if you think this is a mistake.";
             }
+          } else if (errorBody.errors) {
+            // Schema 1: Validation
+            type = ErrorType.ValidationError;
+            title = errorBody.title || 'Check Form Details';
+            
+            const errorList: string[] = [];
+            Object.keys(errorBody.errors).forEach((key) => {
+              const messages = errorBody.errors[key];
+              if (Array.isArray(messages)) {
+                errorList.push(...messages);
+              } else if (typeof messages === 'string') {
+                errorList.push(messages);
+              }
+            });
+            
+            message = errorList.length > 0 
+              ? errorList[0] 
+              : 'Some form details are incorrect. Please verify and try again.';
           } else {
-            // Schema 3: Server/Access errors
-            type = ErrorType.ServerOrAccessError;
-
+            // Schema 3: General HTTP / Server error (500, 503 with no errors block, etc.)
             if (error.status >= 500) {
+              type = ErrorType.ServerOrAccessError;
               title = 'Server Busy';
               message = 'Our servers are experiencing issues right now. We are working on it—please try again soon!';
-            } else if (error.status === 401) {
-              title = 'Unauthorized';
-              message = 'You need to be logged in to perform this action. Please sign in and try again.';
-            } else if (error.status === 403) {
-              title = 'Permission Denied';
-              message = 'You do not have permission to access this resource or perform this action.';
             } else {
+              type = ErrorType.UnknownError;
               title = errorBody.title || title;
               message = errorBody.detail || errorBody.message || error.message || message;
             }
           }
         } else {
-          message = error.message || message;
+          // Fallback if server returned no body at all
+          if (isAccessError) {
+            type = ErrorType.UserError;
+            title = error.status === 401 ? 'Sign In Required' : 'Access Denied';
+            message = error.status === 401
+              ? 'Please sign in first so we can verify who you are.'
+              : "It looks like you don't have access to do that. Please contact support if you think this is a mistake.";
+          } else {
+            message = error.message || message;
+          }
         }
       }
     } else if (error instanceof Error) {
