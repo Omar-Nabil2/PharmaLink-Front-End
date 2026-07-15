@@ -35,8 +35,8 @@
       <!-- Validation Error -->
       <div *ngIf="(f['fullName'].touched || f['fullName'].dirty) && f['fullName'].invalid" class="text-xs text-red-500 flex items-center gap-1.5 mt-1">
         <i class="pi pi-exclamation-circle text-[10px]"></i>
-        <span *ngIf="f['fullName'].errors?.['required']">Full name is required.</span>
-        <span *ngIf="f['fullName'].errors?.['maxlength']">Full name must not exceed 100 characters.</span>
+        <span *ngIf="f['fullName'].errors?.['required']">Please tell us your full name so we know how to address you.</span>
+        <span *ngIf="f['fullName'].errors?.['maxlength']">Whoops! That name is a bit too long. Please keep it under 100 characters.</span>
       </div>
       <!-- Server Side Validation Error -->
       <div *ngIf="f['fullName'].errors?.['serverError']" class="text-xs text-red-500 flex items-center gap-1.5 mt-1">
@@ -70,9 +70,9 @@
       <!-- Validation Error -->
       <div *ngIf="(f['email'].touched || f['email'].dirty) && f['email'].invalid" class="text-xs text-red-500 flex items-center gap-1.5 mt-1">
         <i class="pi pi-exclamation-circle text-[10px]"></i>
-        <span *ngIf="f['email'].errors?.['required']">Email address is required.</span>
-        <span *ngIf="f['email'].errors?.['email']">A valid email address is required.</span>
-        <span *ngIf="f['email'].errors?.['maxlength']">Email must not exceed 256 characters.</span>
+        <span *ngIf="f['email'].errors?.['required']">We need your email address to set up your account.</span>
+        <span *ngIf="f['email'].errors?.['email']">Please enter a valid email address (like name@example.com).</span>
+        <span *ngIf="f['email'].errors?.['maxlength']">This email address is too long. Please use a shorter one.</span>
       </div>
       <!-- Server Side Validation Error -->
       <div *ngIf="f['email'].errors?.['serverError']" class="text-xs text-red-500 flex items-center gap-1.5 mt-1">
@@ -106,8 +106,8 @@
       <!-- Validation Error -->
       <div *ngIf="(f['phoneNumber'].touched || f['phoneNumber'].dirty) && f['phoneNumber'].invalid" class="text-xs text-red-500 flex items-center gap-1.5 mt-1">
         <i class="pi pi-exclamation-circle text-[10px]"></i>
-        <span *ngIf="f['phoneNumber'].errors?.['required']">Phone number is required.</span>
-        <span *ngIf="f['phoneNumber'].errors?.['pattern']">Invalid Egyptian phone number.</span>
+        <span *ngIf="f['phoneNumber'].errors?.['required']">A phone number is required to verify your account.</span>
+        <span *ngIf="f['phoneNumber'].errors?.['pattern']">Please enter a valid Egyptian phone number (e.g. 01xxxxxxxxx).</span>
       </div>
       <!-- Server Side Validation Error -->
       <div *ngIf="f['phoneNumber'].errors?.['serverError']" class="text-xs text-red-500 flex items-center gap-1.5 mt-1">
@@ -237,8 +237,8 @@
       <!-- Validation Error -->
       <div *ngIf="(f['confirmPassword'].touched || f['confirmPassword'].dirty) && f['confirmPassword'].invalid" class="text-xs text-red-500 flex items-center gap-1.5 mt-1">
         <i class="pi pi-exclamation-circle text-[10px]"></i>
-        <span *ngIf="f['confirmPassword'].errors?.['required']">Confirm password is required.</span>
-        <span *ngIf="f['confirmPassword'].errors?.['mismatch']">Passwords do not match.</span>
+        <span *ngIf="f['confirmPassword'].errors?.['required']">Please re-enter your password to confirm.</span>
+        <span *ngIf="f['confirmPassword'].errors?.['mismatch']">The passwords you entered don't match. Double-check your spelling!</span>
       </div>
       <!-- Server Side Validation Error -->
       <div *ngIf="f['confirmPassword'].errors?.['serverError']" class="text-xs text-red-500 flex items-center gap-1.5 mt-1">

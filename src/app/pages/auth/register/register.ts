@@ -9,6 +9,7 @@ import { MessageService } from 'primeng/api';
 import { AuthService } from '../../../core/services/auth.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ErrorHandlerService } from '../../../core/services/error-handler.service';
+import { ErrorType } from '../../../core/interfaces/auth.interface';
 
 @Component({
   selector: 'app-register',
@@ -122,8 +123,8 @@ export class Register implements OnInit {
       this.registerForm.markAllAsTouched();
       this.messageService.add({
         severity: 'warn',
-        summary: 'Form Invalid',
-        detail: 'Please fill in all required fields correctly.'
+        summary: 'Check Form Details',
+        detail: 'Oops! Some details need your attention. Please check the fields in red.'
       });
       return;
     }
@@ -152,36 +153,29 @@ export class Register implements OnInit {
         try {
           this.isLoading = false;
 
-          let errorBody = err.error;
-          if (typeof errorBody === 'string') {
-            try {
-              errorBody = JSON.parse(errorBody);
-            } catch (e) {
-              // Not a JSON string
-            }
-          }
+          // Standardize raw error into typed ParsedError model
+          const parsed = this.errorHandlerService.parseError(err);
 
-          if (errorBody && errorBody.errors) {
-            const errors = errorBody.errors;
-
-            if (typeof errors.message === 'string') {
-              // Schema 2: Conflict / User mistakes (e.g. { errors: { code: "...", message: "..." } })
-              const errorCode = errors.code || '';
-              const errorMessage = errors.message;
+          if (parsed.errors) {
+            if (parsed.type === ErrorType.UserError) {
+              // Schema 2: Conflict / User mistakes (e.g. email already exists)
+              const errorCode = parsed.errors.code || '';
+              const errorMessage = parsed.errors.message;
 
               if (errorCode.includes('Email')) {
                 this.registerForm.get('email')?.setErrors({ serverError: errorMessage });
               } else if (errorCode.includes('Phone')) {
                 this.registerForm.get('phoneNumber')?.setErrors({ serverError: errorMessage });
               }
-            } else {
-              // Schema 1: Field validation dictionary (e.g. { errors: { Email: ["..."], ... } })
-              Object.keys(errors).forEach((field) => {
+            } else if (parsed.type === ErrorType.ValidationError) {
+              // Schema 1: Validation
+              const validationErrors = parsed.errors;
+              Object.keys(validationErrors).forEach((field) => {
                 const camelField = field.charAt(0).toLowerCase() + field.slice(1);
                 const control = this.registerForm.get(camelField);
 
                 if (control) {
-                  const messages = errors[field];
+                  const messages = validationErrors[field];
                   const errorMsg = Array.isArray(messages) ? messages[0] : messages;
                   // Set custom backend validation error on control
                   control.setErrors({ serverError: errorMsg });

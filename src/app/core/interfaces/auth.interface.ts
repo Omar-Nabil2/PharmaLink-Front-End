@@ -28,3 +28,19 @@ export interface ApiErrorResponse {
   instance?: string;
   [key: string]: any;
 }
+
+export enum ErrorType {
+  ValidationError = 'ValidationError',
+  UserError = 'UserError',
+  ServerOrAccessError = 'ServerOrAccessError',
+  ConnectionError = 'ConnectionError',
+  UnknownError = 'UnknownError'
+}
+
+export interface ParsedError {
+  type: ErrorType;
+  title: string;
+  message: string;
+  errors?: any;
+  raw?: any;
+}
