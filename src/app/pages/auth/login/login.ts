@@ -67,28 +67,45 @@ export class Login implements OnInit {
         try {
           this.isLoading = false;
 
-          // Store authentication payload into local storage
-          if (typeof window !== 'undefined') {
-            localStorage.setItem('accessToken', res.accessToken);
-            localStorage.setItem('userId', res.userId);
-            localStorage.setItem('fullName', res.fullName);
-            localStorage.setItem('email', res.email);
-            localStorage.setItem('roleName', res.roleName);
+          if (res.requiresPhoneVerification) {
+            // Case 1: Phone number not verified. Cache userId and redirect to verification.
+            if (typeof window !== 'undefined') {
+              localStorage.setItem('userId', res.userId);
+            }
+
+            this.messageService.add({
+              severity: 'info',
+              summary: 'Verification Required',
+              detail: 'Your phone number is not verified. Redirecting to OTP verification...'
+            });
+
+            setTimeout(() => {
+              this.router.navigate(['/auth/verify-otp']);
+            }, 1500);
+          } else {
+            // Case 2: Verification complete. Store credentials and log in.
+            if (typeof window !== 'undefined') {
+              if (res.accessToken) localStorage.setItem('accessToken', res.accessToken);
+              localStorage.setItem('userId', res.userId);
+              if (res.fullName) localStorage.setItem('fullName', res.fullName);
+              if (res.email) localStorage.setItem('email', res.email);
+              if (res.roleName) localStorage.setItem('roleName', res.roleName);
+            }
+
+            // Trigger a global navbar storage check
+            window.dispatchEvent(new Event('storage'));
+
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Welcome Back',
+              detail: `Signed in successfully as ${res.fullName || 'User'}.`
+            });
+
+            // Redirect to home
+            setTimeout(() => {
+              this.router.navigate(['/']);
+            }, 1000);
           }
-
-          // Trigger a global navbar storage check
-          window.dispatchEvent(new Event('storage'));
-
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Welcome Back',
-            detail: `Signed in successfully as ${res.fullName}.`
-          });
-
-          // Redirect to home
-          setTimeout(() => {
-            this.router.navigate(['/']);
-          }, 1000);
         } catch (storageErr) {
           this.isLoading = false;
           console.error('[LoginStorageError]', storageErr);

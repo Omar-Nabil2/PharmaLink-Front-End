@@ -16,12 +16,23 @@ export interface LoginRequest {
 }
 
 export interface LoginResponse {
-  accessToken: string;
+  accessToken?: string;
   userId: string;
-  fullName: string;
+  fullName?: string;
+  email?: string;
+  expiresAtUtc?: string;
+  roleName?: string;
+  requiresPhoneVerification: boolean;
+}
+
+export interface ForgotPasswordRequest {
   email: string;
-  expiresAtUtc: string;
-  roleName: string;
+}
+
+export interface ResetPasswordRequest {
+  email: string;
+  token: string;
+  password: string;
 }
 
 export interface ApiValidationErrorResponse {
@@ -43,16 +54,6 @@ export interface ApiErrorResponse {
   [key: string]: any;
 }
 
-
-export interface ForgotPasswordRequest {
-  email: string;
-}
-
-export interface ResetPasswordRequest {
-  email: string;
-  password: string;
-  token: string;
-}
 export enum ErrorType {
   ValidationError = 'ValidationError',
   UserError = 'UserError',

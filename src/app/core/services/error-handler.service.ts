@@ -23,7 +23,8 @@ export class ErrorHandlerService {
       if (error.status === 0) {
         type = ErrorType.ConnectionError;
         title = 'Connection Failed';
-        message = "We're having trouble reaching our servers. Check your internet connection or try again shortly.";
+        message =
+          "We're having trouble reaching our servers. Check your internet connection or try again shortly.";
       } else {
         // Attempt to parse string errors (in case headers or interceptors didn't parse JSON)
         let errorBody = error.error;
@@ -48,8 +49,9 @@ export class ErrorHandlerService {
           } else if (isAccessError) {
             // Treat access errors without a custom code/message block as UserError
             type = ErrorType.UserError;
-            title = errorBody.title || (error.status === 401 ? 'Sign In Required' : 'Access Denied');
-            
+            title =
+              errorBody.title || (error.status === 401 ? 'Sign In Required' : 'Access Denied');
+
             if (errorBody.detail) {
               message = errorBody.detail;
             } else if (errorBody.message) {
@@ -59,15 +61,16 @@ export class ErrorHandlerService {
             } else if (typeof errorBody === 'string') {
               message = errorBody;
             } else {
-              message = error.status === 401
-                ? 'Please sign in first so we can verify who you are.'
-                : "It looks like you don't have access to do that. Please contact support if you think this is a mistake.";
+              message =
+                error.status === 401
+                  ? 'Please sign in first so we can verify who you are.'
+                  : "It looks like you don't have access to do that. Please contact support if you think this is a mistake.";
             }
           } else if (errorBody.errors) {
             // Schema 1: Validation
             type = ErrorType.ValidationError;
             title = errorBody.title || 'Check Form Details';
-            
+
             const errorList: string[] = [];
             Object.keys(errorBody.errors).forEach((key) => {
               const messages = errorBody.errors[key];
@@ -77,16 +80,18 @@ export class ErrorHandlerService {
                 errorList.push(messages);
               }
             });
-            
-            message = errorList.length > 0 
-              ? errorList[0] 
-              : 'Some form details are incorrect. Please verify and try again.';
+
+            message =
+              errorList.length > 0
+                ? errorList[0]
+                : 'Some form details are incorrect. Please verify and try again.';
           } else {
             // Schema 3: General HTTP / Server error (500, 503 with no errors block, etc.)
             if (error.status >= 500) {
               type = ErrorType.ServerOrAccessError;
               title = 'Server Busy';
-              message = 'Our servers are experiencing issues right now. We are working on it—please try again soon!';
+              message =
+                'Our servers are experiencing issues right now. We are working on it—please try again soon!';
             } else {
               type = ErrorType.UnknownError;
               title = errorBody.title || title;
@@ -98,9 +103,10 @@ export class ErrorHandlerService {
           if (isAccessError) {
             type = ErrorType.UserError;
             title = error.status === 401 ? 'Sign In Required' : 'Access Denied';
-            message = error.status === 401
-              ? 'Please sign in first so we can verify who you are.'
-              : "It looks like you don't have access to do that. Please contact support if you think this is a mistake.";
+            message =
+              error.status === 401
+                ? 'Please sign in first so we can verify who you are.'
+                : "It looks like you don't have access to do that. Please contact support if you think this is a mistake.";
           } else {
             message = error.message || message;
           }
@@ -122,9 +128,9 @@ export class ErrorHandlerService {
    */
   handleError(error: any, defaultSummary?: string): void {
     const parsed = this.parseError(error);
-    
+
     // Log details to dev console for debugging as requested
-    console.error('[ErrorHandler] Parsed Details:', parsed);
+    console.log('[ErrorHandler] Parsed Details:', parsed);
 
     this.messageService.add({
       severity: parsed.type === ErrorType.ValidationError ? 'warn' : 'error',
