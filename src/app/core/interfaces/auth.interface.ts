@@ -54,6 +54,25 @@ export interface ApiErrorResponse {
   [key: string]: any;
 }
 
+<<<<<<< HEAD
+=======
+
+export interface ForgotPasswordRequest {
+  email: string;
+}
+
+export interface ResetPasswordRequest {
+  email: string;
+  password: string;
+  token: string;
+}
+
+export interface ChangePasswordRequest {
+  currentPassword: string;
+  newPassword: string;
+  confirmNewPassword: string;
+}
+>>>>>>> 3eb9126ce239ecc3af7c8a01997716b4906dd255
 export enum ErrorType {
   ValidationError = 'ValidationError',
   UserError = 'UserError',
