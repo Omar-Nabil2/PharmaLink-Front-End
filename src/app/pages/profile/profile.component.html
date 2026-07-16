@@ -2,7 +2,9 @@
   <div class="mb-8 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
     <div>
       <h1 class="type-display-xl text-ink">Your profile</h1>
-      <p class="type-body-md text-body mt-2">Manage your personal details and administered pharmacies.</p>
+      <p class="type-body-md text-body mt-2">
+        Manage your personal details and administered pharmacies.
+      </p>
     </div>
     <a routerLink="/change-password" class="btn-subtle inline-flex self-start">
       <i class="pi pi-key text-sm"></i>
@@ -10,79 +12,91 @@
     </a>
   </div>
 
-<<<<<<< HEAD
-    <div class="mb-8 flex justify-between items-center flex-wrap gap-4">
-        <div>
-            <h1 class="text-3xl font-black text-slate-900 tracking-tight">Pharmacy Profile</h1>
-            <p class="text-slate-500 mt-2">Manage your personal details and administered pharmacies.</p>
-        </div>
-
-        <!-- زرار التعديل -->
-        <a routerLink="/profile/edit"
-            class="bg-blue-50 text-blue-600 hover:bg-blue-100 px-5 py-2.5 rounded-xl font-semibold transition-colors flex items-center gap-2 border border-blue-200">
-            <i class="pi pi-user-edit text-lg"></i>
-            <span>Edit Profile</span>
-        </a>
-=======
-  <div *ngIf="isLoading" class="flex justify-center items-center py-20">
-    <i class="pi pi-spinner animate-spin text-4xl text-ink"></i>
-  </div>
-
-  <div *ngIf="!isLoading && profileData" class="space-y-6">
-    <div class="card-surface border border-surface-pressed overflow-hidden !p-0">
-      <div class="bg-canvas-soft px-6 py-4 flex items-center gap-3">
-        <div class="bg-canvas text-ink p-2 rounded-full w-10 h-10 flex items-center justify-center">
-          <i class="pi pi-user"></i>
-        </div>
-        <h2 class="type-display-sm">Personal information</h2>
-      </div>
-
-      <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <span class="block type-body-sm-strong text-body mb-1">Full name</span>
-          <p class="type-body-md text-ink">{{ profileData.fullName }}</p>
-        </div>
-        <div>
-          <span class="block type-body-sm-strong text-body mb-1">Email address</span>
-          <p class="type-body-md text-ink">{{ profileData.email }}</p>
-        </div>
-        <div>
-          <span class="block type-body-sm-strong text-body mb-1">Phone number</span>
-          <p class="type-body-md text-ink">{{ profileData.phoneNumber || 'Not provided' }}</p>
-        </div>
-      </div>
->>>>>>> 3eb9126ce239ecc3af7c8a01997716b4906dd255
+  <div class="mb-8 flex justify-between items-center flex-wrap gap-4">
+    <div>
+      <h1 class="text-3xl font-black text-slate-900 tracking-tight">Pharmacy Profile</h1>
+      <p class="text-slate-500 mt-2">Manage your personal details and administered pharmacies.</p>
     </div>
 
-    <div class="card-surface border border-surface-pressed overflow-hidden !p-0">
-      <div class="bg-canvas-soft px-6 py-4 flex items-center gap-3">
-        <div class="bg-canvas text-ink p-2 rounded-full w-10 h-10 flex items-center justify-center">
-          <i class="pi pi-building"></i>
+    <!-- زرار التعديل -->
+    <a
+      routerLink="/profile/edit"
+      class="bg-blue-50 text-blue-600 hover:bg-blue-100 px-5 py-2.5 rounded-xl font-semibold transition-colors flex items-center gap-2 border border-blue-200"
+    >
+      <i class="pi pi-user-edit text-lg"></i>
+      <span>Edit Profile</span>
+    </a>
+    <div *ngIf="isLoading" class="flex justify-center items-center py-20">
+      <i class="pi pi-spinner animate-spin text-4xl text-ink"></i>
+    </div>
+
+    <div *ngIf="!isLoading && profileData" class="space-y-6">
+      <div class="card-surface border border-surface-pressed overflow-hidden !p-0">
+        <div class="bg-canvas-soft px-6 py-4 flex items-center gap-3">
+          <div
+            class="bg-canvas text-ink p-2 rounded-full w-10 h-10 flex items-center justify-center"
+          >
+            <i class="pi pi-user"></i>
+          </div>
+          <h2 class="type-display-sm">Personal information</h2>
         </div>
-        <h2 class="type-display-sm">Administered pharmacies</h2>
+
+        <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <span class="block type-body-sm-strong text-body mb-1">Full name</span>
+            <p class="type-body-md text-ink">{{ profileData.fullName }}</p>
+          </div>
+          <div>
+            <span class="block type-body-sm-strong text-body mb-1">Email address</span>
+            <p class="type-body-md text-ink">{{ profileData.email }}</p>
+          </div>
+          <div>
+            <span class="block type-body-sm-strong text-body mb-1">Phone number</span>
+            <p class="type-body-md text-ink">{{ profileData.phoneNumber || 'Not provided' }}</p>
+          </div>
+        </div>
       </div>
 
-      <div class="p-6">
-        <div *ngIf="profileData.administeredPharmacies?.length === 0" class="text-center py-8 text-body">
-          <i class="pi pi-info-circle text-2xl mb-2 text-mute"></i>
-          <p class="type-body-md">You do not have any registered pharmacies yet.</p>
+      <div class="card-surface border border-surface-pressed overflow-hidden !p-0">
+        <div class="bg-canvas-soft px-6 py-4 flex items-center gap-3">
+          <div
+            class="bg-canvas text-ink p-2 rounded-full w-10 h-10 flex items-center justify-center"
+          >
+            <i class="pi pi-building"></i>
+          </div>
+          <h2 class="type-display-sm">Administered pharmacies</h2>
         </div>
 
-        <div *ngIf="profileData.administeredPharmacies?.length > 0" class="grid grid-cols-1 gap-4">
+        <div class="p-6">
           <div
-            *ngFor="let pharmacy of profileData.administeredPharmacies"
-            class="bg-canvas-soft rounded-xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+            *ngIf="profileData.administeredPharmacies?.length === 0"
+            class="text-center py-8 text-body"
           >
-            <div>
-              <h3 class="type-display-sm">{{ pharmacy.legalName }}</h3>
-              <div class="flex items-center gap-2 mt-1 type-body-sm text-body">
-                <i class="pi pi-id-card"></i>
-                <span>License: {{ pharmacy.licenseNumber }}</span>
+            <i class="pi pi-info-circle text-2xl mb-2 text-mute"></i>
+            <p class="type-body-md">You do not have any registered pharmacies yet.</p>
+          </div>
+
+          <div
+            *ngIf="profileData.administeredPharmacies?.length > 0"
+            class="grid grid-cols-1 gap-4"
+          >
+            <div
+              *ngFor="let pharmacy of profileData.administeredPharmacies"
+              class="bg-canvas-soft rounded-xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+            >
+              <div>
+                <h3 class="type-display-sm">{{ pharmacy.legalName }}</h3>
+                <div class="flex items-center gap-2 mt-1 type-body-sm text-body">
+                  <i class="pi pi-id-card"></i>
+                  <span>License: {{ pharmacy.licenseNumber }}</span>
+                </div>
               </div>
+              <span
+                class="type-body-sm-strong px-4 py-2 rounded-pill bg-canvas text-ink border border-surface-pressed self-start"
+              >
+                {{ pharmacy.verificationStatus || 'Pending' }}
+              </span>
             </div>
-            <span class="type-body-sm-strong px-4 py-2 rounded-pill bg-canvas text-ink border border-surface-pressed self-start">
-              {{ pharmacy.verificationStatus || 'Pending' }}
-            </span>
           </div>
         </div>
       </div>
