@@ -29,8 +29,7 @@ export class UpdateProfileComponent implements OnInit {
     ) {
         this.updateForm = this.fb.group({
             fullName: ['', [Validators.required, Validators.minLength(3)]],
-            phoneNumber: ['', [Validators.required]],
-            email: ['', [Validators.required, Validators.email]]
+            phoneNumber: ['', [Validators.required, Validators.pattern(/^(?:\+20|0020|0)?1[0125][0-9]{8}$/)]]
         });
     }
 
@@ -47,7 +46,6 @@ export class UpdateProfileComponent implements OnInit {
                 this.updateForm.patchValue({
                     fullName: data.fullName ?? data.value?.fullName,
                     phoneNumber: data.phoneNumber ?? data.value?.phoneNumber,
-                    email: data.email ?? data.value?.email,
                 });
                 this.isFetching = false;
                 this.cdr.detectChanges();
