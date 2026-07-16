@@ -2,8 +2,6 @@ import { Component, OnInit, OnDestroy, AfterViewInit, QueryList, ViewChildren, E
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ButtonModule } from 'primeng/button';
-import { InputTextModule } from 'primeng/inputtext';
 import { MessageService } from 'primeng/api';
 import { AuthService } from '../../../core/services/auth.service';
 import { ErrorHandlerService } from '../../../core/services/error-handler.service';
@@ -15,8 +13,6 @@ import { HttpErrorResponse } from '@angular/common/http';
   imports: [
     CommonModule,
     FormsModule,
-    ButtonModule,
-    InputTextModule
   ],
   templateUrl: './verify-otp.component.html',
 })

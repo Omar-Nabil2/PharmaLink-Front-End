@@ -1,2 +1,375 @@
 @use 'tailwindcss';
-/* You can add global styles to this file, and also import other style files */
+@import 'primeicons/primeicons.css';
+
+@theme {
+  --color-primary: #000000;
+  --color-on-primary: #ffffff;
+  --color-ink: #000000;
+  --color-body: #5e5e5e;
+  --color-mute: #afafaf;
+  --color-hairline-mid: #4b4b4b;
+  --color-canvas: #ffffff;
+  --color-canvas-soft: #efefef;
+  --color-canvas-softer: #f3f3f3;
+  --color-surface-pressed: #e2e2e2;
+  --color-link: #0000ee;
+  --color-on-dark: #ffffff;
+  --color-black-elevated: #282828;
+
+  --font-display: 'Inter', system-ui, 'Helvetica Neue', Arial, sans-serif;
+  --font-text: 'Inter', system-ui, 'Helvetica Neue', Arial, sans-serif;
+  --font-sans: 'Inter', system-ui, 'Helvetica Neue', Arial, sans-serif;
+
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-pill: 999px;
+  --radius-pill-tab: 36px;
+  --radius-full: 9999px;
+
+  --shadow-level-1: rgba(0, 0, 0, 0.12) 0px 4px 16px 0px;
+  --shadow-level-2: rgba(0, 0, 0, 0.16) 0px 4px 16px 0px;
+  --shadow-level-3: rgba(0, 0, 0, 0.16) 0px 2px 8px 0px;
+}
+
+@layer base {
+  html {
+    font-family: var(--font-text);
+    color: var(--color-ink);
+    background-color: var(--color-canvas);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background-color: var(--color-canvas);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: 0;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  ::placeholder {
+    color: var(--color-mute);
+  }
+}
+
+@layer components {
+  .container-app {
+    width: 100%;
+    max-width: 1200px;
+    margin-inline: auto;
+    padding-inline: 32px;
+  }
+
+  @media (max-width: 599px) {
+    .container-app {
+      padding-inline: 16px;
+    }
+  }
+
+  .type-display-xxl {
+    font-family: var(--font-display);
+    font-size: 52px;
+    font-weight: 700;
+    line-height: 64px;
+  }
+
+  .type-display-xl {
+    font-family: var(--font-display);
+    font-size: 36px;
+    font-weight: 700;
+    line-height: 44px;
+  }
+
+  .type-display-lg {
+    font-family: var(--font-display);
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 40px;
+  }
+
+  .type-display-md {
+    font-family: var(--font-display);
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 32px;
+  }
+
+  .type-display-sm {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 28px;
+  }
+
+  .type-body-lg {
+    font-family: var(--font-text);
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 24px;
+  }
+
+  .type-body-md {
+    font-family: var(--font-text);
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+  }
+
+  .type-body-md-strong {
+    font-family: var(--font-text);
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 20px;
+  }
+
+  .type-body-sm {
+    font-family: var(--font-text);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+  }
+
+  .type-body-sm-strong {
+    font-family: var(--font-text);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 16px;
+  }
+
+  .type-caption {
+    font-family: var(--font-text);
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 20px;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background-color: var(--color-primary);
+    color: var(--color-on-primary);
+    font-family: var(--font-text);
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 20px;
+    border-radius: var(--radius-pill);
+    padding: 12px 16px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.15s ease, opacity 0.15s ease;
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    background-color: var(--color-black-elevated);
+  }
+
+  .btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: var(--font-text);
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 20px;
+    border-radius: var(--radius-pill);
+    padding: 12px 16px;
+    border: 1px solid var(--color-surface-pressed);
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+  }
+
+  .btn-secondary:hover:not(:disabled) {
+    background-color: var(--color-surface-pressed);
+  }
+
+  .btn-subtle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background-color: var(--color-canvas-soft);
+    color: var(--color-ink);
+    font-family: var(--font-text);
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 20px;
+    border-radius: var(--radius-pill);
+    padding: 12px 16px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+  }
+
+  .btn-subtle:hover:not(:disabled) {
+    background-color: var(--color-surface-pressed);
+  }
+
+  .btn-large {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    background-color: var(--color-primary);
+    color: var(--color-on-primary);
+    font-family: var(--font-text);
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 24px;
+    border-radius: var(--radius-xl);
+    padding: 16px 20px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.15s ease, opacity 0.15s ease;
+  }
+
+  .btn-large:hover:not(:disabled) {
+    background-color: var(--color-black-elevated);
+  }
+
+  .btn-large:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .field-input {
+    width: 100%;
+    background-color: var(--color-canvas-soft);
+    color: var(--color-ink);
+    font-family: var(--font-text);
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+    border-radius: var(--radius-md);
+    padding: 16px;
+    border: none;
+    outline: none;
+    transition: background-color 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .field-input:focus {
+    box-shadow: inset 0 0 0 2px var(--color-ink);
+  }
+
+  .field-input.is-invalid {
+    box-shadow: inset 0 0 0 2px #b00020;
+    background-color: #faf0f0;
+  }
+
+  .field-label {
+    display: block;
+    font-family: var(--font-text);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 16px;
+    color: var(--color-ink);
+    margin-bottom: 8px;
+  }
+
+  .field-error {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 6px;
+    font-size: 12px;
+    line-height: 20px;
+    color: #b00020;
+  }
+
+  .auth-card {
+    background-color: var(--color-canvas-soft);
+    border-radius: var(--radius-xl);
+    padding: 24px;
+  }
+
+  .card-surface {
+    background-color: var(--color-canvas);
+    border-radius: var(--radius-xl);
+    padding: 24px;
+  }
+
+  .card-elevated {
+    background-color: var(--color-canvas);
+    border-radius: var(--radius-xl);
+    padding: 24px;
+    box-shadow: var(--shadow-level-2);
+  }
+
+  .link-ink {
+    color: var(--color-ink);
+    font-weight: 500;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .link-ink:hover {
+    opacity: 0.7;
+  }
+
+  /* PrimeNG toast — flat card, black/white */
+  .p-toast {
+    font-family: var(--font-text);
+  }
+
+  .p-toast .p-toast-message {
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-level-2);
+    border: none;
+    background: var(--color-canvas);
+    color: var(--color-ink);
+  }
+
+  .p-toast .p-toast-message-content {
+    padding: 12px 16px;
+    gap: 12px;
+  }
+
+  .p-toast .p-toast-summary {
+    font-weight: 500;
+    font-size: 14px;
+  }
+
+  .p-toast .p-toast-detail {
+    font-weight: 400;
+    font-size: 14px;
+    color: var(--color-body);
+  }
+
+  @media (max-width: 767px) {
+    .type-display-xxl {
+      font-size: 36px;
+      line-height: 44px;
+    }
+
+    .type-display-xl {
+      font-size: 28px;
+      line-height: 36px;
+    }
+  }
+}

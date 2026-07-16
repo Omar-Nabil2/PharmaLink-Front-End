@@ -1,91 +1,86 @@
-<nav
-  class="sticky top-0 z-50 w-full backdrop-blur-lg bg-white/80 border-b border-gray-200/50 shadow-sm"
->
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="flex justify-between items-center h-20">
-      <!-- Logo -->
-      <div
-        routerLink="/"
-        class="flex items-center gap-1 cursor-pointer select-none transition-all duration-200 hover:scale-[1.02]"
-      >
-        <img src="/logo.png" alt="Pharma Link Logo" class="h-12 md:h-14 w-auto object-contain" />
+<nav class="sticky top-0 z-50 w-full bg-canvas border-b border-surface-pressed">
+  <div class="container-app">
+    <div class="flex justify-between items-center py-4">
+      <a routerLink="/" class="flex items-center gap-2 cursor-pointer select-none">
+        <img src="/logo.png" alt="Pharma Link" class="h-10 md:h-12 w-auto object-contain" />
+        <span class="type-display-sm hidden sm:inline">Pharma Link</span>
+      </a>
 
-        <div class="leading-none">
-          <span class="text-2xl md:text-3xl font-extrabold tracking-tight">
-            <span class="text-blue-600">Pharma</span>
-            <span class="ml-2 text-emerald-500">Link</span>
-          </span>
-        </div>
-      </div>
-      <!-- Desktop Navigation -->
-      <div class="hidden md:flex items-center space-x-8">
+      <div class="hidden lg:flex items-center gap-8">
         <a
           routerLink="/"
-          routerLinkActive="text-blue-600 font-semibold"
+          routerLinkActive="opacity-100"
           [routerLinkActiveOptions]="{ exact: true }"
-          class="text-gray-600 hover:text-blue-600 font-medium transition-colors duration-200"
-          >Home</a
+          class="type-body-md-strong text-ink opacity-70 hover:opacity-100 transition-opacity"
         >
+          Home
+        </a>
         <a
           routerLink="/products"
-          routerLinkActive="text-blue-600 font-semibold"
-          class="text-gray-600 hover:text-blue-600 font-medium transition-colors duration-200"
-          >Products</a
+          routerLinkActive="opacity-100"
+          class="type-body-md-strong text-ink opacity-70 hover:opacity-100 transition-opacity"
         >
+          Products
+        </a>
         <a
           routerLink="/services"
-          routerLinkActive="text-blue-600 font-semibold"
-          class="text-gray-600 hover:text-blue-600 font-medium transition-colors duration-200"
-          >Services</a
+          routerLinkActive="opacity-100"
+          class="type-body-md-strong text-ink opacity-70 hover:opacity-100 transition-opacity"
         >
+          Services
+        </a>
         <a
           routerLink="/contact"
-          routerLinkActive="text-blue-600 font-semibold"
-          class="text-gray-600 hover:text-blue-600 font-medium transition-colors duration-200"
-          >Contact</a
+          routerLinkActive="opacity-100"
+          class="type-body-md-strong text-ink opacity-70 hover:opacity-100 transition-opacity"
         >
+          Contact
+        </a>
       </div>
 
-      <!-- Action Buttons -->
-      <div class="hidden md:flex items-center space-x-4">
-        <!-- Logged Out View -->
+      <div class="hidden md:flex items-center gap-3">
         <ng-container *ngIf="!isLoggedIn">
-          <button pButton routerLink="/auth/login" label="Log in" class="p-button-text p-button-plain font-semibold"></button>
-          <button
-            pButton
-            routerLink="/auth/register"
-            label="Sign up"
-            class="p-button-rounded shadow-md hover:shadow-lg transition-all"
-          ></button>
+          <a routerLink="/auth/login" class="btn-secondary">Log in</a>
+          <a routerLink="/auth/register" class="btn-primary">Sign up</a>
         </ng-container>
 
-        <!-- Logged In View -->
         <ng-container *ngIf="isLoggedIn">
-          <!-- Profile Link/Tab with username -->
-          <a
-            routerLink="/profile"
-            class="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-slate-700 bg-slate-50 border border-slate-200/60 hover:bg-slate-100 hover:border-slate-300 rounded-full transition duration-200 shadow-sm"
-          >
-            <i class="pi pi-user text-blue-600"></i>
+          <a routerLink="/profile" class="btn-subtle gap-2">
+            <i class="pi pi-user text-sm"></i>
             <span>{{ fullName }}</span>
           </a>
-          <!-- Logout Button -->
-          <button
-            pButton
-            (click)="logout()"
-            label="Logout"
-            class="p-button-rounded p-button-danger p-button-outlined shadow-sm hover:shadow transition-all font-semibold"
-          ></button>
+          <a routerLink="/change-password" class="btn-secondary">Change password</a>
+          <button type="button" (click)="logout()" class="btn-primary">Logout</button>
         </ng-container>
       </div>
 
-      <!-- Mobile menu button -->
-      <div class="md:hidden flex items-center">
-        <button
-          class="text-gray-600 hover:text-blue-600 focus:outline-none p-2 rounded-lg hover:bg-blue-50 transition-colors"
-        >
-          <i class="pi pi-bars text-2xl"></i>
-        </button>
+      <button
+        type="button"
+        class="md:hidden flex items-center justify-center w-10 h-10 rounded-full bg-canvas-soft text-ink"
+        (click)="menuOpen = !menuOpen"
+        [attr.aria-expanded]="menuOpen"
+        aria-label="Toggle menu"
+      >
+        <i class="pi text-xl" [ngClass]="menuOpen ? 'pi-times' : 'pi-bars'"></i>
+      </button>
+    </div>
+
+    <div *ngIf="menuOpen" class="md:hidden pb-6 space-y-4 border-t border-surface-pressed pt-4">
+      <a routerLink="/" (click)="menuOpen = false" class="block type-body-md-strong py-2">Home</a>
+      <a routerLink="/products" (click)="menuOpen = false" class="block type-body-md-strong py-2">Products</a>
+      <a routerLink="/services" (click)="menuOpen = false" class="block type-body-md-strong py-2">Services</a>
+      <a routerLink="/contact" (click)="menuOpen = false" class="block type-body-md-strong py-2">Contact</a>
+
+      <div class="flex flex-col gap-3 pt-2">
+        <ng-container *ngIf="!isLoggedIn">
+          <a routerLink="/auth/login" (click)="menuOpen = false" class="btn-secondary w-full">Log in</a>
+          <a routerLink="/auth/register" (click)="menuOpen = false" class="btn-primary w-full">Sign up</a>
+        </ng-container>
+        <ng-container *ngIf="isLoggedIn">
+          <a routerLink="/profile" (click)="menuOpen = false" class="btn-subtle w-full">{{ fullName }}</a>
+          <a routerLink="/change-password" (click)="menuOpen = false" class="btn-secondary w-full">Change password</a>
+          <button type="button" (click)="logout(); menuOpen = false" class="btn-primary w-full">Logout</button>
+        </ng-container>
       </div>
     </div>
   </div>
