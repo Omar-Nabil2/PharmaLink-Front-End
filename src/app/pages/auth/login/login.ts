@@ -105,8 +105,6 @@ export class Login implements OnInit {
               this.router.navigate(['/']);
             }, 1000);
           }
-<<<<<<< HEAD
-=======
 
           // Trigger a global navbar storage check
           window.dispatchEvent(new Event('storage'));
@@ -121,7 +119,6 @@ export class Login implements OnInit {
           setTimeout(() => {
             this.router.navigateByUrl(this.returnUrl);
           }, 1000);
->>>>>>> 3eb9126ce239ecc3af7c8a01997716b4906dd255
         } catch (storageErr) {
           this.isLoading = false;
           console.error('[LoginStorageError]', storageErr);
