@@ -1,9 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { ButtonModule } from 'primeng/button';
-import { InputTextModule } from 'primeng/inputtext';
 import { MessageService } from 'primeng/api';
 import { AuthService } from '../../../core/services/auth.service';
 import { ErrorHandlerService } from '../../../core/services/error-handler.service';
@@ -17,8 +15,6 @@ import { ErrorType } from '../../../core/interfaces/auth.interface';
     CommonModule,
     ReactiveFormsModule,
     RouterLink,
-    ButtonModule,
-    InputTextModule
   ],
   templateUrl: './login.html',
   styleUrl: './login.scss'
@@ -27,16 +23,19 @@ export class Login implements OnInit {
   loginForm!: FormGroup;
   isLoading = false;
   showPassword = false;
+  private returnUrl = '/';
 
   constructor(
     private readonly fb: FormBuilder,
     private readonly authService: AuthService,
     private readonly errorHandlerService: ErrorHandlerService,
     private readonly messageService: MessageService,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
+    this.returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') || '/';
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required]]
@@ -85,9 +84,9 @@ export class Login implements OnInit {
             detail: `Signed in successfully as ${res.fullName}.`
           });
 
-          // Redirect to home
+          // Redirect to original destination or home
           setTimeout(() => {
-            this.router.navigate(['/']);
+            this.router.navigateByUrl(this.returnUrl);
           }, 1000);
         } catch (storageErr) {
           this.isLoading = false;

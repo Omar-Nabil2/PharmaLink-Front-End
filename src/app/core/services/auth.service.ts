@@ -9,6 +9,7 @@ import {
   LoginResponse,
   ResetPasswordRequest,
   ForgotPasswordRequest,
+  ChangePasswordRequest,
 } from '../interfaces/auth.interface';
 
 @Injectable({
@@ -34,6 +35,10 @@ export class AuthService {
 
   resetPassword(data: ResetPasswordRequest): Observable<any> {
     return this.http.post(`${this.omarUrl}Auth/ResetPassword`, data);
+  }
+
+  changePassword(data: ChangePasswordRequest): Observable<any> {
+    return this.http.post(`${this.omarUrl}Auth/ChangePassword`, data);
   }
   /**
    * Requests a phone verification OTP code.

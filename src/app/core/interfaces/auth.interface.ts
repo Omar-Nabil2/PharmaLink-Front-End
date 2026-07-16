@@ -53,6 +53,12 @@ export interface ResetPasswordRequest {
   password: string;
   token: string;
 }
+
+export interface ChangePasswordRequest {
+  currentPassword: string;
+  newPassword: string;
+  confirmNewPassword: string;
+}
 export enum ErrorType {
   ValidationError = 'ValidationError',
   UserError = 'UserError',
