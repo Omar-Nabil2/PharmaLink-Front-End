@@ -6,10 +6,16 @@
         {{ isPatient ? 'Manage your personal details and saved addresses.' : 'Manage your personal details and administered pharmacies.' }}
       </p>
     </div>
-    <a routerLink="/change-password" class="btn-subtle inline-flex self-start">
-      <i class="pi pi-key text-sm"></i>
-      Change password
-    </a>
+    <div class="flex items-center gap-3">
+      <a *ngIf="isPatient" routerLink="/profile/edit" class="btn-subtle inline-flex self-start">
+        <i class="pi pi-user-edit text-sm"></i>
+        Edit profile
+      </a>
+      <a routerLink="/change-password" class="btn-subtle inline-flex self-start">
+        <i class="pi pi-key text-sm"></i>
+        Change password
+      </a>
+    </div>
   </div>
 
   <div *ngIf="isLoading" class="flex justify-center items-center py-20">

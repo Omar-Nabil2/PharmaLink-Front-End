@@ -14,9 +14,16 @@ export interface GetPharmacyProfileResponse {
     administeredPharmacies: PharmacyDto[];
 }
 
+export interface UpdatePatientProfileRequest {
+    fullName: string;
+    phoneNumber: string;
+    email: string;
+}
+
 export interface UpdatePharmacyProfileRequest {
     fullName: string;
     phoneNumber: string;
+    email: string;
 }
 
 export interface UpdatePharmacyProfileResponse {
