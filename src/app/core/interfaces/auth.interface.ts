@@ -10,6 +10,20 @@ export interface RegisterResponse {
   userId: string;
 }
 
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface LoginResponse {
+  accessToken: string;
+  userId: string;
+  fullName: string;
+  email: string;
+  expiresAtUtc: string;
+  roleName: string;
+}
+
 export interface ApiValidationErrorResponse {
   type: string;
   title: string;

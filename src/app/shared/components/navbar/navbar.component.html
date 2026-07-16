@@ -48,13 +48,35 @@
 
       <!-- Action Buttons -->
       <div class="hidden md:flex items-center space-x-4">
-        <button pButton routerLink="/auth/login" label="Log in" class="p-button-text p-button-plain font-semibold"></button>
-        <button
-          pButton
-          routerLink="/auth/register"
-          label="Sign up"
-          class="p-button-rounded shadow-md hover:shadow-lg transition-all"
-        ></button>
+        <!-- Logged Out View -->
+        <ng-container *ngIf="!isLoggedIn">
+          <button pButton routerLink="/auth/login" label="Log in" class="p-button-text p-button-plain font-semibold"></button>
+          <button
+            pButton
+            routerLink="/auth/register"
+            label="Sign up"
+            class="p-button-rounded shadow-md hover:shadow-lg transition-all"
+          ></button>
+        </ng-container>
+
+        <!-- Logged In View -->
+        <ng-container *ngIf="isLoggedIn">
+          <!-- Profile Link/Tab with username -->
+          <a
+            routerLink="/profile"
+            class="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-slate-700 bg-slate-50 border border-slate-200/60 hover:bg-slate-100 hover:border-slate-300 rounded-full transition duration-200 shadow-sm"
+          >
+            <i class="pi pi-user text-blue-600"></i>
+            <span>{{ fullName }}</span>
+          </a>
+          <!-- Logout Button -->
+          <button
+            pButton
+            (click)="logout()"
+            label="Logout"
+            class="p-button-rounded p-button-danger p-button-outlined shadow-sm hover:shadow transition-all font-semibold"
+          ></button>
+        </ng-container>
       </div>
 
       <!-- Mobile menu button -->

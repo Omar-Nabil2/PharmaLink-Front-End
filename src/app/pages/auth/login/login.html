@@ -1,1 +1,116 @@
-<p>login works!</p>
+<div class="bg-white rounded-2xl shadow-xl border border-slate-100 p-8 space-y-6">
+  <!-- Warm Title Header -->
+  <div class="text-center space-y-2">
+    <h2 class="text-3xl font-extrabold tracking-tight text-slate-900">
+      Welcome Back
+    </h2>
+    <p class="text-sm text-slate-500">
+      Sign in to your patient account to stay connected with your pharmacy
+    </p>
+  </div>
+
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-5">
+    <!-- Email Field -->
+    <div class="space-y-1">
+      <label for="email" class="block text-xs font-semibold text-slate-700 tracking-wider uppercase">
+        Email Address
+      </label>
+      <div class="relative">
+        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+          <i class="pi pi-envelope text-sm"></i>
+        </span>
+        <input
+          id="email"
+          type="email"
+          pInputText
+          formControlName="email"
+          placeholder="sarah@example.com"
+          class="w-full pl-9 pr-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition duration-200 text-sm placeholder:text-slate-400/80"
+          [ngClass]="{
+            'border-red-500 focus:ring-red-50 focus:border-red-500 bg-red-50/10':
+              (f['email'].touched || f['email'].dirty) && (f['email'].invalid || f['email'].errors?.['serverError'])
+          }"
+        />
+      </div>
+      <!-- Validation Error -->
+      <div *ngIf="(f['email'].touched || f['email'].dirty) && f['email'].invalid" class="text-xs text-red-500 flex items-center gap-1.5 mt-1">
+        <i class="pi pi-exclamation-circle text-[10px]"></i>
+        <span *ngIf="f['email'].errors?.['required']">Please enter your email address to sign in.</span>
+        <span *ngIf="f['email'].errors?.['email']">Please enter a valid email address (e.g., name@example.com).</span>
+      </div>
+      <!-- Server Side Error -->
+      <div *ngIf="f['email'].errors?.['serverError']" class="text-xs text-red-500 flex items-center gap-1.5 mt-1">
+        <i class="pi pi-exclamation-circle text-[10px]"></i>
+        <span>{{ f['email'].errors?.['serverError'] }}</span>
+      </div>
+    </div>
+
+    <!-- Password Field -->
+    <div class="space-y-1">
+      <div class="flex justify-between items-center">
+        <label for="password" class="block text-xs font-semibold text-slate-700 tracking-wider uppercase">
+          Password
+        </label>
+        <!-- Forget Password Link -->
+        <a routerLink="/auth/forgot-password" class="text-xs text-blue-600 hover:text-blue-700 hover:underline transition font-semibold">
+          Forgot password?
+        </a>
+      </div>
+      <div class="relative">
+        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+          <i class="pi pi-lock text-sm"></i>
+        </span>
+        <input
+          id="password"
+          [type]="showPassword ? 'text' : 'password'"
+          pInputText
+          formControlName="password"
+          placeholder="••••••••"
+          class="w-full pl-9 pr-10 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition duration-200 text-sm placeholder:text-slate-400/80"
+          [ngClass]="{
+            'border-red-500 focus:ring-red-50 focus:border-red-500 bg-red-50/10':
+              (f['password'].touched || f['password'].dirty) && (f['password'].invalid || f['password'].errors?.['serverError'])
+          }"
+        />
+        <button
+          type="button"
+          (click)="showPassword = !showPassword"
+          class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 transition"
+        >
+          <i class="pi text-sm" [ngClass]="showPassword ? 'pi-eye-slash' : 'pi-eye'"></i>
+        </button>
+      </div>
+      <!-- Validation Error -->
+      <div *ngIf="(f['password'].touched || f['password'].dirty) && f['password'].invalid" class="text-xs text-red-500 flex items-center gap-1.5 mt-1">
+        <i class="pi pi-exclamation-circle text-[10px]"></i>
+        <span *ngIf="f['password'].errors?.['required']">Please enter your password.</span>
+      </div>
+      <!-- Server Side Error -->
+      <div *ngIf="f['password'].errors?.['serverError']" class="text-xs text-red-500 flex items-center gap-1.5 mt-1">
+        <i class="pi pi-exclamation-circle text-[10px]"></i>
+        <span>{{ f['password'].errors?.['serverError'] }}</span>
+      </div>
+    </div>
+
+    <!-- Submit Button (Pill Design) -->
+    <button
+      pButton
+      type="submit"
+      [disabled]="isLoading || loginForm.invalid"
+      class="w-full py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-blue-100 font-bold transition duration-200 flex justify-center items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed disabled:from-slate-400 disabled:to-slate-400 disabled:bg-none cursor-pointer"
+    >
+      <i *ngIf="isLoading" class="pi pi-spin pi-spinner text-sm"></i>
+      <span>{{ isLoading ? 'Signing you in...' : 'Sign In' }}</span>
+    </button>
+  </form>
+
+  <!-- Register Link -->
+  <div class="text-center pt-2">
+    <p class="text-sm text-slate-500">
+      Don't have an account?
+      <a routerLink="/auth/register" class="text-blue-600 hover:text-blue-700 font-semibold transition hover:underline">
+        Sign Up
+      </a>
+    </p>
+  </div>
+</div>

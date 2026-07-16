@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { RegisterRequest, RegisterResponse } from '../interfaces/auth.interface';
+import { RegisterRequest, RegisterResponse, LoginRequest, LoginResponse } from '../interfaces/auth.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -35,5 +35,13 @@ export class AuthService {
    */
   verifyPhone(userId: string, code: string): Observable<any> {
     return this.http.post<any>(`${this.baseUrl}PhoneVerification/verify`, { userId, code });
+  }
+
+  /**
+   * Logs in a user.
+   * @param data LoginRequest DTO containing credentials.
+   */
+  login(data: LoginRequest): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${this.baseUrl}Auth/login`, data);
   }
 }
