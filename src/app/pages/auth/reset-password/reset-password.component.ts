@@ -9,7 +9,7 @@ import { MessageService } from 'primeng/api';
 @Component({
     selector: 'app-reset-password',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, RouterLink],
+    imports: [CommonModule, ReactiveFormsModule],
     templateUrl: './reset-password.component.html'
 })
 export class ResetPasswordComponent implements OnInit {
