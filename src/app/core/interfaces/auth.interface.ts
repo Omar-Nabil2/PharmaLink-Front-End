@@ -69,6 +69,7 @@ export interface ChangePasswordRequest {
   newPassword: string;
   confirmNewPassword: string;
 }
+
 export enum ErrorType {
   ValidationError = 'ValidationError',
   UserError = 'UserError',
