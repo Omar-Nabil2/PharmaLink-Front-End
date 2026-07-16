@@ -1,8 +1,17 @@
 <div class="max-w-5xl mx-auto p-6 lg:p-8">
 
-    <div class="mb-8">
-        <h1 class="text-3xl font-black text-slate-900 tracking-tight">Pharmacy Profile</h1>
-        <p class="text-slate-500 mt-2">Manage your personal details and administered pharmacies.</p>
+    <div class="mb-8 flex justify-between items-center flex-wrap gap-4">
+        <div>
+            <h1 class="text-3xl font-black text-slate-900 tracking-tight">Pharmacy Profile</h1>
+            <p class="text-slate-500 mt-2">Manage your personal details and administered pharmacies.</p>
+        </div>
+
+        <!-- زرار التعديل -->
+        <a routerLink="/profile/edit"
+            class="bg-blue-50 text-blue-600 hover:bg-blue-100 px-5 py-2.5 rounded-xl font-semibold transition-colors flex items-center gap-2 border border-blue-200">
+            <i class="pi pi-user-edit text-lg"></i>
+            <span>Edit Profile</span>
+        </a>
     </div>
 
     <!-- لو الداتا لسه بتحمل -->

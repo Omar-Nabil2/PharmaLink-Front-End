@@ -13,3 +13,15 @@ export interface GetPharmacyProfileResponse {
     phoneNumber: string;
     administeredPharmacies: PharmacyDto[];
 }
+
+export interface UpdatePharmacyProfileRequest {
+    fullName: string;
+    phoneNumber: string;
+}
+
+export interface UpdatePharmacyProfileResponse {
+    id: string;
+    fullName: string;
+    email: string;
+    phoneNumber: string;
+}
