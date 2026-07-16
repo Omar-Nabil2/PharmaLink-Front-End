@@ -15,6 +15,10 @@ export const routes: Routes = [
       {
         path: 'profile',
         loadComponent: () => import('./pages/profile/profile.component').then((m) => m.ProfileComponent),
+      },
+      {
+        path: 'profile/edit',
+        loadComponent: () => import('./pages/profile/update-profile/update-profile.component').then((m) => m.UpdateProfileComponent),
       }
     ],
   },
