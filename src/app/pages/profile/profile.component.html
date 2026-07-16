@@ -1,0 +1,81 @@
+<div class="max-w-5xl mx-auto p-6 lg:p-8">
+
+    <div class="mb-8">
+        <h1 class="text-3xl font-black text-slate-900 tracking-tight">Pharmacy Profile</h1>
+        <p class="text-slate-500 mt-2">Manage your personal details and administered pharmacies.</p>
+    </div>
+
+    <!-- لو الداتا لسه بتحمل -->
+    <div *ngIf="isLoading" class="flex justify-center items-center py-20">
+        <i class="pi pi-spinner animate-spin text-4xl text-emerald-600"></i>
+    </div>
+
+    <!-- لو الداتا رجعت بنجاح -->
+    <div *ngIf="!isLoading && profileData" class="space-y-8">
+
+        <!-- كارت البيانات الشخصية -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="bg-slate-50 border-b border-slate-200 px-6 py-4 flex items-center gap-3">
+                <div class="bg-blue-100 text-blue-600 p-2 rounded-lg">
+                    <i class="pi pi-user text-xl"></i>
+                </div>
+                <h2 class="text-xl font-bold text-slate-800">Personal Information</h2>
+            </div>
+
+            <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <span class="block text-sm font-semibold text-slate-500 mb-1">Full Name</span>
+                    <p class="text-slate-900 font-medium">{{ profileData.fullName }}</p>
+                </div>
+                <div>
+                    <span class="block text-sm font-semibold text-slate-500 mb-1">Email Address</span>
+                    <p class="text-slate-900 font-medium">{{ profileData.email }}</p>
+                </div>
+                <div>
+                    <span class="block text-sm font-semibold text-slate-500 mb-1">Phone Number</span>
+                    <p class="text-slate-900 font-medium">{{ profileData.phoneNumber || 'Not provided' }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- كارت الصيدليات التابعة ليه -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="bg-slate-50 border-b border-slate-200 px-6 py-4 flex items-center gap-3">
+                <div class="bg-emerald-100 text-emerald-600 p-2 rounded-lg">
+                    <i class="pi pi-building text-xl"></i>
+                </div>
+                <h2 class="text-xl font-bold text-slate-800">Administered Pharmacies</h2>
+            </div>
+
+            <div class="p-6">
+                <div *ngIf="profileData.administeredPharmacies?.length === 0" class="text-center py-8 text-slate-500">
+                    <i class="pi pi-info-circle text-2xl mb-2 text-slate-400"></i>
+                    <p>You do not have any registered pharmacies yet.</p>
+                </div>
+
+                <div *ngIf="profileData.administeredPharmacies?.length > 0" class="grid grid-cols-1 gap-4">
+                    <div *ngFor="let pharmacy of profileData.administeredPharmacies"
+                        class="border border-slate-200 rounded-xl p-5 hover:border-emerald-300 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-900">{{ pharmacy.legalName }}</h3>
+                            <div class="flex items-center gap-2 mt-1 text-sm text-slate-500">
+                                <i class="pi pi-id-card"></i>
+                                <span>License: {{ pharmacy.licenseNumber }}</span>
+                            </div>
+                        </div>
+
+                        <div class="shrink-0">
+                            <span
+                                class="px-3 py-1 text-xs font-bold rounded-full border bg-slate-100 text-slate-800 border-slate-200">
+                                {{ pharmacy.verificationStatus || 'Pending' }}
+                            </span>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
