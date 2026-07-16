@@ -112,6 +112,61 @@ export const routes: Routes = [
       },
     ],
   },
+  {
+    path: 'patient',
+    canActivate: [authGuard],
+    data: { role: 'Patient' },
+    loadComponent: () =>
+      import('./layouts/patient-layout/patient-layout.component').then(
+        (m) => m.PatientLayoutComponent,
+      ),
+    children: [
+      {
+        path: 'dashboard',
+        loadComponent: () =>
+          import('./pages/dashboard/patient-dashboard/patient-dashboard.component').then(
+            (m) => m.PatientDashboardComponent,
+          ),
+      },
+      { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
+    ],
+  },
+  {
+    path: 'pharmacy',
+    canActivate: [authGuard],
+    data: { role: 'Pharmacy' },
+    loadComponent: () =>
+      import('./layouts/pharmacy-layout/pharmacy-layout.component').then(
+        (m) => m.PharmacyLayoutComponent,
+      ),
+    children: [
+      {
+        path: 'dashboard',
+        loadComponent: () =>
+          import('./pages/dashboard/pharmacy-dashboard/pharmacy-dashboard.component').then(
+            (m) => m.PharmacyDashboardComponent,
+          ),
+      },
+      { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
+    ],
+  },
+  {
+    path: 'admin',
+    canActivate: [authGuard],
+    data: { role: 'Admin' },
+    loadComponent: () =>
+      import('./layouts/admin-layout/admin-layout.component').then((m) => m.AdminLayoutComponent),
+    children: [
+      {
+        path: 'dashboard',
+        loadComponent: () =>
+          import('./pages/dashboard/admin-dashboard/admin-dashboard.component').then(
+            (m) => m.AdminDashboardComponent,
+          ),
+      },
+      { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
+    ],
+  },
   // Unknown routes → Not Found (keeps main layout: navbar + footer)
   {
     path: '**',

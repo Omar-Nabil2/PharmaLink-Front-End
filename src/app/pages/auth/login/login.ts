@@ -7,6 +7,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { ErrorHandlerService } from '../../../core/services/error-handler.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ErrorType } from '../../../core/interfaces/auth.interface';
+import { AppRole, UserAuthData } from '@core/enums/app-roles.constant';
 
 @Component({
   selector: 'app-login',
@@ -78,27 +79,44 @@ export class Login implements OnInit {
               this.router.navigate(['/auth/verify-otp']);
             }, 1500);
           } else {
-            // Case 2: Verification complete. Store credentials and log in.
             if (typeof window !== 'undefined') {
               if (res.accessToken) localStorage.setItem('accessToken', res.accessToken);
-              localStorage.setItem('userId', res.userId);
+              if (res.userId) localStorage.setItem('userId', res.userId);
               if (res.fullName) localStorage.setItem('fullName', res.fullName);
               if (res.email) localStorage.setItem('email', res.email);
               if (res.roleName) localStorage.setItem('roleName', res.roleName);
             }
 
-            // Trigger a global navbar storage check
+            // CRITICAL FIX: Update the AuthService Signal so the Guard knows we are logged in!
+            const userData: UserAuthData = {
+              accessToken: res.accessToken || '',
+              userId: res.userId,
+              fullName: res.fullName || '',
+              email: res.email || '',
+              roleName: res.roleName as AppRole
+            };
+            this.authService.setCurrentUser(userData);
+
             window.dispatchEvent(new Event('storage'));
 
             this.messageService.add({
               severity: 'success',
               summary: 'Welcome Back',
               detail: `Signed in successfully as ${res.fullName || 'User'}.`,
+              life: 3000, // 3000ms = 3 seconds. Add this line!
             });
 
-            // Redirect to the original destination or home
+            // Redirect to the original destination or role specific dashboard
             setTimeout(() => {
-              this.router.navigateByUrl(this.returnUrl || '/');
+              let destination = this.returnUrl;
+
+              if (!destination || destination === '/') {
+                // FIX: Use the new helper to get the correct path
+                destination = this.authService.getDashboardPath();
+              }
+
+              console.log('Navigating to:', destination); // Keep this to debug
+              this.router.navigateByUrl(destination);
             }, 1000);
           }
         } catch (storageErr) {

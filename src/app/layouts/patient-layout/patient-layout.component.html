@@ -1,0 +1,15 @@
+<div class="flex flex-col h-screen overflow-hidden bg-canvas font-sans">
+  <app-navbar class="flex-shrink-0 z-50 shadow-sm" />
+
+  <div class="flex flex-1 overflow-hidden">
+    <app-sidebar [items]="patientNavItems" class="hidden md:block h-full flex-shrink-0" />
+
+    <main class="flex-1 overflow-y-auto bg-canvas-softer p-4 md:p-8">
+      <router-outlet />
+
+      <app-footer class="flex-shrink-0" />
+    </main>
+  </div>
+
+
+</div>
