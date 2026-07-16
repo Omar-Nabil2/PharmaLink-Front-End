@@ -2,13 +2,21 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { RegisterRequest, RegisterResponse, LoginRequest, LoginResponse } from '../interfaces/auth.interface';
+import {
+  RegisterRequest,
+  RegisterResponse,
+  LoginRequest,
+  LoginResponse,
+  ResetPasswordRequest,
+  ForgotPasswordRequest,
+} from '../interfaces/auth.interface';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   private readonly baseUrl = environment.baseUrl;
+  private readonly omarUrl = environment.omarUrl;
 
   constructor(private readonly http: HttpClient) {}
 
@@ -20,6 +28,13 @@ export class AuthService {
     return this.http.post<RegisterResponse>(`${this.baseUrl}Auth/register`, data);
   }
 
+  forgotPassword(data: ForgotPasswordRequest): Observable<any> {
+    return this.http.post(`${this.omarUrl}Auth/ForgotPassword`, data);
+  }
+
+  resetPassword(data: ResetPasswordRequest): Observable<any> {
+    return this.http.post(`${this.omarUrl}Auth/ResetPassword`, data);
+  }
   /**
    * Requests a phone verification OTP code.
    * @param userId The unique ID of the user.
