@@ -59,4 +59,10 @@ export class ProfileComponent implements OnInit {
       });
     }
   }
+
+  isDefaultAddress(index: number): boolean {
+    if (!this.patientData?.addresses) return false;
+    const firstDefaultIndex = this.patientData.addresses.findIndex(a => a.isDefault);
+    return index === firstDefaultIndex;
+  }
 }
