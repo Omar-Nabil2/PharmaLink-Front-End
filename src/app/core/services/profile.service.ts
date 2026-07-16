@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { GetPharmacyProfileResponse, UpdatePharmacyProfileRequest, UpdatePharmacyProfileResponse } from '../interfaces/profile.interface';
+import { GetPharmacyProfileResponse, UpdatePharmacyProfileRequest, UpdatePharmacyProfileResponse, PatientProfileResponse } from '../interfaces/profile.interface';
 
 @Injectable({
     providedIn: 'root'
@@ -16,6 +16,11 @@ export class ProfileService {
     getProfile(): Observable<GetPharmacyProfileResponse> {
 
         return this.http.get<GetPharmacyProfileResponse>(`${this.omarUrl}Pharmaciest`);
+    }
+
+    getPatientProfile(): Observable<PatientProfileResponse> {
+        const url = this.omarUrl || this.baseUrl;
+        return this.http.get<PatientProfileResponse>(`${url}patients/profile`);
     }
 
     updateProfile(data: UpdatePharmacyProfileRequest): Observable<UpdatePharmacyProfileResponse> {
