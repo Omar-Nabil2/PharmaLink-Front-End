@@ -12,6 +12,10 @@ export const routes: Routes = [
         path: '',
         component: HomeComponent,
       },
+      {
+        path: 'profile',
+        loadComponent: () => import('./pages/profile/profile.component').then((m) => m.ProfileComponent),
+      }
     ],
   },
   {
@@ -38,6 +42,10 @@ export const routes: Routes = [
         path: 'reset-password',
         loadComponent: () => import('./pages/auth/reset-password/reset-password.component').then((m) => m.ResetPasswordComponent),
       },
+      {
+        path: 'profile',
+        loadComponent: () => import('./pages/profile/profile.component').then((m) => m.ProfileComponent),
+      }
     ],
   },
 ];
