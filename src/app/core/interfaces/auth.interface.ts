@@ -54,9 +54,6 @@ export interface ApiErrorResponse {
   [key: string]: any;
 }
 
-<<<<<<< HEAD
-=======
-
 export interface ForgotPasswordRequest {
   email: string;
 }
@@ -72,13 +69,12 @@ export interface ChangePasswordRequest {
   newPassword: string;
   confirmNewPassword: string;
 }
->>>>>>> 3eb9126ce239ecc3af7c8a01997716b4906dd255
 export enum ErrorType {
   ValidationError = 'ValidationError',
   UserError = 'UserError',
   ServerOrAccessError = 'ServerOrAccessError',
   ConnectionError = 'ConnectionError',
-  UnknownError = 'UnknownError'
+  UnknownError = 'UnknownError',
 }
 
 export interface ParsedError {
