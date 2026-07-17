@@ -28,7 +28,7 @@
 
   <!-- Patient Profile Layout -->
   <div *ngIf="!isLoading && isPatient && patientData" class="space-y-6">
-    <div class="card-surface border border-surface-pressed overflow-hidden !p-0">
+    <div class="card-surface overflow-hidden !p-0">
       <div class="bg-canvas-soft px-6 py-4 flex items-center gap-3">
         <div class="bg-canvas text-ink p-2 rounded-full w-10 h-10 flex items-center justify-center">
           <i class="pi pi-user"></i>
@@ -67,7 +67,7 @@
     </div>
 
     <!-- Saved Addresses -->
-    <div class="card-surface border border-surface-pressed overflow-hidden !p-0">
+    <div class="card-surface overflow-hidden !p-0">
       <div class="bg-canvas-soft px-6 py-4 flex items-center gap-3">
         <div class="bg-canvas text-ink p-2 rounded-full w-10 h-10 flex items-center justify-center">
           <i class="pi pi-map-marker"></i>
@@ -82,7 +82,7 @@
         </div>
 
         <div *ngIf="patientData.addresses && patientData.addresses.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div *ngFor="let address of patientData.addresses; let i = index" class="bg-canvas-soft rounded-xl p-5 border border-surface-pressed flex flex-col justify-between gap-4">
+          <div *ngFor="let address of patientData.addresses; let i = index" class="bg-canvas-soft rounded-[28px] p-5 border border-hairline-soft flex flex-col justify-between gap-4">
             <div>
               <div class="flex items-center justify-between gap-2 mb-2">
                 <h3 class="type-display-sm">Address {{ i + 1 }}</h3>
@@ -114,7 +114,7 @@
 
   <!-- Pharmacy Profile Layout -->
   <div *ngIf="!isLoading && !isPatient && profileData" class="space-y-6">
-    <div class="card-surface border border-surface-pressed overflow-hidden !p-0">
+    <div class="card-surface overflow-hidden !p-0">
       <div class="bg-canvas-soft px-6 py-4 flex items-center gap-3">
         <div class="bg-canvas text-ink p-2 rounded-full w-10 h-10 flex items-center justify-center">
           <i class="pi pi-user"></i>
@@ -138,7 +138,7 @@
       </div>
     </div>
 
-    <div class="card-surface border border-surface-pressed overflow-hidden !p-0">
+    <div class="card-surface overflow-hidden !p-0">
       <div class="bg-canvas-soft px-6 py-4 flex items-center gap-3">
         <div class="bg-canvas text-ink p-2 rounded-full w-10 h-10 flex items-center justify-center">
           <i class="pi pi-building"></i>
@@ -161,7 +161,7 @@
         >
           <div
             *ngFor="let pharmacy of profileData.administeredPharmacies"
-            class="bg-canvas-soft rounded-xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+            class="bg-canvas-soft rounded-[28px] p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
           >
             <div>
               <h3 class="type-display-sm">{{ pharmacy.legalName }}</h3>
@@ -171,7 +171,7 @@
               </div>
             </div>
             <span
-              class="type-body-sm-strong px-4 py-2 rounded-pill bg-canvas text-ink border border-surface-pressed self-start"
+              class="type-body-sm-strong px-4 py-2 rounded-full bg-canvas text-ink border border-hairline-soft self-start"
             >
               {{ pharmacy.verificationStatus || 'Pending' }}
             </span>

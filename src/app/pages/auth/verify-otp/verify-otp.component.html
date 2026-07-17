@@ -17,8 +17,8 @@
       [value]="otpDigits[i]"
       (keydown)="onKeyDown($event, i)"
       (paste)="onPaste($event)"
-      class="w-11 h-11 sm:w-12 sm:h-12 text-center type-display-sm bg-canvas rounded-md outline-none focus:shadow-[inset_0_0_0_2px_#000]"
-      [ngClass]="{ 'shadow-[inset_0_0_0_2px_#000]': otpDigits[i] !== '' }"
+      class="w-11 h-11 sm:w-12 sm:h-12 text-center type-display-sm bg-canvas rounded-[20px] border border-hairline-soft outline-none focus:border-brand-blue focus:shadow-[0_0_0_4px_rgba(66,98,255,0.12)]"
+      [ngClass]="{ 'border-brand-blue shadow-[0_0_0_4px_rgba(66,98,255,0.12)]': otpDigits[i] !== '' }"
     />
   </div>
 

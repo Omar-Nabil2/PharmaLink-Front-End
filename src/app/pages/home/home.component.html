@@ -1,22 +1,26 @@
 <!-- Hero -->
-<section class="bg-canvas">
-  <div class="container-app py-8 md:py-12">
-    <div class="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+<section class="bg-canvas py-8 md:py-12">
+  <div class="container-app">
+    <div class="grid lg:grid-cols-[1.05fr_0.95fr] gap-10 lg:gap-16 items-center">
       <div class="space-y-6">
+        <span class="badge-tag-yellow">Miro-inspired care experience</span>
         <h1 class="type-display-xxl text-ink">
           Go anywhere with Pharma Link
         </h1>
-        <p class="type-body-lg text-body max-w-md">
+        <p class="type-body-lg text-body max-w-xl">
           Connect patients and pharmacies in one place — prescriptions, orders, and care made simple.
         </p>
         <div class="flex flex-wrap gap-3">
           <a routerLink="/auth/register" class="btn-primary">Get started</a>
-          <a routerLink="/auth/login" class="btn-subtle">Log in</a>
+          <a routerLink="/auth/login" class="btn-secondary">Log in</a>
         </div>
       </div>
 
-      <!-- Request-style card -->
-      <div class="card-elevated max-w-[490px] w-full mx-auto lg:ml-auto space-y-4">
+      <div class="card-elevated max-w-[500px] w-full mx-auto lg:ml-auto space-y-4">
+        <div class="flex items-center gap-2">
+          <span class="badge-success">Live now</span>
+          <span class="badge-tag-coral">Fast pickup</span>
+        </div>
         <h2 class="type-display-md">Find care near you</h2>
         <p class="type-body-sm text-body">Search pharmacies or manage your prescriptions in seconds.</p>
 
@@ -35,7 +39,7 @@
           <button
             *ngFor="let cat of categories"
             type="button"
-            class="type-body-sm-strong bg-canvas-soft text-ink rounded-pill px-4 py-2"
+            class="badge-tag-purple"
           >
             {{ cat }}
           </button>
@@ -48,21 +52,48 @@
 </section>
 
 <!-- Feature promo -->
-<section class="bg-canvas py-8">
+<section class="bg-canvas py-8 md:py-12">
   <div class="container-app">
-    <div class="grid md:grid-cols-2 gap-8 items-center rounded-xl overflow-hidden">
-      <div class="aspect-[4/3] bg-canvas-soft rounded-xl flex items-center justify-center">
-        <div class="text-center p-8 space-y-3">
-          <i class="pi pi-heart text-4xl text-ink"></i>
-          <p class="type-body-md-strong">Patient care, connected</p>
+    <div class="grid md:grid-cols-2 gap-6">
+      <div class="card-feature-teal space-y-4">
+        <div class="flex h-12 w-12 items-center justify-center rounded-full bg-canvas">
+          <i class="pi pi-heart text-2xl text-ink"></i>
         </div>
-      </div>
-      <div class="space-y-4 md:py-4">
-        <h2 class="type-display-xl">Safety, simplified</h2>
+        <h2 class="type-display-md">Safety, simplified</h2>
         <p class="type-body-md text-body">
           Verified accounts, clear prescription flows, and a network you can trust — without the clutter.
         </p>
-        <a routerLink="/auth/register" class="btn-subtle inline-flex">Learn more</a>
+        <a routerLink="/auth/register" class="btn-secondary inline-flex">Learn more</a>
+      </div>
+      <div class="card-feature-rose space-y-4">
+        <div class="flex h-12 w-12 items-center justify-center rounded-full bg-canvas">
+          <i class="pi pi-clock text-2xl text-ink"></i>
+        </div>
+        <h2 class="type-display-md">Plan for later</h2>
+        <p class="type-body-md text-body">
+          Save your profile, revisit prescriptions, and pick up where you left off whenever care matters most.
+        </p>
+        <a routerLink="/profile" class="btn-secondary inline-flex">View profile</a>
+      </div>
+      <div class="card-feature-coral space-y-4">
+        <div class="flex h-12 w-12 items-center justify-center rounded-full bg-canvas">
+          <i class="pi pi-building text-2xl text-ink"></i>
+        </div>
+        <h2 class="type-display-md">Built for pharmacies</h2>
+        <p class="type-body-md text-body">
+          Onboard locations, manage inventory partners, and serve patients with tools designed for healthcare teams.
+        </p>
+        <a routerLink="/auth/register" class="btn-secondary inline-flex">Join as pharmacy</a>
+      </div>
+      <div class="card-feature-yellow space-y-4">
+        <div class="flex h-12 w-12 items-center justify-center rounded-full bg-canvas">
+          <i class="pi pi-check text-2xl text-ink"></i>
+        </div>
+        <h2 class="type-display-md">Stay ahead</h2>
+        <p class="type-body-md text-body">
+          Keep every conversation, order, and prescription moving with a calmer, more connected workflow.
+        </p>
+        <a routerLink="/auth/forgot-password" class="btn-secondary inline-flex">Need help signing in?</a>
       </div>
     </div>
   </div>
@@ -79,27 +110,11 @@
         </p>
         <a routerLink="/auth/register" class="btn-secondary inline-flex">Join as pharmacy</a>
       </div>
-      <div class="aspect-[4/3] bg-black-elevated rounded-xl flex items-center justify-center">
+      <div class="aspect-[4/3] bg-black-elevated rounded-[28px] flex items-center justify-center">
         <div class="text-center p-8 space-y-3">
           <i class="pi pi-building text-4xl text-on-dark"></i>
           <p class="type-body-md-strong text-on-dark">Built for pharmacies</p>
         </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Soft tinted section -->
-<section class="bg-canvas py-8 md:py-12">
-  <div class="container-app">
-    <div class="bg-canvas-soft rounded-xl p-6 md:p-8 space-y-4">
-      <h2 class="type-display-xl">Plan for later</h2>
-      <p class="type-body-md text-body max-w-xl">
-        Save your profile, track prescriptions, and pick up where you left off — whenever you need care.
-      </p>
-      <div class="flex flex-wrap gap-3">
-        <a routerLink="/profile" class="btn-primary">View profile</a>
-        <a routerLink="/auth/forgot-password" class="btn-subtle">Need help signing in?</a>
       </div>
     </div>
   </div>
@@ -128,11 +143,11 @@
 <!-- App download style CTA -->
 <section class="bg-canvas pb-12">
   <div class="container-app flex flex-wrap gap-3">
-    <a routerLink="/auth/register" class="inline-flex items-center gap-2 bg-ink text-on-dark type-body-md-strong rounded-pill px-5 py-3">
+    <a routerLink="/auth/register" class="inline-flex items-center gap-2 bg-ink text-on-dark type-body-md-strong rounded-full px-5 py-3">
       <i class="pi pi-user"></i>
       Create patient account
     </a>
-    <a routerLink="/auth/login" class="inline-flex items-center gap-2 bg-ink text-on-dark type-body-md-strong rounded-pill px-5 py-3">
+    <a routerLink="/auth/login" class="inline-flex items-center gap-2 bg-ink text-on-dark type-body-md-strong rounded-full px-5 py-3">
       <i class="pi pi-sign-in"></i>
       Sign in to continue
     </a>

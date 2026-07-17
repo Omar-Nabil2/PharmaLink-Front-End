@@ -9,7 +9,7 @@
 
   <!-- Quick Stats -->
   <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-    <p-card styleClass="shadow-none border border-surface-pressed rounded-xl bg-canvas">
+    <p-card styleClass="shadow-none border border-hairline-soft rounded-[28px] bg-canvas">
       <div class="flex items-center justify-between">
         <div>
           <span class="block text-mute type-body-md-strong mb-1">Active Orders</span>
@@ -20,7 +20,7 @@
         </div>
       </div>
     </p-card>
-    <p-card styleClass="shadow-none border border-surface-pressed rounded-xl bg-canvas">
+    <p-card styleClass="shadow-none border border-hairline-soft rounded-[28px] bg-canvas">
       <div class="flex items-center justify-between">
         <div>
           <span class="block text-mute type-body-md-strong mb-1">Items in Cart</span>
@@ -31,7 +31,7 @@
         </div>
       </div>
     </p-card>
-    <p-card styleClass="shadow-none border border-surface-pressed rounded-xl bg-canvas">
+    <p-card styleClass="shadow-none border border-hairline-soft rounded-[28px] bg-canvas">
       <div class="flex items-center justify-between">
         <div>
           <span class="block text-mute type-body-md-strong mb-1">Pending Reviews</span>
@@ -46,7 +46,7 @@
 
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
     <!-- Recent Orders Table -->
-    <div class="bg-canvas border border-surface-pressed rounded-xl overflow-hidden shadow-none p-6">
+    <div class="card-surface overflow-hidden p-6">
       <div class="flex justify-between items-center mb-6">
         <h2 class="type-display-sm text-ink">Recent Orders</h2>
         <a routerLink="/patient/orders" class="text-link type-body-sm-strong hover:underline">View All</a>
@@ -60,7 +60,7 @@
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-order>
-          <tr class="border-b border-surface-pressed hover:bg-canvas-softer transition-colors">
+          <tr class="border-b border-hairline-soft hover:bg-canvas-softer transition-colors">
             <td class="py-3 px-4 text-ink type-body-sm">{{ order.id }}</td>
             <td class="py-3 px-4">
               <p-tag [value]="order.status" [severity]="getSeverity(order.status)" [rounded]="true"></p-tag>
@@ -77,13 +77,13 @@
     </div>
 
     <!-- Prescription Reviews -->
-    <div class="bg-canvas border border-surface-pressed rounded-xl overflow-hidden shadow-none p-6">
+    <div class="card-surface overflow-hidden p-6">
       <div class="flex justify-between items-center mb-6">
         <h2 class="type-display-sm text-ink">Prescription Reviews</h2>
         <a routerLink="/patient/prescriptions" class="text-link type-body-sm-strong hover:underline">View All</a>
       </div>
       <div class="space-y-4">
-        <div *ngFor="let review of prescriptionReviews" class="flex items-start justify-between p-4 rounded-xl border border-surface-pressed bg-canvas-softer hover:bg-canvas-soft transition-colors cursor-pointer">
+        <div *ngFor="let review of prescriptionReviews" class="flex items-start justify-between p-4 rounded-[28px] border border-hairline-soft bg-canvas-softer hover:bg-canvas-soft transition-colors cursor-pointer">
           <div class="flex flex-col gap-1">
             <span class="type-body-md-strong text-ink">{{ review.medication }}</span>
             <span class="type-caption text-mute">Reviewed by: {{ review.doctor }}</span>

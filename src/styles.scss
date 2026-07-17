@@ -2,34 +2,49 @@
 @import 'primeicons/primeicons.css';
 
 @theme {
-  --color-primary: #000000;
+  --color-primary: #1c1c1e;
   --color-on-primary: #ffffff;
-  --color-ink: #000000;
-  --color-body: #5e5e5e;
-  --color-mute: #afafaf;
-  --color-hairline-mid: #4b4b4b;
+  --color-ink: #050038;
+  --color-body: #555a6a;
+  --color-mute: #8e91a0;
+  --color-hairline: #e0e2e8;
+  --color-hairline-soft: #eef0f3;
+  --color-hairline-strong: #c7cad5;
   --color-canvas: #ffffff;
-  --color-canvas-soft: #efefef;
-  --color-canvas-softer: #f3f3f3;
-  --color-surface-pressed: #e2e2e2;
-  --color-link: #0000ee;
+  --color-canvas-soft: #f7f8fa;
+  --color-canvas-softer: #fafbfc;
+  --color-surface-pressed: #e0e2e8;
+  --color-link: #4262ff;
   --color-on-dark: #ffffff;
   --color-black-elevated: #282828;
+  --color-brand-yellow: #ffd02f;
+  --color-brand-yellow-deep: #fcb900;
+  --color-brand-blue: #4262ff;
+  --color-brand-coral: #ff9999;
+  --color-brand-teal: #0fbcb0;
+  --color-brand-rose: #ffd8f4;
+  --color-brand-purple: #7c6cff;
+  --color-success: #00b473;
+  --color-red-light: #fbd4d4;
+  --color-red-dark: #b00020;
 
-  --font-display: 'Inter', system-ui, 'Helvetica Neue', Arial, sans-serif;
-  --font-text: 'Inter', system-ui, 'Helvetica Neue', Arial, sans-serif;
-  --font-sans: 'Inter', system-ui, 'Helvetica Neue', Arial, sans-serif;
+  --font-display: 'Roobert PRO', 'Inter', system-ui, 'Helvetica Neue', Arial, sans-serif;
+  --font-text: 'Roobert PRO', 'Inter', system-ui, 'Helvetica Neue', Arial, sans-serif;
+  --font-sans: 'Roobert PRO', 'Inter', system-ui, 'Helvetica Neue', Arial, sans-serif;
 
+  --radius-sm: 6px;
   --radius-md: 8px;
   --radius-lg: 12px;
   --radius-xl: 16px;
+  --radius-xxl: 20px;
+  --radius-xxxl: 28px;
   --radius-pill: 999px;
-  --radius-pill-tab: 36px;
+  --radius-pill-tab: 999px;
   --radius-full: 9999px;
 
-  --shadow-level-1: rgba(0, 0, 0, 0.12) 0px 4px 16px 0px;
-  --shadow-level-2: rgba(0, 0, 0, 0.16) 0px 4px 16px 0px;
-  --shadow-level-3: rgba(0, 0, 0, 0.16) 0px 2px 8px 0px;
+  --shadow-level-1: 0 12px 32px rgba(5, 0, 56, 0.08);
+  --shadow-level-2: 0 18px 40px rgba(5, 0, 56, 0.12);
+  --shadow-level-3: 0 8px 20px rgba(5, 0, 56, 0.08);
 }
 
 @layer base {
@@ -56,6 +71,7 @@
     font-family: var(--font-display);
     font-weight: 700;
     letter-spacing: 0;
+    color: var(--color-ink);
   }
 
   a {
@@ -84,79 +100,93 @@
 
   .type-display-xxl {
     font-family: var(--font-display);
-    font-size: 52px;
-    font-weight: 700;
-    line-height: 64px;
+    font-size: 80px;
+    font-weight: 500;
+    line-height: 1.05;
+    letter-spacing: -2px;
+    color: var(--color-ink);
   }
 
   .type-display-xl {
     font-family: var(--font-display);
-    font-size: 36px;
-    font-weight: 700;
-    line-height: 44px;
+    font-size: 60px;
+    font-weight: 500;
+    line-height: 1.1;
+    letter-spacing: -1.5px;
+    color: var(--color-ink);
   }
 
   .type-display-lg {
     font-family: var(--font-display);
-    font-size: 32px;
-    font-weight: 700;
-    line-height: 40px;
+    font-size: 48px;
+    font-weight: 500;
+    line-height: 1.15;
+    letter-spacing: -1px;
+    color: var(--color-ink);
   }
 
   .type-display-md {
     font-family: var(--font-display);
-    font-size: 24px;
-    font-weight: 700;
-    line-height: 32px;
+    font-size: 28px;
+    font-weight: 500;
+    line-height: 1.25;
+    color: var(--color-ink);
   }
 
   .type-display-sm {
     font-family: var(--font-display);
-    font-size: 20px;
-    font-weight: 700;
-    line-height: 28px;
+    font-size: 22px;
+    font-weight: 500;
+    line-height: 1.3;
+    color: var(--color-ink);
   }
 
   .type-body-lg {
     font-family: var(--font-text);
     font-size: 18px;
-    font-weight: 500;
-    line-height: 24px;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--color-body);
   }
 
   .type-body-md {
     font-family: var(--font-text);
     font-size: 16px;
     font-weight: 400;
-    line-height: 24px;
+    line-height: 1.5;
+    color: var(--color-body);
   }
 
   .type-body-md-strong {
     font-family: var(--font-text);
     font-size: 16px;
     font-weight: 500;
-    line-height: 20px;
+    line-height: 1.5;
+    color: var(--color-ink);
   }
 
   .type-body-sm {
     font-family: var(--font-text);
     font-size: 14px;
     font-weight: 400;
-    line-height: 20px;
+    line-height: 1.5;
+    color: var(--color-body);
   }
 
   .type-body-sm-strong {
     font-family: var(--font-text);
     font-size: 14px;
     font-weight: 500;
-    line-height: 16px;
+    line-height: 1.4;
+    color: var(--color-ink);
   }
 
   .type-caption {
     font-family: var(--font-text);
     font-size: 12px;
     font-weight: 400;
-    line-height: 20px;
+    line-height: 1.4;
+    color: var(--color-body);
   }
 
   .btn-primary {
@@ -170,15 +200,17 @@
     font-size: 16px;
     font-weight: 500;
     line-height: 20px;
-    border-radius: var(--radius-pill);
-    padding: 12px 16px;
+    border-radius: var(--radius-full);
+    padding: 12px 24px;
     border: none;
     cursor: pointer;
-    transition: background-color 0.15s ease, opacity 0.15s ease;
+    transition: background-color 0.15s ease, transform 0.15s ease, opacity 0.15s ease;
+    box-shadow: var(--shadow-level-3);
   }
 
   .btn-primary:hover:not(:disabled) {
     background-color: var(--color-black-elevated);
+    transform: translateY(-1px);
   }
 
   .btn-primary:disabled {
@@ -197,15 +229,16 @@
     font-size: 16px;
     font-weight: 500;
     line-height: 20px;
-    border-radius: var(--radius-pill);
-    padding: 12px 16px;
-    border: 1px solid var(--color-surface-pressed);
+    border-radius: var(--radius-full);
+    padding: 12px 24px;
+    border: 1px solid var(--color-hairline-strong);
     cursor: pointer;
-    transition: background-color 0.15s ease;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
   }
 
   .btn-secondary:hover:not(:disabled) {
-    background-color: var(--color-surface-pressed);
+    background-color: var(--color-canvas-soft);
+    border-color: var(--color-hairline-strong);
   }
 
   .btn-subtle {
@@ -219,15 +252,16 @@
     font-size: 16px;
     font-weight: 500;
     line-height: 20px;
-    border-radius: var(--radius-pill);
-    padding: 12px 16px;
-    border: none;
+    border-radius: var(--radius-full);
+    padding: 12px 24px;
+    border: 1px solid transparent;
     cursor: pointer;
-    transition: background-color 0.15s ease;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
   }
 
   .btn-subtle:hover:not(:disabled) {
-    background-color: var(--color-surface-pressed);
+    background-color: var(--color-canvas-softer);
+    border-color: var(--color-hairline-soft);
   }
 
   .btn-large {
@@ -242,15 +276,17 @@
     font-size: 18px;
     font-weight: 500;
     line-height: 24px;
-    border-radius: var(--radius-xl);
-    padding: 16px 20px;
+    border-radius: var(--radius-full);
+    padding: 16px 24px;
     border: none;
     cursor: pointer;
-    transition: background-color 0.15s ease, opacity 0.15s ease;
+    transition: background-color 0.15s ease, transform 0.15s ease, opacity 0.15s ease;
+    box-shadow: var(--shadow-level-3);
   }
 
   .btn-large:hover:not(:disabled) {
     background-color: var(--color-black-elevated);
+    transform: translateY(-1px);
   }
 
   .btn-large:disabled {
@@ -260,26 +296,29 @@
 
   .field-input {
     width: 100%;
-    background-color: var(--color-canvas-soft);
+    background-color: var(--color-canvas);
     color: var(--color-ink);
     font-family: var(--font-text);
     font-size: 16px;
     font-weight: 400;
     line-height: 24px;
-    border-radius: var(--radius-md);
-    padding: 16px;
-    border: none;
+    border-radius: var(--radius-xxl);
+    padding: 14px 16px;
+    border: 1px solid var(--color-hairline);
     outline: none;
-    transition: background-color 0.15s ease, box-shadow 0.15s ease;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
   }
 
   .field-input:focus {
-    box-shadow: inset 0 0 0 2px var(--color-ink);
+    border-color: var(--color-brand-blue);
+    box-shadow: 0 0 0 4px rgba(66, 98, 255, 0.12);
+    outline: none;
   }
 
   .field-input.is-invalid {
-    box-shadow: inset 0 0 0 2px #b00020;
-    background-color: #faf0f0;
+    border-color: var(--color-red-dark);
+    background-color: var(--color-red-light);
+    box-shadow: 0 0 0 4px rgba(176, 0, 32, 0.12);
   }
 
   .field-label {
@@ -299,26 +338,119 @@
     margin-top: 6px;
     font-size: 12px;
     line-height: 20px;
-    color: #b00020;
+    color: var(--color-red-dark);
   }
 
   .auth-card {
-    background-color: var(--color-canvas-soft);
-    border-radius: var(--radius-xl);
+    background-color: var(--color-canvas);
+    border: 1px solid var(--color-hairline-soft);
+    border-radius: var(--radius-xxxl);
     padding: 24px;
+    box-shadow: var(--shadow-level-1);
   }
 
   .card-surface {
     background-color: var(--color-canvas);
-    border-radius: var(--radius-xl);
+    border: 1px solid var(--color-hairline-soft);
+    border-radius: var(--radius-xxxl);
     padding: 24px;
+    box-shadow: var(--shadow-level-1);
   }
 
   .card-elevated {
     background-color: var(--color-canvas);
-    border-radius: var(--radius-xl);
+    border: 1px solid var(--color-hairline-soft);
+    border-radius: var(--radius-xxxl);
     padding: 24px;
     box-shadow: var(--shadow-level-2);
+  }
+
+  .card-feature-yellow {
+    background-color: var(--color-brand-yellow);
+    color: var(--color-ink);
+    border-radius: var(--radius-xxxl);
+    padding: 24px;
+    box-shadow: var(--shadow-level-1);
+  }
+
+  .card-feature-coral {
+    background-color: var(--color-brand-coral);
+    color: var(--color-ink);
+    border-radius: var(--radius-xxxl);
+    padding: 24px;
+    box-shadow: var(--shadow-level-1);
+  }
+
+  .card-feature-teal {
+    background-color: #c3faf5;
+    color: var(--color-ink);
+    border-radius: var(--radius-xxxl);
+    padding: 24px;
+    box-shadow: var(--shadow-level-1);
+  }
+
+  .card-feature-rose {
+    background-color: #fde0f0;
+    color: var(--color-ink);
+    border-radius: var(--radius-xxxl);
+    padding: 24px;
+    box-shadow: var(--shadow-level-1);
+  }
+
+  .badge-tag-yellow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-full);
+    padding: 8px 12px;
+    background-color: var(--color-brand-yellow);
+    color: var(--color-ink);
+    font-family: var(--font-text);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  .badge-tag-purple {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-full);
+    padding: 8px 12px;
+    background-color: #e8e4ff;
+    color: var(--color-brand-purple);
+    font-family: var(--font-text);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  .badge-tag-coral {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-full);
+    padding: 8px 12px;
+    background-color: #ffe0e0;
+    color: #b54a4a;
+    font-family: var(--font-text);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  .badge-success {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-full);
+    padding: 8px 12px;
+    background-color: #dff9ee;
+    color: var(--color-success);
+    font-family: var(--font-text);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.4;
   }
 
   .link-ink {
@@ -332,13 +464,12 @@
     opacity: 0.7;
   }
 
-  /* PrimeNG toast — flat card, black/white */
   .p-toast {
     font-family: var(--font-text);
   }
 
   .p-toast .p-toast-message {
-    border-radius: var(--radius-xl);
+    border-radius: var(--radius-xxxl);
     box-shadow: var(--shadow-level-2);
     border: none;
     background: var(--color-canvas);
@@ -363,13 +494,14 @@
 
   @media (max-width: 767px) {
     .type-display-xxl {
-      font-size: 36px;
-      line-height: 44px;
+      font-size: 44px;
+      line-height: 52px;
+      letter-spacing: -1px;
     }
 
     .type-display-xl {
-      font-size: 28px;
-      line-height: 36px;
+      font-size: 32px;
+      line-height: 40px;
     }
   }
 }

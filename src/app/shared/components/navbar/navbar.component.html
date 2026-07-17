@@ -1,8 +1,10 @@
-<nav class="sticky top-0 z-50 w-full bg-canvas border-b border-surface-pressed">
+<nav class="sticky top-0 z-50 w-full border-b border-hairline-soft bg-canvas">
   <div class="container-app">
     <div class="flex justify-between items-center py-4">
-      <a routerLink="/" class="flex items-center gap-2 cursor-pointer select-none">
-        <img src="/logo.png" alt="Pharma Link" class="h-10 md:h-12 w-auto object-contain" />
+      <a routerLink="/" class="flex items-center gap-3 cursor-pointer select-none">
+        <span class="flex h-10 w-10 items-center justify-center rounded-full bg-brand-yellow text-sm font-semibold text-ink">
+          PL
+        </span>
         <span class="type-display-sm hidden sm:inline">Pharma Link</span>
       </a>
 
@@ -56,7 +58,7 @@
 
       <button
         type="button"
-        class="md:hidden flex items-center justify-center w-10 h-10 rounded-full bg-canvas-soft text-ink"
+        class="md:hidden flex items-center justify-center w-10 h-10 rounded-full border border-hairline-soft bg-canvas-soft text-ink"
         (click)="menuOpen = !menuOpen"
         [attr.aria-expanded]="menuOpen"
         aria-label="Toggle menu"
@@ -65,7 +67,7 @@
       </button>
     </div>
 
-    <div *ngIf="menuOpen" class="md:hidden pb-6 space-y-4 border-t border-surface-pressed pt-4">
+    <div *ngIf="menuOpen" class="md:hidden pb-6 space-y-4 border-t border-hairline-soft pt-4">
       <a routerLink="/" (click)="menuOpen = false" class="block type-body-md-strong py-2">Home</a>
       <a routerLink="/products" (click)="menuOpen = false" class="block type-body-md-strong py-2">Products</a>
       <a routerLink="/services" (click)="menuOpen = false" class="block type-body-md-strong py-2">Services</a>
