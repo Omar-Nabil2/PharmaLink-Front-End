@@ -119,23 +119,6 @@ export class Login implements OnInit {
               this.router.navigateByUrl(destination);
             }, 1000);
           }
-<<<<<<< HEAD
-
-          // Trigger a global navbar storage check
-          window.dispatchEvent(new Event('storage'));
-
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Welcome Back',
-            detail: `Signed in successfully as ${res.fullName}.`
-          });
-
-          // Redirect to original destination or home
-          setTimeout(() => {
-            this.router.navigateByUrl(this.returnUrl);
-          }, 1000);
-=======
->>>>>>> 9aab0fd540dbf59e6c09e92a856fe75852855357
         } catch (storageErr) {
           this.isLoading = false;
           console.error('[LoginStorageError]', storageErr);
