@@ -1,0 +1,105 @@
+<div class="space-y-6">
+  <div class="flex items-center justify-between">
+    <h1 class="type-display-lg text-ink">System Administration</h1>
+    <button class="btn-primary gap-2 flex items-center">
+      <i class="pi pi-cloud-download"></i>
+      <span>Export Report</span>
+    </button>
+  </div>
+
+  <!-- System Metrics -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <p-card styleClass="shadow-none border border-surface-pressed rounded-xl bg-canvas">
+      <div class="flex items-center justify-between">
+        <div>
+          <span class="block text-mute type-body-md-strong mb-1">Total Users</span>
+          <div class="text-ink type-display-xl font-bold">{{ totalRegisteredUsers | number }}</div>
+        </div>
+        <div class="w-12 h-12 rounded-full bg-canvas-soft flex items-center justify-center">
+          <i class="pi pi-users text-xl text-ink"></i>
+        </div>
+      </div>
+    </p-card>
+    <p-card styleClass="shadow-none border border-surface-pressed rounded-xl bg-canvas">
+      <div class="flex items-center justify-between">
+        <div>
+          <span class="block text-mute type-body-md-strong mb-1">Pharmacies</span>
+          <div class="text-ink type-display-xl font-bold">{{ totalPharmacies | number }}</div>
+        </div>
+        <div class="w-12 h-12 rounded-full bg-canvas-soft flex items-center justify-center">
+          <i class="pi pi-shop text-xl text-ink"></i>
+        </div>
+      </div>
+    </p-card>
+    <p-card styleClass="shadow-none border border-surface-pressed rounded-xl bg-canvas">
+      <div class="flex items-center justify-between">
+        <div>
+          <span class="block text-mute type-body-md-strong mb-1">Drugs in System</span>
+          <div class="text-ink type-display-xl font-bold">{{ totalDrugsInSystem | number }}</div>
+        </div>
+        <div class="w-12 h-12 rounded-full bg-canvas-soft flex items-center justify-center">
+          <i class="pi pi-database text-xl text-ink"></i>
+        </div>
+      </div>
+    </p-card>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Pending Pharmacy Verifications -->
+    <div class="bg-canvas border border-surface-pressed rounded-xl overflow-hidden shadow-none p-6">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="type-display-sm text-ink">Pending Verifications</h2>
+        <a routerLink="/admin/approvals" class="text-link type-body-sm-strong hover:underline">View All</a>
+      </div>
+      <p-table [value]="pendingVerifications" responsiveLayout="scroll" styleClass="p-datatable-sm">
+        <ng-template pTemplate="header">
+          <tr>
+            <th class="bg-canvas-soft text-ink type-body-sm-strong border-b border-surface-pressed py-3 px-4">Pharmacy</th>
+            <th class="bg-canvas-soft text-ink type-body-sm-strong border-b border-surface-pressed py-3 px-4">License</th>
+            <th class="bg-canvas-soft text-ink type-body-sm-strong border-b border-surface-pressed py-3 px-4 text-right">Action</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-pharmacy>
+          <tr class="border-b border-surface-pressed hover:bg-canvas-softer transition-colors">
+            <td class="py-3 px-4 text-ink type-body-sm-strong">{{ pharmacy.name }}</td>
+            <td class="py-3 px-4 text-mute type-body-sm">{{ pharmacy.licenseNumber }}</td>
+            <td class="py-3 px-4 text-right">
+              <button class="btn-subtle px-3 py-1 text-sm">Review</button>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="3" class="text-center py-4 text-mute type-body-sm">No pending verifications.</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+
+    <!-- Recent Audits (OrderFulfillmentLegStatusAudits) -->
+    <div class="bg-canvas border border-surface-pressed rounded-xl overflow-hidden shadow-none p-6">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="type-display-sm text-ink">System Audits</h2>
+        <a routerLink="/admin/audits" class="text-link type-body-sm-strong hover:underline">View Log</a>
+      </div>
+      <div class="space-y-4">
+        <div *ngFor="let audit of recentAudits" class="flex items-center justify-between p-4 rounded-xl border border-surface-pressed bg-canvas-softer hover:bg-canvas-soft transition-colors cursor-pointer">
+          <div class="flex flex-col gap-1">
+            <div class="flex items-center gap-2">
+              <span class="type-body-md-strong text-ink">{{ audit.legId }}</span>
+              <span class="type-caption text-mute">by {{ audit.modifiedBy }}</span>
+            </div>
+            <div class="flex items-center gap-2 mt-1">
+              <p-tag [value]="audit.previousStatus" [severity]="getAuditStatusSeverity(audit.previousStatus)" styleClass="text-xs"></p-tag>
+              <i class="pi pi-arrow-right text-mute text-xs"></i>
+              <p-tag [value]="audit.newStatus" [severity]="getAuditStatusSeverity(audit.newStatus)" styleClass="text-xs"></p-tag>
+            </div>
+          </div>
+          <div class="text-right">
+            <span class="type-caption text-mute">{{ audit.timestamp | date:'short' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -2,6 +2,7 @@ import { Component, HostListener } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { clearAuthSession } from '@core/utils/auth-storage';
+import { AuthService } from '@core/services/auth.service';
 
 @Component({
   selector: 'app-navbar',
@@ -13,7 +14,7 @@ import { clearAuthSession } from '@core/utils/auth-storage';
 export class NavbarComponent {
   menuOpen = false;
 
-  constructor(private readonly router: Router) {}
+  constructor(private readonly router: Router, private readonly authService: AuthService) {}
 
   @HostListener('window:storage')
   onStorageChange(): void {}
@@ -29,7 +30,7 @@ export class NavbarComponent {
   }
 
   logout(): void {
-    clearAuthSession();
+    this.authService.logout();
     this.router.navigate(['/auth/login']);
   }
 }

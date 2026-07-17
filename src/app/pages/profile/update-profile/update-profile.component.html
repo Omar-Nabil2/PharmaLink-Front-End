@@ -35,9 +35,15 @@
                     [ngClass]="{'border-red-500 focus:ring-red-500': updateForm.get('phoneNumber')?.invalid && updateForm.get('phoneNumber')?.touched}">
 
                 <div *ngIf="updateForm.get('phoneNumber')?.invalid && updateForm.get('phoneNumber')?.touched"
-                    class="text-red-500 text-xs mt-1.5 flex items-center gap-1">
-                    <i class="pi pi-exclamation-circle"></i>
-                    <span>Phone number is required.</span>
+                    class="text-red-500 text-xs mt-1.5 flex flex-col gap-1">
+                    <div *ngIf="updateForm.get('phoneNumber')?.errors?.['required']" class="flex items-center gap-1">
+                        <i class="pi pi-exclamation-circle"></i>
+                        <span>Phone number is required.</span>
+                    </div>
+                    <div *ngIf="updateForm.get('phoneNumber')?.errors?.['pattern']" class="flex items-center gap-1">
+                        <i class="pi pi-exclamation-circle"></i>
+                        <span>Please enter a valid Egyptian phone number.</span>
+                    </div>
                 </div>
             </div>
 
@@ -48,8 +54,7 @@
                     class="px-5 py-2.5 rounded-xl font-semibold text-slate-600 hover:bg-slate-100 transition-colors">
                     Cancel
                 </a>
-                <button type="submit" [disabled]="updateForm.invalid || isLoading"
-                    class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-6 rounded-xl transition-all shadow-md hover:shadow-lg disabled:opacity-60 disabled:cursor-not-allowed flex justify-center items-center gap-2">
+                <button type="submit" [disabled]="updateForm.invalid || isLoading" class="btn-primary">
                     <i *ngIf="isLoading" class="pi pi-spinner animate-spin"></i>
                     <span>{{ isLoading ? 'Saving...' : 'Save Changes' }}</span>
                 </button>

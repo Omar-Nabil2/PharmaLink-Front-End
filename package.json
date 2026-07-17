@@ -22,7 +22,7 @@
     "@tailwindcss/postcss": "^4.3.2",
     "postcss": "^8.5.19",
     "primeicons": "^7.0.0",
-    "primeng": "^21.1.9",
+    "primeng": "^22.0.0",
     "rxjs": "~7.8.0",
     "tailwindcss": "^4.3.2",
     "tslib": "^2.3.0"

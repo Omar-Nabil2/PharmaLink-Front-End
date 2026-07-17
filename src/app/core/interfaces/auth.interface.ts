@@ -17,12 +17,18 @@ export interface LoginRequest {
 
 export interface LoginResponse {
   accessToken?: string;
+  refreshToken?: string;
   userId: string;
   fullName?: string;
   email?: string;
   expiresAtUtc?: string;
   roleName?: string;
   requiresPhoneVerification: boolean;
+}
+
+export interface RefreshTokenRequest {
+  token: string;
+  refreshToken: string;
 }
 
 export interface ForgotPasswordRequest {
@@ -54,7 +60,10 @@ export interface ApiErrorResponse {
   [key: string]: any;
 }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 9aab0fd540dbf59e6c09e92a856fe75852855357
 export interface ForgotPasswordRequest {
   email: string;
 }
@@ -70,12 +79,16 @@ export interface ChangePasswordRequest {
   newPassword: string;
   confirmNewPassword: string;
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 9aab0fd540dbf59e6c09e92a856fe75852855357
 export enum ErrorType {
   ValidationError = 'ValidationError',
   UserError = 'UserError',
   ServerOrAccessError = 'ServerOrAccessError',
   ConnectionError = 'ConnectionError',
-  UnknownError = 'UnknownError'
+  UnknownError = 'UnknownError',
 }
 
 export interface ParsedError {

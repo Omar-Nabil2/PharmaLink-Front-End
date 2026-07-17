@@ -1,8 +1,20 @@
-const AUTH_KEYS = ['accessToken', 'userId', 'fullName', 'email', 'roleName', 'refreshToken'] as const;
+const AUTH_KEYS = [
+  'accessToken',
+  'userId',
+  'fullName',
+  'email',
+  'roleName',
+  'refreshToken',
+] as const;
 
 export function getAccessToken(): string | null {
   if (typeof window === 'undefined') return null;
   return localStorage.getItem('accessToken');
+}
+
+export function getRefreshToken(): string | null {
+  if (typeof window === 'undefined') return null;
+  return localStorage.getItem('refreshToken');
 }
 
 export function clearAuthSession(): void {

@@ -2,6 +2,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
+import { Observable } from 'rxjs';
 import { ProfileService } from '../../../core/services/profile.service';
 import { ErrorHandlerService } from '../../../core/services/error-handler.service';
 import { MessageService } from 'primeng/api';
@@ -15,7 +16,8 @@ import { MessageService } from 'primeng/api';
 export class UpdateProfileComponent implements OnInit {
     updateForm: FormGroup;
     isLoading = false;
-    isFetching = true; // علشان نوري لودينج واحنا بنجيب الداتا القديمة
+    isFetching = true;
+    isPatient = false;
 
     constructor(
         private readonly fb: FormBuilder,
@@ -27,22 +29,28 @@ export class UpdateProfileComponent implements OnInit {
     ) {
         this.updateForm = this.fb.group({
             fullName: ['', [Validators.required, Validators.minLength(3)]],
-            phoneNumber: ['', [Validators.required]]
+            phoneNumber: ['', [Validators.required, Validators.pattern(/^(?:\+20|0020|0)?1[0125][0-9]{8}$/)]]
         });
     }
 
     ngOnInit(): void {
-        // 1. نجيب بيانات البروفايل الحالية علشان نملا بيها الفورم
-        this.profileService.getProfile().subscribe({
-            next: (data) => {
+        const role = typeof window !== 'undefined' ? localStorage.getItem('roleName') : null;
+        this.isPatient = role === 'Patient';
+
+        const request$: Observable<any> = this.isPatient
+            ? this.profileService.getPatientProfile()
+            : this.profileService.getProfile();
+
+        request$.subscribe({
+            next: (data: any) => {
                 this.updateForm.patchValue({
-                    fullName: data.fullName,
-                    phoneNumber: data.phoneNumber
+                    fullName: data.fullName ?? data.value?.fullName,
+                    phoneNumber: data.phoneNumber ?? data.value?.phoneNumber,
                 });
                 this.isFetching = false;
                 this.cdr.detectChanges();
             },
-            error: (err) => {
+            error: (err: unknown) => {
                 this.isFetching = false;
                 this.errorHandler.handleError(err, 'Failed to load profile data');
                 this.cdr.detectChanges();
@@ -58,8 +66,12 @@ export class UpdateProfileComponent implements OnInit {
 
         this.isLoading = true;
 
-        // 2. نبعت الداتا الجديدة للباك-إند
-        this.profileService.updateProfile(this.updateForm.value).subscribe({
+        const payload = this.updateForm.getRawValue();
+        const request$: Observable<any> = this.isPatient
+            ? this.profileService.updatePatientProfile(payload)
+            : this.profileService.updateProfile(payload);
+
+        request$.subscribe({
             next: () => {
                 this.isLoading = false;
                 this.messageService.add({
@@ -69,10 +81,9 @@ export class UpdateProfileComponent implements OnInit {
                     life: 3000
                 });
 
-                // 3. نرجعه لصفحة البروفايل تاني
                 this.router.navigate(['/profile']);
             },
-            error: (err) => {
+            error: (err: unknown) => {
                 this.isLoading = false;
                 this.errorHandler.handleError(err, 'Failed to update profile');
                 this.cdr.detectChanges();

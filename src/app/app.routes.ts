@@ -15,12 +15,16 @@ export const routes: Routes = [
       },
       {
         path: 'profile',
-        loadComponent: () => import('./pages/profile/profile.component').then((m) => m.ProfileComponent),
+        loadComponent: () =>
+          import('./pages/profile/profile.component').then((m) => m.ProfileComponent),
       },
       {
         path: 'profile/edit',
-        loadComponent: () => import('./pages/profile/update-profile/update-profile.component').then((m) => m.UpdateProfileComponent),
-      }
+        loadComponent: () =>
+          import('./pages/profile/update-profile/update-profile.component').then(
+            (m) => m.UpdateProfileComponent,
+          ),
+      },
     ],
   },
   {
@@ -44,14 +48,14 @@ export const routes: Routes = [
         path: 'forgot-password',
         loadComponent: () =>
           import('./pages/auth/forgot-password/forgot-password.component').then(
-            (m) => m.ForgotPasswordComponent
+            (m) => m.ForgotPasswordComponent,
           ),
       },
       {
         path: 'reset-password',
         loadComponent: () =>
           import('./pages/auth/reset-password/reset-password.component').then(
-            (m) => m.ResetPasswordComponent
+            (m) => m.ResetPasswordComponent,
           ),
       },
       { path: '', pathMatch: 'full', redirectTo: 'login' },
@@ -91,14 +95,14 @@ export const routes: Routes = [
         canActivate: [authGuard],
         loadComponent: () =>
           import('./pages/auth/change-password/change-password.component').then(
-            (m) => m.ChangePasswordComponent
+            (m) => m.ChangePasswordComponent,
           ),
       },
       {
         path: 'access-denied',
         loadComponent: () =>
           import('./pages/errors/access-denied/access-denied.component').then(
-            (m) => m.AccessDeniedComponent
+            (m) => m.AccessDeniedComponent,
           ),
       },
       {
@@ -106,6 +110,61 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./pages/errors/not-found/not-found.component').then((m) => m.NotFoundComponent),
       },
+    ],
+  },
+  {
+    path: 'patient',
+    canActivate: [authGuard],
+    data: { role: 'Patient' },
+    loadComponent: () =>
+      import('./layouts/patient-layout/patient-layout.component').then(
+        (m) => m.PatientLayoutComponent,
+      ),
+    children: [
+      {
+        path: 'dashboard',
+        loadComponent: () =>
+          import('./pages/dashboard/patient-dashboard/patient-dashboard.component').then(
+            (m) => m.PatientDashboardComponent,
+          ),
+      },
+      { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
+    ],
+  },
+  {
+    path: 'pharmacy',
+    canActivate: [authGuard],
+    data: { role: 'Pharmacy' },
+    loadComponent: () =>
+      import('./layouts/pharmacy-layout/pharmacy-layout.component').then(
+        (m) => m.PharmacyLayoutComponent,
+      ),
+    children: [
+      {
+        path: 'dashboard',
+        loadComponent: () =>
+          import('./pages/dashboard/pharmacy-dashboard/pharmacy-dashboard.component').then(
+            (m) => m.PharmacyDashboardComponent,
+          ),
+      },
+      { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
+    ],
+  },
+  {
+    path: 'admin',
+    canActivate: [authGuard],
+    data: { role: 'Admin' },
+    loadComponent: () =>
+      import('./layouts/admin-layout/admin-layout.component').then((m) => m.AdminLayoutComponent),
+    children: [
+      {
+        path: 'dashboard',
+        loadComponent: () =>
+          import('./pages/dashboard/admin-dashboard/admin-dashboard.component').then(
+            (m) => m.AdminDashboardComponent,
+          ),
+      },
+      { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
     ],
   },
   // Unknown routes → Not Found (keeps main layout: navbar + footer)

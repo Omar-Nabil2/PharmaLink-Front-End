@@ -7,17 +7,14 @@ import { AuthService } from '../../../core/services/auth.service';
 import { ErrorHandlerService } from '../../../core/services/error-handler.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ErrorType } from '../../../core/interfaces/auth.interface';
+import { AppRole, UserAuthData } from '@core/enums/app-roles.constant';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    RouterLink,
-  ],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './login.html',
-  styleUrl: './login.scss'
+  styleUrl: './login.scss',
 })
 export class Login implements OnInit {
   loginForm!: FormGroup;
@@ -31,14 +28,14 @@ export class Login implements OnInit {
     private readonly errorHandlerService: ErrorHandlerService,
     private readonly messageService: MessageService,
     private readonly router: Router,
-    private readonly route: ActivatedRoute
+    private readonly route: ActivatedRoute,
   ) {}
 
   ngOnInit(): void {
     this.returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') || '/';
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required]]
+      password: ['', [Validators.required]],
     });
   }
 
@@ -53,7 +50,7 @@ export class Login implements OnInit {
       this.messageService.add({
         severity: 'warn',
         summary: 'Check Login Details',
-        detail: 'Oops! Please fill in your email and password correctly.'
+        detail: 'Oops! Please fill in your email and password correctly.',
       });
       return;
     }
@@ -75,36 +72,54 @@ export class Login implements OnInit {
             this.messageService.add({
               severity: 'info',
               summary: 'Verification Required',
-              detail: 'Your phone number is not verified. Redirecting to OTP verification...'
+              detail: 'Your phone number is not verified. Redirecting to OTP verification...',
             });
 
             setTimeout(() => {
               this.router.navigate(['/auth/verify-otp']);
             }, 1500);
           } else {
-            // Case 2: Verification complete. Store credentials and log in.
             if (typeof window !== 'undefined') {
               if (res.accessToken) localStorage.setItem('accessToken', res.accessToken);
-              localStorage.setItem('userId', res.userId);
+              if (res.userId) localStorage.setItem('userId', res.userId);
               if (res.fullName) localStorage.setItem('fullName', res.fullName);
               if (res.email) localStorage.setItem('email', res.email);
               if (res.roleName) localStorage.setItem('roleName', res.roleName);
             }
 
-            // Trigger a global navbar storage check
+            // CRITICAL FIX: Update the AuthService Signal so the Guard knows we are logged in!
+            const userData: UserAuthData = {
+              accessToken: res.accessToken || '',
+              userId: res.userId,
+              fullName: res.fullName || '',
+              email: res.email || '',
+              roleName: res.roleName as AppRole
+            };
+            this.authService.setCurrentUser(userData);
+
             window.dispatchEvent(new Event('storage'));
 
             this.messageService.add({
               severity: 'success',
               summary: 'Welcome Back',
-              detail: `Signed in successfully as ${res.fullName || 'User'}.`
+              detail: `Signed in successfully as ${res.fullName || 'User'}.`,
+              life: 3000, // 3000ms = 3 seconds. Add this line!
             });
 
-            // Redirect to home
+            // Redirect to the original destination or role specific dashboard
             setTimeout(() => {
-              this.router.navigate(['/']);
+              let destination = this.returnUrl;
+
+              if (!destination || destination === '/') {
+                // FIX: Use the new helper to get the correct path
+                destination = this.authService.getDashboardPath();
+              }
+
+              console.log('Navigating to:', destination); // Keep this to debug
+              this.router.navigateByUrl(destination);
             }, 1000);
           }
+<<<<<<< HEAD
 
           // Trigger a global navbar storage check
           window.dispatchEvent(new Event('storage'));
@@ -119,6 +134,8 @@ export class Login implements OnInit {
           setTimeout(() => {
             this.router.navigateByUrl(this.returnUrl);
           }, 1000);
+=======
+>>>>>>> 9aab0fd540dbf59e6c09e92a856fe75852855357
         } catch (storageErr) {
           this.isLoading = false;
           console.error('[LoginStorageError]', storageErr);
@@ -152,7 +169,7 @@ export class Login implements OnInit {
           this.isLoading = false;
           console.error('[LoginFatalError]', fatalErr);
         }
-      }
+      },
     });
   }
 }

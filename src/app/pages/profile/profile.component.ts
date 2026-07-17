@@ -1,44 +1,68 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
 import { ProfileService } from '../../core/services/profile.service';
 import { ErrorHandlerService } from '../../core/services/error-handler.service';
-import { GetPharmacyProfileResponse } from '../../core/interfaces/profile.interface';
+import { GetPharmacyProfileResponse, PatientProfile } from '../../core/interfaces/profile.interface';
 
 @Component({
-    selector: 'app-profile',
-    standalone: true,
-    imports: [CommonModule, RouterLink],
-    templateUrl: './profile.component.html'
+  selector: 'app-profile',
+  standalone: true,
+  imports: [CommonModule, RouterLink],
+  templateUrl: './profile.component.html',
 })
 export class ProfileComponent implements OnInit {
-    profileData: GetPharmacyProfileResponse | null = null;
-    isLoading = true;
+  isPatient = false;
+  patientData: PatientProfile | null = null;
+  profileData: GetPharmacyProfileResponse | null = null;
+  isLoading = true;
 
-    constructor(
-        private readonly profileService: ProfileService,
-        private readonly errorHandler: ErrorHandlerService,
-        private readonly cdr: ChangeDetectorRef
-    ) { }
+  constructor(
+    private readonly profileService: ProfileService,
+    private readonly errorHandler: ErrorHandlerService,
+    private readonly cdr: ChangeDetectorRef,
+  ) {}
 
-    ngOnInit(): void {
-        this.fetchProfile();
+  ngOnInit(): void {
+    const role = typeof window !== 'undefined' ? localStorage.getItem('roleName') : null;
+    this.isPatient = (role === 'Patient');
+    this.fetchProfile();
+  }
+
+  fetchProfile(): void {
+    this.isLoading = true;
+    if (this.isPatient) {
+      this.profileService.getPatientProfile().subscribe({
+        next: (response) => {
+          this.patientData = response.value;
+          this.isLoading = false;
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          this.isLoading = false;
+          this.errorHandler.handleError(err, 'Failed to load patient profile');
+          this.cdr.detectChanges();
+        },
+      });
+    } else {
+      this.profileService.getProfile().subscribe({
+        next: (data) => {
+          this.profileData = data;
+          this.isLoading = false;
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          this.isLoading = false;
+          this.errorHandler.handleError(err, 'Failed to load profile');
+          this.cdr.detectChanges();
+        },
+      });
     }
+  }
 
-    fetchProfile(): void {
-        this.isLoading = true;
-        this.profileService.getProfile().subscribe({
-            next: (data) => {
-                this.profileData = data;
-                this.isLoading = false;
-                this.cdr.detectChanges();
-            },
-            error: (err) => {
-                this.isLoading = false;
-                this.errorHandler.handleError(err, 'Failed to load profile');
-                this.cdr.detectChanges();
-            }
-        });
-    }
+  isDefaultAddress(index: number): boolean {
+    if (!this.patientData?.addresses) return false;
+    const firstDefaultIndex = this.patientData.addresses.findIndex(a => a.isDefault);
+    return index === firstDefaultIndex;
+  }
 }
