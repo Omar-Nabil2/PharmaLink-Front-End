@@ -2,9 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { ButtonModule } from 'primeng/button';
-import { InputTextModule } from 'primeng/inputtext';
-import { PasswordModule } from 'primeng/password';
 import { MessageService } from 'primeng/api';
 import { AuthService } from '../../../core/services/auth.service';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -18,9 +15,6 @@ import { ErrorType } from '../../../core/interfaces/auth.interface';
     CommonModule,
     ReactiveFormsModule,
     RouterLink,
-    ButtonModule,
-    InputTextModule,
-    PasswordModule
   ],
   templateUrl: './register.html',
   styleUrl: './register.scss',

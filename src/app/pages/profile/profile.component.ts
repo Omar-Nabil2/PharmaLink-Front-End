@@ -1,9 +1,11 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { ProfileService } from '../../core/services/profile.service';
 import { ErrorHandlerService } from '../../core/services/error-handler.service';
 import { GetPharmacyProfileResponse } from '../../core/interfaces/profile.interface';
+
 @Component({
     selector: 'app-profile',
     standalone: true,
@@ -28,7 +30,6 @@ export class ProfileComponent implements OnInit {
         this.isLoading = true;
         this.profileService.getProfile().subscribe({
             next: (data) => {
-                console.log('API Response:', data);
                 this.profileData = data;
                 this.isLoading = false;
                 this.cdr.detectChanges();
@@ -39,14 +40,5 @@ export class ProfileComponent implements OnInit {
                 this.cdr.detectChanges();
             }
         });
-    }
-
-    getStatusColor(status: string): string {
-        switch (status?.toLowerCase()) {
-            case 'approved': return 'bg-emerald-100 text-emerald-800 border-emerald-200';
-            case 'pending': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-            case 'rejected': return 'bg-red-100 text-red-800 border-red-200';
-            default: return 'bg-slate-100 text-slate-800 border-slate-200';
-        }
     }
 }
