@@ -1,4 +1,11 @@
-const AUTH_KEYS = ['accessToken', 'userId', 'fullName', 'email', 'roleName', 'refreshToken'] as const;
+const AUTH_KEYS = [
+  'accessToken',
+  'userId',
+  'fullName',
+  'email',
+  'roleName',
+  'refreshToken',
+] as const;
 
 export function getAccessToken(): string | null {
   if (typeof window === 'undefined') return null;

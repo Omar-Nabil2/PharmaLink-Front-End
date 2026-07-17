@@ -1,7 +1,7 @@
 import { computed, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '../../../environments/environment';
+
 import {
   RegisterRequest,
   RegisterResponse,
@@ -13,14 +13,13 @@ import {
 } from '../interfaces/auth.interface';
 import { clearAuthSession, getAccessToken } from '../utils/auth-storage';
 import { AppRole, UserAuthData } from '@core/enums/app-roles.constant';
-
+import { environment } from '@environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   private readonly baseUrl = environment.baseUrl;
-  private readonly omarUrl = environment.omarUrl;
 
   private currentUserSignal = signal<UserAuthData | null>(this.loadUserFromStorage());
 
@@ -99,26 +98,26 @@ export class AuthService {
    * @param data RegisterRequest DTO containing patient registration details.
    */
   register(data: RegisterRequest): Observable<RegisterResponse> {
-    return this.http.post<RegisterResponse>(`${this.baseUrl}Auth/register`, data);
+    return this.http.post<RegisterResponse>(`${this.baseUrl}/Auth/register`, data);
   }
 
   forgotPassword(data: ForgotPasswordRequest): Observable<any> {
-    return this.http.post(`${this.omarUrl}Auth/ForgotPassword`, data);
+    return this.http.post(`${this.baseUrl}/Auth/ForgotPassword`, data);
   }
 
   resetPassword(data: ResetPasswordRequest): Observable<any> {
-    return this.http.post(`${this.omarUrl}Auth/ResetPassword`, data);
+    return this.http.post(`${this.baseUrl}/Auth/ResetPassword`, data);
   }
 
   changePassword(data: ChangePasswordRequest): Observable<any> {
-    return this.http.post(`${this.omarUrl}Auth/ChangePassword`, data);
+    return this.http.post(`${this.baseUrl}/Auth/change-password`, data);
   }
   /**
    * Requests a phone verification OTP code.
    * @param userId The unique ID of the user.
    */
   requestPhoneVerification(userId: string): Observable<any> {
-    return this.http.post<any>(`${this.baseUrl}PhoneVerification/request`, { userId });
+    return this.http.post<any>(`${this.baseUrl}/PhoneVerification/request`, { userId });
   }
 
   /**
@@ -127,7 +126,7 @@ export class AuthService {
    * @param code The 6-digit OTP code.
    */
   verifyPhone(userId: string, code: string): Observable<any> {
-    return this.http.post<any>(`${this.baseUrl}PhoneVerification/verify`, { userId, code });
+    return this.http.post<any>(`${this.baseUrl}/PhoneVerification/verify`, { userId, code });
   }
 
   /**
@@ -135,6 +134,6 @@ export class AuthService {
    * @param data LoginRequest DTO containing credentials.
    */
   login(data: LoginRequest): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.baseUrl}Auth/login`, data);
+    return this.http.post<LoginResponse>(`${this.baseUrl}/Auth/login`, data);
   }
 }

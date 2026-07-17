@@ -2,11 +2,7 @@ import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, throwError } from 'rxjs';
-import {
-  clearAuthSession,
-  getAccessToken,
-  isAuthApiRequest,
-} from '../utils/auth-storage';
+import { clearAuthSession, getAccessToken, isAuthApiRequest } from '../utils/auth-storage';
 
 /**
  * Global HTTP interceptor:
@@ -68,6 +64,6 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       }
 
       return throwError(() => error);
-    })
+    }),
   );
 };
