@@ -17,12 +17,18 @@ export interface LoginRequest {
 
 export interface LoginResponse {
   accessToken?: string;
+  refreshToken?: string;
   userId: string;
   fullName?: string;
   email?: string;
   expiresAtUtc?: string;
   roleName?: string;
   requiresPhoneVerification: boolean;
+}
+
+export interface RefreshTokenRequest {
+  token: string;
+  refreshToken: string;
 }
 
 export interface ForgotPasswordRequest {

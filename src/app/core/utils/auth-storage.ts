@@ -12,6 +12,11 @@ export function getAccessToken(): string | null {
   return localStorage.getItem('accessToken');
 }
 
+export function getRefreshToken(): string | null {
+  if (typeof window === 'undefined') return null;
+  return localStorage.getItem('refreshToken');
+}
+
 export function clearAuthSession(): void {
   if (typeof window === 'undefined') return;
   for (const key of AUTH_KEYS) {

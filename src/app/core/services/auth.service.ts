@@ -72,7 +72,21 @@ export class AuthService {
   }
 
   logout() {
-    localStorage.clear(); // أو تمسح الـ Keys المحددة بس
+    const token = localStorage.getItem('accessToken');
+    const refreshToken = localStorage.getItem('refreshToken');
+    if (token && refreshToken) {
+      // Best effort revocation
+      this.revokeToken({ token, refreshToken }).subscribe({
+        next: () => this.clearSession(),
+        error: () => this.clearSession()
+      });
+    } else {
+      this.clearSession();
+    }
+  }
+
+  private clearSession() {
+    localStorage.clear();
     this.currentUserSignal.set(null);
   }
 
@@ -112,6 +126,7 @@ export class AuthService {
   changePassword(data: ChangePasswordRequest): Observable<any> {
     return this.http.post(`${this.baseUrl}/Auth/change-password`, data);
   }
+
   /**
    * Requests a phone verification OTP code.
    * @param userId The unique ID of the user.
@@ -135,5 +150,13 @@ export class AuthService {
    */
   login(data: LoginRequest): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${this.baseUrl}/Auth/login`, data);
+  }
+
+  refreshToken(data: { token: string, refreshToken: string }): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${this.baseUrl}/Auth/refresh`, data);
+  }
+
+  revokeToken(data: { token: string, refreshToken: string }): Observable<any> {
+    return this.http.post(`${this.baseUrl}/Auth/revoke-refresh-token`, data);
   }
 }
