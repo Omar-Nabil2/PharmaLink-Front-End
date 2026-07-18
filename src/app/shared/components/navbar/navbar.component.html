@@ -1,5 +1,5 @@
 <nav class="sticky top-0 z-50 w-full bg-canvas border-b border-surface-pressed">
-  <div class="container-app">
+  <div class="container mx-auto px-4">
     <div class="flex justify-between items-center py-4">
       <a routerLink="/" class="flex items-center gap-2 cursor-pointer select-none">
         <img src="/logo.png" alt="Pharma Link" class="h-10 md:h-12 w-auto object-contain" />
@@ -9,33 +9,58 @@
       <div class="hidden lg:flex items-center gap-8">
         <a
           routerLink="/"
-          routerLinkActive="opacity-100"
+          routerLinkActive="text-ink after:w-4/5"
           [routerLinkActiveOptions]="{ exact: true }"
-          class="type-body-md-strong text-ink opacity-70 hover:opacity-100 transition-opacity"
+          aria-current="page"
+          class="relative inline-block type-body-md-strong text-body hover:text-ink transition-colors duration-200
+                after:content-[''] after:absolute after:left-1/2 after:-bottom-1 after:-translate-x-1/2
+                after:h-[2px] after:w-0 after:bg-ink after:rounded-full after:transition-all after:duration-300 after:ease-out
+                hover:after:w-4/5"
         >
           Home
         </a>
         <a
           routerLink="/products"
-          routerLinkActive="opacity-100"
-          class="type-body-md-strong text-ink opacity-70 hover:opacity-100 transition-opacity"
+          routerLinkActive="text-ink after:w-4/5"
+          class="relative inline-block type-body-md-strong text-body hover:text-ink transition-colors duration-200
+                after:content-[''] after:absolute after:left-1/2 after:-bottom-1 after:-translate-x-1/2
+                after:h-[2px] after:w-0 after:bg-ink after:rounded-full after:transition-all after:duration-300 after:ease-out
+                hover:after:w-4/5"
         >
           Products
         </a>
         <a
           routerLink="/services"
-          routerLinkActive="opacity-100"
-          class="type-body-md-strong text-ink opacity-70 hover:opacity-100 transition-opacity"
+          routerLinkActive="text-ink after:w-4/5"
+          class="relative inline-block type-body-md-strong text-body hover:text-ink transition-colors duration-200
+                after:content-[''] after:absolute after:left-1/2 after:-bottom-1 after:-translate-x-1/2
+                after:h-[2px] after:w-0 after:bg-ink after:rounded-full after:transition-all after:duration-300 after:ease-out
+                hover:after:w-4/5"
         >
           Services
         </a>
         <a
           routerLink="/contact"
-          routerLinkActive="opacity-100"
-          class="type-body-md-strong text-ink opacity-70 hover:opacity-100 transition-opacity"
+          routerLinkActive="text-ink after:w-4/5"
+          class="relative inline-block type-body-md-strong text-body hover:text-ink transition-colors duration-200
+                after:content-[''] after:absolute after:left-1/2 after:-bottom-1 after:-translate-x-1/2
+                after:h-[2px] after:w-0 after:bg-ink after:rounded-full after:transition-all after:duration-300 after:ease-out
+                hover:after:w-4/5"
         >
           Contact
         </a>
+        @if (isLoggedIn) {
+          <a
+            [routerLink]="dashboardPath"
+            routerLinkActive="text-ink after:w-4/5"
+            class="relative inline-block type-body-md-strong text-body hover:text-ink transition-colors duration-200
+                  after:content-[''] after:absolute after:left-1/2 after:-bottom-1 after:-translate-x-1/2
+                  after:h-[2px] after:w-0 after:bg-ink after:rounded-full after:transition-all after:duration-300 after:ease-out
+                  hover:after:w-4/5"
+          >
+            Dashboard
+          </a>
+        }
       </div>
 
       <div class="hidden md:flex items-center gap-3">
@@ -49,7 +74,7 @@
             <i class="pi pi-user text-sm"></i>
             <span>{{ fullName }}</span>
           </a>
-          <a routerLink="/change-password" class="btn-secondary">Change password</a>
+          <!-- <a routerLink="/change-password" class="btn-secondary">Change password</a> -->
           <button type="button" (click)="logout()" class="btn-primary">Logout</button>
         </ng-container>
       </div>
