@@ -11,7 +11,6 @@ import {
   ForgotPasswordRequest,
   ChangePasswordRequest,
 } from '../interfaces/auth.interface';
-import { clearAuthSession, getAccessToken } from '../utils/auth-storage';
 import { AppRole, UserAuthData } from '@core/enums/app-roles.constant';
 import { environment } from '@environments/environment';
 
@@ -27,19 +26,16 @@ export class AuthService {
 
   }
 
-  // Computed Signals عشان نقرأ الداتا بسهولة في الـ Components
   currentUser = computed(() => this.currentUserSignal());
   isLoggedIn = computed(() => this.currentUserSignal() !== null);
   userRole = computed(() => this.currentUserSignal()?.roleName ?? null);
 
   private loadUserFromStorage(): UserAuthData | null {
-    // لو الداتا محفوظة كـ Object واحد
     const storedData = localStorage.getItem('userData');
     if (storedData) {
       return JSON.parse(storedData) as UserAuthData;
     }
 
-    // أو لو محفوظة كـ Keys منفصلة (بناءً على الصورة)
     const accessToken = localStorage.getItem('accessToken');
     const roleName = localStorage.getItem('roleName') as AppRole;
 
@@ -90,16 +86,14 @@ export class AuthService {
     this.currentUserSignal.set(null);
   }
 
-  // Add this to your AuthService
   getDashboardPath(): string {
     const role = this.getNormalizedRole();
 
-    // Explicitly map roles to your defined routes
     switch (role) {
       case 'admin':
         return '/admin/dashboard';
-      case 'pharmacist': // Or whatever your role string is
-        return '/pharmacy/dashboard'; // Matches your 'pharmacy' route path
+      case 'pharmacist':
+        return '/pharmacy/dashboard';
       case 'patient':
         return '/patient/dashboard';
       default:

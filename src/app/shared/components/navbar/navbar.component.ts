@@ -29,6 +29,10 @@ export class NavbarComponent {
     return localStorage.getItem('fullName') || 'Profile';
   }
 
+  get dashboardPath(): string {
+    return this.authService.getDashboardPath();
+  }
+
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/auth/login']);
