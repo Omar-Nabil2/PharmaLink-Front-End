@@ -1,99 +1,228 @@
 <div class="space-y-6">
-  <div class="flex items-center justify-between">
-    <h1 class="type-display-lg text-ink">Welcome back, Patient!</h1>
-    <button class="btn-primary gap-2 flex items-center">
-      <i class="pi pi-plus"></i>
-      <span>New Prescription</span>
-    </button>
-  </div>
-
-  <!-- Quick Stats -->
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-    <p-card styleClass="shadow-none border border-hairline-soft rounded-[28px] bg-canvas">
+  
+  @if (loading) {
+    <!-- ==================== LOADING STATE ==================== -->
+    <div class="space-y-6">
       <div class="flex items-center justify-between">
-        <div>
-          <span class="block text-mute type-body-md-strong mb-1">Active Orders</span>
-          <div class="text-ink type-display-xl font-bold">{{ activeOrders }}</div>
-        </div>
-        <div class="w-12 h-12 rounded-full bg-canvas-soft flex items-center justify-center">
-          <i class="pi pi-shopping-bag text-xl text-ink"></i>
-        </div>
+        <p-skeleton width="20rem" height="2.5rem"></p-skeleton>
+        <p-skeleton width="10rem" height="2.5rem"></p-skeleton>
       </div>
-    </p-card>
-    <p-card styleClass="shadow-none border border-hairline-soft rounded-[28px] bg-canvas">
-      <div class="flex items-center justify-between">
-        <div>
-          <span class="block text-mute type-body-md-strong mb-1">Items in Cart</span>
-          <div class="text-ink type-display-xl font-bold">{{ itemsInCart }}</div>
-        </div>
-        <div class="w-12 h-12 rounded-full bg-canvas-soft flex items-center justify-center">
-          <i class="pi pi-shopping-cart text-xl text-ink"></i>
-        </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        @for (i of [1, 2, 3, 4]; track i) {
+          <p-skeleton height="100px" styleClass="rounded-[28px]"></p-skeleton>
+        }
       </div>
-    </p-card>
-    <p-card styleClass="shadow-none border border-hairline-soft rounded-[28px] bg-canvas">
-      <div class="flex items-center justify-between">
-        <div>
-          <span class="block text-mute type-body-md-strong mb-1">Pending Reviews</span>
-          <div class="text-ink type-display-xl font-bold">1</div>
-        </div>
-        <div class="w-12 h-12 rounded-full bg-canvas-soft flex items-center justify-center">
-          <i class="pi pi-file-edit text-xl text-ink"></i>
-        </div>
-      </div>
-    </p-card>
-  </div>
-
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-    <!-- Recent Orders Table -->
-    <div class="card-surface overflow-hidden p-6">
-      <div class="flex justify-between items-center mb-6">
-        <h2 class="type-display-sm text-ink">Recent Orders</h2>
-        <a routerLink="/patient/orders" class="text-link type-body-sm-strong hover:underline">View All</a>
-      </div>
-      <p-table [value]="recentOrders" responsiveLayout="scroll" styleClass="p-datatable-sm">
-        <ng-template pTemplate="header">
-          <tr>
-            <th class="bg-canvas-soft text-ink type-body-sm-strong border-b border-surface-pressed py-3 px-4">Order ID</th>
-            <th class="bg-canvas-soft text-ink type-body-sm-strong border-b border-surface-pressed py-3 px-4">Status</th>
-            <th class="bg-canvas-soft text-ink type-body-sm-strong border-b border-surface-pressed py-3 px-4">Amount</th>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-order>
-          <tr class="border-b border-hairline-soft hover:bg-canvas-softer transition-colors">
-            <td class="py-3 px-4 text-ink type-body-sm">{{ order.id }}</td>
-            <td class="py-3 px-4">
-              <p-tag [value]="order.status" [severity]="getSeverity(order.status)" [rounded]="true"></p-tag>
-            </td>
-            <td class="py-3 px-4 text-ink type-body-sm-strong">${{ order.totalAmount }}</td>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="emptymessage">
-          <tr>
-            <td colspan="3" class="text-center py-4 text-mute type-body-sm">No recent orders found.</td>
-          </tr>
-        </ng-template>
-      </p-table>
-    </div>
-
-    <!-- Prescription Reviews -->
-    <div class="card-surface overflow-hidden p-6">
-      <div class="flex justify-between items-center mb-6">
-        <h2 class="type-display-sm text-ink">Prescription Reviews</h2>
-        <a routerLink="/patient/prescriptions" class="text-link type-body-sm-strong hover:underline">View All</a>
-      </div>
-      <div class="space-y-4">
-        <div *ngFor="let review of prescriptionReviews" class="flex items-start justify-between p-4 rounded-[28px] border border-hairline-soft bg-canvas-softer hover:bg-canvas-soft transition-colors cursor-pointer">
-          <div class="flex flex-col gap-1">
-            <span class="type-body-md-strong text-ink">{{ review.medication }}</span>
-            <span class="type-caption text-mute">Reviewed by: {{ review.doctor }}</span>
-            <span class="type-caption text-mute">{{ review.date }}</span>
-          </div>
-          <div>
-            <p-tag [value]="review.reviewStatus" [severity]="getSeverity(review.reviewStatus)" [rounded]="true"></p-tag>
-          </div>
-        </div>
+      
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <p-skeleton height="300px" styleClass="rounded-[28px]"></p-skeleton>
+        <p-skeleton height="300px" styleClass="rounded-[28px]"></p-skeleton>
       </div>
     </div>
-  </div>
+  } 
+  
+  @else if (error) {
+    <!-- ==================== ERROR STATE ==================== -->
+    <div class="p-6">
+      <p-message severity="error" [text]="error" styleClass="w-full"></p-message>
+      <div class="mt-4 flex justify-center">
+        <button pButton label="Retry" icon="pi pi-refresh" (click)="loadDashboardData()"></button>
+      </div>
+    </div>
+  } 
+  
+  @else if (dashboardData) {
+    <!-- ==================== DASHBOARD CONTENT ==================== -->
+    <div class="space-y-6">
+      
+      <!-- 1. Header Section -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <h1 class="type-display-lg text-ink">Welcome back!</h1>
+        <div class="flex flex-wrap gap-3">
+          <button class="btn-primary gap-2 flex items-center">
+            <i class="pi pi-file-upload"></i>
+            <span>Upload Prescription</span>
+          </button>
+          <button class="btn-secondary gap-2 flex items-center">
+            <i class="pi pi-camera"></i>
+            <span>Medicine Image</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 2. Quick Stats Section -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Stat: Total Orders -->
+        <p-card styleClass="shadow-none border border-hairline-soft rounded-[28px] bg-canvas">
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="block text-mute type-body-md-strong mb-1">Total Orders</span>
+              <div class="text-ink type-display-xl font-bold">{{ dashboardData.statistics?.totalOrders }}</div>
+            </div>
+            <div class="w-12 h-12 rounded-full bg-canvas-soft flex items-center justify-center">
+              <i class="pi pi-shopping-bag text-xl text-ink"></i>
+            </div>
+          </div>
+        </p-card>
+        
+        <!-- Stat: Pending Reviews -->
+        <p-card styleClass="shadow-none border border-hairline-soft rounded-[28px] bg-canvas">
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="block text-mute type-body-md-strong mb-1">Pending Reviews</span>
+              <div class="text-ink type-display-xl font-bold">{{ dashboardData.statistics?.pendingPrescriptionReviews }}</div>
+            </div>
+            <div class="w-12 h-12 rounded-full bg-canvas-soft flex items-center justify-center">
+              <i class="pi pi-file-edit text-xl text-ink"></i>
+            </div>
+          </div>
+        </p-card>
+        
+        <!-- Stat: Saved Addresses -->
+        <p-card styleClass="shadow-none border border-hairline-soft rounded-[28px] bg-canvas">
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="block text-mute type-body-md-strong mb-1">Saved Addresses</span>
+              <div class="text-ink type-display-xl font-bold">{{ dashboardData.statistics?.savedAddresses }}</div>
+            </div>
+            <div class="w-12 h-12 rounded-full bg-canvas-soft flex items-center justify-center">
+              <i class="pi pi-map-marker text-xl text-ink"></i>
+            </div>
+          </div>
+        </p-card>
+        
+        <!-- Stat: Reward Points -->
+        <p-card styleClass="shadow-none border border-hairline-soft rounded-[28px] bg-canvas">
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="block text-mute type-body-md-strong mb-1">Reward Points</span>
+              <div class="text-ink type-display-xl font-bold">{{ dashboardData.statistics?.rewardPoints }}</div>
+            </div>
+            <div class="w-12 h-12 rounded-full bg-canvas-soft flex items-center justify-center">
+              <i class="pi pi-star text-xl text-ink"></i>
+            </div>
+          </div>
+        </p-card>
+      </div>
+
+      <!-- 3. Actions & Active Order Section -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Quick Actions Sidebar -->
+        <div class="lg:col-span-1 space-y-6">
+          <div class="card-surface p-6">
+            <h2 class="type-display-sm text-ink mb-4">Quick Actions</h2>
+            <div class="grid grid-cols-1 gap-3">
+              <button class="w-full text-left p-4 rounded-xl border border-hairline-soft hover:bg-canvas-soft transition-colors flex items-center gap-4">
+                <div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center">
+                  <i class="pi pi-search text-primary"></i>
+                </div>
+                <span class="type-body-md-strong text-ink">Browse Drug Catalog</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Active Order Details -->
+        <div class="lg:col-span-2">
+          @if (dashboardData.currentOrder) {
+            <div class="card-surface p-6 h-full">
+              <div class="flex justify-between items-center mb-6">
+                <h2 class="type-display-sm text-ink">Active Order</h2>
+                <p-tag [value]="dashboardData.currentOrder.status" 
+                       [severity]="getSeverity(dashboardData.currentOrder.status)" 
+                       [rounded]="true">
+                </p-tag>
+              </div>
+              
+              <div class="mb-4">
+                <span class="type-caption text-mute block">Order ID</span>
+                <span class="type-body-md-strong text-ink">{{ dashboardData.currentOrder.orderId }}</span>
+              </div>
+              
+              <div class="mt-6">
+                <h3 class="type-body-md-strong text-ink mb-4">Order Progress</h3>
+                <p-timeline [value]="dashboardData.currentOrder.progressTimeline" layout="horizontal" align="top">
+                  <ng-template pTemplate="marker" let-event>
+                    <span class="flex w-8 h-8 items-center justify-center text-white rounded-full z-10 shadow-sm"
+                          [class.bg-green-500]="event.status === 'Completed'"
+                          [class.bg-blue-500]="event.status === 'Assigned'"
+                          [class.bg-gray-300]="event.status !== 'Completed' && event.status !== 'Assigned'">
+                      
+                      @if (event.status === 'Completed') {
+                        <i class="pi pi-check"></i>
+                      } @else if (event.status === 'Assigned') {
+                        <i class="pi pi-sync"></i>
+                      }
+                    </span>
+                  </ng-template>
+                  <ng-template pTemplate="content" let-event>
+                    <div class="text-center mt-2">
+                      <div class="type-caption-strong text-ink">{{ event.legType }}</div>
+                      <div class="type-caption text-mute text-xs">{{ event.pharmacyName }}</div>
+                    </div>
+                  </ng-template>
+                </p-timeline>
+              </div>
+            </div>
+          } @else {
+            <!-- Empty State for Active Order -->
+            <div class="card-surface p-6 h-full flex flex-col items-center justify-center text-center">
+               <i class="pi pi-shopping-cart text-4xl text-mute mb-4"></i>
+               <p class="text-mute type-body-md">No active orders at the moment.</p>
+               <button class="btn-link mt-2">Start Shopping</button>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- 4. Recent Orders Table Section -->
+      <div class="card-surface overflow-hidden p-6">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="type-display-sm text-ink">Recent Orders</h2>
+          
+          @if (dashboardData.hasMoreOrders) {
+            <a routerLink="/patient/orders" class="text-link type-body-sm-strong hover:underline">View All</a>
+          }
+        </div>
+        
+        <p-table [value]="dashboardData.recentOrders || []" responsiveLayout="scroll" styleClass="p-datatable-sm">          <ng-template pTemplate="header">
+            <tr>
+              <th class="bg-canvas-soft text-ink type-body-sm-strong border-b border-surface-pressed py-3 px-4">Order #</th>
+              <th class="bg-canvas-soft text-ink type-body-sm-strong border-b border-surface-pressed py-3 px-4">Date</th>
+              <th class="bg-canvas-soft text-ink type-body-sm-strong border-b border-surface-pressed py-3 px-4">Medicines</th>
+              <th class="bg-canvas-soft text-ink type-body-sm-strong border-b border-surface-pressed py-3 px-4">Amount</th>
+              <th class="bg-canvas-soft text-ink type-body-sm-strong border-b border-surface-pressed py-3 px-4">Status</th>
+            </tr>
+          </ng-template>
+          
+          <ng-template pTemplate="body" let-order>
+            <tr class="border-b border-hairline-soft hover:bg-canvas-softer transition-colors">
+              <td class="py-3 px-4 text-ink type-body-sm">{{ order.orderNumber || 'N/A' }}</td>
+              <td class="py-3 px-4 text-mute type-body-sm">{{ order.orderDate | date:'mediumDate' }}</td>
+              <td class="py-3 px-4 text-ink type-body-sm max-w-[200px] truncate" [title]="getMedicineNames(order.medicines)">
+                {{ getMedicineNames(order.medicines) }}
+              </td>
+              <td class="py-3 px-4 text-ink type-body-sm-strong">${{ order.totalAmount }}</td>
+              <td class="py-3 px-4">
+                <p-tag [value]="order.status" [severity]="getSeverity(order.status)" [rounded]="true"></p-tag>
+              </td>
+            </tr>
+          </ng-template>
+          
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="5" class="text-center py-8">
+                <div class="flex flex-col items-center">
+                  <i class="pi pi-inbox text-4xl text-mute mb-2"></i>
+                  <p class="text-mute type-body-sm">No recent orders found.</p>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+      
+    </div>
+  }
 </div>
