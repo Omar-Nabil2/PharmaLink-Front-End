@@ -1,0 +1,147 @@
+<div class="max-w-5xl mx-auto space-y-6">
+  <div class="space-y-1">
+    <h1 class="type-display-md text-ink">Your cart</h1>
+    <p class="type-body-sm text-body">Review your medicines, pick a delivery address, and place your order.</p>
+  </div>
+
+  <!-- Loading skeleton -->
+  <div *ngIf="isLoading" class="space-y-4">
+    <div class="card-surface animate-pulse h-24"></div>
+    <div class="card-surface animate-pulse h-24"></div>
+    <div class="card-surface animate-pulse h-40"></div>
+  </div>
+
+  <!-- Load error -->
+  <div *ngIf="!isLoading && loadFailed" class="card-surface text-center space-y-4 py-12">
+    <p class="type-body-md text-ink">We couldn't load your cart right now.</p>
+    <button type="button" (click)="loadCheckoutData()" class="btn-primary mx-auto">Try again</button>
+  </div>
+
+  <!-- Order success -->
+  <div *ngIf="!isLoading && !loadFailed && orderResult" class="card-elevated text-center space-y-4 py-12">
+    <div class="w-14 h-14 rounded-full bg-canvas-soft flex items-center justify-center mx-auto">
+      <i class="pi pi-check text-2xl text-ink"></i>
+    </div>
+    <div class="space-y-1">
+      <h2 class="type-display-sm text-ink">Order placed</h2>
+      <p class="type-body-sm text-body">{{ orderResult.message }}</p>
+      <p class="type-caption text-mute">Order #{{ orderResult.orderId }} &middot; {{ orderResult.status }}</p>
+    </div>
+    <div class="flex gap-3 justify-center pt-2">
+      <button type="button" (click)="goToOrderHistory()" class="btn-primary">View my orders</button>
+      <button type="button" (click)="goToCatalog()" class="btn-secondary">Continue shopping</button>
+    </div>
+  </div>
+
+  <!-- Empty cart -->
+  <div
+    *ngIf="!isLoading && !loadFailed && !orderResult && !hasItems"
+    class="card-surface text-center space-y-4 py-12"
+  >
+    <i class="pi pi-shopping-cart text-3xl text-mute"></i>
+    <div class="space-y-1">
+      <h2 class="type-display-sm text-ink">Your cart is empty</h2>
+      <p class="type-body-sm text-body">Browse the catalog to add medicines to your cart.</p>
+    </div>
+    <button type="button" (click)="goToCatalog()" class="btn-primary mx-auto">Browse Drug Catalog</button>
+  </div>
+
+  <!-- Checkout form -->
+  <div *ngIf="!isLoading && !loadFailed && !orderResult && hasItems" class="grid lg:grid-cols-3 gap-6 items-start">
+    <div class="lg:col-span-2 space-y-6">
+      <!-- Ordered medicines -->
+      <div class="card-surface space-y-4">
+        <h2 class="type-display-sm text-ink">Ordered medicines</h2>
+
+        <div class="divide-y divide-canvas-soft">
+          <div *ngFor="let item of cart!.items" class="flex items-center justify-between py-3 gap-4">
+            <div class="min-w-0">
+              <p class="type-body-md-strong text-ink truncate">{{ item.drugBrandName }}</p>
+              <p class="type-caption text-mute truncate">{{ item.drugGenericName }} &middot; Qty {{ item.quantity }}</p>
+            </div>
+            <p class="type-body-md-strong text-ink whitespace-nowrap">{{ item.lineTotal | currency:'EGP' }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Delivery address -->
+      <div class="card-surface space-y-4">
+        <h2 class="type-display-sm text-ink">Delivery address</h2>
+
+        <div *ngIf="addresses.length === 0" class="type-body-sm text-body">
+          You don't have any saved addresses yet.
+        </div>
+
+        <div class="space-y-2">
+          <button
+            *ngFor="let address of addresses"
+            type="button"
+            (click)="selectAddress(address.addressId)"
+            class="w-full text-left flex items-start gap-3 p-4 rounded-lg transition-colors"
+            [ngClass]="
+              selectedAddressId === address.addressId
+                ? 'bg-canvas-soft shadow-[inset_0_0_0_2px_var(--color-ink)]'
+                : 'bg-canvas-softer hover:bg-canvas-soft'
+            "
+          >
+            <span
+              class="mt-1 w-4 h-4 rounded-full border flex-shrink-0"
+              [ngClass]="
+                selectedAddressId === address.addressId
+                  ? 'bg-ink border-ink'
+                  : 'bg-canvas border-mute'
+              "
+            ></span>
+            <span class="min-w-0">
+              <span class="type-body-md-strong text-ink block">{{ address.addressLine }}</span>
+              <span class="type-caption text-mute block">
+                {{ address.city }}, {{ address.governorate }}
+                <ng-container *ngIf="address.isDefault"> &middot; Default</ng-container>
+              </span>
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Fulfillment mode -->
+      <div class="card-surface space-y-4">
+        <h2 class="type-display-sm text-ink">Delivery method</h2>
+        <div class="flex gap-2">
+          <button
+            type="button"
+            (click)="setFulfillmentMode('Delivery')"
+            [class]="fulfillmentMode === 'Delivery' ? 'btn-primary' : 'btn-subtle'"
+          >
+            Delivery
+          </button>
+          <button
+            type="button"
+            (click)="setFulfillmentMode('Pickup')"
+            [class]="fulfillmentMode === 'Pickup' ? 'btn-primary' : 'btn-subtle'"
+          >
+            Pickup
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Order summary -->
+    <div class="card-elevated space-y-4 lg:sticky lg:top-6">
+      <h2 class="type-display-sm text-ink">Order summary</h2>
+
+      <div class="flex items-center justify-between type-body-md text-body">
+        <span>Total</span>
+        <span class="type-body-md-strong text-ink">{{ cart!.grandTotal | currency:'EGP' }}</span>
+      </div>
+
+      <button type="button" (click)="placeOrder()" [disabled]="!canSubmit" class="btn-large">
+        <i *ngIf="isSubmitting" class="pi pi-spin pi-spinner text-xs"></i>
+        <span>{{ isSubmitting ? 'Placing order...' : 'Place order' }}</span>
+      </button>
+
+      <p *ngIf="!selectedAddressId" class="type-caption text-mute text-center">
+        Select a delivery address to continue.
+      </p>
+    </div>
+  </div>
+</div>

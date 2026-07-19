@@ -56,7 +56,11 @@ export const routes: Routes = [
         path: 'contact',
         loadComponent: () => import('./pages/contact/contact.component').then((m) => m.ContactComponent),
       },
-      
+      {
+      path: 'cart',
+        loadComponent: () =>
+        import('./pages/cart/cart').then((m) => m.CartComponent),
+      },
       // المسارات المحمية (تحتاج تسجيل دخول)
       {
         path: 'profile',
@@ -104,6 +108,8 @@ export const routes: Routes = [
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
     ],
   },
+
+
   // 4. مسار لوحة تحكم الصيدلية
   {
     path: 'pharmacy',
