@@ -117,8 +117,8 @@ export class Register implements OnInit {
       this.registerForm.markAllAsTouched();
       this.messageService.add({
         severity: 'warn',
-        summary: 'Check Form Details',
-        detail: 'Oops! Some details need your attention. Please check the fields in red.'
+        summary: 'تحقق من تفاصيل النموذج',
+        detail: 'عذراً! بعض التفاصيل تحتاج إلى انتباهك. يرجى التحقق من الحقول باللون الأحمر.'
       });
       return;
     }
@@ -129,8 +129,8 @@ export class Register implements OnInit {
         this.isLoading = false;
         this.messageService.add({
           severity: 'success',
-          summary: 'Success',
-          detail: 'Account registered successfully!'
+          summary: 'نجاح',
+          detail: 'تم تسجيل الحساب بنجاح!'
         });
 
         // Save userId in local storage as requested
@@ -179,7 +179,7 @@ export class Register implements OnInit {
           }
 
           // Delegate toast messaging and console logging to ErrorHandlerService
-          this.errorHandlerService.handleError(err, 'Registration Failed');
+          this.errorHandlerService.handleError(err, 'فشل التسجيل');
         } catch (fatalErr) {
           // Safeguard: Ensure button transitions out of loading state even on fatal js exceptions
           this.isLoading = false;

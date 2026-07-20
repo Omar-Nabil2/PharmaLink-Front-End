@@ -3,7 +3,7 @@
     <div class="flex justify-between items-center py-4">
       <a routerLink="/" class="flex items-center gap-2 cursor-pointer select-none">
         <img src="/logo.png" alt="Pharma Link" class="h-10 md:h-12 w-auto object-contain" />
-        <span class="type-display-sm hidden sm:inline">Pharma Link</span>
+        <span class="type-display-sm hidden sm:inline">فارما لينك</span>
       </a>
 
       <div class="hidden lg:flex items-center gap-8">
@@ -17,7 +17,7 @@
                 after:h-[2px] after:w-0 after:bg-ink after:rounded-full after:transition-all after:duration-300 after:ease-out
                 hover:after:w-4/5"
         >
-          Home
+          الرئيسية
         </a>
         <a
           routerLink="/products"
@@ -27,7 +27,7 @@
                 after:h-[2px] after:w-0 after:bg-ink after:rounded-full after:transition-all after:duration-300 after:ease-out
                 hover:after:w-4/5"
         >
-          Products
+          المنتجات
         </a>
         <a
           routerLink="/services"
@@ -37,7 +37,7 @@
                 after:h-[2px] after:w-0 after:bg-ink after:rounded-full after:transition-all after:duration-300 after:ease-out
                 hover:after:w-4/5"
         >
-          Services
+          الخدمات
         </a>
         <a
           routerLink="/contact"
@@ -47,7 +47,7 @@
                 after:h-[2px] after:w-0 after:bg-ink after:rounded-full after:transition-all after:duration-300 after:ease-out
                 hover:after:w-4/5"
         >
-          Contact
+          اتصل بنا
         </a>
         @if (isLoggedIn) {
           <a
@@ -58,15 +58,15 @@
                   after:h-[2px] after:w-0 after:bg-ink after:rounded-full after:transition-all after:duration-300 after:ease-out
                   hover:after:w-4/5"
           >
-            Dashboard
+            لوحة التحكم
           </a>
         }
       </div>
 
       <div class="hidden md:flex items-center gap-3">
         <ng-container *ngIf="!isLoggedIn">
-          <a routerLink="/auth/login" class="btn-secondary">Log in</a>
-          <a routerLink="/auth/register" class="btn-primary">Sign up</a>
+          <a routerLink="/auth/login" class="btn-secondary">تسجيل الدخول</a>
+          <a routerLink="/auth/register" class="btn-primary">حساب جديد</a>
         </ng-container>
 
         <ng-container *ngIf="isLoggedIn">
@@ -75,7 +75,7 @@
             <span>{{ fullName }}</span>
           </a>
           <!-- <a routerLink="/change-password" class="btn-secondary">Change password</a> -->
-          <button type="button" (click)="logout()" class="btn-primary">Logout</button>
+          <button type="button" (click)="logout()" class="btn-primary">تسجيل الخروج</button>
         </ng-container>
       </div>
 
@@ -91,20 +91,20 @@
     </div>
 
     <div *ngIf="menuOpen" class="md:hidden pb-6 space-y-4 border-t border-surface-pressed pt-4">
-      <a routerLink="/" (click)="menuOpen = false" class="block type-body-md-strong py-2">Home</a>
-      <a routerLink="/products" (click)="menuOpen = false" class="block type-body-md-strong py-2">Products</a>
-      <a routerLink="/services" (click)="menuOpen = false" class="block type-body-md-strong py-2">Services</a>
-      <a routerLink="/contact" (click)="menuOpen = false" class="block type-body-md-strong py-2">Contact</a>
+      <a routerLink="/" (click)="menuOpen = false" class="block type-body-md-strong py-2">الرئيسية</a>
+      <a routerLink="/products" (click)="menuOpen = false" class="block type-body-md-strong py-2">المنتجات</a>
+      <a routerLink="/services" (click)="menuOpen = false" class="block type-body-md-strong py-2">الخدمات</a>
+      <a routerLink="/contact" (click)="menuOpen = false" class="block type-body-md-strong py-2">اتصل بنا</a>
 
       <div class="flex flex-col gap-3 pt-2">
         <ng-container *ngIf="!isLoggedIn">
-          <a routerLink="/auth/login" (click)="menuOpen = false" class="btn-secondary w-full">Log in</a>
-          <a routerLink="/auth/register" (click)="menuOpen = false" class="btn-primary w-full">Sign up</a>
+          <a routerLink="/auth/login" (click)="menuOpen = false" class="btn-secondary w-full">تسجيل الدخول</a>
+          <a routerLink="/auth/register" (click)="menuOpen = false" class="btn-primary w-full">حساب جديد</a>
         </ng-container>
         <ng-container *ngIf="isLoggedIn">
           <a routerLink="/profile" (click)="menuOpen = false" class="btn-subtle w-full">{{ fullName }}</a>
-          <a routerLink="/change-password" (click)="menuOpen = false" class="btn-secondary w-full">Change password</a>
-          <button type="button" (click)="logout(); menuOpen = false" class="btn-primary w-full">Logout</button>
+          <a routerLink="/change-password" (click)="menuOpen = false" class="btn-secondary w-full">تغيير كلمة المرور</a>
+          <button type="button" (click)="logout(); menuOpen = false" class="btn-primary w-full">تسجيل الخروج</button>
         </ng-container>
       </div>
     </div>

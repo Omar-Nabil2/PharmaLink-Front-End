@@ -52,7 +52,7 @@ export class UpdateProfileComponent implements OnInit {
             },
             error: (err: unknown) => {
                 this.isFetching = false;
-                this.errorHandler.handleError(err, 'Failed to load profile data');
+                this.errorHandler.handleError(err, 'فشل تحميل بيانات الملف الشخصي');
                 this.cdr.detectChanges();
             }
         });
@@ -76,8 +76,8 @@ export class UpdateProfileComponent implements OnInit {
                 this.isLoading = false;
                 this.messageService.add({
                     severity: 'success',
-                    summary: 'Profile Updated',
-                    detail: 'Your profile has been updated successfully.',
+                    summary: 'تم تحديث الملف الشخصي',
+                    detail: 'تم تحديث ملفك الشخصي بنجاح.',
                     life: 3000
                 });
 
@@ -85,7 +85,7 @@ export class UpdateProfileComponent implements OnInit {
             },
             error: (err: unknown) => {
                 this.isLoading = false;
-                this.errorHandler.handleError(err, 'Failed to update profile');
+                this.errorHandler.handleError(err, 'فشل تحديث الملف الشخصي');
                 this.cdr.detectChanges();
             }
         });

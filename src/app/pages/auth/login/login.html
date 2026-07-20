@@ -1,16 +1,16 @@
 <div class="auth-card space-y-6">
   <div class="space-y-2">
-    <h2 class="type-display-md text-ink">Welcome back</h2>
+    <h2 class="type-display-md text-ink">مرحباً بعودتك</h2>
     <p class="type-body-sm text-body">
-      Sign in to your account to stay connected with your pharmacy.
+      قم بتسجيل الدخول إلى حسابك لتبقى على اتصال بصيدليتك.
     </p>
   </div>
 
   <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-4">
     <div>
-      <label for="email" class="field-label">Email address</label>
+      <label for="email" class="field-label">البريد الإلكتروني</label>
       <div class="relative">
-        <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-mute pointer-events-none">
+        <span class="absolute inset-y-0 start-0 ps-4 flex items-center text-mute pointer-events-none">
           <i class="pi pi-envelope text-sm"></i>
         </span>
         <input
@@ -18,7 +18,7 @@
           type="email"
           formControlName="email"
           placeholder="name@example.com"
-          class="field-input pl-11"
+          class="field-input ps-11"
           [ngClass]="{
             'is-invalid':
               (f['email'].touched || f['email'].dirty) && (f['email'].invalid || f['email'].errors?.['serverError'])
@@ -27,8 +27,8 @@
       </div>
       <div *ngIf="(f['email'].touched || f['email'].dirty) && f['email'].invalid" class="field-error">
         <i class="pi pi-exclamation-circle text-[10px]"></i>
-        <span *ngIf="f['email'].errors?.['required']">Please enter your email address.</span>
-        <span *ngIf="f['email'].errors?.['email']">Please enter a valid email address.</span>
+        <span *ngIf="f['email'].errors?.['required']">يرجى إدخال عنوان بريدك الإلكتروني.</span>
+        <span *ngIf="f['email'].errors?.['email']">يرجى إدخال عنوان بريد إلكتروني صحيح.</span>
       </div>
       <div *ngIf="f['email'].errors?.['serverError']" class="field-error">
         <i class="pi pi-exclamation-circle text-[10px]"></i>
@@ -38,11 +38,11 @@
 
     <div>
       <div class="flex justify-between items-center mb-2">
-        <label for="password" class="field-label !mb-0">Password</label>
-        <a routerLink="/auth/forgot-password" class="type-body-sm link-ink">Forgot password?</a>
+        <label for="password" class="field-label !mb-0">كلمة المرور</label>
+        <a routerLink="/auth/forgot-password" class="type-body-sm link-ink">هل نسيت كلمة المرور؟</a>
       </div>
       <div class="relative">
-        <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-mute pointer-events-none">
+        <span class="absolute inset-y-0 start-0 ps-4 flex items-center text-mute pointer-events-none">
           <i class="pi pi-lock text-sm"></i>
         </span>
         <input
@@ -50,7 +50,7 @@
           [type]="showPassword ? 'text' : 'password'"
           formControlName="password"
           placeholder="••••••••"
-          class="field-input pl-11 pr-11"
+          class="field-input ps-11 pe-11"
           [ngClass]="{
             'is-invalid':
               (f['password'].touched || f['password'].dirty) &&
@@ -60,7 +60,7 @@
         <button
           type="button"
           (click)="showPassword = !showPassword"
-          class="absolute inset-y-0 right-0 pr-4 flex items-center text-mute hover:text-ink transition-colors"
+          class="absolute inset-y-0 end-0 pe-4 flex items-center text-mute hover:text-ink transition-colors"
           aria-label="Toggle password visibility"
         >
           <i class="pi text-sm" [ngClass]="showPassword ? 'pi-eye-slash' : 'pi-eye'"></i>
@@ -68,7 +68,7 @@
       </div>
       <div *ngIf="(f['password'].touched || f['password'].dirty) && f['password'].invalid" class="field-error">
         <i class="pi pi-exclamation-circle text-[10px]"></i>
-        <span *ngIf="f['password'].errors?.['required']">Please enter your password.</span>
+        <span *ngIf="f['password'].errors?.['required']">يرجى إدخال كلمة المرور.</span>
       </div>
       <div *ngIf="f['password'].errors?.['serverError']" class="field-error">
         <i class="pi pi-exclamation-circle text-[10px]"></i>
@@ -78,12 +78,12 @@
 
     <button type="submit" [disabled]="isLoading || loginForm.invalid" class="btn-large mt-2">
       <i *ngIf="isLoading" class="pi pi-spin pi-spinner text-sm"></i>
-      <span>{{ isLoading ? 'Signing you in...' : 'Sign in' }}</span>
+      <span>{{ isLoading ? 'جاري تسجيل الدخول...' : 'تسجيل الدخول' }}</span>
     </button>
   </form>
 
   <p class="type-body-sm text-body text-center">
-    Don't have an account?
-    <a routerLink="/auth/register" class="link-ink">Sign up</a>
+    ليس لديك حساب؟
+    <a routerLink="/auth/register" class="link-ink">إنشاء حساب</a>
   </p>
 </div>

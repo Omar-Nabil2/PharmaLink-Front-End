@@ -128,6 +128,13 @@ export const routes: Routes = [
             (m) => m.PatientDashboardComponent,
           ),
       },
+      {
+        path: 'prescriptions/upload',
+        loadComponent: () =>
+          import('./pages/prescriptions/upload-prescription/upload-prescription.component').then(
+            (m) => m.UploadPrescriptionComponent,
+          ),
+      },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
     ],
   },
