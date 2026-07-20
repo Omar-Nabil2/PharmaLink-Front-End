@@ -15,4 +15,7 @@ export class CartService {
   getCart(): Observable<CartResponse> {
     return this.http.get<CartResponse>(`${this.baseUrl}/Cart`);
   }
+  addItem(drugId: string, quantity: number): Observable<CartResponse> {
+  return this.http.post<CartResponse>(`${this.baseUrl}/Cart/items`, { drugId, quantity });
+}
 }

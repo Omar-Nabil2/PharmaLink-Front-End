@@ -18,5 +18,6 @@ export class PatientLayoutComponent {
     { label: 'My Prescriptions', icon: 'pi pi-file-edit', routerLink: '/patient/prescriptions' },
     { label: 'My Cart', icon: 'pi pi-shopping-cart', routerLink: '/patient/cart' },
     { label: 'Order History', icon: 'pi pi-history', routerLink: '/patient/orders' },
+    { label: 'Drug Catalog', icon: 'pi pi-search', routerLink: '/patient/drugs' },
   ];
 }

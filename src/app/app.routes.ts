@@ -61,6 +61,11 @@ export const routes: Routes = [
         loadComponent: () =>
         import('./pages/cart/cart').then((m) => m.CartComponent),
       },
+      {
+        path: 'drugs',
+        loadComponent: () =>
+          import('./pages/drugs/drugs').then((m) => m.DrugsComponent),
+      },
       // المسارات المحمية (تحتاج تسجيل دخول)
       {
         path: 'profile',

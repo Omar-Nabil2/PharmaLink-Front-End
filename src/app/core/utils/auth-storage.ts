@@ -32,6 +32,7 @@ export function isAuthApiRequest(url: string): boolean {
     normalized.includes('/auth/register') ||
     normalized.includes('/auth/forgotpassword') ||
     normalized.includes('/auth/resetpassword') ||
+    normalized.includes('/auth/refresh') ||
     normalized.includes('/auth/refreshtoken')
   );
 }
