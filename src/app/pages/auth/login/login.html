@@ -13,7 +13,7 @@
         <span class="absolute inset-y-0 start-0 ps-4 flex items-center text-mute pointer-events-none">
           <i class="pi pi-envelope text-sm"></i>
         </span>
-        <input id="email" type="email" formControlName="email" placeholder="name@example.com" class="field-input pl-11"
+        <input id="email" type="email" formControlName="email" placeholder="name@example.com" class="field-input ps-11"
           [ngClass]="{
             'is-invalid':
               (f['email'].touched || f['email'].dirty) && (f['email'].invalid || f['email'].errors?.['serverError'])
@@ -39,28 +39,17 @@
         <span class="absolute inset-y-0 start-0 ps-4 flex items-center text-mute pointer-events-none">
           <i class="pi pi-lock text-sm"></i>
         </span>
-        <<<<<<< HEAD <input id="password" [type]="showPassword ? 'text' : 'password'" formControlName="password"
-          placeholder="••••••••" class="field-input pl-11 pr-11" [ngClass]="{
+        <input id="password" [type]="showPassword ? 'text' : 'password'" formControlName="password"
+          placeholder="••••••••" class="field-input ps-11 pe-11" [ngClass]="{
             'is-invalid':
               (f['password'].touched || f['password'].dirty) &&
               (f['password'].invalid || f['password'].errors?.['serverError'])
           }" />
         <button type="button" (click)="showPassword = !showPassword"
-          class="absolute inset-y-0 right-0 pr-4 flex items-center text-mute hover:text-ink transition-colors"
+          class="absolute inset-y-0 end-0 pe-4 flex items-center text-mute hover:text-ink transition-colors"
           aria-label="Toggle password visibility">
-          =======
-          <input id="password" [type]="showPassword ? 'text' : 'password'" formControlName="password"
-            placeholder="••••••••" class="field-input ps-11 pe-11" [ngClass]="{
-            'is-invalid':
-              (f['password'].touched || f['password'].dirty) &&
-              (f['password'].invalid || f['password'].errors?.['serverError'])
-          }" />
-          <button type="button" (click)="showPassword = !showPassword"
-            class="absolute inset-y-0 end-0 pe-4 flex items-center text-mute hover:text-ink transition-colors"
-            aria-label="Toggle password visibility">
-            >>>>>>> a5e75b1b4ca64ee3d4059d88c1bf103a0b112447
-            <i class="pi text-sm" [ngClass]="showPassword ? 'pi-eye-slash' : 'pi-eye'"></i>
-          </button>
+          <i class="pi text-sm" [ngClass]="showPassword ? 'pi-eye-slash' : 'pi-eye'"></i>
+        </button>
       </div>
       <div *ngIf="(f['password'].touched || f['password'].dirty) && f['password'].invalid" class="field-error">
         <i class="pi pi-exclamation-circle text-[10px]"></i>
