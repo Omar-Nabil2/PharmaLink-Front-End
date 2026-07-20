@@ -1,16 +1,16 @@
-<aside class="w-64 h-full bg-canvas border-r border-surface-pressed flex flex-col pt-6">
+<aside class="w-64 h-full bg-canvas border-e border-surface-pressed flex flex-col pt-6">
   <div class="px-6 mb-8 flex items-center gap-2">
     <img src="/logo.png" alt="Pharma Link" class="h-8 w-auto object-contain" />
-    <span class="type-display-sm text-ink hidden sm:inline">Pharma Link</span>
+    <span class="type-display-sm text-ink hidden sm:inline">فارما لينك</span>
   </div>
 
   <nav class="flex-1 px-4 space-y-2 overflow-y-auto">
     @for (item of items; track item.routerLink) {
       <a
         [routerLink]="item.routerLink"
-        routerLinkActive="bg-canvas text-ink border-l-4 border-primary shadow-[0_4px_16px_rgba(0,0,0,0.12)]"
+        routerLinkActive="bg-canvas text-ink border-s-4 border-primary shadow-[0_4px_16px_rgba(0,0,0,0.12)]"
         [routerLinkActiveOptions]="{ exact: item.routerLink === '/' }"
-        class="flex items-center gap-3 px-4 py-3 rounded-md text-body type-body-md-strong hover:bg-canvas-soft hover:text-ink transition-colors border-l-4 border-transparent"
+        class="flex items-center gap-3 px-4 py-3 rounded-md text-body type-body-md-strong hover:bg-canvas-soft hover:text-ink transition-colors border-s-4 border-transparent"
       >
 
         @if (item.icon) {

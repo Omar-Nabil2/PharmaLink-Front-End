@@ -39,15 +39,15 @@ export class ForgotPasswordComponent {
                 this.isLoading = false;
                 this.messageService.add({
                     severity: 'success',
-                    summary: 'Email Sent',
-                    detail: 'If the email is registered, a reset link has been sent.',
+                    summary: 'تم إرسال البريد الإلكتروني',
+                    detail: 'إذا كان البريد الإلكتروني مسجلاً، فسيتم إرسال رابط إعادة التعيين.',
                     life: 5000
                 });
                 this.forgotForm.reset();
             },
             error: (err) => {
                 this.isLoading = false;
-                this.errorHandler.handleError(err, 'Reset Request Failed');
+                this.errorHandler.handleError(err, 'فشل طلب إعادة التعيين');
             }
         });
     }

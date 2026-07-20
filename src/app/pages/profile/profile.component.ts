@@ -40,7 +40,7 @@ export class ProfileComponent implements OnInit {
         },
         error: (err) => {
           this.isLoading = false;
-          this.errorHandler.handleError(err, 'Failed to load patient profile');
+          this.errorHandler.handleError(err, 'فشل تحميل الملف الشخصي للمريض');
           this.cdr.detectChanges();
         },
       });
@@ -53,7 +53,7 @@ export class ProfileComponent implements OnInit {
         },
         error: (err) => {
           this.isLoading = false;
-          this.errorHandler.handleError(err, 'Failed to load profile');
+          this.errorHandler.handleError(err, 'فشل تحميل الملف الشخصي');
           this.cdr.detectChanges();
         },
       });

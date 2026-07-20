@@ -1,9 +1,9 @@
-<div class="space-y-6">
+<div class="space-y-6" dir="rtl">
   <div class="flex items-center justify-between">
-    <h1 class="type-display-lg text-ink">Welcome back, Patient!</h1>
+    <h1 class="type-display-lg text-ink">مرحباً بعودتك، أيها المريض!</h1>
     <button class="btn-primary gap-2 flex items-center">
       <i class="pi pi-plus"></i>
-      <span>New Prescription</span>
+      <span>وصفة طبية جديدة</span>
     </button>
   </div>
 
@@ -12,7 +12,7 @@
     <p-card styleClass="shadow-none border border-surface-pressed rounded-xl bg-canvas">
       <div class="flex items-center justify-between">
         <div>
-          <span class="block text-mute type-body-md-strong mb-1">Active Orders</span>
+          <span class="block text-mute type-body-md-strong mb-1">الطلبات النشطة</span>
           <div class="text-ink type-display-xl font-bold">{{ activeOrders }}</div>
         </div>
         <div class="w-12 h-12 rounded-full bg-canvas-soft flex items-center justify-center">
@@ -23,7 +23,7 @@
     <p-card styleClass="shadow-none border border-surface-pressed rounded-xl bg-canvas">
       <div class="flex items-center justify-between">
         <div>
-          <span class="block text-mute type-body-md-strong mb-1">Items in Cart</span>
+          <span class="block text-mute type-body-md-strong mb-1">عناصر في العربة</span>
           <div class="text-ink type-display-xl font-bold">{{ itemsInCart }}</div>
         </div>
         <div class="w-12 h-12 rounded-full bg-canvas-soft flex items-center justify-center">
@@ -34,7 +34,7 @@
     <p-card styleClass="shadow-none border border-surface-pressed rounded-xl bg-canvas">
       <div class="flex items-center justify-between">
         <div>
-          <span class="block text-mute type-body-md-strong mb-1">Pending Reviews</span>
+          <span class="block text-mute type-body-md-strong mb-1">مراجعات قيد الانتظار</span>
           <div class="text-ink type-display-xl font-bold">1</div>
         </div>
         <div class="w-12 h-12 rounded-full bg-canvas-soft flex items-center justify-center">
@@ -48,15 +48,15 @@
     <!-- Recent Orders Table -->
     <div class="bg-canvas border border-surface-pressed rounded-xl overflow-hidden shadow-none p-6">
       <div class="flex justify-between items-center mb-6">
-        <h2 class="type-display-sm text-ink">Recent Orders</h2>
-        <a routerLink="/patient/orders" class="text-link type-body-sm-strong hover:underline">View All</a>
+        <h2 class="type-display-sm text-ink">الطلبات الأخيرة</h2>
+        <a routerLink="/patient/orders" class="text-link type-body-sm-strong hover:underline">عرض الكل</a>
       </div>
       <p-table [value]="recentOrders" responsiveLayout="scroll" styleClass="p-datatable-sm">
         <ng-template pTemplate="header">
           <tr>
-            <th class="bg-canvas-soft text-ink type-body-sm-strong border-b border-surface-pressed py-3 px-4">Order ID</th>
-            <th class="bg-canvas-soft text-ink type-body-sm-strong border-b border-surface-pressed py-3 px-4">Status</th>
-            <th class="bg-canvas-soft text-ink type-body-sm-strong border-b border-surface-pressed py-3 px-4">Amount</th>
+            <th class="bg-canvas-soft text-ink type-body-sm-strong border-b border-surface-pressed py-3 px-4">رقم الطلب</th>
+            <th class="bg-canvas-soft text-ink type-body-sm-strong border-b border-surface-pressed py-3 px-4">الحالة</th>
+            <th class="bg-canvas-soft text-ink type-body-sm-strong border-b border-surface-pressed py-3 px-4">المبلغ</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-order>
@@ -70,7 +70,7 @@
         </ng-template>
         <ng-template pTemplate="emptymessage">
           <tr>
-            <td colspan="3" class="text-center py-4 text-mute type-body-sm">No recent orders found.</td>
+            <td colspan="3" class="text-center py-4 text-mute type-body-sm">لم يتم العثور على طلبات حديثة.</td>
           </tr>
         </ng-template>
       </p-table>
@@ -79,14 +79,14 @@
     <!-- Prescription Reviews -->
     <div class="bg-canvas border border-surface-pressed rounded-xl overflow-hidden shadow-none p-6">
       <div class="flex justify-between items-center mb-6">
-        <h2 class="type-display-sm text-ink">Prescription Reviews</h2>
-        <a routerLink="/patient/prescriptions" class="text-link type-body-sm-strong hover:underline">View All</a>
+        <h2 class="type-display-sm text-ink">مراجعات الوصفات الطبية</h2>
+        <a routerLink="/patient/prescriptions" class="text-link type-body-sm-strong hover:underline">عرض الكل</a>
       </div>
       <div class="space-y-4">
         <div *ngFor="let review of prescriptionReviews" class="flex items-start justify-between p-4 rounded-xl border border-surface-pressed bg-canvas-softer hover:bg-canvas-soft transition-colors cursor-pointer">
           <div class="flex flex-col gap-1">
             <span class="type-body-md-strong text-ink">{{ review.medication }}</span>
-            <span class="type-caption text-mute">Reviewed by: {{ review.doctor }}</span>
+            <span class="type-caption text-mute">روجعت بواسطة: {{ review.doctor }}</span>
             <span class="type-caption text-mute">{{ review.date }}</span>
           </div>
           <div>

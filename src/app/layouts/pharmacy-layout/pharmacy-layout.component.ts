@@ -14,9 +14,9 @@ import { FooterComponent } from '../../shared/components/footer/footer.component
 })
 export class PharmacyLayoutComponent {
   pharmacyNavItems: SidebarItem[] = [
-    { label: 'Dashboard', icon: 'pi pi-home', routerLink: '/pharmacy/dashboard' },
-    { label: 'Inventory', icon: 'pi pi-box', routerLink: '/pharmacy/inventory' },
-    { label: 'Order Fulfillment', icon: 'pi pi-check-square', routerLink: '/pharmacy/orders' },
-    { label: 'Branch Settings', icon: 'pi pi-cog', routerLink: '/pharmacy/settings' },
+    { label: 'لوحة التحكم', icon: 'pi pi-home', routerLink: '/pharmacy/dashboard' },
+    { label: 'المخزون', icon: 'pi pi-box', routerLink: '/pharmacy/inventory' },
+    { label: 'تنفيذ الطلبات', icon: 'pi pi-check-square', routerLink: '/pharmacy/orders' },
+    { label: 'إعدادات الفرع', icon: 'pi pi-cog', routerLink: '/pharmacy/settings' },
   ];
 }

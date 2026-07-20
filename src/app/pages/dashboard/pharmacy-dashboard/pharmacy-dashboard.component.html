@@ -1,9 +1,9 @@
-<div class="space-y-6">
+<div class="space-y-6" dir="rtl">
   <div class="flex items-center justify-between">
-    <h1 class="type-display-lg text-ink">Pharmacy Operations Overview</h1>
+    <h1 class="type-display-lg text-ink">نظرة عامة على عمليات الصيدلية</h1>
     <button class="btn-primary gap-2 flex items-center">
       <i class="pi pi-receipt"></i>
-      <span>Process Order</span>
+      <span>معالجة الطلب</span>
     </button>
   </div>
 
@@ -12,7 +12,7 @@
     <p-card styleClass="shadow-none border border-surface-pressed rounded-xl bg-canvas">
       <div class="flex items-center justify-between">
         <div>
-          <span class="block text-mute type-body-md-strong mb-1">Pending Orders</span>
+          <span class="block text-mute type-body-md-strong mb-1">الطلبات المعلقة</span>
           <div class="text-ink type-display-xl font-bold">{{ pendingOrders }}</div>
         </div>
         <div class="w-12 h-12 rounded-full bg-canvas-soft flex items-center justify-center">
@@ -23,7 +23,7 @@
     <p-card styleClass="shadow-none border border-surface-pressed rounded-xl bg-canvas">
       <div class="flex items-center justify-between">
         <div>
-          <span class="block text-mute type-body-md-strong mb-1">Total Drugs in Inventory</span>
+          <span class="block text-mute type-body-md-strong mb-1">إجمالي الأدوية في المخزون</span>
           <div class="text-ink type-display-xl font-bold">{{ totalDrugs }}</div>
         </div>
         <div class="w-12 h-12 rounded-full bg-canvas-soft flex items-center justify-center">
@@ -34,7 +34,7 @@
     <p-card styleClass="shadow-none border border-surface-pressed rounded-xl bg-canvas">
       <div class="flex items-center justify-between">
         <div>
-          <span class="block text-mute type-body-md-strong mb-1">Today's Completed Legs</span>
+          <span class="block text-mute type-body-md-strong mb-1">المراحل المكتملة اليوم</span>
           <div class="text-ink type-display-xl font-bold">{{ completedLegsToday }}</div>
         </div>
         <div class="w-12 h-12 rounded-full bg-canvas-soft flex items-center justify-center">
@@ -48,22 +48,22 @@
     <!-- Low Stock Alerts Table -->
     <div class="bg-canvas border border-surface-pressed rounded-xl overflow-hidden shadow-none p-6">
       <div class="flex justify-between items-center mb-6">
-        <h2 class="type-display-sm text-ink">Low Stock Alerts</h2>
-        <a routerLink="/pharmacy/inventory" class="text-link type-body-sm-strong hover:underline">Manage Inventory</a>
+        <h2 class="type-display-sm text-ink">تنبيهات انخفاض المخزون</h2>
+        <a routerLink="/pharmacy/inventory" class="text-link type-body-sm-strong hover:underline">إدارة المخزون</a>
       </div>
       <p-table [value]="lowStockAlerts" responsiveLayout="scroll" styleClass="p-datatable-sm">
         <ng-template pTemplate="header">
           <tr>
-            <th class="bg-canvas-soft text-ink type-body-sm-strong border-b border-surface-pressed py-3 px-4">Drug Name</th>
-            <th class="bg-canvas-soft text-ink type-body-sm-strong border-b border-surface-pressed py-3 px-4">Batch</th>
-            <th class="bg-canvas-soft text-ink type-body-sm-strong border-b border-surface-pressed py-3 px-4 text-right">Stock (Min)</th>
+            <th class="bg-canvas-soft text-ink type-body-sm-strong border-b border-surface-pressed py-3 px-4">اسم الدواء</th>
+            <th class="bg-canvas-soft text-ink type-body-sm-strong border-b border-surface-pressed py-3 px-4">الدفعة</th>
+            <th class="bg-canvas-soft text-ink type-body-sm-strong border-b border-surface-pressed py-3 px-4 text-end">المخزون (الأدنى)</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-item>
           <tr class="border-b border-surface-pressed hover:bg-canvas-softer transition-colors">
             <td class="py-3 px-4 text-ink type-body-sm-strong">{{ item.drugName }}</td>
             <td class="py-3 px-4 text-mute type-body-sm">{{ item.batchNumber }}</td>
-            <td class="py-3 px-4 text-right">
+            <td class="py-3 px-4 text-end">
               <p-tag 
                 [value]="item.stockQuantity + ' (' + item.threshold + ')'" 
                 [severity]="getSeverity(item.stockQuantity, item.threshold)" 
@@ -74,7 +74,7 @@
         </ng-template>
         <ng-template pTemplate="emptymessage">
           <tr>
-            <td colspan="3" class="text-center py-4 text-mute type-body-sm">Inventory looks good.</td>
+            <td colspan="3" class="text-center py-4 text-mute type-body-sm">المخزون يبدو جيداً.</td>
           </tr>
         </ng-template>
       </p-table>
@@ -83,8 +83,8 @@
     <!-- Pending Fulfillment Legs -->
     <div class="bg-canvas border border-surface-pressed rounded-xl overflow-hidden shadow-none p-6">
       <div class="flex justify-between items-center mb-6">
-        <h2 class="type-display-sm text-ink">Pending Fulfillment Legs</h2>
-        <a routerLink="/pharmacy/orders" class="text-link type-body-sm-strong hover:underline">View All</a>
+        <h2 class="type-display-sm text-ink">مراحل التنفيذ المعلقة</h2>
+        <a routerLink="/pharmacy/orders" class="text-link type-body-sm-strong hover:underline">عرض الكل</a>
       </div>
       <div class="space-y-4">
         <div *ngFor="let leg of pendingFulfillmentLegs" class="flex items-center justify-between p-4 rounded-xl border border-surface-pressed bg-canvas-softer hover:bg-canvas-soft transition-colors cursor-pointer">
@@ -93,10 +93,10 @@
               <span class="type-body-md-strong text-ink">{{ leg.orderId }}</span>
               <p-tag [value]="leg.status" [severity]="getLegSeverity(leg.status)"></p-tag>
             </div>
-            <span class="type-caption text-mute">{{ leg.items }} Items to pack</span>
+            <span class="type-caption text-mute">{{ leg.items }} عناصر للتعبئة</span>
           </div>
-          <div class="text-right">
-            <span class="block type-caption text-mute mb-1">Ready by</span>
+          <div class="text-end">
+            <span class="block type-caption text-mute mb-1">جاهز بحلول</span>
             <span class="type-body-sm-strong text-ink">{{ leg.readyByEstimate | date:'shortTime' }}</span>
           </div>
         </div>
