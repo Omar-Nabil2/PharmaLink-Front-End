@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpEvent, HttpRequest } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '@environments/environment';
+import { PrescriptionReviewDto } from '@core/interfaces/prescription-review.interface';
 
 export interface PrescriptionReviewUploadResponse {
   reviewId: string;
@@ -16,6 +17,7 @@ export interface PrescriptionReviewUploadResponse {
 export class PrescriptionReviewService {
   private http = inject(HttpClient);
   private readonly baseUrl = environment.baseUrl;
+  private readonly omarUrl = environment.omarUrl;
 
   uploadPrescription(file: File): Observable<HttpEvent<PrescriptionReviewUploadResponse>> {
     const formData = new FormData();
@@ -27,5 +29,27 @@ export class PrescriptionReviewService {
     });
 
     return this.http.request<PrescriptionReviewUploadResponse>(req);
+  }
+
+  getReview(id: string): Observable<PrescriptionReviewDto> {
+    return this.http.get<PrescriptionReviewDto>(`${this.baseUrl}/PrescriptionReviews/${id}`);
+  }
+
+  searchMedicines(term: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.omarUrl}/PrescriptionReviews/search`, {
+      params: { term: term }
+    });
+  }
+
+  updateReview(id: string, data: any): Observable<any> {
+    return this.http.put(`${this.baseUrl}/PrescriptionReviews/${id}`, data);
+  }
+
+  approve(id: string, notes: string): Observable<any> {
+    return this.http.put(`${this.baseUrl}/PrescriptionReviews/${id}/approve`, { notes });
+  }
+
+  reject(id: string, notes: string): Observable<any> {
+    return this.http.put(`${this.baseUrl}/PrescriptionReviews/${id}/reject`, { notes });
   }
 }
