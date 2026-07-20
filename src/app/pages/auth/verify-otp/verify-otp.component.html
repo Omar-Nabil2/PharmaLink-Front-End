@@ -1,12 +1,12 @@
 <div class="auth-card space-y-6">
   <div class="space-y-2">
-    <h2 class="type-display-md text-ink">OTP verification</h2>
+    <h2 class="type-display-md text-ink">التحقق من رمز OTP</h2>
     <p class="type-body-sm text-body">
-      Enter the one-time password sent to your registered phone number to complete verification.
+      أدخل كلمة المرور لمرة واحدة (OTP) المرسلة إلى رقم هاتفك المسجل لإكمال عملية التحقق.
     </p>
   </div>
 
-  <div class="flex gap-2 justify-between py-2">
+  <div class="flex gap-2 justify-between py-2" dir="ltr">
     <input
       *ngFor="let digit of otpDigits; let i = index"
       #digitInput
@@ -24,17 +24,17 @@
 
   <div class="flex justify-between items-center type-caption">
     <span class="text-body">
-      Remaining time: <span class="text-ink font-medium">{{ formattedTime }}</span>
+      الوقت المتبقي: <span class="text-ink font-medium">{{ formattedTime }}</span>
     </span>
     <span class="text-body">
-      Didn't get the code?
+      لم يصلك الرمز؟
       <button
         type="button"
         (click)="sendOtpRequest()"
         [disabled]="!canResend"
         class="link-ink disabled:opacity-40 disabled:no-underline disabled:cursor-not-allowed bg-transparent border-none p-0 cursor-pointer"
       >
-        Resend
+        إعادة إرسال
       </button>
     </span>
   </div>
@@ -47,7 +47,7 @@
       class="btn-large"
     >
       <i *ngIf="isLoading" class="pi pi-spin pi-spinner text-xs"></i>
-      <span>Verify</span>
+      <span>تحقق</span>
     </button>
 
     <button
@@ -56,7 +56,7 @@
       [disabled]="isLoading || isResending"
       class="btn-secondary w-full"
     >
-      Cancel
+      إلغاء
     </button>
   </div>
 </div>

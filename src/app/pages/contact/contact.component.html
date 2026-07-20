@@ -2,9 +2,9 @@
   <div class="container-app py-10 md:py-14">
     <div class="grid lg:grid-cols-2 gap-10 lg:gap-16 items-start">
       <div class="space-y-4">
-        <h1 class="type-display-xxl">Contact</h1>
+        <h1 class="type-display-xxl">اتصل بنا</h1>
         <p class="type-body-lg text-body max-w-md">
-          Questions about accounts, pharmacies, or orders? Send a message and our team will help.
+          هل لديك أسئلة حول الحسابات، الصيدليات، أو الطلبات؟ أرسل رسالة وسيقوم فريقنا بمساعدتك.
         </p>
 
         <div class="space-y-4 pt-4">
@@ -13,7 +13,7 @@
               <i class="pi pi-envelope"></i>
             </div>
             <div>
-              <p class="type-body-md-strong">Email</p>
+              <p class="type-body-md-strong">البريد الإلكتروني</p>
               <p class="type-body-sm text-body">support@pharmalink.app</p>
             </div>
           </div>
@@ -22,7 +22,7 @@
               <i class="pi pi-phone"></i>
             </div>
             <div>
-              <p class="type-body-md-strong">Phone</p>
+              <p class="type-body-md-strong">الهاتف</p>
               <p class="type-body-sm text-body">+20 100 000 0000</p>
             </div>
           </div>
@@ -30,25 +30,25 @@
       </div>
 
       <div class="card-elevated space-y-5">
-        <h2 class="type-display-md">Send a message</h2>
+        <h2 class="type-display-md">أرسل رسالة</h2>
         <form [formGroup]="contactForm" (ngSubmit)="onSubmit()" class="space-y-4">
           <div>
-            <label for="name" class="field-label">Full name</label>
+            <label for="name" class="field-label">الاسم الكامل</label>
             <input
               id="name"
               type="text"
               formControlName="name"
               class="field-input"
               [ngClass]="{ 'is-invalid': f['name'].touched && f['name'].invalid }"
-              placeholder="Your name"
+              placeholder="اسمك"
             />
             <div *ngIf="f['name'].touched && f['name'].invalid" class="field-error">
-              Please enter your name.
+              يرجى إدخال اسمك.
             </div>
           </div>
 
           <div>
-            <label for="email" class="field-label">Email</label>
+            <label for="email" class="field-label">البريد الإلكتروني</label>
             <input
               id="email"
               type="email"
@@ -58,28 +58,28 @@
               placeholder="name@example.com"
             />
             <div *ngIf="f['email'].touched && f['email'].invalid" class="field-error">
-              Please enter a valid email.
+              يرجى إدخال بريد إلكتروني صحيح.
             </div>
           </div>
 
           <div>
-            <label for="message" class="field-label">Message</label>
+            <label for="message" class="field-label">الرسالة</label>
             <textarea
               id="message"
               formControlName="message"
               rows="5"
               class="field-input resize-y min-h-[120px]"
               [ngClass]="{ 'is-invalid': f['message'].touched && f['message'].invalid }"
-              placeholder="How can we help?"
+              placeholder="كيف يمكننا مساعدتك؟"
             ></textarea>
             <div *ngIf="f['message'].touched && f['message'].invalid" class="field-error">
-              Message must be at least 10 characters.
+              يجب أن تكون الرسالة 10 أحرف على الأقل.
             </div>
           </div>
 
           <button type="submit" class="btn-large" [disabled]="isSending || contactForm.invalid">
             <i *ngIf="isSending" class="pi pi-spin pi-spinner"></i>
-            <span>{{ isSending ? 'Sending...' : 'Send message' }}</span>
+            <span>{{ isSending ? 'جاري الإرسال...' : 'إرسال الرسالة' }}</span>
           </button>
         </form>
       </div>

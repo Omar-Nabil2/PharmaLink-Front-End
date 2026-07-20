@@ -43,8 +43,8 @@ export class VerifyOtpComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!this.userId) {
       this.messageService.add({
         severity: 'warn',
-        summary: 'Access Denied',
-        detail: 'No patient registration details found. Please sign up first.'
+        summary: 'تم رفض الوصول',
+        detail: 'لم يتم العثور على تفاصيل تسجيل المريض. يرجى التسجيل أولاً.'
       });
       this.router.navigate(['/auth/register']);
       return;
@@ -187,8 +187,8 @@ export class VerifyOtpComponent implements OnInit, OnDestroy, AfterViewInit {
       // Simulated success response: Ok(new { message = "Verification code sent to your registered phone number." });
       this.messageService.add({
         severity: 'success',
-        summary: 'OTP Sent',
-        detail: 'Verification code sent to your registered phone number.'
+        summary: 'تم إرسال الرمز',
+        detail: 'تم إرسال رمز التحقق إلى رقم هاتفك المسجل.'
       });
 
       // Clear fields on resend
@@ -216,8 +216,8 @@ export class VerifyOtpComponent implements OnInit, OnDestroy, AfterViewInit {
           // Simulated success response: Ok(new { message = "Phone number verified successfully." });
           this.messageService.add({
             severity: 'success',
-            summary: 'Verified Successfully',
-            detail: 'Phone number verified successfully.'
+            summary: 'تم التحقق بنجاح',
+            detail: 'تم توثيق رقم الهاتف بنجاح.'
           });
 
           // Clear local storage key after verification completes
@@ -245,7 +245,7 @@ export class VerifyOtpComponent implements OnInit, OnDestroy, AfterViewInit {
             }
           });
 
-          this.errorHandlerService.handleError(mockError, 'Verification Failed');
+          this.errorHandlerService.handleError(mockError, 'فشل التحقق');
 
           // Human-friendly recovery: clear entries and refocus first input so they can try again
           this.otpDigits = ['', '', '', '', '', ''];
