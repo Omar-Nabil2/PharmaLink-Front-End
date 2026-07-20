@@ -49,7 +49,7 @@
     <div class="bg-canvas border border-surface-pressed rounded-xl overflow-hidden shadow-none p-6">
       <div class="flex justify-between items-center mb-6">
         <h2 class="type-display-sm text-ink">تنبيهات انخفاض المخزون</h2>
-        <a routerLink="/pharmacy/inventory" class="text-link type-body-sm-strong hover:underline">إدارة المخزون</a>
+        <a routerLink="/pharmacist/inventory" class="text-link type-body-sm-strong hover:underline">إدارة المخزون</a>
       </div>
       <p-table [value]="lowStockAlerts" responsiveLayout="scroll" styleClass="p-datatable-sm">
         <ng-template pTemplate="header">
@@ -64,9 +64,9 @@
             <td class="py-3 px-4 text-ink type-body-sm-strong">{{ item.drugName }}</td>
             <td class="py-3 px-4 text-mute type-body-sm">{{ item.batchNumber }}</td>
             <td class="py-3 px-4 text-end">
-              <p-tag 
-                [value]="item.stockQuantity + ' (' + item.threshold + ')'" 
-                [severity]="getSeverity(item.stockQuantity, item.threshold)" 
+              <p-tag
+                [value]="item.stockQuantity + ' (' + item.threshold + ')'"
+                [severity]="getSeverity(item.stockQuantity, item.threshold)"
                 [rounded]="true">
               </p-tag>
             </td>
@@ -84,7 +84,7 @@
     <div class="bg-canvas border border-surface-pressed rounded-xl overflow-hidden shadow-none p-6">
       <div class="flex justify-between items-center mb-6">
         <h2 class="type-display-sm text-ink">مراحل التنفيذ المعلقة</h2>
-        <a routerLink="/pharmacy/orders" class="text-link type-body-sm-strong hover:underline">عرض الكل</a>
+        <a routerLink="/pharmacist/orders" class="text-link type-body-sm-strong hover:underline">عرض الكل</a>
       </div>
       <div class="space-y-4">
         <div *ngFor="let leg of pendingFulfillmentLegs" class="flex items-center justify-between p-4 rounded-xl border border-surface-pressed bg-canvas-softer hover:bg-canvas-soft transition-colors cursor-pointer">

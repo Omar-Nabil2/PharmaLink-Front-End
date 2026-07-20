@@ -93,7 +93,7 @@ export class AuthService {
       case 'admin':
         return '/admin/dashboard';
       case 'pharmacist':
-        return '/pharmacy/dashboard';
+        return '/pharmacist/dashboard';
       case 'patient':
         return '/patient/dashboard';
       default:

@@ -1,7 +1,7 @@
 <p-toast></p-toast>
 <div class="flex justify-center p-6 bg-canvas-softer min-h-[500px]">
   <div class="w-full max-w-3xl">
-    
+
     <!-- Upload Area -->
     <div *ngIf="status === 'idle' || status === 'error'"
          [ngClass]="dragAreaClass"
@@ -10,17 +10,17 @@
          (dragleave)="onDragLeave($event)"
          (drop)="onDrop($event)"
          (click)="fileInput.click()">
-         
+
       <input type="file" #fileInput class="hidden" accept=".jpg,.jpeg,.png,.pdf" (change)="onFileSelected($event)">
-      
+
       <div class="flex flex-col items-center justify-center space-y-4">
         <!-- Cloud upload icon -->
         <i class="pi pi-cloud-upload text-5xl text-primary mb-2"></i>
-        
+
         <h3 class="text-xl font-bold text-surface-900">
           اسحب الروشتة هنا أو اضغط للرفع
         </h3>
-        
+
         <p class="text-surface-500 text-sm">
           JPG, PNG, PDF . بحد أقصى 10MB
         </p>
@@ -28,12 +28,12 @@
     </div>
 
     <!-- Uploading / Processing State -->
-    <div *ngIf="status === 'uploading' || status === 'processing'" 
+    <div *ngIf="status === 'uploading' || status === 'processing'"
          class="rounded-xl border border-surface-200 bg-surface-0 p-8 text-center shadow-sm">
-         
+
       <div class="flex flex-col items-center justify-center space-y-6">
         <i class="pi pi-spin pi-spinner text-5xl text-primary"></i>
-        
+
         <div class="w-full max-w-md">
           <h3 class="text-lg font-semibold text-surface-900 mb-2">
             {{ status === 'uploading' ? 'جاري الرفع...' : 'جاري تحليل الروشتة بواسطة الذكاء الاصطناعي...' }}
@@ -47,20 +47,20 @@
     </div>
 
     <!-- Success State -->
-    <div *ngIf="status === 'success'" 
+    <div *ngIf="status === 'success'"
          class="rounded-xl border border-green-200 bg-green-50 p-8 text-center shadow-sm">
-         
+
       <div class="flex flex-col items-center justify-center space-y-4">
         <i class="pi pi-check-circle text-5xl text-green-500"></i>
-        
+
         <h3 class="text-xl font-bold text-green-900">
           تم رفع الروشتة بنجاح!
         </h3>
-        
+
         <p class="text-green-700">
           تم استخراج الأدوية وبدء عملية المراجعة.
         </p>
-        
+
         <div *ngIf="responseData?.medicines?.length" class="w-full max-w-lg mt-6 bg-white rounded-lg p-6 shadow-sm border border-green-100 text-right">
             <h4 class="font-semibold text-lg text-surface-900 mb-4 border-b pb-2">الأدوية المستخرجة:</h4>
             <ul class="space-y-3">
@@ -81,7 +81,7 @@
                 </li>
             </ul>
         </div>
-        
+
         <button class="mt-6 px-6 py-2 bg-primary text-white rounded-md hover:bg-primary-dark transition" (click)="reset()">
           رفع روشتة أخرى
         </button>

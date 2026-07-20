@@ -8,13 +8,13 @@ import { TagModule } from 'primeng/tag';
 import { ButtonModule } from 'primeng/button';
 
 @Component({
-  selector: 'app-pharmacy-dashboard',
+  selector: 'app-pharmacist-dashboard',
   standalone: true,
   imports: [CommonModule, RouterLink, CardModule, TableModule, BadgeModule, TagModule, ButtonModule],
-  templateUrl: './pharmacy-dashboard.component.html',
-  styleUrl: './pharmacy-dashboard.component.scss',
+  templateUrl: './pharmacist-dashboard.component.html',
+  styleUrl: './pharmacist-dashboard.component.scss',
 })
-export class PharmacyDashboardComponent {
+export class pharmacistDashboardComponent {
   pendingOrders = 12;
   totalDrugs = 1450;
   completedLegsToday = 8;
