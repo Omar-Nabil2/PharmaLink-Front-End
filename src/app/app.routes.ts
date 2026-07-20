@@ -139,19 +139,40 @@ export const routes: Routes = [
     ],
   },
   {
-    path: 'pharmacy',
+    path: 'pharmacist',
     canActivate: [authGuard],
-    data: { role: 'Pharmacy' },
+    data: { role: 'pharmacist' },
     loadComponent: () =>
-      import('./layouts/pharmacy-layout/pharmacy-layout.component').then(
-        (m) => m.PharmacyLayoutComponent,
+      import('./layouts/pharmacist-layout/pharmacist-layout.component').then(
+        (m) => m.pharmacistLayoutComponent,
       ),
     children: [
       {
         path: 'dashboard',
         loadComponent: () =>
-          import('./pages/dashboard/pharmacy-dashboard/pharmacy-dashboard.component').then(
-            (m) => m.PharmacyDashboardComponent,
+          import('./pages/dashboard/pharmacist-dashboard/pharmacist-dashboard.component').then(
+            (m) => m.pharmacistDashboardComponent,
+          ),
+      },
+      {
+        path: 'assigned-orders',
+        loadComponent: () =>
+          import('./pages/pharmacist/assigned-orders/assigned-orders').then(
+            (m) => m.AssignedOrders,
+          ),
+      },
+      {
+        path: 'preparation-list',
+        loadComponent: () =>
+          import('./pages/pharmacist/preparation-list/preparation-list').then(
+            (m) => m.PreparationList,
+          ),
+      },
+      {
+        path: 'prescription-queue',
+        loadComponent: () =>
+          import('./pages/pharmacist/prescription-queue/prescription-queue').then(
+            (m) => m.PrescriptionQueue,
           ),
       },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
