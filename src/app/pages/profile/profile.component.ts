@@ -21,7 +21,7 @@ export class ProfileComponent implements OnInit {
     private readonly profileService: ProfileService,
     private readonly errorHandler: ErrorHandlerService,
     private readonly cdr: ChangeDetectorRef,
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     const role = typeof window !== 'undefined' ? localStorage.getItem('roleName') : null;
@@ -34,6 +34,7 @@ export class ProfileComponent implements OnInit {
     if (this.isPatient) {
       this.profileService.getPatientProfile().subscribe({
         next: (response) => {
+          console.log('Patient profile response:', response);
           this.patientData = response.value;
           this.isLoading = false;
           this.cdr.detectChanges();
@@ -47,6 +48,8 @@ export class ProfileComponent implements OnInit {
     } else {
       this.profileService.getProfile().subscribe({
         next: (data) => {
+          console.log('Pharmacy profile response:', data);
+
           this.profileData = data;
           this.isLoading = false;
           this.cdr.detectChanges();

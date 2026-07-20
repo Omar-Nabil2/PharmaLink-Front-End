@@ -13,17 +13,11 @@
         <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-mute pointer-events-none">
           <i class="pi pi-envelope text-sm"></i>
         </span>
-        <input
-          id="email"
-          type="email"
-          formControlName="email"
-          placeholder="name@example.com"
-          class="field-input pl-11"
+        <input id="email" type="email" formControlName="email" placeholder="name@example.com" class="field-input pl-11"
           [ngClass]="{
             'is-invalid':
               (f['email'].touched || f['email'].dirty) && (f['email'].invalid || f['email'].errors?.['serverError'])
-          }"
-        />
+          }" />
       </div>
       <div *ngIf="(f['email'].touched || f['email'].dirty) && f['email'].invalid" class="field-error">
         <i class="pi pi-exclamation-circle text-[10px]"></i>
@@ -45,24 +39,15 @@
         <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-mute pointer-events-none">
           <i class="pi pi-lock text-sm"></i>
         </span>
-        <input
-          id="password"
-          [type]="showPassword ? 'text' : 'password'"
-          formControlName="password"
-          placeholder="••••••••"
-          class="field-input pl-11 pr-11"
-          [ngClass]="{
+        <input id="password" [type]="showPassword ? 'text' : 'password'" formControlName="password"
+          placeholder="••••••••" class="field-input pl-11 pr-11" [ngClass]="{
             'is-invalid':
               (f['password'].touched || f['password'].dirty) &&
               (f['password'].invalid || f['password'].errors?.['serverError'])
-          }"
-        />
-        <button
-          type="button"
-          (click)="showPassword = !showPassword"
+          }" />
+        <button type="button" (click)="showPassword = !showPassword"
           class="absolute inset-y-0 right-0 pr-4 flex items-center text-mute hover:text-ink transition-colors"
-          aria-label="Toggle password visibility"
-        >
+          aria-label="Toggle password visibility">
           <i class="pi text-sm" [ngClass]="showPassword ? 'pi-eye-slash' : 'pi-eye'"></i>
         </button>
       </div>

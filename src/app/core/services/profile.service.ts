@@ -15,11 +15,12 @@ import {
 })
 export class ProfileService {
   private readonly baseUrl = environment.baseUrl;
+  private readonly omarUrl = environment.omarUrl;
 
-  constructor(private readonly http: HttpClient) {}
+  constructor(private readonly http: HttpClient) { }
 
   getProfile(): Observable<GetPharmacyProfileResponse> {
-    return this.http.get<GetPharmacyProfileResponse>(`${this.baseUrl}/Pharmaciest`);
+    return this.http.get<GetPharmacyProfileResponse>(`${this.baseUrl}/PharmacistProfile`);
   }
 
   getPatientProfile(): Observable<PatientProfileResponse> {
@@ -31,6 +32,6 @@ export class ProfileService {
   }
 
   updateProfile(data: UpdatePharmacyProfileRequest): Observable<UpdatePharmacyProfileResponse> {
-    return this.http.put<UpdatePharmacyProfileResponse>(`${this.baseUrl}/Pharmaciest`, data);
+    return this.http.put<UpdatePharmacyProfileResponse>(`${this.omarUrl}/PharmacistProfile`, data);
   }
 }
