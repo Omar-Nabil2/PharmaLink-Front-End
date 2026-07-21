@@ -19,6 +19,9 @@ colors:
   accent-soft: "rgba(15, 157, 118, 0.15)"
   destructive: "#dc2626"
   destructive-soft: "rgba(220, 38, 38, 0.15)"
+  footer: rgb(33 39 48);
+  header: rgb(253 255 255);
+  green-hover: rgb(0 148 139);
 
 typography:
   display-xxl:
