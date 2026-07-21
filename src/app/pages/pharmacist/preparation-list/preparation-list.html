@@ -1,1 +1,56 @@
-<p>preparation-list works!</p>
+<div class="preparation-container" dir="rtl">
+
+    <!-- الـ Pop up (Toast Notification) -->
+    <div class="toast-notification" *ngIf="toastMessage">
+        <span class="toast-icon">✓</span>
+        {{ toastMessage }}
+    </div>
+
+    <div class="loading-spinner" *ngIf="isLoading">
+        جاري التحميل...
+    </div>
+
+    <div class="orders-grid" *ngIf="!isLoading">
+        <div class="order-card" *ngFor="let order of orders">
+
+            <div class="card-header">
+                <div class="patient-info">
+                    <span class="order-number">{{ order.orderNumber }}</span>
+                    <h3 class="patient-name">{{ order.patientName }}</h3>
+                </div>
+
+                <div class="status-container">
+                    <span class="status-badge" [ngClass]="getStatusBadgeClass(order.status)">
+                        <!-- هنا كان الخطأ، ضفنا order.legType -->
+                        {{ getStatusLabel(order.status, order.legType) }}
+                    </span>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <ul class="medicine-list">
+                    <li *ngFor="let med of order.medcineDTOs">
+                        <span class="bullet">▪</span>
+                        <span class="med-name">{{ med.name }}</span>
+                        <span class="med-qty">× {{ med.quantity }}</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="card-footer">
+                <!-- رجعنا الـ Select عشان الصيدلي يقدر يغير الحالة -->
+                <select class="status-select" [(ngModel)]="order.selectedStatus" [disabled]="!!order.isUpdating">
+                    <option *ngFor="let status of getAllowedStatuses(order)" [value]="status.value">
+                        {{ status.label }}
+                    </option>
+                </select>
+
+                <button class="btn-update" (click)="updateStatus(order)"
+                    [disabled]="!!order.isUpdating || order.status === order.selectedStatus">
+                    {{ order.isUpdating ? 'جاري...' : 'تحديث' }}
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>

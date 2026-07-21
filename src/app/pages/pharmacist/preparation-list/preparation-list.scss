@@ -1,0 +1,217 @@
+.preparation-container {
+    padding: 24px;
+    background-color: #f8fafc; // لون خلفية هادئ جداً
+    min-height: 100vh;
+}
+
+.orders-grid {
+    display: grid;
+    // الكروت هتكون عريضة شوية عشان تاخد مساحتها زي التصميم (2 في الصف على الشاشات الكبيرة)
+    grid-template-columns: repeat(auto-fill, minmax(480px, 1fr));
+    gap: 24px;
+}
+
+.order-card {
+    background: #ffffff;
+    border-radius: 16px; // حواف دائرية ناعمة زي التصميم
+    padding: 24px;
+    border: 1px solid #e2e8f0; // حدود رمادية خفيفة جداً
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 16px;
+
+        .patient-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+
+            .order-number {
+                color: #64748b;
+                font-size: 0.8rem;
+                font-family: monospace;
+                letter-spacing: 0.5px;
+            }
+
+            .patient-name {
+                font-size: 1.25rem;
+                font-weight: 700;
+                color: #0f172a;
+                margin: 0;
+            }
+        }
+
+        .status-badge {
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            white-space: nowrap;
+
+            // الألوان مطابقة للصورة
+            &.badge-primary {
+                background-color: #e0f2fe; // أزرق فاتح جداً
+                color: #0284c7; // أزرق داكن للنص
+            }
+
+            &.badge-success {
+                background-color: #d1fae5; // أخضر فاتح جداً
+                color: #059669; // أخضر داكن للنص
+            }
+        }
+    }
+
+    .card-body {
+        flex-grow: 1;
+        margin-bottom: 24px;
+
+        .medicine-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            padding-right: 14px;
+            border-right: 2px solid #0f766e; // الخط الأخضر الداكن اللي على اليمين
+
+            li {
+                display: flex;
+                align-items: center;
+                color: #475569;
+                font-size: 0.95rem;
+                margin-bottom: 10px;
+
+                &:last-child {
+                    margin-bottom: 0;
+                }
+
+                .bullet {
+                    color: #94a3b8;
+                    font-size: 10px;
+                    margin-left: 8px;
+                }
+
+                .med-qty {
+                    margin-right: 6px;
+                    color: #64748b;
+                    direction: ltr; // عشان علامة الـ X والكمية يظبطوا
+                }
+            }
+        }
+    }
+
+    .card-footer {
+        display: flex;
+        gap: 16px; // مسافة بين الـ Dropdown والزرار
+        align-items: stretch; // عشان الزرار والـ Select يبقوا نفس الارتفاع
+
+        .status-select {
+            flex-grow: 1; // تخلي الـ Select ياخد باقي المساحة
+            padding: 10px 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            background-color: #ffffff;
+            font-family: inherit;
+            color: #334155;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s;
+
+            &:focus {
+                border-color: #0f766e;
+            }
+        }
+
+        .btn-update {
+            background-color: #00796b; // لون فارما لينك (Teal) للزرار
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0 28px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: opacity 0.2s;
+
+            &:hover {
+                opacity: 0.9;
+            }
+        }
+    }
+
+    // ... الكود بتاعك القديم زي ما هو ...
+
+    // تعديل بسيط على الزرار عشان يبان إنه مقفول
+    .btn-update {
+        background-color: #00796b;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 0 28px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: all 0.2s;
+
+        &:hover:not(:disabled) {
+            opacity: 0.9;
+        }
+
+        // هنا شكل الزرار وهو Disabled
+        &:disabled {
+            background-color: #cbd5e1; // لون رمادي باهت
+            color: #64748b; // نص رمادي غامق
+            cursor: not-allowed; // شكل الماوس يتغير لعلامة المنع
+            opacity: 0.7;
+        }
+    }
+
+    // ستايل الـ Pop up (Toast)
+    .toast-notification {
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #059669; // أخضر يعبر عن النجاح
+        color: white;
+        padding: 12px 24px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        z-index: 1000;
+        font-weight: 600;
+        font-size: 0.95rem;
+        animation: slideUp 0.3s ease-out forwards;
+
+        .toast-icon {
+            background-color: white;
+            color: #059669;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+    }
+
+    // حركة ظهور الـ Toast من تحت
+    @keyframes slideUp {
+        from {
+            transform: translate(-50%, 100%);
+            opacity: 0;
+        }
+
+        to {
+            transform: translate(-50%, 0);
+            opacity: 1;
+        }
+    }
+}
