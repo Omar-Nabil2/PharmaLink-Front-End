@@ -56,16 +56,6 @@ export const routes: Routes = [
         path: 'contact',
         loadComponent: () => import('./pages/contact/contact.component').then((m) => m.ContactComponent),
       },
-      {
-      path: 'cart',
-        loadComponent: () =>
-        import('./pages/cart/cart').then((m) => m.CartComponent),
-      },
-      {
-        path: 'drugs',
-        loadComponent: () =>
-          import('./pages/drugs/drugs').then((m) => m.DrugsComponent),
-      },
       // المسارات المحمية (تحتاج تسجيل دخول)
       {
         path: 'profile',
@@ -109,6 +99,23 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/dashboard/patient-dashboard/patient-dashboard.component').then(
           (m) => m.PatientDashboardComponent
         ),
+      },
+      {
+        path: 'cart',
+        loadComponent: () =>
+          import('./pages/cart/cart').then((m) => m.CartComponent),
+      },
+      {
+        path: 'drugs',
+        loadComponent: () =>
+          import('./pages/drugs/drugs').then((m) => m.DrugsComponent),
+      },
+      {
+        path: 'prescriptions/:id',
+        loadComponent: () =>
+          import('./pages/prescription-review/prescription-review').then(
+            (m) => m.PrescriptionReviewComponent,
+          ),
       },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
     ],

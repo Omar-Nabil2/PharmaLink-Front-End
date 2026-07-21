@@ -1,0 +1,49 @@
+<div class="max-w-3xl mx-auto space-y-6">
+  <div *ngIf="isLoading" class="space-y-4">
+    <div class="card-surface animate-pulse h-64"></div>
+    <div class="card-surface animate-pulse h-40"></div>
+  </div>
+
+  <div *ngIf="!isLoading && loadFailed" class="card-surface text-center space-y-4 py-12">
+    <p class="type-body-md text-ink">We couldn't load this prescription right now.</p>
+    <button type="button" (click)="ngOnInit()" class="btn-primary mx-auto">Try again</button>
+  </div>
+
+  <ng-container *ngIf="!isLoading && !loadFailed && review">
+    <div class="space-y-1">
+      <div class="flex items-center justify-between gap-4">
+        <h1 class="type-display-md text-ink">Prescription review</h1>
+        <p-tag [value]="statusLabel(review.status)" [severity]="statusSeverity(review.status)" />
+      </div>
+      <p class="type-body-sm text-body">
+        Submitted {{ review.createdAt | date: 'medium' }}
+      </p>
+    </div>
+
+    <div class="card-surface">
+      <img
+        [src]="review.imageUrl"
+        alt="Uploaded prescription"
+        class="w-full max-h-[420px] object-contain rounded-lg bg-canvas-softer"
+      />
+    </div>
+
+    <div class="card-surface space-y-4">
+      <h2 class="type-display-sm text-ink">Extracted medicines</h2>
+      <div class="divide-y divide-canvas-soft">
+        <div *ngFor="let medicine of review.medicines" class="py-3 space-y-1">
+          <p class="type-body-md-strong text-ink">{{ medicine.medicineName }}</p>
+          <p class="type-caption text-mute">
+            {{ medicine.dose }} &middot; {{ medicine.frequency }} &middot; {{ medicine.duration }}
+          </p>
+          <p class="type-caption text-mute">{{ medicine.dosageForm }} &middot; Qty {{ medicine.quantity }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="review.reviewNotes" class="card-surface space-y-2">
+      <h2 class="type-display-sm text-ink">Pharmacist notes</h2>
+      <p class="type-body-sm text-body">{{ review.reviewNotes }}</p>
+    </div>
+  </ng-container>
+</div>
