@@ -46,13 +46,14 @@ export class AdminOrdersComponent implements OnInit {
   dateRange = signal<Date[] | null>(null);
 
   // Pagination and sorting
+  first = signal<number>(0);
   pageNumber = signal<number>(1);
   pageSize = signal<number>(10);
   sortBy = signal<string>('date');
   sortDir = signal<string>('desc');
 
   ngOnInit(): void {
-    this.loadOrders();
+    // Rely on p-table's initial onLazyLoad event to call loadOrders
   }
 
   loadOrders(): void {
@@ -61,8 +62,8 @@ export class AdminOrdersComponent implements OnInit {
     const filter: AdminOrdersFilter = {
       search: this.searchQuery().trim() || undefined,
       status: this.getStatusValueFromTab(this.selectedStatusTab()),
-      fromDate: this.dateRange() && this.dateRange()![0] ? this.dateRange()![0].toISOString() : undefined,
-      toDate: this.dateRange() && this.dateRange()![1] ? this.dateRange()![1].toISOString() : undefined,
+      fromDate: this.dateRange() && this.dateRange()![0] ? this.formatDate(this.dateRange()![0]) : undefined,
+      toDate: this.dateRange() && this.dateRange()![1] ? this.formatDate(this.dateRange()![1]) : undefined,
       pageNumber: this.pageNumber(),
       pageSize: this.pageSize(),
       sortBy: this.sortBy(),
@@ -86,13 +87,24 @@ export class AdminOrdersComponent implements OnInit {
     });
   }
 
+  formatDate(date: any): string | undefined {
+    if (!date) return undefined;
+    try {
+      return new Date(date).toISOString();
+    } catch {
+      return undefined;
+    }
+  }
+
   onSearch(): void {
+    this.first.set(0);
     this.pageNumber.set(1);
     this.loadOrders();
   }
 
   onStatusTabChange(tab: string): void {
     this.selectedStatusTab.set(tab);
+    this.first.set(0);
     this.pageNumber.set(1);
     this.loadOrders();
   }
@@ -100,15 +112,28 @@ export class AdminOrdersComponent implements OnInit {
   onDateRangeChange(): void {
     // Only reload if we have both start and end dates, or if it is cleared
     if (!this.dateRange() || (this.dateRange()![0] && this.dateRange()![1])) {
+      this.first.set(0);
       this.pageNumber.set(1);
       this.loadOrders();
     }
   }
 
+  resetFilters(): void {
+    this.searchQuery.set('');
+    this.selectedStatusTab.set('all');
+    this.dateRange.set(null);
+    this.first.set(0);
+    this.pageNumber.set(1);
+    this.loadOrders();
+  }
+
   onPageChange(event: any): void {
-    const page = (event.first / event.rows) + 1;
+    if (event.first != null) {
+      this.first.set(event.first);
+    }
+    const page = Math.floor((event.first ?? 0) / (event.rows ?? 10)) + 1;
     this.pageNumber.set(page);
-    this.pageSize.set(event.rows);
+    this.pageSize.set(event.rows ?? 10);
     this.loadOrders();
   }
 

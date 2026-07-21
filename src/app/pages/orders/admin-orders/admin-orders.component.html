@@ -84,6 +84,12 @@
       <button class="btn-secondary flex items-center gap-2 px-4 py-2 text-sm" (click)="exportOrders('csv')">
         <span>CSV</span>
       </button>
+      
+      <!-- Reset Filters Button -->
+      <button class="btn-secondary flex items-center gap-2 px-4 py-2 text-sm text-red-600 border-red-200 hover:bg-red-50" (click)="resetFilters()">
+        <i class="pi pi-filter-slash"></i>
+        <span>إعادة تعيين</span>
+      </button>
     </div>
   </div>
 
@@ -93,6 +99,7 @@
       [value]="orders()" 
       [lazy]="true" 
       [rows]="pageSize()" 
+      [first]="first()"
       [paginator]="true" 
       [totalRecords]="totalRecords()" 
       [loading]="isLoading()"
