@@ -46,6 +46,7 @@ export class PrescriptionReviewService {
   }
 
   approve(id: string, notes: string): Observable<any> {
+
     return this.http.put(`${this.baseUrl}/PrescriptionReviews/${id}/approve`, { notes });
   }
 
