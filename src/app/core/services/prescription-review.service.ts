@@ -31,25 +31,25 @@ export class PrescriptionReviewService {
   }
 
   getReview(id: string): Observable<PrescriptionReviewDto> {
-    return this.http.get<PrescriptionReviewDto>(`${this.baseUrl}/PrescriptionReviews/${id}`);
+    return this.http.get<PrescriptionReviewDto>(`${this.localUrl}/PrescriptionReviews/${id}`);
   }
 
   searchMedicines(term: string): Observable<any[]> {
-    return this.http.get<any[]>(`${this.omarUrl}/PrescriptionReviews/search`, {
+    return this.http.get<any[]>(`${this.localUrl}/PrescriptionReviews/search`, {
       params: { term: term }
     });
   }
 
   updateReview(id: string, data: any): Observable<any> {
-    return this.http.put(`${this.baseUrl}/PrescriptionReviews/${id}`, data);
+    return this.http.put(`${this.localUrl}/PrescriptionReviews/${id}`, data);
   }
 
   approve(id: string, notes: string): Observable<any> {
 
-    return this.http.put(`${this.baseUrl}/PrescriptionReviews/${id}/approve`, { notes });
+    return this.http.put(`${this.localUrl}/PrescriptionReviews/${id}/approve`, { notes });
   }
 
   reject(id: string, notes: string): Observable<any> {
-    return this.http.put(`${this.baseUrl}/PrescriptionReviews/${id}/reject`, { notes });
+    return this.http.put(`${this.localUrl}/PrescriptionReviews/${id}/reject`, { notes });
   }
 }
