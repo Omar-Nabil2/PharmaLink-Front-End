@@ -25,6 +25,10 @@ export const routes: Routes = [
             (m) => m.UpdateProfileComponent,
           ),
       },
+      {
+        path: 'prescriptions/review/:id',
+        loadComponent: () => import('./pages/prescriptions/review-prescription/review-prescription.component').then(m => m.ReviewPrescriptionComponent)
+      }
     ],
   },
   {
