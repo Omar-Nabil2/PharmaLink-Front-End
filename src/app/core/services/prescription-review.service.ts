@@ -15,13 +15,13 @@ export interface PrescriptionReviewUploadResponse {
 })
 export class PrescriptionReviewService {
   private http = inject(HttpClient);
-  private readonly baseUrl = environment.baseUrl;
+  private readonly localUrl = environment.localUrl;
 
   uploadPrescription(file: File): Observable<HttpEvent<PrescriptionReviewUploadResponse>> {
     const formData = new FormData();
     formData.append('Image', file);
 
-    const req = new HttpRequest('POST', `${this.baseUrl}/PrescriptionReviews`, formData, {
+    const req = new HttpRequest('POST', `${this.localUrl}/PrescriptionReviews`, formData, {
       reportProgress: true,
       responseType: 'json'
     });

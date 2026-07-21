@@ -18,7 +18,7 @@ import { environment } from '@environments/environment';
   providedIn: 'root',
 })
 export class AuthService {
-  private readonly baseUrl = environment.baseUrl;
+  private readonly localUrl = environment.localUrl;
 
   private currentUserSignal = signal<UserAuthData | null>(this.loadUserFromStorage());
 
@@ -92,6 +92,8 @@ export class AuthService {
     switch (role) {
       case 'admin':
         return '/admin/dashboard';
+      case 'pharmacyadmin':
+        return '/owner/dashboard';
       case 'pharmacist':
         return '/pharmacist/dashboard';
       case 'patient':
@@ -99,6 +101,7 @@ export class AuthService {
       default:
         return '/';
     }
+
   }
 
   /**
@@ -106,19 +109,19 @@ export class AuthService {
    * @param data RegisterRequest DTO containing patient registration details.
    */
   register(data: RegisterRequest): Observable<RegisterResponse> {
-    return this.http.post<RegisterResponse>(`${this.baseUrl}/Auth/register`, data);
+    return this.http.post<RegisterResponse>(`${this.localUrl}/Auth/register`, data);
   }
 
   forgotPassword(data: ForgotPasswordRequest): Observable<any> {
-    return this.http.post(`${this.baseUrl}/Auth/ForgotPassword`, data);
+    return this.http.post(`${this.localUrl}/Auth/ForgotPassword`, data);
   }
 
   resetPassword(data: ResetPasswordRequest): Observable<any> {
-    return this.http.post(`${this.baseUrl}/Auth/ResetPassword`, data);
+    return this.http.post(`${this.localUrl}/Auth/ResetPassword`, data);
   }
 
   changePassword(data: ChangePasswordRequest): Observable<any> {
-    return this.http.post(`${this.baseUrl}/Auth/change-password`, data);
+    return this.http.post(`${this.localUrl}/Auth/change-password`, data);
   }
 
   /**
@@ -126,7 +129,7 @@ export class AuthService {
    * @param userId The unique ID of the user.
    */
   requestPhoneVerification(userId: string): Observable<any> {
-    return this.http.post<any>(`${this.baseUrl}/PhoneVerification/request`, { userId });
+    return this.http.post<any>(`${this.localUrl}/PhoneVerification/request`, { userId });
   }
 
   /**
@@ -135,7 +138,7 @@ export class AuthService {
    * @param code The 6-digit OTP code.
    */
   verifyPhone(userId: string, code: string): Observable<any> {
-    return this.http.post<any>(`${this.baseUrl}/PhoneVerification/verify`, { userId, code });
+    return this.http.post<any>(`${this.localUrl}/PhoneVerification/verify`, { userId, code });
   }
 
   /**
@@ -143,14 +146,14 @@ export class AuthService {
    * @param data LoginRequest DTO containing credentials.
    */
   login(data: LoginRequest): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.baseUrl}/Auth/login`, data);
+    return this.http.post<LoginResponse>(`${this.localUrl}/Auth/login`, data);
   }
 
   refreshToken(data: { token: string, refreshToken: string }): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.baseUrl}/Auth/refresh`, data);
+    return this.http.post<LoginResponse>(`${this.localUrl}/Auth/refresh`, data);
   }
 
   revokeToken(data: { token: string, refreshToken: string }): Observable<any> {
-    return this.http.post(`${this.baseUrl}/Auth/revoke-refresh-token`, data);
+    return this.http.post(`${this.localUrl}/Auth/revoke-refresh-token`, data);
   }
 }

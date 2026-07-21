@@ -1,0 +1,43 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+:host ::ng-deep .p-datatable {
+  font-family: var(--font-cairo);
+
+  .p-datatable-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .p-datatable-thead > tr > th,
+  .p-datatable-tbody > tr > td {
+    background: transparent;
+    border: none;
+    color: inherit;
+  }
+
+  .p-datatable-tbody > tr {
+    background: transparent;
+    transition: background-color 0.15s ease;
+  }
+
+  .p-datatable-tbody > tr:hover {
+    background: color-mix(in srgb, var(--color-muted) 55%, transparent);
+  }
+
+  .p-datatable-tbody > tr:focus {
+    outline: none;
+  }
+}
+
+:host ::ng-deep .p-chart {
+  width: 100%;
+  height: 100%;
+
+  canvas {
+    width: 100% !important;
+    height: 100% !important;
+  }
+}
