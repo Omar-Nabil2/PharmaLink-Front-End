@@ -114,6 +114,7 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./pages/errors/not-found/not-found.component').then((m) => m.NotFoundComponent),
       },
+
     ],
   },
   {
@@ -138,6 +139,21 @@ export const routes: Routes = [
           import('./pages/prescriptions/upload-prescription/upload-prescription.component').then(
             (m) => m.UploadPrescriptionComponent,
           ),
+      },
+      {
+        path: 'addresses',
+        loadComponent: () =>
+          import('./pages/profile/addresses/address-list/address-list.component').then((m) => m.AddressListComponent),
+      },
+      {
+        path: 'addresses/new',
+        loadComponent: () =>
+          import('./pages/profile/addresses/address-form/address-form.component').then((m) => m.AddressFormComponent),
+      },
+      {
+        path: 'addresses/edit/:id',
+        loadComponent: () =>
+          import('./pages/profile/addresses/address-form/address-form.component').then((m) => m.AddressFormComponent),
       },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
     ],

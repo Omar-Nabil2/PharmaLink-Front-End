@@ -1,0 +1,131 @@
+<div class="container-app py-8 md:py-12" dir="rtl">
+  <div class="mb-8 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+    <div>
+      <a routerLink="/patient/addresses" class="inline-flex items-center gap-1.5 type-body-sm text-body hover:text-ink mb-3 transition-colors">
+        <i class="pi pi-arrow-right"></i>
+        <span>العودة لقائمة العناوين</span>
+      </a>
+      <h1 class="type-display-xl text-ink">{{ isEditMode ? 'تعديل العنوان' : 'إضافة عنوان جديد' }}</h1>
+      <p class="type-body-md text-body mt-2">
+        {{ isEditMode ? 'قم بتحديث تفاصيل عنوانك.' : 'أدخل تفاصيل العنوان الجديد لتوصيل طلباتك.' }}
+      </p>
+    </div>
+  </div>
+
+  <div *ngIf="isLoading" class="flex justify-center items-center py-20">
+    <i class="pi pi-spinner animate-spin text-4xl text-ink"></i>
+  </div>
+
+  <div *ngIf="!isLoading" class="max-w-2xl">
+    <div class="card-surface border border-surface-pressed overflow-hidden !p-0">
+      <div class="bg-canvas-soft px-6 py-4 border-b border-surface-pressed">
+        <h2 class="type-display-sm text-ink flex items-center gap-2">
+          <i class="pi pi-map-marker text-blue-600"></i>
+          <span>تفاصيل العنوان</span>
+        </h2>
+      </div>
+
+      <form [formGroup]="addressForm" (ngSubmit)="onSubmit()" class="p-6">
+        
+        <div class="mb-5">
+          <label for="addressLine" class="block type-body-sm-strong text-ink mb-2">العنوان بالتفصيل (الشارع، رقم المبنى، الشقة) <span class="text-red-500">*</span></label>
+          <input 
+            type="text" 
+            id="addressLine" 
+            formControlName="addressLine"
+            class="input-field" 
+            placeholder="مثال: شارع التحرير، مبنى 5، شقة 12"
+            [ngClass]="{'border-red-500': isFieldInvalid('addressLine')}"
+          >
+          <div *ngIf="isFieldInvalid('addressLine')" class="text-red-500 type-body-sm mt-1">
+            <span *ngIf="f['addressLine'].errors?.['required']">هذا الحقل مطلوب</span>
+            <span *ngIf="f['addressLine'].errors?.['minlength']">يجب أن يتكون العنوان من 5 أحرف على الأقل</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+          <div>
+            <label for="governorate" class="block type-body-sm-strong text-ink mb-2">المحافظة <span class="text-red-500">*</span></label>
+            <select 
+              id="governorate" 
+              formControlName="governorate"
+              class="input-field appearance-none bg-no-repeat bg-[right_1rem_center] pe-10"
+              style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23131313%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); background-size: .65em auto;"
+              [ngClass]="{'border-red-500': isFieldInvalid('governorate')}"
+            >
+              <option value="" disabled selected>اختر المحافظة</option>
+              <option *ngFor="let gov of governorates" [value]="gov">{{ gov }}</option>
+            </select>
+            <div *ngIf="isFieldInvalid('governorate')" class="text-red-500 type-body-sm mt-1">
+              هذا الحقل مطلوب
+            </div>
+          </div>
+
+          <div>
+            <label for="city" class="block type-body-sm-strong text-ink mb-2">المدينة / المنطقة <span class="text-red-500">*</span></label>
+            <input 
+              type="text" 
+              id="city" 
+              formControlName="city"
+              class="input-field" 
+              placeholder="مثال: الدقي"
+              [ngClass]="{'border-red-500': isFieldInvalid('city')}"
+            >
+            <div *ngIf="isFieldInvalid('city')" class="text-red-500 type-body-sm mt-1">
+              هذا الحقل مطلوب
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-6 p-4 rounded-lg bg-blue-50 border border-blue-100 flex flex-col gap-3">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="type-body-sm-strong text-blue-900">تحديد الموقع على الخريطة</h3>
+              <p class="type-body-sm text-blue-700">السماح بتحديد موقعك لضمان دقة التوصيل.</p>
+            </div>
+            <button 
+              type="button" 
+              (click)="getCurrentLocation()" 
+              class="btn-secondary !bg-white !text-blue-600 border-blue-200 hover:border-blue-300 inline-flex items-center gap-2"
+            >
+              <i class="pi pi-map-marker"></i>
+              <span>الحصول على موقعي</span>
+            </button>
+          </div>
+          <div *ngIf="addressForm.get('latitude')?.value && addressForm.get('latitude')?.value !== 0" class="flex items-center gap-2 text-emerald-600 type-body-sm-strong">
+            <i class="pi pi-check-circle"></i>
+            <span>تم تحديد الموقع بنجاح واستخدامه في العنوان.</span>
+          </div>
+        </div>
+
+        <div class="mb-8">
+          <label class="flex items-center gap-3 cursor-pointer group">
+            <div class="relative flex items-center">
+              <input type="checkbox" formControlName="isDefault" class="peer sr-only">
+              <div class="w-5 h-5 border border-surface-pressed rounded bg-canvas peer-checked:bg-blue-600 peer-checked:border-blue-600 transition-colors flex items-center justify-center">
+                <i class="pi pi-check text-white text-xs opacity-0 peer-checked:opacity-100 transition-opacity"></i>
+              </div>
+            </div>
+            <span class="type-body-sm-strong text-ink select-none">تعيين كعنوان افتراضي للتوصيل</span>
+          </label>
+        </div>
+
+        <div class="flex items-center gap-3 pt-6 border-t border-surface-pressed">
+          <button 
+            type="submit" 
+            class="btn-primary inline-flex items-center gap-2"
+            [disabled]="isSubmitting"
+          >
+            <i class="pi pi-spinner animate-spin" *ngIf="isSubmitting"></i>
+            <i class="pi pi-save" *ngIf="!isSubmitting"></i>
+            <span>{{ isSubmitting ? 'جاري الحفظ...' : 'حفظ العنوان' }}</span>
+          </button>
+          <a routerLink="/patient/addresses" class="btn-subtle">
+            إلغاء
+          </a>
+        </div>
+        
+      </form>
+    </div>
+  </div>
+</div>
