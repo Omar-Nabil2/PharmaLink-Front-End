@@ -1,11 +1,11 @@
-
 export const AppRoles = {
   Patient: 'Patient',
   Pharmacist: 'Pharmacist',
-  Admin: 'Admin'
+  Admin: 'Admin',
+  PharmacyAdmin: 'PharmacyAdmin',
 } as const;
 
-export type AppRole = typeof AppRoles[keyof typeof AppRoles];
+export type AppRole = (typeof AppRoles)[keyof typeof AppRoles];
 
 export interface UserAuthData {
   accessToken: string;

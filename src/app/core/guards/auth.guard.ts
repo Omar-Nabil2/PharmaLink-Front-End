@@ -2,17 +2,17 @@ import { inject } from '@angular/core';
 import { CanActivateFn, Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { AuthService } from '../services/auth.service';
+import { AppRole } from '../enums/app-roles.constant';
 
 export const authGuard: CanActivateFn = (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
   const router = inject(Router);
   const messageService = inject(MessageService);
   const authService = inject(AuthService);
 
-  // FIX: Change currentUserRole() to userRole() to match the new Signal
   const currentRole = authService.userRole();
-  const expectedRole = route.data['role'] as string | undefined;
+  const expectedRole = route.data['role'] as AppRole | undefined;
 
-  // If unauthenticated
+  // 1. If unauthenticated
   if (!currentRole) {
     messageService.add({
       severity: 'warn',
@@ -26,29 +26,23 @@ export const authGuard: CanActivateFn = (route: ActivatedRouteSnapshot, state: R
     });
   }
 
-  // If no specific role is expected, just being authenticated is enough
+  // 2. If no specific role is expected, just being authenticated is enough
   if (!expectedRole) {
     return true;
   }
 
-  // Normalize expected role
-  let normalizedExpectedRole = expectedRole.toLowerCase().replace(/\s+/g, '');
-  if (normalizedExpectedRole === 'systemadmin' || normalizedExpectedRole === 'administrator') {
-    normalizedExpectedRole = 'admin';
-  }
-
-  // If the user's role matches the expected role
-  if (authService.getNormalizedRole() === normalizedExpectedRole) {
+  // 3. Compare user's normalized role against expected role using AppRoles
+  if (authService.hasRole(expectedRole)) {
     return true;
   }
 
-  // Authenticated but lacks the correct role: redirect to their specific dashboard
+  // 4. Authenticated but lacks the required role: redirect to user's dashboard
   messageService.add({
     severity: 'error',
     summary: 'Access Denied',
     detail: 'You do not have permission to access this page.',
   });
 
-  const redirectPath = `/${authService.getNormalizedRole()}/dashboard`;
+  const redirectPath = authService.getDashboardPath();
   return router.createUrlTree([redirectPath]);
 };

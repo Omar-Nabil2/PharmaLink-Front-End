@@ -11,7 +11,7 @@ import {
   ForgotPasswordRequest,
   ChangePasswordRequest,
 } from '../interfaces/auth.interface';
-import { AppRole, UserAuthData } from '@core/enums/app-roles.constant';
+import { AppRole, AppRoles, UserAuthData } from '@core/enums/app-roles.constant';
 import { environment } from '@environments/environment';
 
 @Injectable({
@@ -22,9 +22,7 @@ export class AuthService {
 
   private currentUserSignal = signal<UserAuthData | null>(this.loadUserFromStorage());
 
-  constructor(private readonly http: HttpClient) {
-
-  }
+  constructor(private readonly http: HttpClient) {}
 
   currentUser = computed(() => this.currentUserSignal());
   isLoggedIn = computed(() => this.currentUserSignal() !== null);
@@ -55,16 +53,27 @@ export class AuthService {
     this.currentUserSignal.set(data);
   }
 
-  getNormalizedRole(): string | null {
-    const role = this.userRole();
+  /**
+   * Normalizes any input role string into a canonical AppRole enum value (or null).
+   */
+  normalizeRole(role: string | null | undefined): AppRole | null {
     if (!role) return null;
     const r = role.toLowerCase().replace(/\s+/g, '');
-    if (r === 'systemadmin' || r === 'administrator') return 'admin';
-    return r;
+    if (r === 'admin' || r === 'systemadmin' || r === 'administrator') return AppRoles.Admin;
+    if (r === 'pharmacist') return AppRoles.Pharmacist;
+    if (r === 'pharmacyadmin' || r === 'owner' || r === 'pharmacyowner') return AppRoles.PharmacyAdmin;
+    if (r === 'patient') return AppRoles.Patient;
+    return null;
+  }
+
+  getNormalizedRole(): AppRole | null {
+    return this.normalizeRole(this.userRole());
   }
 
   hasRole(expectedRole: AppRole): boolean {
-    return this.userRole() === expectedRole;
+    const current = this.getNormalizedRole();
+    const expected = this.normalizeRole(expectedRole);
+    return current !== null && current === expected;
   }
 
   logout() {
@@ -90,18 +99,17 @@ export class AuthService {
     const role = this.getNormalizedRole();
 
     switch (role) {
-      case 'admin':
+      case AppRoles.Admin:
         return '/admin/dashboard';
-      case 'pharmacyadmin':
+      case AppRoles.PharmacyAdmin:
         return '/owner/dashboard';
-      case 'pharmacist':
+      case AppRoles.Pharmacist:
         return '/pharmacist/dashboard';
-      case 'patient':
+      case AppRoles.Patient:
         return '/patient/dashboard';
       default:
         return '/';
     }
-
   }
 
   /**
