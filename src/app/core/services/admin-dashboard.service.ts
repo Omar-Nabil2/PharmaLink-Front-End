@@ -7,7 +7,7 @@ import { AdminDashboardDTO, ProblemDetails } from '@pages/dashboard/admin-dashbo
 @Injectable({ providedIn: 'root' })
 export class AdminDashboardService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = environment.baseUrl;
+  private readonly baseUrl = environment.localUrl;
 
   /**
    * Fetches the admin dashboard data.
