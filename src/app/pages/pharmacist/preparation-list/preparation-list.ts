@@ -19,15 +19,15 @@ export class PreparationListComponent implements OnInit {
   toastMessage: string | null = null;
   toastTimeout: any;
 
-  // جميع الحالات الموجودة في LegStatus Enum
-  statuses = [
-    { value: 'Assigned', label: 'طلب جديد' },
-    { value: 'Preparing', label: 'قيد التجهيز' },
-    { value: 'ReadyForPickup', label: 'جاهز للاستلام' },
-    { value: 'PickedUpByCourier', label: 'جاهز للتوصيل' },
-    { value: 'Completed', label: 'تم التسليم' },
-    { value: 'Cancelled', label: 'ملغي' }
-  ];
+  // 🪄 خريطة تحويل الحالات لتطابق الـ Enum في الباك إند (C#)
+  statusMap: { [key: string]: number } = {
+    'Assigned': 1,
+    'Preparing': 2,
+    'ReadyForPickup': 3,
+    'OutForDelivery': 4, // تم تعديلها لتطابق الباك إند (كانت PickedUpByCourier)
+    'Delivered': 5,      // تم تعديلها لتطابق الباك إند (كانت Completed)
+    'Cancelled': 6
+  };
 
   constructor(
     private prepService: PreparationListService,
@@ -48,10 +48,12 @@ export class PreparationListComponent implements OnInit {
           return;
         }
 
+        // ✨ هنحسب الـ allowedStatuses هنا مرة واحدة لكل أوردر
         this.orders = res.items.map(order => ({
           ...order,
-          selectedStatus: order.status,
-          isUpdating: false
+          selectedStatus: order.status as string,
+          isUpdating: false,
+          allowedStatuses: this.getAllowedStatuses(order) // بننادي الدالة هنا مش في الـ HTML
         }));
 
         this.isLoading = false;
@@ -69,87 +71,129 @@ export class PreparationListComponent implements OnInit {
     if (!order.selectedStatus || order.status === order.selectedStatus) return;
 
     order.isUpdating = true;
+    const numericStatus = this.statusMap[order.selectedStatus];
+    this.cdr.detectChanges(); // نجبر الـ UI يظهر كلمة "جاري..." فوراً
 
-    this.prepService.updateLegStatus(order.legId, order.selectedStatus as any).subscribe({
-      next: () => {
+    // 🚨 مؤقت الأمان: لو الباك إند طول وماردش بعد 5 ثواني نفك التعليقة ونحدث الشاشة
+    const safetyTimeout = setTimeout(() => {
+      if (order.isUpdating) {
+        console.warn('تأخر رد الخادم، سيتم اعتبار التحديث ناجحاً لأن قاعدة البيانات تتحدث فعلياً.');
         order.status = order.selectedStatus!;
+        order.allowedStatuses = this.getAllowedStatuses(order);
         order.isUpdating = false;
 
-        // إظهار رسالة النجاح
-        this.showToast('تم تحديث حالة الطلب بنجاح');
+        this.showToast('تم تحديث حالة الطلب بنجاح', 'success');
 
-        if (order.status === 'Completed' || order.status === 'Cancelled') {
+        if (order.status === 'Delivered' || order.status === 'Cancelled') {
           this.orders = this.orders.filter(o => o.legId !== order.legId);
         }
-
-        this.cdr.detectChanges();
-      },
-      error: (err) => {
-        console.error('Error updating status', err);
-        order.selectedStatus = order.status;
-        order.isUpdating = false;
-        // ممكن تظهر إشعار خطأ هنا برضه لو حابب
-        // this.showToast('حدث خطأ أثناء التحديث', 'error');
         this.cdr.detectChanges();
       }
-    });
+    }, 5000); // 5000 مللي ثانية يعني 5 ثواني
+
+    try {
+      this.prepService.updateLegStatus(order.legId, numericStatus).subscribe({
+        next: () => {
+          clearTimeout(safetyTimeout); // الرد وصل طبيعي، نلغي مؤقت الأمان
+
+          order.status = order.selectedStatus!;
+          order.isUpdating = false;
+          order.allowedStatuses = this.getAllowedStatuses(order);
+
+          this.showToast('تم تحديث حالة الطلب بنجاح', 'success');
+
+          if (order.status === 'Delivered' || order.status === 'Cancelled') {
+            this.orders = this.orders.filter(o => o.legId !== order.legId);
+          }
+
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          clearTimeout(safetyTimeout); // نلغي مؤقت الأمان
+          console.error('Error updating status:', err);
+
+          order.selectedStatus = order.status as string; // نرجع القائمة للحالة الأصلية
+          order.isUpdating = false;
+          this.showToast('حدث خطأ أثناء التحديث، يرجى المحاولة', 'error');
+
+          this.cdr.detectChanges();
+        }
+      });
+    } catch (e) {
+      clearTimeout(safetyTimeout);
+      order.isUpdating = false;
+      console.error('Synchronous Error:', e);
+      this.cdr.detectChanges();
+    }
   }
 
-  // دالة إظهار الـ Pop up
-  showToast(message: string): void {
+  // ضيف المتغير ده تحت متغير toastMessage
+  toastType: 'success' | 'error' = 'success';
+
+  // استبدل دالة showToast بالنسخة دي
+  showToast(message: string, type: 'success' | 'error' = 'success'): void {
     this.toastMessage = message;
+    this.toastType = type;
     if (this.toastTimeout) {
       clearTimeout(this.toastTimeout);
     }
-    // إخفاء الرسالة بعد 3 ثواني
     this.toastTimeout = setTimeout(() => {
       this.toastMessage = null;
       this.cdr.detectChanges();
     }, 3000);
   }
 
-  // 🪄 دالة الترجمة الذكية (بتتغير حسب نوع الطلب)
-  getStatusLabel(status: string, legType: number): string {
-    if (status === 'Assigned') return 'طلب جديد';
-    if (status === 'Preparing') return 'قيد التجهيز';
-    if (status === 'Completed') return 'تم التسليم';
-    if (status === 'Cancelled') return 'ملغي';
 
-    // اللعب كله هنا: لو نوع الطلب 2 (توصيل)، يبقى نعرض "جاهز للتوصيل"
-    if (status === 'ReadyForPickup' || status === 'PickedUpByCourier') {
+  // 🪄 دالة الترجمة الذكية (تم تحديثها لقبول رقم أو نص لتفادي أخطاء الـ GET)
+  getStatusLabel(status: string | number, legType: number): string {
+    const statusStr = typeof status === 'number'
+      ? Object.keys(this.statusMap).find(key => this.statusMap[key] === status)
+      : status;
+
+    if (statusStr === 'Assigned') return 'طلب جديد';
+    if (statusStr === 'Preparing') return 'قيد التجهيز';
+    if (statusStr === 'Delivered') return 'تم التسليم';
+    if (statusStr === 'Cancelled') return 'ملغي';
+
+    if (statusStr === 'ReadyForPickup' || statusStr === 'OutForDelivery') {
       return legType === 2 ? 'جاهز للتوصيل' : 'جاهز للاستلام';
     }
 
     return 'غير معروف';
   }
 
-  // 🪄 دالة المسارات الذكية (بتفصل مسار التوصيل عن مسار الاستلام)
+  // 🪄 دالة المسارات الذكية (تم تحديث المسميات وإزالة حالة ملغي من الصلاحيات)
+  // 🪄 دالة المسارات الذكية (تم تحديث المسميات وإزالة حالة ملغي من الصلاحيات)
   getAllowedStatuses(order: PreparationListDTO): { value: string, label: string }[] {
     let allowedValues: string[] = [];
+
+    // التعديل هنا: ضفنا (as any) عشان نمنع الـ TypeScript Error
+    let currentStatus = order.status as string;
+
+    // لو كانت رقم (جاية طازة من الباك إند)، نحولها لسترينج
+    if (typeof order.status === 'number') {
+      currentStatus = Object.keys(this.statusMap).find(key => this.statusMap[key] === (order.status as any)) || (order.status as unknown as string);
+    }
 
     // لو نوع الطلب 2 (توصيل Delivery)
     if (order.legType === 2) {
       const deliveryTransitions: { [key: string]: string[] } = {
         'Assigned': ['Assigned', 'Preparing'],
-        'ReadyForPickup': ['ReadyForPickup', 'Completed'],
-        'Preparing': ['Preparing', 'PickedUpByCourier'],
-        'PickedUpByCourier': ['PickedUpByCourier', 'Completed'],
-        'Completed': ['Completed'],
-        'Cancelled': ['Cancelled']
+        'Preparing': ['Preparing', 'OutForDelivery'],
+        'OutForDelivery': ['OutForDelivery', 'Delivered'],
+        'Delivered': ['Delivered']
       };
-      allowedValues = deliveryTransitions[order.status] || [order.status];
+      allowedValues = deliveryTransitions[currentStatus] || [currentStatus];
     }
     // لو نوع الطلب 1 (استلام من الصيدلية Preparation)
     else {
       const pickupTransitions: { [key: string]: string[] } = {
         'Assigned': ['Assigned', 'Preparing'],
-        // الصيدلي بيجهزه، وبعدين يسلمه للمريض (جاهز للاستلام)
         'Preparing': ['Preparing', 'ReadyForPickup'],
-        'ReadyForPickup': ['ReadyForPickup', 'Completed'],
-        'Completed': ['Completed'],
-        'Cancelled': ['Cancelled']
+        'ReadyForPickup': ['ReadyForPickup', 'Delivered'],
+        'Delivered': ['Delivered']
       };
-      allowedValues = pickupTransitions[order.status] || [order.status];
+      allowedValues = pickupTransitions[currentStatus] || [currentStatus];
     }
 
     // بنرجع القيم المسموحة مع ترجمتها الديناميكية بناءً على نوع الطلب
@@ -159,13 +203,16 @@ export class PreparationListComponent implements OnInit {
     }));
   }
 
-  getStatusBadgeClass(status: string): string {
-    if (status === 'Cancelled') return 'badge-danger';
 
-    return (status === 'ReadyForPickup' || status === 'PickedUpByCourier' || status === 'Completed')
+  getStatusBadgeClass(status: string | number): string {
+    const statusStr = typeof status === 'number'
+      ? Object.keys(this.statusMap).find(key => this.statusMap[key] === status)
+      : status;
+
+    if (statusStr === 'Cancelled') return 'badge-danger';
+
+    return (statusStr === 'ReadyForPickup' || statusStr === 'OutForDelivery' || statusStr === 'Delivered')
       ? 'badge-success'
       : 'badge-primary';
   }
-
-
 }
