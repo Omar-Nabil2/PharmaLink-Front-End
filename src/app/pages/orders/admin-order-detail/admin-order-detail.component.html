@@ -1,0 +1,167 @@
+<div class="space-y-6" dir="rtl" *ngIf="order() as ord">
+  <p-toast />
+
+  <!-- Breadcrumbs & Title -->
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div>
+      <div class="flex items-center gap-2 text-mute type-body-sm-strong mb-1">
+        <a routerLink="/admin/orders" class="hover:underline">جميع الطلبات</a>
+        <i class="pi pi-chevron-left text-xs"></i>
+        <span>تفاصيل الطلب {{ ord.orderNumber }}</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <h1 class="type-display-lg text-ink font-bold">الطلب {{ ord.orderNumber }}</h1>
+        <p-tag 
+          [value]="ord.orderStatus | statusTranslate:'OrderStatus'" 
+          [severity]="getOrderStatusSeverity(ord.orderStatus)"
+          styleClass="text-sm font-semibold px-3 py-1 rounded-full"
+        />
+      </div>
+    </div>
+
+    <!-- Re-split action button -->
+    <div class="flex items-center gap-2">
+      <button 
+        class="btn-secondary"
+        routerLink="/admin/orders">
+        العودة للقائمة
+      </button>
+      <button 
+        class="btn-primary flex items-center gap-2 bg-[#0f9d76]"
+        [disabled]="isSplitting() || ord.orderStatus === 4 || ord.orderStatus === 5"
+        (click)="onResplit()">
+        <i class="pi pi-refresh" [class.pi-spin]="isSplitting()"></i>
+        <span>إعادة تقسيم الطلب</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Left Column: Items and Fulfillment Legs -->
+    <div class="lg:col-span-2 space-y-6">
+      
+      <!-- Medicines List Card -->
+      <div class="bg-canvas border border-surface-pressed rounded-xl p-6">
+        <h2 class="type-display-sm text-ink font-bold mb-4">الأدوية المطلوبة</h2>
+        <div class="overflow-x-auto">
+          <table class="w-full text-right border-collapse">
+            <thead>
+              <tr class="bg-canvas-soft border-b border-surface-pressed">
+                <th class="py-3 px-4 text-ink type-body-sm-strong">الدواء</th>
+                <th class="py-3 px-4 text-ink type-body-sm-strong">التركيز / الشكل</th>
+                <th class="py-3 px-4 text-ink type-body-sm-strong text-center">الكمية</th>
+                <th class="py-3 px-4 text-ink type-body-sm-strong text-left">السعر</th>
+                <th class="py-3 px-4 text-ink type-body-sm-strong text-left">الإجمالي</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of ord.items" class="border-b border-surface-pressed hover:bg-canvas-softer transition-colors">
+                <td class="py-3 px-4">
+                  <div class="font-bold text-ink">{{ item.drugName }}</div>
+                  <div class="text-xs text-mute">{{ item.genericName }}</div>
+                </td>
+                <td class="py-3 px-4 text-mute type-body-sm">{{ item.strength }} - {{ item.dosageForm }}</td>
+                <td class="py-3 px-4 text-center text-ink font-bold">{{ item.quantityNeeded }}</td>
+                <td class="py-3 px-4 text-left text-ink">ج {{ item.unitPrice | number:'1.2-2' }}</td>
+                <td class="py-3 px-4 text-left text-ink font-bold">ج {{ item.lineTotal | number:'1.2-2' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Fulfillment Legs Card -->
+      <div class="bg-canvas border border-surface-pressed rounded-xl p-6">
+        <h2 class="type-display-sm text-ink font-bold mb-4">توزيع التوصيل والتحضير (Fulfillment Legs)</h2>
+        <div *ngIf="ord.fulfillmentLegs.length === 0" class="text-center py-8 text-mute">
+          لم يتم توزيع أجزاء الطلب على الصيدليات بعد. قد يكون بسبب فشل توزيع الأدوية.
+        </div>
+        <div class="space-y-4">
+          <div *ngFor="let leg of ord.fulfillmentLegs" class="border border-surface-pressed rounded-xl p-4 bg-canvas-soft">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-surface-pressed pb-2 mb-2">
+              <div class="flex items-center gap-2">
+                <span class="font-bold text-ink text-sm sm:text-base">{{ leg.pharmacyName }} ({{ leg.branchName }})</span>
+                <p-tag 
+                  [value]="leg.legStatus | statusTranslate:'LegStatus'" 
+                  [severity]="getLegStatusSeverity(leg.legStatus)"
+                  styleClass="text-xs font-semibold px-2 py-0.5 rounded-full"
+                />
+              </div>
+              <div class="text-xs text-mute">
+                المدينة: {{ leg.city }} | نوع الجزء: {{ leg.legType === 1 ? 'تحضير' : 'توصيل' }}
+              </div>
+            </div>
+            
+            <div class="text-xs text-mute mb-2">
+              التقدير الزمني: {{ leg.readyByEstimate | date:'yyyy-MM-dd HH:mm' }}
+            </div>
+
+            <div class="text-xs">
+              <span class="font-bold text-ink">الأدوية المشمولة:</span>
+              <ul class="list-disc list-inside mt-1 text-mute space-y-1">
+                <li *ngFor="let med of leg.medicineNames">{{ med }}</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right Column: Order & Customer Details -->
+    <div class="space-y-6">
+      
+      <!-- Summary Card -->
+      <div class="bg-canvas border border-surface-pressed rounded-xl p-6">
+        <h2 class="type-display-sm text-ink font-bold mb-4">ملخص الطلب</h2>
+        
+        <div class="space-y-3">
+          <div class="flex justify-between py-2 border-b border-surface-pressed text-sm">
+            <span class="text-mute">تاريخ الطلب</span>
+            <span class="text-ink font-semibold">{{ ord.createdAt | date:'yyyy-MM-dd HH:mm' }}</span>
+          </div>
+          <div class="flex justify-between py-2 border-b border-surface-pressed text-sm">
+            <span class="text-mute">طريقة الاستلام</span>
+            <span class="text-ink font-semibold">{{ ord.fulfillmentMode | statusTranslate:'FulfillmentMode' }}</span>
+          </div>
+          <div class="flex justify-between py-2 border-b border-surface-pressed text-sm">
+            <span class="text-mute">اسم المريض</span>
+            <span class="text-ink font-semibold">{{ ord.patientName }}</span>
+          </div>
+          <div class="flex justify-between py-2 border-b border-surface-pressed text-sm">
+            <span class="text-mute">البريد الإلكتروني</span>
+            <span class="text-ink font-semibold">{{ ord.patientEmail }}</span>
+          </div>
+          <div class="flex justify-between py-2 border-b border-surface-pressed text-sm">
+            <span class="text-mute">تاريخ التسليم</span>
+            <span class="text-ink font-semibold">{{ ord.deliveredAt ? (ord.deliveredAt | date:'yyyy-MM-dd') : 'قيد الفحص والتوصيل' }}</span>
+          </div>
+          <div class="flex flex-col py-2 border-b border-surface-pressed text-sm gap-1">
+            <span class="text-mute">عنوان التوصيل</span>
+            <span class="text-ink font-semibold leading-relaxed">{{ ord.deliveryAddress }}</span>
+          </div>
+          <div class="flex justify-between pt-4 text-base font-bold">
+            <span class="text-ink">المبلغ الإجمالي</span>
+            <span class="text-[#0f9d76]">ج {{ ord.totalAmount | number:'1.2-2' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Instruction Note Card -->
+      <div class="bg-canvas border border-surface-pressed rounded-xl p-6 border-r-4 border-r-[#0f9d76]">
+        <h3 class="font-bold text-ink mb-2">تعليمات المسؤول</h3>
+        <p class="text-xs text-mute leading-relaxed">
+          يمكنك إعادة تقسيم الطلب في حالة تعذر توفيره من الفروع الحالية، أو عند تحديث المخزون في صيدلية أخرى قريبة.
+          عملية التقسيم تقوم بإعادة تطبيق الخوارزمية الجشعة لتوزيع الأدوية وفق أقصر مسافة جغرافية.
+        </p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Loading state -->
+<div *ngIf="isLoading()" class="flex flex-col items-center justify-center min-h-[400px] gap-3">
+  <i class="pi pi-spin pi-spinner text-3xl text-[#0f9d76]"></i>
+  <span class="text-mute text-sm">جاري تحميل تفاصيل الطلب...</span>
+</div>

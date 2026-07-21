@@ -1,0 +1,55 @@
+$accent: #0f9d76;
+$accent-hover: #0d8b67;
+$border: #e2e8e6;
+$surface: #ffffff;
+$text-ink: #1a2e28;
+$text-mute: #6b7a76;
+$radius-md: 0.75rem;
+
+.tab-btn {
+  padding: 0.5rem 1.25rem;
+  border-radius: 9999px;
+  border: 1px solid $border;
+  background: $surface;
+  color: $text-ink;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  white-space: nowrap;
+
+  &:hover {
+    background: #f6f9f8;
+  }
+
+  &.active {
+    background: $accent;
+    color: #ffffff;
+    border-color: $accent;
+  }
+}
+
+// Custom style override for prime ng tables and buttons to keep them elegant
+::ng-deep {
+  .p-datepicker {
+    .p-inputtext {
+      font-size: 0.875rem;
+      border: 1px solid #e2e8e6;
+      border-radius: 0.75rem;
+      padding: 0.5rem 2.5rem 0.5rem 1rem !important;
+      &:focus {
+        border-color: #0f9d76;
+        box-shadow: 0 0 0 2px rgba(15, 157, 118, 0.2);
+      }
+    }
+  }
+
+  .p-datatable {
+    .p-datatable-thead > tr > th {
+      font-family: inherit;
+    }
+    .p-datatable-tbody > tr > td {
+      font-family: inherit;
+    }
+  }
+}
