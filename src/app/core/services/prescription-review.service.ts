@@ -1,8 +1,8 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpEvent, HttpRequest } from '@angular/common/http';
+import { HttpClient, HttpEvent, HttpParams, HttpRequest } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '@environments/environment';
-import { PrescriptionReviewDto } from '@core/interfaces/prescription-review.interface';
+import { GetAllPrescriptionReviewDto, PaginatedResponse, PrescriptionReviewDto, PrescriptionReviewQueryDto } from '@core/interfaces/prescription-review.interface';
 
 export interface PrescriptionReviewUploadResponse {
   reviewId: string;
@@ -51,5 +51,30 @@ export class PrescriptionReviewService {
 
   reject(id: string, notes: string): Observable<any> {
     return this.http.put(`${this.localUrl}/PrescriptionReviews/${id}/reject`, { notes });
+  }
+
+  getAllPrescriptionReview(query: PrescriptionReviewQueryDto): Observable<PaginatedResponse<GetAllPrescriptionReviewDto>> {
+    let params = new HttpParams();
+
+    if (query.status) {
+      params = params.set('Status', query.status);
+    }
+
+    if (query.searchTerm) {
+      params = params.set('SearchTerm', query.searchTerm);
+    }
+
+    if (query.pageNumber != null) {
+      params = params.set('PageNumber', query.pageNumber.toString());
+    }
+
+    if (query.pageSize != null) {
+      params = params.set('PageSize', query.pageSize.toString());
+    }
+
+    return this.http.get<PaginatedResponse<GetAllPrescriptionReviewDto>>(
+      `${this.localUrl}/PrescriptionReviews`,
+      { params }
+    );
   }
 }

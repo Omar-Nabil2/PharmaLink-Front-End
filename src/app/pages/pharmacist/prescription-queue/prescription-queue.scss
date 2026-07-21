@@ -1,0 +1,30 @@
+::ng-deep {
+    .p-datatable .p-datatable-thead > tr > th {
+        background-color: transparent !important;
+        border-color: transparent !important;
+        color: inherit !important;
+        font-weight: inherit !important;
+    }
+
+    .p-datatable-loading-overlay {
+        background-color: rgba(255, 255, 255, 0.6) !important;
+        z-index: 2;
+    }
+
+    .p-paginator {
+        background-color: #ffffff !important;
+        border-top: 1px solid #e2e2e2 !important;
+        padding: 16px !important;
+    }
+
+    .p-paginator .p-paginator-pages .p-paginator-page.p-highlight {
+        background-color: #0f766e !important;
+        color: white !important;
+        border-color: #0f766e !important;
+    }
+
+    .p-paginator .p-paginator-pages .p-paginator-page {
+        border-radius: 999px !important;
+        color: #5e5e5e !important;
+    }
+}

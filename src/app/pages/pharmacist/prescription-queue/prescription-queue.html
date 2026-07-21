@@ -1,1 +1,110 @@
-<p>prescription-queue works!</p>
+<div dir="rtl" class="p-[32px] bg-[#f3f3f3] min-h-screen">
+
+  <div class="bg-[#ffffff] rounded-[16px] p-[24px] mb-[24px] flex flex-col md:flex-row justify-between items-center gap-[16px] shadow-sm">
+
+    <div class="flex items-center gap-2 overflow-x-auto w-full md:w-auto">
+      <ng-container *ngFor="let option of filterOptions">
+        <button
+          type="button"
+          (click)="setFilter(option.value)"
+          [class.bg-teal-700]="status === option.value"
+          [class.text-white]="status === option.value"
+          [class.bg-gray-100]="status !== option.value"
+          [class.text-gray-600]="status !== option.value"
+          class="px-5 py-2 rounded-lg text-sm font-semibold transition-colors duration-200 whitespace-nowrap hover:bg-teal-600 hover:text-white">
+          {{ option.label }}
+        </button>
+      </ng-container>
+    </div>
+
+    <div class="relative w-full md:w-96">
+      <input
+        type="text"
+        pInputText
+        [(ngModel)]="searchTermInput"
+        (ngModelChange)="onSearchChange($event)"
+        placeholder="ابحث برقم الروشتة أو اسم المريض..."
+        class="w-full pl-3 pr-10 py-2.5 bg-white border border-gray-200 text-gray-700 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-teal-600 focus:border-teal-600 transition-all">
+      <span class="absolute inset-y-0 left-3 flex items-center pr-3 pointer-events-none text-gray-400">
+        <i class="pi pi-search"></i>
+      </span>
+  </div>
+  </div>
+
+  <div class="bg-[#ffffff] rounded-[16px] overflow-hidden shadow-sm">
+    <p-table
+      [value]="reviews"
+      [lazy]="true"
+      (onLazyLoad)="onLazyLoad($event)"
+      [paginator]="true"
+      [rows]="rows"
+      [first]="first"
+      [totalRecords]="totalRecords"
+      [loading]="loading"
+      [rowsPerPageOptions]="[10, 20, 50]"
+      dataKey="reviewId"
+      styleClass="p-datatable-sm"
+      responsiveLayout="scroll">
+
+      <ng-template pTemplate="header">
+        <tr class="bg-[#efefef] text-[#000000] text-[14px] font-medium border-b border-[#e2e2e2]">
+          <th class="py-[12px] px-[16px] text-right w-1/6">رقم الروشتة</th>
+          <th class="py-[12px] px-[16px] text-right w-1/4">المريض</th>
+          <th class="py-[12px] px-[16px] text-center w-1/6">وقت الرفع</th>
+          <th class="py-[12px] px-[16px] text-center w-1/6">الحالة</th>
+          <th class="py-[12px] px-[16px] text-center w-1/6">الأدوية</th>
+          <th class="py-[12px] px-[16px] text-center w-1/6">إجراء</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-review>
+        <tr class="border-b border-[#e2e2e2] hover:bg-[#f3f3f3] transition-colors">
+
+          <td class="py-[16px] px-[16px] text-[#5e5e5e] text-[14px]">
+            <span class="uppercase">{{ review.reviewId | slice:0:8 }}</span>
+          </td>
+
+          <td class="py-[16px] px-[16px] text-[#000000] font-medium text-[16px]">
+            {{ review.patientName }}
+          </td>
+
+          <td class="py-[16px] px-[16px] text-[#5e5e5e] text-[14px] text-center">
+            {{ getTimeAgo(review.createdAt) }}
+          </td>
+
+          <td class="py-[16px] px-[16px] text-center">
+            <span
+              class="inline-block px-[16px] py-[8px] rounded-[999px] text-[14px] font-medium"
+              [ngClass]="getStatusClasses(review.status)">
+              {{ getStatusArabicLabel(review.status) }}
+            </span>
+          </td>
+
+          <td class="py-[16px] px-[16px] text-[#5e5e5e] text-[16px] text-center">
+            {{ review.medicineCount }} أدوية
+          </td>
+
+          <td class="py-[16px] px-[16px] text-center">
+            <button
+              type="button"
+              class="bg-teal-700 hover:bg-teal-800 text-white px-5 py-1.5 rounded-lg text-sm font-semibold transition-colors duration-200 shadow-sm">
+              مراجعة
+            </button>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="6" class="text-center p-[32px] text-[#5e5e5e]">
+            لا توجد روشتات متطابقة مع بحثك.
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="loadingicon">
+        <i class="pi pi-spin pi-spinner text-teal-700" style="font-size: 2rem"></i>
+      </ng-template>
+    </p-table>
+  </div>
+</div>

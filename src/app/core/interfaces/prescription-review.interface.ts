@@ -15,3 +15,28 @@ export interface PrescriptionReviewDto {
     aiModel?: string;
     ocrResult?: string;
 }
+
+export interface GetAllPrescriptionReviewDto {
+  reviewId: string;
+  patientName: string;
+  imageUrl: string;
+  status: string;
+  medicineCount: number;
+  createdAt: string;
+  reviewedAt: string | null;
+}
+
+export interface PaginatedResponse<T> {
+  items: T[];
+  pageNumber: number;
+  totalPages: number;
+  hasPreviousPage: boolean;
+  hasNextPage: boolean;
+}
+
+export interface PrescriptionReviewQueryDto {
+  status?: string;
+  searchTerm?: string;
+  pageNumber?: number;
+  pageSize?: number;
+}
