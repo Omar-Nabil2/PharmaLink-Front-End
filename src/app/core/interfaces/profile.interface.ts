@@ -33,6 +33,7 @@ export interface UpdatePharmacyProfileResponse {
 
 export interface PatientAddress {
     addressId: string;
+
     addressLine: string;
     city: string;
     governorate: string;
@@ -40,6 +41,7 @@ export interface PatientAddress {
     latitude: number;
     longitude: number;
 }
+
 
 export interface PatientProfile {
     patientId: string;

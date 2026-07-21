@@ -68,11 +68,17 @@
 
     <!-- Saved Addresses -->
     <div class="card-surface border border-surface-pressed overflow-hidden !p-0">
-      <div class="bg-canvas-soft px-6 py-4 flex items-center gap-3">
-        <div class="bg-canvas text-ink p-2 rounded-full w-10 h-10 flex items-center justify-center">
-          <i class="pi pi-map-marker"></i>
+      <div class="bg-canvas-soft px-6 py-4 flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <div class="bg-canvas text-ink p-2 rounded-full w-10 h-10 flex items-center justify-center">
+            <i class="pi pi-map-marker"></i>
+          </div>
+          <h2 class="type-display-sm">العناوين المحفوظة</h2>
         </div>
-        <h2 class="type-display-sm">العناوين المحفوظة</h2>
+        <a routerLink="/patient/addresses" class="btn-subtle type-body-sm-strong flex items-center gap-2">
+          <span>إدارة العناوين</span>
+          <i class="pi pi-arrow-left"></i>
+        </a>
       </div>
 
       <div class="p-6">
