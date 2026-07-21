@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TableModule, TableLazyLoadEvent } from 'primeng/table';
@@ -18,6 +18,9 @@ import { PrescriptionReviewService } from '@core/services/prescription-review.se
   styleUrl: './prescription-queue.scss',
 })
 export class PrescriptionQueue implements OnInit, OnDestroy {
+  private readonly prescriptionService = inject(PrescriptionReviewService);
+  private readonly cd = inject(ChangeDetectorRef);
+
   reviews: GetAllPrescriptionReviewDto[] = [];
   loading = true;
 
@@ -29,7 +32,7 @@ export class PrescriptionQueue implements OnInit, OnDestroy {
   searchTerm = '';
   searchTermInput = '';
 
-  filterOptions = [
+  readonly filterOptions = [
     { label: 'الكل', value: '' },
     { label: 'قيد المراجعة', value: 'PendingReview' },
     { label: 'موافق عليها', value: 'Approved' },
@@ -39,11 +42,6 @@ export class PrescriptionQueue implements OnInit, OnDestroy {
   private readonly searchSubject = new Subject<string>();
   private readonly loadSubject = new Subject<void>();
   private readonly subs = new Subscription();
-
-  constructor(
-    private readonly prescriptionService: PrescriptionReviewService,
-    private readonly cd: ChangeDetectorRef,
-  ) {}
 
   ngOnInit(): void {
     this.subs.add(
@@ -92,7 +90,6 @@ export class PrescriptionQueue implements OnInit, OnDestroy {
           },
         }),
     );
-
   }
 
   ngOnDestroy(): void {
@@ -114,38 +111,28 @@ export class PrescriptionQueue implements OnInit, OnDestroy {
   }
 
   setFilter(statusValue: string): void {
-    if (this.status === statusValue) {
-      return;
-    }
+    if (this.status === statusValue) return;
     this.status = statusValue;
     this.first = 0;
     this.loadSubject.next();
   }
 
   getStatusArabicLabel(status: string): string {
-    switch (status) {
-      case 'PendingReview':
-        return 'قيد المراجعة';
-      case 'Approved':
-        return 'موافق عليها';
-      case 'Rejected':
-        return 'مرفوضة';
-      default:
-        return status;
-    }
+    const labels: Record<string, string> = {
+      'PendingReview': 'قيد المراجعة',
+      'Approved': 'موافق عليها',
+      'Rejected': 'مرفوضة'
+    };
+    return labels[status] || status;
   }
 
   getStatusClasses(status: string): string {
-    switch (status) {
-      case 'PendingReview':
-        return 'bg-yellow-100 text-yellow-700';
-      case 'Approved':
-        return 'bg-green-100 text-green-700';
-      case 'Rejected':
-        return 'bg-red-100 text-red-700';
-      default:
-        return 'bg-gray-100 text-gray-700';
-    }
+    const classes: Record<string, string> = {
+      'PendingReview': 'bg-amber-100 text-amber-700',
+      'Approved': 'bg-emerald-100 text-emerald-700',
+      'Rejected': 'bg-rose-100 text-rose-700'
+    };
+    return classes[status] || 'bg-gray-100 text-gray-700';
   }
 
   getTimeAgo(dateString: string): string {

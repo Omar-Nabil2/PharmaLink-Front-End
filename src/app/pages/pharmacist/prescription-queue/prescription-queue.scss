@@ -7,14 +7,15 @@
     }
 
     .p-datatable-loading-overlay {
-        background-color: rgba(255, 255, 255, 0.6) !important;
+        background-color: rgba(255, 255, 255, 0.7) !important;
+        backdrop-filter: blur(2px);
         z-index: 2;
     }
 
     .p-paginator {
         background-color: #ffffff !important;
-        border-top: 1px solid #e2e2e2 !important;
-        padding: 16px !important;
+        border-top: 1px solid #f3f4f6 !important;
+        padding: 12px 16px !important;
     }
 
     .p-paginator .p-paginator-pages .p-paginator-page.p-highlight {
@@ -24,7 +25,8 @@
     }
 
     .p-paginator .p-paginator-pages .p-paginator-page {
-        border-radius: 999px !important;
-        color: #5e5e5e !important;
+        border-radius: 8px !important;
+        color: #4b5563 !important;
+        font-size: 0.875rem !important;
     }
 }
