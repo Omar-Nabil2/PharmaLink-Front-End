@@ -14,24 +14,24 @@ import {
   providedIn: 'root',
 })
 export class ProfileService {
-  private readonly baseUrl = environment.baseUrl;
-  private readonly omarUrl = environment.omarUrl;
+  private readonly localUrl = environment.localUrl;
 
   constructor(private readonly http: HttpClient) { }
 
   getProfile(): Observable<GetPharmacyProfileResponse> {
-    return this.http.get<GetPharmacyProfileResponse>(`${this.baseUrl}/PharmacistProfile`);
+    return this.http.get<GetPharmacyProfileResponse>(`${this.localUrl}/PharmacistProfile`);
   }
 
   getPatientProfile(): Observable<PatientProfileResponse> {
-    return this.http.get<PatientProfileResponse>(`${this.baseUrl}patients/profile`);
+    return this.http.get<PatientProfileResponse>(`${this.localUrl}/patients/profile`);
   }
 
   updatePatientProfile(data: UpdatePatientProfileRequest): Observable<PatientProfileResponse> {
-    return this.http.put<PatientProfileResponse>(`${this.baseUrl}patients/profile`, data);
+    return this.http.put<PatientProfileResponse>(`${this.localUrl}/patients/profile`, data);
   }
 
   updateProfile(data: UpdatePharmacyProfileRequest): Observable<UpdatePharmacyProfileResponse> {
-    return this.http.put<UpdatePharmacyProfileResponse>(`${this.omarUrl}/PharmacistProfile`, data);
+    return this.http.put<UpdatePharmacyProfileResponse>(`${this.localUrl}/PharmacistProfile`, data);
   }
+
 }

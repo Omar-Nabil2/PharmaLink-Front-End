@@ -183,9 +183,34 @@ export const routes: Routes = [
     ],
   },
   {
+    path: 'owner',
+    canActivate: [authGuard],
+    data: { role: 'PharmacyAdmin' },
+    loadComponent: () =>
+      import('./layouts/owner-layout/owner-layout.component').then((m) => m.OwnerLayoutComponent),
+    children: [
+      {
+        path: 'dashboard',
+        loadComponent: () =>
+          import('./pages/dashboard/owner-dashboard/pharmacy-dashboard.component').then(
+            (m) => m.PharmacyDashboardComponent,
+          ),
+      },
+      {
+        path: 'dashboard/:id',
+        loadComponent: () =>
+          import('./pages/dashboard/owner-dashboard/pharmacy-dashboard.component').then(
+            (m) => m.PharmacyDashboardComponent,
+          ),
+      },
+      { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
+    ],
+  },
+  {
     path: 'admin',
     canActivate: [authGuard],
     data: { role: 'Admin' },
+
     loadComponent: () =>
       import('./layouts/admin-layout/admin-layout.component').then((m) => m.AdminLayoutComponent),
     children: [

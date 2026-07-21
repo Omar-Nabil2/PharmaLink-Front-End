@@ -2,7 +2,7 @@
 @import 'primeicons/primeicons.css';
 
 @theme {
-  --color-primary: #000000;
+  --color-primary: #007671;
   --color-on-primary: #ffffff;
   --color-ink: #000000;
   --color-body: #5e5e5e;
@@ -15,10 +15,40 @@
   --color-link: #0000ee;
   --color-on-dark: #ffffff;
   --color-black-elevated: #282828;
+  --color-footer: #212730;
+  --color-header: #FDFFFF;
+  --color-green-hover: #00948B;
+
+  /* ----------------------------------------------------------------
+   * Semantic design tokens for the Pharmacy Owner dashboard prototype
+   * (design.html). These back the shadcn-style utility classes used in
+   * the template (bg-card, bg-background, border-border, text-accent,
+   * bg-warning/15, bg-info/15, bg-destructive/15, ...). The existing
+   * global --color-primary (black) is intentionally reused so the rest
+   * of the app keeps its identity; only the missing tokens are added.
+   * ---------------------------------------------------------------- */
+  --color-background: #f6f8f7;
+  --color-foreground: #1a2b28;
+  --color-card: #ffffff;
+  --color-card-foreground: #1a2b28;
+  --color-primary-foreground: #ffffff;
+  --color-muted: #eef2f1;
+  --color-muted-foreground: #6b7a76;
+  --color-accent: #0f9d76;
+  --color-accent-foreground: #ffffff;
+  --color-info: #2563eb;
+  --color-info-foreground: #ffffff;
+  --color-warning: #f59e0b;
+  --color-warning-foreground: #7c4a03;
+  --color-destructive: #dc2626;
+  --color-destructive-foreground: #ffffff;
+  --color-border: #e2e8e6;
+  --color-ring: #0f9d76;
 
   --font-display: 'Tajawal', system-ui, 'Helvetica Neue', Arial, sans-serif;
   --font-text: 'Tajawal', system-ui, 'Helvetica Neue', Arial, sans-serif;
   --font-sans: 'Tajawal', system-ui, 'Helvetica Neue', Arial, sans-serif;
+  --font-cairo: 'Cairo', 'Tajawal', system-ui, 'Helvetica Neue', Arial, sans-serif;
 
   --radius-md: 8px;
   --radius-lg: 12px;
@@ -174,11 +204,11 @@
     padding: 12px 16px;
     border: none;
     cursor: pointer;
-    transition: background-color 0.15s ease, opacity 0.15s ease;
+    transition: background-color 0.2s ease-in-out, opacity 0.15s ease;
   }
 
   .btn-primary:hover:not(:disabled) {
-    background-color: var(--color-black-elevated);
+    background-color: var(--color-green-hover);
   }
 
   .btn-primary:disabled {
@@ -246,11 +276,11 @@
     padding: 16px 20px;
     border: none;
     cursor: pointer;
-    transition: background-color 0.15s ease, opacity 0.15s ease;
+    transition: background-color 0.2s ease-in-out, opacity 0.15s ease;
   }
 
   .btn-large:hover:not(:disabled) {
-    background-color: var(--color-black-elevated);
+    background-color: var(--color-green-hover);
   }
 
   .btn-large:disabled {
