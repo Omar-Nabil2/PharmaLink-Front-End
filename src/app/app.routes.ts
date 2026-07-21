@@ -167,10 +167,7 @@ export const routes: Routes = [
       },
       {
         path: 'preparation-list',
-        loadComponent: () =>
-          import('./pages/pharmacist/preparation-list/preparation-list').then(
-            (m) => m.PreparationList,
-          ),
+        loadComponent: () => import('./pages/pharmacist/preparation-list/preparation-list').then((m) => m.PreparationListComponent),
       },
       {
         path: 'prescription-queue',
