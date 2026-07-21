@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpEvent, HttpParams, HttpRequest } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '@environments/environment';
-import { GetAllPrescriptionReviewDto, PaginatedResponse, PrescriptionReviewDto, PrescriptionReviewQueryDto } from '@core/interfaces/prescription-review.interface';
+import { BranchOrderRowDto, GetAllPrescriptionReviewDto, PaginatedResponse, PrescriptionReviewDto, PrescriptionReviewQueryDto, Result } from '@core/interfaces/prescription-review.interface';
 
 export interface PrescriptionReviewUploadResponse {
   reviewId: string;
@@ -74,6 +74,21 @@ export class PrescriptionReviewService {
 
     return this.http.get<PaginatedResponse<GetAllPrescriptionReviewDto>>(
       `${this.localUrl}/PrescriptionReviews`,
+      { params }
+    );
+  }
+
+  getAssignedOrders(pageNumber: number = 1, pageSize: number = 10, status?: string): Observable<Result<BranchOrderRowDto>> {
+    let params = new HttpParams()
+      .set('PageNumber', pageNumber.toString())
+      .set('PageSize', pageSize.toString());
+
+    if (status) {
+      params = params.set('Status', status);
+    }
+
+    return this.http.get<Result<BranchOrderRowDto>>(
+      `${this.localUrl}/OrderFulfillmentLegs/assigned`,
       { params }
     );
   }

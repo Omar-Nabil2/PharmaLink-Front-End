@@ -40,3 +40,28 @@ export interface PrescriptionReviewQueryDto {
   pageNumber?: number;
   pageSize?: number;
 }
+
+export interface BranchOrderRowDto {
+  orderId: string;
+  orderNumber: string;
+  patientName: string;
+  drugsSummary: string;
+  totalAmount: number;
+  status: string;
+  date: string;
+}
+
+export interface PaginatedList<T> {
+  items: T[];
+  pageNumber: number;
+  totalPages: number;
+  hasPreviousPage: boolean;
+  hasNextPage: boolean;
+}
+
+export interface Result<T> {
+  value: PaginatedList<T>;
+  isSuccess: boolean;
+  isFailure: boolean;
+  error: any;
+}
