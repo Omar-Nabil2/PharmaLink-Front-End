@@ -1,105 +1,220 @@
-<div class="space-y-6" dir="rtl">
-  <div class="flex items-center justify-between">
-    <h1 class="type-display-lg text-ink">إدارة النظام</h1>
-    <button class="btn-primary gap-2 flex items-center">
-      <i class="pi pi-cloud-download"></i>
-      <span>تصدير التقرير</span>
+<div class="admin-dashboard" dir="rtl">
+
+  <!-- ─── Header ──────────────────────────────────────────────────────────── -->
+  <div class="dashboard-header">
+    <div>
+      <h1 class="dashboard-title">لوحة تحكم النظام</h1>
+      <p class="dashboard-subtitle">مرحباً بك، مسؤول النظام العام</p>
+    </div>
+    <button class="btn-reload" (click)="reload()" [disabled]="isLoading()">
+      <i class="pi" [class.pi-refresh]="!isLoading()" [class.pi-spin]="isLoading()"></i>
+      تحديث
     </button>
   </div>
 
-  <!-- System Metrics -->
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-    <p-card styleClass="shadow-none border border-surface-pressed rounded-xl bg-canvas">
-      <div class="flex items-center justify-between">
-        <div>
-          <span class="block text-mute type-body-md-strong mb-1">إجمالي المستخدمين</span>
-          <div class="text-ink type-display-xl font-bold">{{ totalRegisteredUsers | number }}</div>
-        </div>
-        <div class="w-12 h-12 rounded-full bg-canvas-soft flex items-center justify-center">
-          <i class="pi pi-users text-xl text-ink"></i>
-        </div>
-      </div>
-    </p-card>
-    <p-card styleClass="shadow-none border border-surface-pressed rounded-xl bg-canvas">
-      <div class="flex items-center justify-between">
-        <div>
-          <span class="block text-mute type-body-md-strong mb-1">الصيدليات</span>
-          <div class="text-ink type-display-xl font-bold">{{ totalPharmacies | number }}</div>
-        </div>
-        <div class="w-12 h-12 rounded-full bg-canvas-soft flex items-center justify-center">
-          <i class="pi pi-shop text-xl text-ink"></i>
-        </div>
-      </div>
-    </p-card>
-    <p-card styleClass="shadow-none border border-surface-pressed rounded-xl bg-canvas">
-      <div class="flex items-center justify-between">
-        <div>
-          <span class="block text-mute type-body-md-strong mb-1">الأدوية في النظام</span>
-          <div class="text-ink type-display-xl font-bold">{{ totalDrugsInSystem | number }}</div>
-        </div>
-        <div class="w-12 h-12 rounded-full bg-canvas-soft flex items-center justify-center">
-          <i class="pi pi-database text-xl text-ink"></i>
-        </div>
-      </div>
-    </p-card>
-  </div>
+  <!-- ─── Error Banner ─────────────────────────────────────────────────────── -->
+  @if (errorMessage()) {
+    <div class="error-banner">
+      <i class="pi pi-exclamation-triangle"></i>
+      <span>{{ errorMessage() }}</span>
+    </div>
+  }
 
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-    <!-- Pending Pharmacy Verifications -->
-    <div class="bg-canvas border border-surface-pressed rounded-xl overflow-hidden shadow-none p-6">
-      <div class="flex justify-between items-center mb-6">
-        <h2 class="type-display-sm text-ink">التحققات المعلقة</h2>
-        <a routerLink="/admin/approvals" class="text-link type-body-sm-strong hover:underline">عرض الكل</a>
+  <!-- ─── Stat Cards ────────────────────────────────────────────────────────── -->
+  <div class="stats-grid">
+
+    <!-- Patients -->
+    <div class="stat-card stat-card--patients">
+      <div class="stat-card__icon">
+        <i class="pi pi-users"></i>
       </div>
-      <p-table [value]="pendingVerifications" responsiveLayout="scroll" styleClass="p-datatable-sm">
-        <ng-template pTemplate="header">
-          <tr>
-            <th class="bg-canvas-soft text-ink type-body-sm-strong border-b border-surface-pressed py-3 px-4">الصيدلية</th>
-            <th class="bg-canvas-soft text-ink type-body-sm-strong border-b border-surface-pressed py-3 px-4">الترخيص</th>
-            <th class="bg-canvas-soft text-ink type-body-sm-strong border-b border-surface-pressed py-3 px-4 text-end">الإجراء</th>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-pharmacy>
-          <tr class="border-b border-surface-pressed hover:bg-canvas-softer transition-colors">
-            <td class="py-3 px-4 text-ink type-body-sm-strong">{{ pharmacy.name }}</td>
-            <td class="py-3 px-4 text-mute type-body-sm">{{ pharmacy.licenseNumber }}</td>
-            <td class="py-3 px-4 text-end">
-              <button class="btn-subtle px-3 py-1 text-sm">مراجعة</button>
-            </td>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="emptymessage">
-          <tr>
-            <td colspan="3" class="text-center py-4 text-mute type-body-sm">لا توجد تحققات معلقة.</td>
-          </tr>
-        </ng-template>
-      </p-table>
+      <div class="stat-card__body">
+        <span class="stat-card__label">مريض مسجل</span>
+        @if (isLoading()) {
+          <div class="skeleton-line skeleton-line--lg"></div>
+        } @else {
+          <span class="stat-card__value">{{ platformStats()?.totalPatients | number }}</span>
+        }
+        <span class="stat-card__trend trend-up"><i class="pi pi-arrow-up"></i> 12% من الشهر السابق</span>
+      </div>
     </div>
 
-    <!-- Recent Audits (OrderFulfillmentLegStatusAudits) -->
-    <div class="bg-canvas border border-surface-pressed rounded-xl overflow-hidden shadow-none p-6">
-      <div class="flex justify-between items-center mb-6">
-        <h2 class="type-display-sm text-ink">سجلات النظام</h2>
-        <a routerLink="/admin/audits" class="text-link type-body-sm-strong hover:underline">عرض السجل</a>
+    <!-- Pharmacies -->
+    <div class="stat-card stat-card--pharmacies">
+      <div class="stat-card__icon">
+        <i class="pi pi-shop"></i>
       </div>
-      <div class="space-y-4">
-        <div *ngFor="let audit of recentAudits" class="flex items-center justify-between p-4 rounded-xl border border-surface-pressed bg-canvas-softer hover:bg-canvas-soft transition-colors cursor-pointer">
-          <div class="flex flex-col gap-1">
-            <div class="flex items-center gap-2">
-              <span class="type-body-md-strong text-ink">{{ audit.legId }}</span>
-              <span class="type-caption text-mute">بواسطة {{ audit.modifiedBy }}</span>
-            </div>
-            <div class="flex items-center gap-2 mt-1">
-              <p-tag [value]="audit.previousStatus" [severity]="getAuditStatusSeverity(audit.previousStatus)" styleClass="text-xs"></p-tag>
-              <i class="pi pi-arrow-left text-mute text-xs" [ngClass]="{'transform rotate-180': false}"></i>
-              <p-tag [value]="audit.newStatus" [severity]="getAuditStatusSeverity(audit.newStatus)" styleClass="text-xs"></p-tag>
-            </div>
-          </div>
-          <div class="text-end">
-            <span class="type-caption text-mute">{{ audit.timestamp | date:'short' }}</span>
-          </div>
-        </div>
+      <div class="stat-card__body">
+        <span class="stat-card__label">صيدلية شريكة</span>
+        @if (isLoading()) {
+          <div class="skeleton-line skeleton-line--lg"></div>
+        } @else {
+          <span class="stat-card__value">{{ platformStats()?.totalPharmacies | number }}</span>
+        }
+        <span class="stat-card__trend trend-up"><i class="pi pi-arrow-up"></i> 5% من الشهر السابق</span>
       </div>
     </div>
+
+    <!-- Orders -->
+    <div class="stat-card stat-card--orders">
+      <div class="stat-card__icon">
+        <i class="pi pi-shopping-bag"></i>
+      </div>
+      <div class="stat-card__body">
+        <span class="stat-card__label">إجمالي الطلبات</span>
+        @if (isLoading()) {
+          <div class="skeleton-line skeleton-line--lg"></div>
+        } @else {
+          <span class="stat-card__value">{{ platformStats()?.totalOrders | number }}</span>
+        }
+        <span class="stat-card__trend trend-up"><i class="pi pi-arrow-up"></i> 18% من الشهر السابق</span>
+      </div>
+    </div>
+
+    <!-- Medicines -->
+    <div class="stat-card stat-card--medicines">
+      <div class="stat-card__icon">
+        <i class="pi pi-tag"></i>
+      </div>
+      <div class="stat-card__body">
+        <span class="stat-card__label">دواء في الكتالوج</span>
+        @if (isLoading()) {
+          <div class="skeleton-line skeleton-line--lg"></div>
+        } @else {
+          <span class="stat-card__value">{{ platformStats()?.totalMedicines | number }}</span>
+        }
+        <span class="stat-card__trend trend-up"><i class="pi pi-arrow-up"></i> 3% من الشهر السابق</span>
+      </div>
+    </div>
+
   </div>
+
+  <!-- ─── Charts Row ────────────────────────────────────────────────────────── -->
+  <div class="charts-grid">
+
+    <!-- 30-Day Orders Line Chart -->
+    <div class="chart-card chart-card--line">
+      <div class="chart-card__header">
+        <h2 class="chart-card__title">الطلبات خلال آخر 30 يوم</h2>
+      </div>
+      <div class="chart-card__body">
+        @if (isLoading()) {
+          <div class="chart-skeleton"></div>
+        } @else {
+          <p-chart
+            type="line"
+            [data]="ordersLineChartData()"
+            [options]="ordersLineChartOptions"
+            height="260px"
+          />
+        }
+      </div>
+    </div>
+
+    <!-- Order Status Doughnut -->
+    <div class="chart-card chart-card--doughnut">
+      <div class="chart-card__header">
+        <h2 class="chart-card__title">توزيع حالات الطلبات</h2>
+      </div>
+      <div class="chart-card__body chart-card__body--centered">
+        @if (isLoading()) {
+          <div class="chart-skeleton chart-skeleton--round"></div>
+        } @else if (statusDoughnutData()) {
+          <p-chart
+            type="doughnut"
+            [data]="statusDoughnutData()"
+            [options]="statusDoughnutOptions"
+            height="260px"
+          />
+        }
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ─── Tables Row ────────────────────────────────────────────────────────── -->
+  <div class="tables-grid">
+
+    <!-- Recent Orders -->
+    <div class="table-card">
+      <div class="table-card__header">
+        <h2 class="table-card__title">آخر الطلبات</h2>
+      </div>
+      <div class="table-card__body">
+        @if (isLoading()) {
+          @for (i of [1,2,3,4,5]; track i) {
+            <div class="skeleton-row"></div>
+          }
+        } @else if (recentOrders().length === 0) {
+          <div class="empty-state">
+            <i class="pi pi-inbox empty-state__icon"></i>
+            <span>لا توجد طلبات حتى الآن.</span>
+          </div>
+        } @else {
+          <!-- Table Header -->
+          <div class="orders-table">
+            <div class="orders-table__header">
+              <span>الرقم</span>
+              <span>المريض</span>
+              <span>الإجمالي</span>
+              <span>الحالة</span>
+            </div>
+            @for (order of recentOrders(); track order.orderId) {
+              <div class="orders-table__row">
+                <span class="order-number">{{ order.orderNumber }}</span>
+                <span class="patient-name">{{ order.patientName }}</span>
+                <span class="order-amount">ج {{ order.totalAmount | number:'1.2-2' }}</span>
+                <span [class]="getOrderStatusClass(order.status)">
+                  {{ order.status | statusTranslate:'OrderStatus' }}
+                </span>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Top Pharmacies -->
+    <div class="table-card">
+      <div class="table-card__header">
+        <h2 class="table-card__title">أعلى الصيدليات</h2>
+      </div>
+      <div class="table-card__body">
+        @if (isLoading()) {
+          @for (i of [1,2,3,4,5]; track i) {
+            <div class="skeleton-row"></div>
+          }
+        } @else if (topPharmacies().length === 0) {
+          <div class="empty-state">
+            <i class="pi pi-shop empty-state__icon"></i>
+            <span>لا توجد صيدليات بعد.</span>
+          </div>
+        } @else {
+          <div class="pharmacies-list">
+            @for (pharmacy of topPharmacies(); track pharmacy.pharmacyId; let idx = $index) {
+              <div class="pharmacy-item">
+                <span class="pharmacy-rank">{{ idx + 1 }}</span>
+                <div class="pharmacy-info">
+                  <span class="pharmacy-name">{{ pharmacy.pharmacyName }}</span>
+                  <span class="pharmacy-address">{{ pharmacy.primaryAddress }}</span>
+                  <div class="pharmacy-stars">
+                    @for (s of getStars(pharmacy.rating).filled; track $index) {
+                      <i class="pi pi-star-fill star-filled"></i>
+                    }
+                    @for (s of getStars(pharmacy.rating).empty; track $index) {
+                      <i class="pi pi-star star-empty"></i>
+                    }
+                    <span class="pharmacy-rating-val">{{ pharmacy.rating | number:'1.1-1' }}</span>
+                  </div>
+                </div>
+                <span class="pharmacy-orders">{{ pharmacy.totalOrders | number }} طلب</span>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+
+  </div>
+
 </div>
