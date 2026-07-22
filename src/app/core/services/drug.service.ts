@@ -24,4 +24,8 @@ export class DrugService {
 
     return this.http.get<PaginatedList<DrugDto>>(`${this.baseUrl}/Drugs`, { params: httpParams });
   }
+
+  getDrugById(id: string): Observable<DrugDto> {
+    return this.http.get<DrugDto>(`${this.baseUrl}/Drugs/${id}`);
+  }
 }
