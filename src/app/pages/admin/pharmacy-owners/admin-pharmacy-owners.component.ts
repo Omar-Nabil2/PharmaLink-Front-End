@@ -79,7 +79,13 @@ export class AdminPharmacyOwnersComponent implements OnInit, OnDestroy {
   formPharmacySearchTerm = '';
   formPharmacySearchResults: AdminPharmacySummaryDto[] = [];
   isSearchingFormPharmacies = false;
-  selectedFormPharmacy: { pharmacyId: string; legalName: string; licenseNumber: string; logoUrl?: string | null } | null = null;
+  selectedFormPharmacy: {
+    pharmacyId: string;
+    legalName: string;
+    licenseNumber: string;
+    logoUrl?: string | null;
+    ownerName?: string | null;
+  } | null = null;
   private readonly formPharmacySearchSubject = new Subject<string>();
 
   // ─── Delete Dialog ────────────────────────────────────────────────────────────
@@ -277,6 +283,7 @@ export class AdminPharmacyOwnersComponent implements OnInit, OnDestroy {
       legalName: pharmacy.legalName,
       licenseNumber: pharmacy.licenseNumber,
       logoUrl: pharmacy.logoUrl,
+      ownerName: pharmacy.owner?.fullName || null,
     };
     this.ownerForm.patchValue({ pharmacyId: pharmacy.pharmacyId });
     this.ownerForm.get('pharmacyId')?.markAsTouched();
@@ -356,6 +363,7 @@ export class AdminPharmacyOwnersComponent implements OnInit, OnDestroy {
         legalName: owner.pharmacy.legalName,
         licenseNumber: owner.pharmacy.licenseNumber,
         logoUrl: owner.pharmacy.logoUrl,
+        ownerName: owner.fullName,
       };
     } else if (owner.pharmacyId) {
       this.selectedFormPharmacy = {
@@ -363,6 +371,7 @@ export class AdminPharmacyOwnersComponent implements OnInit, OnDestroy {
         legalName: 'الصيدلية المرتبطة',
         licenseNumber: owner.pharmacyId.slice(0, 8).toUpperCase(),
         logoUrl: null,
+        ownerName: owner.fullName,
       };
     } else {
       this.selectedFormPharmacy = null;

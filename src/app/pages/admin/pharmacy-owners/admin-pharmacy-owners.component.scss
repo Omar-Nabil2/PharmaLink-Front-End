@@ -759,7 +759,27 @@ $shadow-dialog: 0 20px 60px rgba(0, 0, 0, 0.18);
 
   .pharmacy-info { flex: 1; min-width: 0; }
   .pharmacy-name { font-size: 0.85rem; font-weight: 600; color: $text-ink; }
-  .pharmacy-sub  { font-size: 0.72rem; color: $text-mute; }
+  .pharmacy-sub  {
+    font-size: 0.72rem;
+    color: $text-mute;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+
+    .owner-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      color: $accent;
+      background: $accent-light;
+      padding: 0.05rem 0.4rem;
+      border-radius: 4px;
+      font-weight: 600;
+
+      i { font-size: 0.65rem; }
+    }
+  }
 }
 
 .pharmacy-loading,

@@ -332,7 +332,15 @@
                 </div>
                 <div class="pharmacy-info">
                   <div class="pharmacy-name">{{ selectedFormPharmacy.legalName }}</div>
-                  <div class="pharmacy-sub">ترخيص: {{ selectedFormPharmacy.licenseNumber }}</div>
+                  <div class="pharmacy-sub">
+                    <span>ترخيص: {{ selectedFormPharmacy.licenseNumber }}</span>
+                    @if (selectedFormPharmacy.ownerName) {
+                      <span class="owner-tag">
+                        <i class="pi pi-user"></i>
+                        المالك: {{ selectedFormPharmacy.ownerName }}
+                      </span>
+                    }
+                  </div>
                 </div>
                 <button
                   type="button"
@@ -385,7 +393,15 @@
                       </div>
                       <div class="pharmacy-info">
                         <div class="pharmacy-name">{{ pharmacy.legalName }}</div>
-                        <div class="pharmacy-sub">ترخيص: {{ pharmacy.licenseNumber }}</div>
+                        <div class="pharmacy-sub">
+                          <span>ترخيص: {{ pharmacy.licenseNumber }}</span>
+                          @if (pharmacy.owner?.fullName) {
+                            <span class="owner-tag">
+                              <i class="pi pi-user"></i>
+                              المالك: {{ pharmacy.owner?.fullName }}
+                            </span>
+                          }
+                        </div>
                       </div>
                       <i class="pi pi-plus" style="color: #0f9d76; font-size: 0.85rem;"></i>
                     </div>
@@ -610,7 +626,15 @@
                 </div>
                 <div class="pharmacy-info">
                   <div class="pharmacy-name">{{ pharmacy.legalName }}</div>
-                  <div class="pharmacy-sub">ترخيص: {{ pharmacy.licenseNumber }}</div>
+                  <div class="pharmacy-sub">
+                    <span>ترخيص: {{ pharmacy.licenseNumber }}</span>
+                    @if (pharmacy.owner?.fullName) {
+                      <span class="owner-tag">
+                        <i class="pi pi-user"></i>
+                        المالك: {{ pharmacy.owner?.fullName }}
+                      </span>
+                    }
+                  </div>
                 </div>
                 @if (selectedPharmacy?.pharmacyId === pharmacy.pharmacyId) {
                   <i class="pi pi-check" style="color: #0f9d76; font-size: 0.875rem;"></i>
@@ -642,7 +666,15 @@
             </div>
             <div class="pharmacy-info">
               <div class="pharmacy-name">{{ selectedPharmacy.legalName }}</div>
-              <div class="pharmacy-sub">ترخيص: {{ selectedPharmacy.licenseNumber }}</div>
+              <div class="pharmacy-sub">
+                <span>ترخيص: {{ selectedPharmacy.licenseNumber }}</span>
+                @if (selectedPharmacy.owner?.fullName) {
+                  <span class="owner-tag">
+                    <i class="pi pi-user"></i>
+                    المالك: {{ selectedPharmacy.owner?.fullName }}
+                  </span>
+                }
+              </div>
             </div>
             <button class="btn-deselect" (click)="selectedPharmacy = null; pharmacySearchTerm = ''; pharmacySearchResults = [];" title="إلغاء التحديد">
               <i class="pi pi-times"></i>
