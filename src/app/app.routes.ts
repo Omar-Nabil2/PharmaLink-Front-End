@@ -3,6 +3,7 @@ import { MainLayoutComponent } from './layouts/main-layout/main-layout.component
 import { HomeComponent } from './pages/home/home.component';
 import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
 import { authGuard } from './core/guards/auth.guard';
+import { AppRoles } from './core/enums/app-roles.constant';
 
 export const routes: Routes = [
   {
@@ -120,7 +121,7 @@ export const routes: Routes = [
   {
     path: 'patient',
     canActivate: [authGuard],
-    data: { role: 'Patient' },
+    data: { role: AppRoles.Patient },
     loadComponent: () =>
       import('./layouts/patient-layout/patient-layout.component').then(
         (m) => m.PatientLayoutComponent,
@@ -161,7 +162,7 @@ export const routes: Routes = [
   {
     path: 'pharmacist',
     canActivate: [authGuard],
-    data: { role: 'pharmacist' },
+    data: { role: AppRoles.Pharmacist },
     loadComponent: () =>
       import('./layouts/pharmacist-layout/pharmacist-layout.component').then(
         (m) => m.pharmacistLayoutComponent,
@@ -198,7 +199,7 @@ export const routes: Routes = [
   {
     path: 'owner',
     canActivate: [authGuard],
-    data: { role: 'PharmacyAdmin' },
+    data: { role: AppRoles.PharmacyAdmin },
     loadComponent: () =>
       import('./layouts/owner-layout/owner-layout.component').then((m) => m.OwnerLayoutComponent),
     children: [
@@ -222,7 +223,7 @@ export const routes: Routes = [
   {
     path: 'admin',
     canActivate: [authGuard],
-    data: { role: 'Admin' },
+    data: { role: AppRoles.Admin },
 
     loadComponent: () =>
       import('./layouts/admin-layout/admin-layout.component').then((m) => m.AdminLayoutComponent),
@@ -232,6 +233,20 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./pages/dashboard/admin-dashboard/admin-dashboard.component').then(
             (m) => m.AdminDashboardComponent,
+          ),
+      },
+      {
+        path: 'pharmacies',
+        loadComponent: () =>
+          import('./pages/admin/pharmacies/admin-pharmacies.component').then(
+            (m) => m.AdminPharmaciesComponent,
+          ),
+      },
+      {
+        path: 'pharmacies/:id',
+        loadComponent: () =>
+          import('./pages/admin/pharmacies/pharmacy-detail/pharmacy-detail.component').then(
+            (m) => m.PharmacyDetailComponent,
           ),
       },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },

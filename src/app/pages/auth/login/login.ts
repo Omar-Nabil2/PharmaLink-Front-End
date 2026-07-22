@@ -81,6 +81,7 @@ export class Login implements OnInit {
           } else {
             if (typeof window !== 'undefined') {
               if (res.accessToken) localStorage.setItem('accessToken', res.accessToken);
+              if (res.refreshToken) localStorage.setItem('refreshToken', res.refreshToken);
               if (res.userId) localStorage.setItem('userId', res.userId);
               if (res.fullName) localStorage.setItem('fullName', res.fullName);
               if (res.email) localStorage.setItem('email', res.email);
@@ -93,7 +94,8 @@ export class Login implements OnInit {
               userId: res.userId,
               fullName: res.fullName || '',
               email: res.email || '',
-              roleName: res.roleName as AppRole
+              roleName: res.roleName as AppRole,
+              refreshToken: res.refreshToken,
             };
             this.authService.setCurrentUser(userData);
 

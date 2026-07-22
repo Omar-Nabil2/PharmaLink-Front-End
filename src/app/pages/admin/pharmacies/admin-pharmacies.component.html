@@ -1,0 +1,556 @@
+<div class="pharmacies-page" dir="rtl">
+
+  <!-- ─── Page Header ───────────────────────────────────────────────────────── -->
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">إدارة الصيدليات</h1>
+      <p class="page-subtitle">لوحة التحكم ← الصيدليات</p>
+    </div>
+    <button class="btn-primary" (click)="openCreateDialog()">
+      <i class="pi pi-plus"></i>
+      <span>إضافة صيدلية</span>
+    </button>
+  </div>
+
+  <!-- ─── Toolbar: Search + Filters ────────────────────────────────────────── -->
+  <div class="toolbar">
+    <!-- Search -->
+    <div class="toolbar-right">
+      <div class="search-wrapper">
+        <i class="pi pi-search search-icon"></i>
+        <input
+          type="text"
+          class="search-input"
+          placeholder="ابحث باسم الصيدلية..."
+          [value]="searchTerm"
+          (input)="onSearchChange($any($event.target).value)"
+        />
+      </div>
+    </div>
+
+    <!-- Status filter -->
+    <select
+      class="filter-select"
+      [value]="selectedStatus ?? ''"
+      (change)="onStatusChange($any($event.target).value === '' ? null : +$any($event.target).value)"
+    >
+      @for (opt of statusOptions; track opt.value) {
+        <option [value]="opt.value ?? ''">{{ opt.label }}</option>
+      }
+    </select>
+
+    <!-- City filter -->
+    <input
+      type="text"
+      class="filter-select"
+      placeholder="المدينة"
+      [value]="cityFilter"
+      (change)="onCityChange($any($event.target).value)"
+      style="min-width: 130px;"
+    />
+
+    <!-- Reset -->
+    @if (searchTerm || selectedStatus !== null || cityFilter) {
+      <button class="btn-reset" (click)="resetFilters()">
+        <i class="pi pi-filter-slash"></i>
+        <span>إعادة تعيين</span>
+      </button>
+    }
+  </div>
+
+  <!-- ─── Loading Skeleton ──────────────────────────────────────────────────── -->
+  @if (isLoading) {
+    <div class="skeleton-grid">
+      @for (n of [1,2,3,4,5,6]; track n) {
+        <div class="skeleton-card">
+          <div class="sk-logo"></div>
+          <div class="sk-line" style="width: 60%; margin: 0 auto;"></div>
+          <div class="sk-line-sm"></div>
+          <div class="sk-line" style="width: 80%;"></div>
+          <div class="sk-line" style="width: 50%;"></div>
+          <div class="sk-actions">
+            <div class="sk-btn"></div>
+            <div class="sk-btn"></div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- ─── Empty State ───────────────────────────────────────────────────────── -->
+  @if (!isLoading && pharmacies.length === 0) {
+    <div class="empty-state">
+      <div class="empty-icon">
+        <i class="pi pi-building"></i>
+      </div>
+      <h3>لا توجد صيدليات</h3>
+      <p>لم يتم العثور على أي صيدليات تطابق معايير البحث الحالية.</p>
+    </div>
+  }
+
+  <!-- ─── Pharmacy Cards Grid ───────────────────────────────────────────────── -->
+  @if (!isLoading && pharmacies.length > 0) {
+    <div class="cards-grid">
+      @for (pharmacy of pharmacies; track trackByPharmacyId($index, pharmacy)) {
+        <div class="pharmacy-card">
+
+          <!-- Card Header: Logo + Name + Status -->
+          <div class="card-header">
+            <!-- Logo -->
+            <div class="card-logo">
+              @if (pharmacy.logoUrl) {
+                <img [src]="getLogoUrl(pharmacy.logoUrl)" [alt]="pharmacy.legalName" (error)="pharmacy.logoUrl = ''" />
+              } @else {
+                <i class="pi pi-building logo-placeholder"></i>
+              }
+            </div>
+
+            <!-- Name & License -->
+            <div class="card-title-group">
+              <h3
+                class="card-name"
+                [title]="pharmacy.legalName"
+                (click)="navigateToDetail(pharmacy)"
+                style="cursor: pointer;"
+              >{{ pharmacy.legalName }}</h3>
+              <p class="card-license">
+                <i class="pi pi-id-card"></i>
+                <span>{{ pharmacy.licenseNumber }}</span>
+              </p>
+            </div>
+
+            <!-- Status badge -->
+            <span class="status-badge" [ngClass]="getStatusClass(pharmacy.verificationStatus)">
+              {{ getStatusLabel(pharmacy.verificationStatus) }}
+            </span>
+          </div>
+
+          <!-- Meta Information -->
+          <div class="card-meta">
+            <!-- Owner -->
+            <div class="meta-row">
+              <i class="pi pi-user meta-icon"></i>
+              <span class="meta-label">المالك:</span>
+              <span class="meta-value">{{ pharmacy.owner?.fullName || '—' }}</span>
+            </div>
+
+            <!-- Branches / Locations -->
+            <div class="meta-row">
+              <i class="pi pi-map-marker meta-icon"></i>
+              <span class="meta-label">المواقع:</span>
+              <span class="meta-value">{{ getBranchLocations(pharmacy) }}</span>
+            </div>
+          </div>
+
+          <!-- Stats Pills: Branches + Drugs -->
+          <div class="card-stats">
+            <div class="stat-pill">
+              <span class="stat-value">{{ pharmacy.branchesCount }}</span>
+              <span class="stat-label">فرع</span>
+            </div>
+            <div class="stat-pill">
+              <span class="stat-value">{{ pharmacy.drugsCount }}</span>
+              <span class="stat-label">دواء</span>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="card-actions">
+            <!-- Edit -->
+            <button class="btn-action btn-edit" (click)="openEditDialog(pharmacy)" title="تعديل">
+              <i class="pi pi-pencil"></i>
+              <span>تعديل</span>
+            </button>
+
+            <!-- Change Status -->
+            <button class="btn-action btn-status" (click)="openStatusDialog(pharmacy)" title="تغيير الحالة">
+              <i class="pi pi-sync"></i>
+              <span>الحالة</span>
+            </button>
+
+            <!-- Assign Owner -->
+            <button class="btn-action btn-assign" (click)="openAssignOwnerDialog(pharmacy)" title="تعيين مالك">
+              <i class="pi pi-user-plus"></i>
+              <span>مالك</span>
+            </button>
+
+            <!-- Delete -->
+            <button class="btn-action btn-delete" (click)="openDeleteDialog(pharmacy)" title="حذف">
+              <i class="pi pi-trash"></i>
+              <span>حذف</span>
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- ─── Pagination ─────────────────────────────────────────────────────────── -->
+  @if (!isLoading && totalPages > 1) {
+    <div class="pagination">
+      <p class="pagination-info">
+        صفحة <strong>{{ pageNumber }}</strong> من <strong>{{ totalPages }}</strong>
+      </p>
+      <div class="pagination-controls">
+        <!-- First -->
+        <button class="page-btn" (click)="onPageChange(1)" [disabled]="!hasPreviousPage" title="الأولى">
+          <i class="pi pi-angle-double-right"></i>
+        </button>
+        <!-- Prev -->
+        <button class="page-btn" (click)="onPageChange(pageNumber - 1)" [disabled]="!hasPreviousPage" title="السابق">
+          <i class="pi pi-angle-right"></i>
+        </button>
+
+        @for (page of pagesArray; track page) {
+          <button
+            class="page-btn"
+            [class.active]="page === pageNumber"
+            (click)="onPageChange(page)"
+          >{{ page }}</button>
+        }
+
+        <!-- Next -->
+        <button class="page-btn" (click)="onPageChange(pageNumber + 1)" [disabled]="!hasNextPage" title="التالي">
+          <i class="pi pi-angle-left"></i>
+        </button>
+        <!-- Last -->
+        <button class="page-btn" (click)="onPageChange(totalPages)" [disabled]="!hasNextPage" title="الأخيرة">
+          <i class="pi pi-angle-double-left"></i>
+        </button>
+      </div>
+    </div>
+  }
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     DIALOG: Create / Edit Pharmacy
+════════════════════════════════════════════════════════════════════════════ -->
+@if (showFormDialog) {
+  <div class="modal-overlay" (click)="closeFormDialog()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+
+      <!-- Header -->
+      <div class="modal-header">
+        <h2 class="modal-title">
+          <i [class]="dialogMode === 'create' ? 'pi pi-plus-circle' : 'pi pi-pencil'"></i>
+          {{ dialogMode === 'create' ? 'إضافة صيدلية جديدة' : 'تعديل بيانات الصيدلية' }}
+        </h2>
+        <button class="modal-close" (click)="closeFormDialog()" [disabled]="isSaving">
+          <i class="pi pi-times"></i>
+        </button>
+      </div>
+
+      <!-- Body -->
+      <div class="modal-body">
+        <form [formGroup]="pharmacyForm" class="field-group" (ngSubmit)="submitPharmacyForm()">
+
+          <!-- Legal Name -->
+          <div class="field">
+            <label class="field-label" for="legalName">الاسم التجاري <span style="color:#dc2626">*</span></label>
+            <input
+              id="legalName"
+              type="text"
+              class="field-input"
+              formControlName="legalName"
+              placeholder="مثال: صيدلية النور"
+              [class.is-invalid]="pharmacyForm.get('legalName')!.invalid && pharmacyForm.get('legalName')!.touched"
+            />
+            @if (pharmacyForm.get('legalName')!.invalid && pharmacyForm.get('legalName')!.touched) {
+              <span class="field-error">
+                <i class="pi pi-exclamation-circle"></i>
+                الاسم التجاري مطلوب ويجب أن يكون حرفين على الأقل
+              </span>
+            }
+          </div>
+
+          <!-- License Number -->
+          <div class="field">
+            <label class="field-label" for="licenseNumber">رقم الترخيص <span style="color:#dc2626">*</span></label>
+            <input
+              id="licenseNumber"
+              type="text"
+              class="field-input"
+              formControlName="licenseNumber"
+              placeholder="مثال: LIC-2024-001"
+              [class.is-invalid]="pharmacyForm.get('licenseNumber')!.invalid && pharmacyForm.get('licenseNumber')!.touched"
+            />
+            @if (pharmacyForm.get('licenseNumber')!.invalid && pharmacyForm.get('licenseNumber')!.touched) {
+              <span class="field-error">
+                <i class="pi pi-exclamation-circle"></i>
+                رقم الترخيص مطلوب
+              </span>
+            }
+          </div>
+
+          <!-- Verification Status -->
+          <div class="field">
+            <label class="field-label" for="verificationStatus">حالة التوثيق</label>
+            <select id="verificationStatus" class="field-select" formControlName="verificationStatus">
+              <option [value]="VerificationStatus.Pending">قيد الانتظار</option>
+              <option [value]="VerificationStatus.Verified">موثقة</option>
+              <option [value]="VerificationStatus.Rejected">مرفوضة</option>
+            </select>
+          </div>
+
+          <!-- Logo Upload -->
+          <div class="field">
+            <label class="field-label">الشعار (اختياري)</label>
+            <div class="logo-upload-area">
+              <!-- Preview -->
+              <div class="logo-preview-box">
+                @if (logoPreview) {
+                  <img [src]="getLogoUrl(logoPreview)" alt="معاينة الشعار" />
+                } @else {
+                  <i class="pi pi-image logo-ph"></i>
+                }
+              </div>
+              <!-- Controls -->
+              <div class="logo-upload-controls">
+                <label class="btn-upload-logo">
+                  <i class="pi pi-upload"></i>
+                  <span>رفع صورة</span>
+                  <input type="file" accept="image/*" style="display:none" (change)="onLogoFileChange($event)" />
+                </label>
+                @if (logoPreview) {
+                  <button type="button" class="btn-clear-logo" (click)="clearLogoFile()">
+                    <i class="pi pi-times"></i>
+                    <span>إزالة</span>
+                  </button>
+                }
+                <span style="font-size:0.7rem; color: #6b7a76;">PNG / JPG / WEBP — 2MB كحد أقصى</span>
+              </div>
+            </div>
+          </div>
+
+        </form>
+      </div>
+
+      <!-- Footer -->
+      <div class="modal-footer">
+        <button class="btn-ghost" (click)="closeFormDialog()" [disabled]="isSaving">إلغاء</button>
+        <button class="btn-primary" (click)="submitPharmacyForm()" [disabled]="isSaving || pharmacyForm.invalid">
+          @if (isSaving) {
+            <span class="spinner"></span>
+          } @else {
+            <i [class]="dialogMode === 'create' ? 'pi pi-check' : 'pi pi-save'"></i>
+          }
+          {{ dialogMode === 'create' ? 'إنشاء الصيدلية' : 'حفظ التغييرات' }}
+        </button>
+      </div>
+
+    </div>
+  </div>
+}
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     DIALOG: Delete Confirmation
+════════════════════════════════════════════════════════════════════════════ -->
+@if (showDeleteDialog) {
+  <div class="modal-overlay" (click)="closeDeleteDialog()">
+    <div class="modal-card modal-card-sm" (click)="$event.stopPropagation()">
+
+      <div class="modal-header">
+        <h2 class="modal-title" style="color: #dc2626;">
+          <i class="pi pi-trash"></i>
+          حذف الصيدلية
+        </h2>
+        <button class="modal-close" (click)="closeDeleteDialog()" [disabled]="isDeleting">
+          <i class="pi pi-times"></i>
+        </button>
+      </div>
+
+      <div class="delete-body">
+        <div class="delete-icon">
+          <i class="pi pi-exclamation-triangle"></i>
+        </div>
+        <h3>هل أنت متأكد؟</h3>
+        <p>
+          سيتم حذف صيدلية
+          <strong>«{{ deletingPharmacy?.legalName }}»</strong>
+          بصورة مؤقتة. يمكنك استعادتها لاحقاً عبر تغيير الحالة.
+        </p>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-ghost" (click)="closeDeleteDialog()" [disabled]="isDeleting">إلغاء</button>
+        <button class="btn-danger" (click)="confirmDelete()" [disabled]="isDeleting">
+          @if (isDeleting) {
+            <span class="spinner"></span>
+          } @else {
+            <i class="pi pi-trash"></i>
+          }
+          تأكيد الحذف
+        </button>
+      </div>
+
+    </div>
+  </div>
+}
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     DIALOG: Change Status
+════════════════════════════════════════════════════════════════════════════ -->
+@if (showStatusDialog) {
+  <div class="modal-overlay" (click)="closeStatusDialog()">
+    <div class="modal-card modal-card-sm" (click)="$event.stopPropagation()">
+
+      <div class="modal-header">
+        <h2 class="modal-title">
+          <i class="pi pi-sync"></i>
+          تغيير حالة الصيدلية
+        </h2>
+        <button class="modal-close" (click)="closeStatusDialog()" [disabled]="isChangingStatus">
+          <i class="pi pi-times"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <p style="font-size:0.8rem; color:#6b7a76; margin: 0 0 1rem;">
+          اختر الحالة الجديدة لصيدلية <strong>«{{ statusChangeTarget?.legalName }}»</strong>:
+        </p>
+
+        <div class="status-options">
+          @for (opt of statusOptions.slice(1); track opt.value) {
+            <label
+              class="status-option"
+              [class.selected]="pendingStatus === opt.value"
+              (click)="pendingStatus = opt.value"
+            >
+              <input type="radio" [value]="opt.value" [(ngModel)]="pendingStatus" />
+              <span class="status-badge status-option-badge" [ngClass]="getStatusClass(opt.value!)">
+                {{ opt.label }}
+              </span>
+            </label>
+          }
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-ghost" (click)="closeStatusDialog()" [disabled]="isChangingStatus">إلغاء</button>
+        <button
+          class="btn-primary"
+          (click)="confirmStatusChange()"
+          [disabled]="isChangingStatus || pendingStatus === statusChangeTarget?.verificationStatus"
+        >
+          @if (isChangingStatus) {
+            <span class="spinner"></span>
+          } @else {
+            <i class="pi pi-check"></i>
+          }
+          تطبيق التغيير
+        </button>
+      </div>
+
+    </div>
+  </div>
+}
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     DIALOG: Assign Owner (Async Search)
+════════════════════════════════════════════════════════════════════════════ -->
+@if (showAssignOwnerDialog) {
+  <div class="modal-overlay" (click)="closeAssignOwnerDialog()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+
+      <div class="modal-header">
+        <h2 class="modal-title">
+          <i class="pi pi-user-plus"></i>
+          تعيين مالك الصيدلية
+        </h2>
+        <button class="modal-close" (click)="closeAssignOwnerDialog()" [disabled]="isAssigning">
+          <i class="pi pi-times"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <p style="font-size:0.8rem; color:#6b7a76; margin: 0 0 1rem; line-height: 1.6;">
+          ابحث عن مالك صيدلية مسجل مسبقاً لتعيينه مالكاً لصيدلية
+          <strong>«{{ assignOwnerPharmacy?.legalName }}»</strong>.
+        </p>
+
+        <!-- Search input -->
+        <div class="owner-search-wrap">
+          <input
+            type="text"
+            class="owner-search-input"
+            placeholder="ابحث بالاسم أو البريد الإلكتروني..."
+            [value]="ownerSearchTerm"
+            (input)="onOwnerSearchChange($any($event.target).value)"
+            autocomplete="off"
+          />
+          <i class="pi pi-search owner-search-icon"></i>
+        </div>
+
+        <!-- Loading -->
+        @if (isSearchingOwners) {
+          <div class="owner-results">
+            <div class="owner-loading">
+              <span class="spinner"></span>
+              <span>جاري البحث...</span>
+            </div>
+          </div>
+        }
+
+        <!-- Results -->
+        @if (!isSearchingOwners && ownerSearchResults.length > 0) {
+          <div class="owner-results">
+            @for (owner of ownerSearchResults; track trackByOwnerId($index, owner)) {
+              <div
+                class="owner-result-item"
+                [class.selected-owner]="selectedOwner?.id === owner.id"
+                (click)="selectOwner(owner)"
+              >
+                <div class="owner-avatar">{{ owner.fullName.charAt(0) }}</div>
+                <div class="owner-info">
+                  <div class="owner-name">{{ owner.fullName }}</div>
+                  <div class="owner-email">{{ owner.email }}</div>
+                </div>
+                @if (selectedOwner?.id === owner.id) {
+                  <i class="pi pi-check" style="color: #0f9d76; font-size: 0.875rem;"></i>
+                }
+              </div>
+            }
+          </div>
+        }
+
+        <!-- No results -->
+        @if (!isSearchingOwners && ownerSearchTerm.trim() && ownerSearchResults.length === 0) {
+          <div class="owner-results">
+            <div class="owner-empty">
+              <i class="pi pi-search"></i>
+              <span>لا توجد نتائج مطابقة</span>
+            </div>
+          </div>
+        }
+
+        <!-- Selected owner card -->
+        @if (selectedOwner) {
+          <div class="selected-owner-card">
+            <div class="owner-avatar">{{ selectedOwner.fullName.charAt(0) }}</div>
+            <div class="owner-info">
+              <div class="owner-name">{{ selectedOwner.fullName }}</div>
+              <div class="owner-email">{{ selectedOwner.email }}</div>
+            </div>
+            <button class="btn-deselect" (click)="selectedOwner = null; ownerSearchTerm = ''; ownerSearchResults = [];" title="إلغاء التحديد">
+              <i class="pi pi-times"></i>
+            </button>
+          </div>
+        }
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-ghost" (click)="closeAssignOwnerDialog()" [disabled]="isAssigning">إلغاء</button>
+        <button class="btn-primary" (click)="confirmAssignOwner()" [disabled]="isAssigning || !selectedOwner">
+          @if (isAssigning) {
+            <span class="spinner"></span>
+          } @else {
+            <i class="pi pi-user-edit"></i>
+          }
+          تعيين المالك
+        </button>
+      </div>
+
+    </div>
+  </div>
+}

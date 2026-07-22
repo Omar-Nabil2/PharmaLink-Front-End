@@ -1,5 +1,4 @@
 <div class="admin-dashboard" dir="rtl">
-
   <!-- ─── Header ──────────────────────────────────────────────────────────── -->
   <div class="dashboard-header">
     <div>
@@ -22,7 +21,6 @@
 
   <!-- ─── Stat Cards ────────────────────────────────────────────────────────── -->
   <div class="stats-grid">
-
     <!-- Patients -->
     <div class="stat-card stat-card--patients">
       <div class="stat-card__icon">
@@ -35,7 +33,9 @@
         } @else {
           <span class="stat-card__value">{{ platformStats()?.totalPatients | number }}</span>
         }
-        <span class="stat-card__trend trend-up"><i class="pi pi-arrow-up"></i> 12% من الشهر السابق</span>
+        <span class="stat-card__trend trend-up"
+          ><i class="pi pi-arrow-up"></i> 12% من الشهر السابق</span
+        >
       </div>
     </div>
 
@@ -51,7 +51,9 @@
         } @else {
           <span class="stat-card__value">{{ platformStats()?.totalPharmacies | number }}</span>
         }
-        <span class="stat-card__trend trend-up"><i class="pi pi-arrow-up"></i> 5% من الشهر السابق</span>
+        <span class="stat-card__trend trend-up"
+          ><i class="pi pi-arrow-up"></i> 5% من الشهر السابق</span
+        >
       </div>
     </div>
 
@@ -67,7 +69,9 @@
         } @else {
           <span class="stat-card__value">{{ platformStats()?.totalOrders | number }}</span>
         }
-        <span class="stat-card__trend trend-up"><i class="pi pi-arrow-up"></i> 18% من الشهر السابق</span>
+        <span class="stat-card__trend trend-up"
+          ><i class="pi pi-arrow-up"></i> 18% من الشهر السابق</span
+        >
       </div>
     </div>
 
@@ -83,15 +87,15 @@
         } @else {
           <span class="stat-card__value">{{ platformStats()?.totalMedicines | number }}</span>
         }
-        <span class="stat-card__trend trend-up"><i class="pi pi-arrow-up"></i> 3% من الشهر السابق</span>
+        <span class="stat-card__trend trend-up"
+          ><i class="pi pi-arrow-up"></i> 3% من الشهر السابق</span
+        >
       </div>
     </div>
-
   </div>
 
   <!-- ─── Charts Row ────────────────────────────────────────────────────────── -->
   <div class="charts-grid">
-
     <!-- 30-Day Orders Line Chart -->
     <div class="chart-card chart-card--line">
       <div class="chart-card__header">
@@ -129,12 +133,10 @@
         }
       </div>
     </div>
-
   </div>
 
   <!-- ─── Tables Row ────────────────────────────────────────────────────────── -->
   <div class="tables-grid">
-
     <!-- Recent Orders -->
     <div class="table-card">
       <div class="table-card__header">
@@ -142,7 +144,7 @@
       </div>
       <div class="table-card__body">
         @if (isLoading()) {
-          @for (i of [1,2,3,4,5]; track i) {
+          @for (i of [1, 2, 3, 4, 5]; track i) {
             <div class="skeleton-row"></div>
           }
         } @else if (recentOrders().length === 0) {
@@ -163,9 +165,9 @@
               <div class="orders-table__row">
                 <span class="order-number">{{ order.orderNumber }}</span>
                 <span class="patient-name">{{ order.patientName }}</span>
-                <span class="order-amount">ج {{ order.totalAmount | number:'1.2-2' }}</span>
+                <span class="order-amount">ج {{ order.totalAmount | number: '1.2-2' }}</span>
                 <span [class]="getOrderStatusClass(order.status)">
-                  {{ order.status | statusTranslate:'OrderStatus' }}
+                  {{ order.status | statusTranslate: 'OrderStatus' }}
                 </span>
               </div>
             }
@@ -181,7 +183,7 @@
       </div>
       <div class="table-card__body">
         @if (isLoading()) {
-          @for (i of [1,2,3,4,5]; track i) {
+          @for (i of [1, 2, 3, 4, 5]; track i) {
             <div class="skeleton-row"></div>
           }
         } @else if (topPharmacies().length === 0) {
@@ -204,7 +206,7 @@
                     @for (s of getStars(pharmacy.rating).empty; track $index) {
                       <i class="pi pi-star star-empty"></i>
                     }
-                    <span class="pharmacy-rating-val">{{ pharmacy.rating | number:'1.1-1' }}</span>
+                    <span class="pharmacy-rating-val">{{ pharmacy.rating | number: '1.1-1' }}</span>
                   </div>
                 </div>
                 <span class="pharmacy-orders">{{ pharmacy.totalOrders | number }} طلب</span>
@@ -214,7 +216,5 @@
         }
       </div>
     </div>
-
   </div>
-
 </div>

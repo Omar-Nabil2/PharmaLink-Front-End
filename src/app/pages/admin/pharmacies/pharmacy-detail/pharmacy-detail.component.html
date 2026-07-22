@@ -1,0 +1,256 @@
+<div class="detail-page" dir="rtl">
+
+  <!-- ─── Back + Breadcrumb ─────────────────────────────────────────────────── -->
+  <div class="detail-breadcrumb">
+    <button class="btn-back" (click)="goBack()">
+      <i class="pi pi-arrow-right"></i>
+      <span>العودة للصيدليات</span>
+    </button>
+    @if (pharmacy) {
+      <span class="breadcrumb-sep">/</span>
+      <span class="breadcrumb-current">{{ pharmacy.legalName }}</span>
+    }
+  </div>
+
+  <!-- ─── Loading Skeleton ──────────────────────────────────────────────────── -->
+  @if (isLoading) {
+    <div class="detail-skeleton">
+      <div class="sk-header">
+        <div class="sk-logo-lg"></div>
+        <div class="sk-header-info">
+          <div class="sk-line" style="width: 40%; height: 1.5rem;"></div>
+          <div class="sk-line" style="width: 25%; margin-top: .5rem;"></div>
+          <div class="sk-line" style="width: 18%; margin-top: .5rem;"></div>
+        </div>
+      </div>
+      <div class="sk-grid">
+        @for (n of [1,2,3,4]; track n) {
+          <div class="sk-card-box"></div>
+        }
+      </div>
+      <div class="sk-line" style="width: 100%; height: 6rem; margin-top: 1rem;"></div>
+    </div>
+  }
+
+  <!-- ─── Error State ───────────────────────────────────────────────────────── -->
+  @if (!isLoading && errorMsg) {
+    <div class="error-banner">
+      <i class="pi pi-exclamation-circle"></i>
+      <span>{{ errorMsg }}</span>
+      <button class="btn-back" (click)="goBack()" style="margin-right: auto;">
+        <i class="pi pi-arrow-right"></i>
+        <span>العودة</span>
+      </button>
+    </div>
+  }
+
+  <!-- ─── Detail Content ────────────────────────────────────────────────────── -->
+  @if (!isLoading && pharmacy) {
+
+    <!-- Hero Card: Logo + Identity + Status -->
+    <div class="hero-card">
+      <!-- Logo -->
+      <div class="hero-logo">
+        @if (pharmacy.logoUrl) {
+          <img [src]="getLogoUrl(pharmacy.logoUrl)" [alt]="pharmacy.legalName" />
+        } @else {
+          <i class="pi pi-building"></i>
+        }
+      </div>
+
+      <!-- Info -->
+      <div class="hero-info">
+        <h1 class="hero-name">{{ pharmacy.legalName }}</h1>
+        <div class="hero-meta">
+          <span class="hero-tag">
+            <i class="pi pi-id-card"></i>
+            ترخيص: {{ pharmacy.licenseNumber }}
+          </span>
+          <span class="status-badge" [ngClass]="getStatusClass(pharmacy.verificationStatus)">
+            {{ getStatusLabel(pharmacy.verificationStatus) }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Quick stats -->
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <span class="hero-stat-value">{{ pharmacy.branchesCount }}</span>
+          <span class="hero-stat-label">فرع</span>
+        </div>
+        <div class="hero-stat-divider"></div>
+        <div class="hero-stat">
+          <span class="hero-stat-value">{{ pharmacy.drugsCount }}</span>
+          <span class="hero-stat-label">دواء في الكتالوج</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── 2-column info grid ─────────────────────────────────────────────── -->
+    <div class="info-grid">
+
+      <!-- Owner Card -->
+      <div class="info-card">
+        <h2 class="info-card-title">
+          <i class="pi pi-user"></i>
+          بيانات المالك
+        </h2>
+        @if (pharmacy.owner) {
+          <div class="info-rows">
+            <div class="info-row">
+              <span class="info-label">الاسم الكامل</span>
+              <span class="info-value">{{ pharmacy.owner.fullName }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">البريد الإلكتروني</span>
+              <span class="info-value">{{ pharmacy.owner.email }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">رقم الهاتف</span>
+              <span class="info-value">{{ pharmacy.owner.phoneNumber || '—' }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">معرف المستخدم</span>
+              <span class="info-value info-id">{{ pharmacy.owner.id }}</span>
+            </div>
+          </div>
+        } @else {
+          <div class="info-empty">
+            <i class="pi pi-user-minus"></i>
+            <span>لم يتم تعيين مالك لهذه الصيدلية بعد</span>
+          </div>
+        }
+      </div>
+
+      <!-- Pharmacy Identity Card -->
+      <div class="info-card">
+        <h2 class="info-card-title">
+          <i class="pi pi-building"></i>
+          بيانات الصيدلية
+        </h2>
+        <div class="info-rows">
+          <div class="info-row">
+            <span class="info-label">الاسم التجاري</span>
+            <span class="info-value">{{ pharmacy.legalName }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">رقم الترخيص</span>
+            <span class="info-value">{{ pharmacy.licenseNumber }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">حالة التوثيق</span>
+            <span class="info-value">
+              <span class="status-badge" [ngClass]="getStatusClass(pharmacy.verificationStatus)">
+                {{ getStatusLabel(pharmacy.verificationStatus) }}
+              </span>
+            </span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">عدد الفروع</span>
+            <span class="info-value">{{ pharmacy.branchesCount }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">عدد الأدوية</span>
+            <span class="info-value">{{ pharmacy.drugsCount }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">معرف الصيدلية</span>
+            <span class="info-value info-id">{{ pharmacy.pharmacyId }}</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ─── Branches Section ───────────────────────────────────────────────── -->
+    <div class="branches-section">
+      <h2 class="section-title">
+        <i class="pi pi-map-marker"></i>
+        الفروع
+        <span class="section-count">{{ pharmacy.branches.length }}</span>
+      </h2>
+
+      @if (pharmacy.branches.length === 0) {
+        <div class="branches-empty">
+          <i class="pi pi-map"></i>
+          <p>لا توجد فروع مسجلة لهذه الصيدلية</p>
+        </div>
+      } @else {
+        <div class="branches-grid">
+          @for (branch of pharmacy.branches; track trackByBranchId($index, branch)) {
+            <div class="branch-card">
+              <!-- Branch header -->
+              <div class="branch-header">
+                <h3 class="branch-name">{{ branch.branchName }}</h3>
+                <div class="branch-badges">
+                  @if (branch.supportsDelivery) {
+                    <span class="branch-badge delivery">
+                      <i class="pi pi-car"></i> توصيل
+                    </span>
+                  }
+                  @if (branch.supportsPickup) {
+                    <span class="branch-badge pickup">
+                      <i class="pi pi-shopping-bag"></i> استلام
+                    </span>
+                  }
+                </div>
+              </div>
+
+              <!-- Branch info -->
+              <div class="branch-rows">
+                <!-- Governorate & City -->
+                <div class="branch-row">
+                  <i class="pi pi-map-marker"></i>
+                  <span class="branch-label">العنوان:</span>
+                  <span class="branch-val">
+                    {{ branch.governorate || '' }}@if (branch.governorate && branch.city) {، }{{ branch.city || '' }}
+                  </span>
+                </div>
+
+                <!-- Phone Number -->
+                <div class="branch-row">
+                  <i class="pi pi-phone"></i>
+                  <span class="branch-label">رقم الهاتف:</span>
+                  <span class="branch-val">{{ branch.phoneNumber || 'غير محدد' }}</span>
+                </div>
+
+                <!-- Working Hours -->
+                <div class="branch-row">
+                  <i class="pi pi-clock"></i>
+                  <span class="branch-label">ساعات العمل:</span>
+                  <span class="branch-val">{{ branch.workingHours || 'غير محددة' }}</span>
+                </div>
+
+                <!-- Service Radius -->
+                <div class="branch-row">
+                  <i class="pi pi-send"></i>
+                  <span class="branch-label">نطاق التوصيل:</span>
+                  <span class="branch-val">{{ branch.serviceRadiusKm }} كم</span>
+                </div>
+
+                <!-- Latitude & Longitude -->
+                @if (branch.latitude || branch.longitude) {
+                  <div class="branch-row">
+                    <i class="pi pi-compass"></i>
+                    <span class="branch-label">الإحداثيات:</span>
+                    <span class="branch-val branch-geo">
+                      {{ branch.latitude | number:'1.4-4' }} , {{ branch.longitude | number:'1.4-4' }}
+                    </span>
+                  </div>
+                }
+
+                <!-- Branch ID -->
+                <div class="branch-row">
+                  <i class="pi pi-key"></i>
+                  <span class="branch-label">معرف الفرع:</span>
+                  <span class="branch-val branch-id">{{ branch.branchId }}</span>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+  }
+</div>
