@@ -43,8 +43,8 @@ export class VerifyOtpComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!this.userId) {
       this.messageService.add({
         severity: 'warn',
-        summary: 'Access Denied',
-        detail: 'No patient registration details found. Please sign up first.'
+        summary: 'غير مسموح بالوصول',
+        detail: 'لم نجد بيانات تسجيل مسبقة للمريض. يرجى إنشاء حساب أولاً.'
       });
       this.router.navigate(['/auth/register']);
       return;
@@ -90,7 +90,7 @@ export class VerifyOtpComponent implements OnInit, OnDestroy, AfterViewInit {
     const seconds = this.countdownSeconds() % 60;
     const padMin = minutes.toString().padStart(2, '0');
     const padSec = seconds.toString().padStart(2, '0');
-    return `${padMin}:${padSec}s`;
+    return `${padMin}:${padSec} ثانية`;
   }
 
   get canResend(): boolean {
@@ -176,8 +176,8 @@ export class VerifyOtpComponent implements OnInit, OnDestroy, AfterViewInit {
 
         this.messageService.add({
           severity: 'success',
-          summary: 'OTP Sent',
-          detail: response?.message || 'Verification code sent to your registered phone number.'
+          summary: 'تم إرسال الرمز',
+          detail: response?.message || 'تم إرسال رمز التحقق الجديد إلى رقم هاتفك المحمول المسجل.'
         });
 
         if (!isInitialLoad) {
@@ -187,7 +187,7 @@ export class VerifyOtpComponent implements OnInit, OnDestroy, AfterViewInit {
       },
       error: (err) => {
         this.isResending = false;
-        this.errorHandlerService.handleError(err, 'Failed to Send Code');
+        this.errorHandlerService.handleError(err, 'فشل إرسال رمز التحقق');
       }
     });
   }
@@ -206,8 +206,8 @@ export class VerifyOtpComponent implements OnInit, OnDestroy, AfterViewInit {
 
         this.messageService.add({
           severity: 'success',
-          summary: 'Verified Successfully',
-          detail: response?.message || 'Phone number verified successfully.'
+          summary: 'تم التأكيد بنجاح',
+          detail: response?.message || 'تم تأكيد رقم هاتفك وتفعيل الحساب بنجاح.'
         });
 
         if (typeof window !== 'undefined') {
@@ -221,7 +221,7 @@ export class VerifyOtpComponent implements OnInit, OnDestroy, AfterViewInit {
       error: (err) => {
         this.isLoading = false;
 
-        this.errorHandlerService.handleError(err, 'Verification Failed');
+        this.errorHandlerService.handleError(err, 'فشل تأكيد الرمز');
 
         this.otpDigits = ['', '', '', '', '', ''];
         setTimeout(() => {

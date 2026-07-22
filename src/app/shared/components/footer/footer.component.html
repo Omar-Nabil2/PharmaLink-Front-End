@@ -1,61 +1,63 @@
-<footer class="bg-primary text-on-dark">
-  <div class="container-app py-8">
+<footer class="bg-footer-bg text-on-dark py-12 md:py-16">
+  <div class="container-app">
     <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
       <div>
         <div class="flex items-center gap-2 mb-4">
-          <img src="/small_logo.png" alt="Pharma Link" class="h-10 w-auto object-contain brightness-0 invert" />
-          <span class="type-body-md-strong text-on-dark">Pharma Link</span>
+          <span class="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-sm font-semibold text-on-primary">
+            PL
+          </span>
+          <span class="type-body-md-strong text-on-dark">فارما لينك</span>
         </div>
-        <p class="type-body-sm text-mute mb-6 max-w-xs">
-          Connecting pharmacies with patients and suppliers — reliably, securely, and simply.
+        <p class="type-body-sm text-on-dark-muted mb-6 max-w-xs">
+          نربط الصيدليات بالمرضى وموردي الأدوية بكل موثوقية، أمان، وسهولة.
         </p>
         <div class="flex gap-3">
-          <a href="#" class="w-10 h-10 rounded-full bg-canvas text-ink flex items-center justify-center hover:bg-canvas-soft transition-colors" aria-label="Facebook">
+          <a href="#" class="w-10 h-10 rounded-full bg-canvas text-ink flex items-center justify-center hover:bg-surface transition-colors" aria-label="Facebook">
             <i class="pi pi-facebook"></i>
           </a>
-          <a href="#" class="w-10 h-10 rounded-full bg-canvas text-ink flex items-center justify-center hover:bg-canvas-soft transition-colors" aria-label="Twitter">
+          <a href="#" class="w-10 h-10 rounded-full bg-canvas text-ink flex items-center justify-center hover:bg-surface transition-colors" aria-label="Twitter">
             <i class="pi pi-twitter"></i>
           </a>
-          <a href="#" class="w-10 h-10 rounded-full bg-canvas text-ink flex items-center justify-center hover:bg-canvas-soft transition-colors" aria-label="LinkedIn">
+          <a href="#" class="w-10 h-10 rounded-full bg-canvas text-ink flex items-center justify-center hover:bg-surface transition-colors" aria-label="LinkedIn">
             <i class="pi pi-linkedin"></i>
           </a>
         </div>
       </div>
 
       <div>
-        <h3 class="type-body-md-strong text-on-dark mb-4">Company</h3>
+        <h3 class="type-body-md-strong text-on-dark mb-4">الشركة</h3>
         <ul class="space-y-3">
-          <li><a routerLink="/" class="type-body-sm text-mute hover:text-on-dark transition-colors">Home</a></li>
-          <li><a routerLink="/services" class="type-body-sm text-mute hover:text-on-dark transition-colors">Services</a></li>
-          <li><a routerLink="/products" class="type-body-sm text-mute hover:text-on-dark transition-colors">Products</a></li>
-          <li><a routerLink="/contact" class="type-body-sm text-mute hover:text-on-dark transition-colors">Contact</a></li>
+          <li><a routerLink="/" class="type-body-sm text-on-dark-muted hover:text-on-dark transition-colors">الرئيسية</a></li>
+          <li><a routerLink="/services" class="type-body-sm text-on-dark-muted hover:text-on-dark transition-colors">الخدمات</a></li>
+          <li><a routerLink="/products" class="type-body-sm text-on-dark-muted hover:text-on-dark transition-colors">المنتجات</a></li>
+          <li><a routerLink="/contact" class="type-body-sm text-on-dark-muted hover:text-on-dark transition-colors">اتصل بنا</a></li>
         </ul>
       </div>
 
       <div>
-        <h3 class="type-body-md-strong text-on-dark mb-4">Support</h3>
+        <h3 class="type-body-md-strong text-on-dark mb-4">الدعم</h3>
         <ul class="space-y-3">
-          <li><a href="#" class="type-body-sm text-mute hover:text-on-dark transition-colors">Help center</a></li>
-          <li><a href="#" class="type-body-sm text-mute hover:text-on-dark transition-colors">Terms of service</a></li>
-          <li><a href="#" class="type-body-sm text-mute hover:text-on-dark transition-colors">Privacy policy</a></li>
-          <li><a href="#" class="type-body-sm text-mute hover:text-on-dark transition-colors">FAQs</a></li>
+          <li><a href="#" class="type-body-sm text-on-dark-muted hover:text-on-dark transition-colors">مركز المساعدة</a></li>
+          <li><a href="#" class="type-body-sm text-on-dark-muted hover:text-on-dark transition-colors">شروط الخدمة</a></li>
+          <li><a href="#" class="type-body-sm text-on-dark-muted hover:text-on-dark transition-colors">سياسة الخصوصية</a></li>
+          <li><a href="#" class="type-body-sm text-on-dark-muted hover:text-on-dark transition-colors">الأسئلة الشائعة</a></li>
         </ul>
       </div>
 
       <div>
-        <h3 class="type-body-md-strong text-on-dark mb-4">Get started</h3>
-        <p class="type-body-sm text-mute mb-4">
-          Create an account and manage prescriptions in one place.
+        <h3 class="type-body-md-strong text-on-dark mb-4">ابدأ الآن</h3>
+        <p class="type-body-sm text-on-dark-muted mb-4">
+          قم بإنشاء حساب لإدارة وصفاتك الطبية وأدويتك في مكان واحد.
         </p>
-        <a routerLink="/auth/register" class="btn-secondary inline-flex">Sign up</a>
+        <a routerLink="/auth/register" class="btn-primary inline-flex">إنشاء حساب</a>
       </div>
     </div>
 
     <div class="mt-8 pt-6 border-t border-white/15 flex flex-col md:flex-row justify-between items-center gap-4">
-      <p class="type-caption text-mute">&copy; {{ currentYear }} Pharma Link. All rights reserved.</p>
+      <p class="type-caption text-on-dark-muted">&copy; {{ currentYear }} فارما لينك. جميع الحقوق محفوظة.</p>
       <div class="flex gap-6">
-        <a href="#" class="type-caption text-mute hover:text-on-dark transition-colors">English (US)</a>
-        <a href="#" class="type-caption text-mute hover:text-on-dark transition-colors">Support</a>
+        <a href="#" class="type-caption text-on-dark-muted hover:text-on-dark transition-colors">العربية</a>
+        <a href="#" class="type-caption text-on-dark-muted hover:text-on-dark transition-colors">الدعم الفني</a>
       </div>
     </div>
   </div>

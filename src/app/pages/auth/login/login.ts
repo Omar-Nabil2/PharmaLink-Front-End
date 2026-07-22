@@ -49,8 +49,8 @@ export class Login implements OnInit {
       this.loginForm.markAllAsTouched();
       this.messageService.add({
         severity: 'warn',
-        summary: 'Check Login Details',
-        detail: 'Oops! Please fill in your email and password correctly.',
+        summary: 'تأكد من البيانات',
+        detail: 'عذراً! يرجى تعبئة حقل البريد الإلكتروني وكلمة المرور بشكل صحيح.',
       });
       return;
     }
@@ -71,8 +71,8 @@ export class Login implements OnInit {
 
             this.messageService.add({
               severity: 'info',
-              summary: 'Verification Required',
-              detail: 'Your phone number is not verified. Redirecting to OTP verification...',
+              summary: 'مطلوب تأكيد الحساب',
+              detail: 'رقم الهاتف الخاص بك غير مؤكد بعد. جاري تحويلك لصفحة التحقق لتأكيد الرمز...',
             });
 
             setTimeout(() => {
@@ -102,8 +102,8 @@ export class Login implements OnInit {
 
             this.messageService.add({
               severity: 'success',
-              summary: 'Welcome Back',
-              detail: `Signed in successfully as ${res.fullName || 'User'}.`,
+              summary: 'مرحباً بك مجدداً',
+              detail: `تم تسجيل الدخول بنجاح، أهلاً بك ${res.fullName || 'يا فندم'}.`,
               life: 3000, // 3000ms = 3 seconds. Add this line!
             });
 
@@ -148,7 +148,7 @@ export class Login implements OnInit {
           }
 
           // Delegate to toast error handler
-          this.errorHandlerService.handleError(err, 'Sign In Failed');
+          this.errorHandlerService.handleError(err, 'فشل تسجيل الدخول');
         } catch (fatalErr) {
           this.isLoading = false;
           console.error('[LoginFatalError]', fatalErr);

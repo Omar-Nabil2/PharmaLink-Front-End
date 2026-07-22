@@ -11,22 +11,22 @@ import { CommonModule } from '@angular/common';
 export class HomeComponent {
   protected readonly title = signal('Pharma Link');
 
-  categories = ['Prescriptions', 'Pharmacies', 'Orders', 'Inventory', 'Support'];
+  categories = ['الوصفات الطبية', 'الصيدليات الشريكة', 'متابعة الطلبات', 'المخزون الدوائي', 'الدعم الفني'];
 
   faqs = [
     {
-      q: 'How do I create a patient account?',
-      a: 'Sign up with your email and phone number, then verify with the OTP sent to your phone.',
+      q: 'كيف يمكنني إنشاء حساب مريض؟',
+      a: 'اضغط على زر إنشاء حساب وسجل باستخدام بريدك الإلكتروني ورقم هاتفك، ثم قم بتأكيد حسابك عبر رمز التفعيل OTP المرسل إلى هاتفك.',
       open: false,
     },
     {
-      q: 'Can pharmacies manage multiple locations?',
-      a: 'Yes. Administered pharmacies appear on your profile so you can switch and manage each location.',
+      q: 'هل يمكن للصيدليات إدارة فروع متعددة؟',
+      a: 'نعم، تدعم المنصة ربط فروع متعددة بصيدليتك الرئيسية لتتمكن من التبديل بين الفروع ومتابعة مخزون وأوردرات كل فرع بسلاسة.',
       open: false,
     },
     {
-      q: 'Is my data secure?',
-      a: 'Pharma Link uses authenticated sessions and verification flows to keep patient and pharmacy data protected.',
+      q: 'هل بياناتي ووصفاتي الطبية آمنة؟',
+      a: 'بكل تأكيد. نطبق معايير أمان مشددة وجلسات تحقق مشفرة لضمان سرية وحماية كامل بيانات المرضى والوصفات الطبية المرفوعة.',
       open: false,
     },
   ];

@@ -1,55 +1,56 @@
 <div class="min-h-screen flex bg-canvas">
   <div
-    class="hidden lg:flex lg:w-1/2 lg:h-screen lg:sticky lg:top-0 bg-ink text-on-dark p-10 xl:p-12 flex-col justify-between"
+    class="hidden lg:flex lg:w-1/2 lg:h-screen lg:sticky lg:top-0 bg-footer-bg text-on-dark p-10 xl:p-12 flex-col justify-between"
   >
     <a routerLink="/" class="flex items-center gap-3">
-      <img
-        src="/small_logo.png"
-        alt="Pharma Link"
-        class="h-9 w-auto object-contain brightness-0 invert"
-      />
-      <span class="type-display-sm text-on-dark">Pharma Link</span>
+      <span class="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-sm font-semibold text-on-primary">
+        PL
+      </span>
+      <span class="type-heading-4 text-on-dark">فارما لينك</span>
     </a>
 
     <div class="max-w-lg space-y-6 my-auto">
-      <h1 class="type-display-xl text-on-dark">
-        Your pharmacy network, simplified.
+      <h1 class="type-display-xl text-on-dark leading-tight">
+        شبكة صيدليتك، أصبحت أبسط.
       </h1>
-      <p class="type-body-lg text-mute">
-        Manage prescriptions, verify accounts, and stay connected with patients — all in one secure place.
+      <p class="type-body-lg text-on-dark-muted">
+        أدر الوصفات الطبية، وتحقق من الحسابات، وتواصل مع المرضى — كل ذلك في مكان واحد آمن.
       </p>
 
       <div class="space-y-3 pt-2">
-        <div class="flex gap-4 p-4 rounded-[28px] bg-black-elevated">
-          <div class="flex items-center justify-center w-10 h-10 rounded-full bg-canvas-soft/10 shrink-0">
-            <i class="pi pi-shield text-on-dark"></i>
+        <div class="flex gap-4 p-4 rounded-xl bg-charcoal/20">
+          <div class="flex items-center justify-center w-10 h-10 rounded-full bg-primary/20 shrink-0">
+            <i class="pi pi-shield text-primary"></i>
           </div>
           <div>
-            <h3 class="type-body-md-strong text-on-dark">Secure verification</h3>
-            <p class="type-body-sm text-mute mt-1">Identity and prescription checks built into every flow.</p>
+            <h3 class="type-body-md-strong text-on-dark">تحقق آمن</h3>
+            <p class="type-body-sm text-on-dark-muted mt-1">فحوصات الهوية والوصفات الطبية مدمجة في كل خطوة.</p>
           </div>
         </div>
 
-        <div class="flex gap-4 p-4 rounded-[28px] bg-black-elevated">
-          <div class="flex items-center justify-center w-10 h-10 rounded-full bg-canvas-soft/10 shrink-0">
-            <i class="pi pi-bolt text-on-dark"></i>
+        <div class="flex gap-4 p-4 rounded-xl bg-charcoal/20">
+          <div class="flex items-center justify-center w-10 h-10 rounded-full bg-primary/20 shrink-0">
+            <i class="pi pi-bolt text-primary"></i>
           </div>
           <div>
-            <h3 class="type-body-md-strong text-on-dark">Fast account setup</h3>
-            <p class="type-body-sm text-mute mt-1">OTP validation gets you into your portal in minutes.</p>
+            <h3 class="type-body-md-strong text-on-dark">إعداد سريع للحساب</h3>
+            <p class="type-body-sm text-on-dark-muted mt-1">التحقق بواسطة رمز OTP يدخلك إلى بوابتك في دقائق معدودة.</p>
           </div>
         </div>
       </div>
     </div>
 
-    <p class="type-caption text-mute">&copy; 2026 Pharma Link. All rights reserved.</p>
+    <p class="type-caption text-on-dark-muted">&copy; 2026 فارما لينك. جميع الحقوق محفوظة.</p>
   </div>
 
   <!-- Form side -->
   <div class="w-full lg:w-1/2 flex items-center justify-center px-4 py-10 sm:px-8 md:px-12 overflow-y-auto bg-canvas">
     <div class="w-full max-w-md">
       <a routerLink="/" class="flex lg:hidden justify-center items-center gap-2 mb-8">
-        <img src="/logo.png" alt="Pharma Link" class="h-12 w-auto object-contain" />
+        <span class="flex h-12 w-12 items-center justify-center rounded-full bg-primary text-lg font-bold text-on-primary">
+          PL
+        </span>
+        <span class="type-heading-3 text-primary">فارما لينك</span>
       </a>
 
       <router-outlet></router-outlet>

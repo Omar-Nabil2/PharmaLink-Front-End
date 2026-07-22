@@ -1,155 +1,296 @@
-<!-- Hero -->
-<section class="bg-canvas py-8 md:py-12">
+<!-- Hero Section -->
+<section class="bg-surface py-12 md:py-20 border-b border-hairline-soft">
   <div class="container-app">
-    <div class="grid lg:grid-cols-[1.05fr_0.95fr] gap-10 lg:gap-16 items-center">
-      <div class="space-y-6">
-        <span class="badge-tag-yellow">Miro-inspired care experience</span>
-        <h1 class="type-display-xxl text-ink">
-          Go anywhere with Pharma Link
+    <div class="grid lg:grid-cols-[1.1fr_0.9fr] gap-12 lg:gap-16 items-center">
+      <!-- Left side (logical start in RTL, right side visually) -->
+      <div class="space-y-6 text-right">
+        <span class="badge-tag-coral">خدمة توصيل أدوية معتمدة وسريعة ⚡</span>
+        <h1 class="type-display-xxl text-ink-deep leading-tight">
+          احصل على دوائك<br>
+          <span class="text-primary">بنقرة واحدة</span>
         </h1>
-        <p class="type-body-lg text-body max-w-xl">
-          Connect patients and pharmacies in one place — prescriptions, orders, and care made simple.
+        <p class="type-body-lg text-slate max-w-xl">
+          فارما لينك هي المنصة الأولى في مصر لربط المرضى بأكبر شبكة صيدليات معتمدة. ارفع وصفتك الطبية الآن ودعنا نهتم بالباقي بكل سرعة وأمان.
         </p>
-        <div class="flex flex-wrap gap-3">
-          <a routerLink="/auth/register" class="btn-primary">Get started</a>
-          <a routerLink="/auth/login" class="btn-secondary">Log in</a>
+        <div class="flex flex-wrap gap-4">
+          <a routerLink="/auth/register" class="btn-primary">ابدأ الآن مجاناً</a>
+          <a routerLink="/auth/login" class="btn-secondary">تسجيل الدخول</a>
         </div>
       </div>
 
-      <div class="card-elevated max-w-[500px] w-full mx-auto lg:ml-auto space-y-4">
-        <div class="flex items-center gap-2">
-          <span class="badge-success">Live now</span>
-          <span class="badge-tag-coral">Fast pickup</span>
+      <!-- Right side (logical end in RTL, left side visually): Prescription Upload Zone & Active Order Mockup -->
+      <div class="space-y-6">
+        <!-- Prescription Upload Zone -->
+        <div class="btn-upload">
+          <i class="pi pi-cloud-upload text-4xl text-primary mb-2"></i>
+          <h3 class="type-heading-4 text-ink-deep">اسحب الروشتة أو الصورة هنا</h3>
+          <p class="type-body-sm text-slate text-center">يدعم صور الروشتة (PNG, JPG, PDF) بحد أقصى 5 ميجابايت</p>
+          <a routerLink="/auth/register" class="btn-primary !py-2.5 !px-6 text-sm">رفع الروشتة الطبية</a>
         </div>
-        <h2 class="type-display-md">Find care near you</h2>
-        <p class="type-body-sm text-body">Search pharmacies or manage your prescriptions in seconds.</p>
 
-        <div class="space-y-3">
-          <div class="field-input flex items-center gap-3 cursor-default">
-            <i class="pi pi-map-marker text-ink"></i>
-            <span class="text-mute">Enter your location</span>
+        <!-- Live order tracking card preview -->
+        <div class="card-order-tracking">
+          <div class="flex justify-between items-center mb-4">
+            <span class="type-order-id text-primary font-mono select-all">#PL-98213</span>
+            <span class="badge-status-processing">جاري التحضير</span>
           </div>
-          <div class="field-input flex items-center gap-3 cursor-default">
-            <i class="pi pi-building text-ink"></i>
-            <span class="text-mute">Pharmacy or medicine name</span>
+          
+          <div class="space-y-2 mb-4">
+            <div class="flex justify-between items-center text-sm">
+              <span class="text-charcoal font-medium">الوقت المتوقع للتوصيل</span>
+              <span class="text-ink-deep font-bold">خلال 45 دقيقة</span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill" style="width: 65%;"></div>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <div class="avatar-circle">ص</div>
+            <div>
+              <h4 class="type-body-sm-strong text-ink-deep">صيدلية العزبي (فرع المعادي)</h4>
+              <p class="type-caption text-slate">تم التحقق من الوصفة الطبية</p>
+            </div>
           </div>
         </div>
-
-        <div class="flex flex-wrap gap-2">
-          <button
-            *ngFor="let cat of categories"
-            type="button"
-            class="badge-tag-purple"
-          >
-            {{ cat }}
-          </button>
-        </div>
-
-        <a routerLink="/auth/register" class="btn-large">See options</a>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Feature promo -->
-<section class="bg-canvas py-8 md:py-12">
+<!-- 3-Step Flow: How it works -->
+<section class="bg-canvas py-16 md:py-24">
+  <div class="container-app text-center">
+    <span class="badge-tag-primary mb-4">خطوات سهلة وبسيطة</span>
+    <h2 class="type-display-xl text-ink-deep mb-4">كيف يعمل فارما لينك؟</h2>
+    <p class="type-subtitle max-w-2xl mx-auto mb-12">
+      لقد قمنا بتبسيط عملية طلب الدواء الطويل والبحث عنه في الصيدليات لتتم في ثلاث خطوات سريعة.
+    </p>
+
+    <div class="grid md:grid-cols-3 gap-8">
+      <!-- Step 1 -->
+      <div class="card-base text-center space-y-4 hover:shadow-level-2 transition-all">
+        <div class="mx-auto step-indicator">١</div>
+        <h3 class="type-heading-3 text-ink-deep">ارفع الروشتة أو ابحث عن الدواء</h3>
+        <p class="type-body-sm text-slate">
+          قم بتصوير الروشتة الطبية ورفعها مباشرة عبر الموقع، أو ابحث يدويًا في دليل الأدوية الشامل لدينا.
+        </p>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="card-base text-center space-y-4 hover:shadow-level-2 transition-all">
+        <div class="mx-auto step-indicator">٢</div>
+        <h3 class="type-heading-3 text-ink-deep">تلقى العروض وقارن الأسعار</h3>
+        <p class="type-body-sm text-slate">
+          ستقوم الصيدليات القريبة بمراجعة طلبك وعرض الأسعار وتوفر البدائل في ثوانٍ معدودة لتختار الأنسب لك.
+        </p>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="card-base text-center space-y-4 hover:shadow-level-2 transition-all">
+        <div class="mx-auto step-indicator">٣</div>
+        <h3 class="type-heading-3 text-ink-deep">استلم طلبك حتى باب بيتك</h3>
+        <p class="type-body-sm text-slate">
+          سيصلك الدواء مغلفًا وآمنًا مع كابتن التوصيل السريع التابع للصيدلية المختارة، مع خيارات دفع مرنة.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Feature Promo Grid -->
+<section class="bg-surface py-16 md:py-24 border-t border-b border-hairline-soft">
   <div class="container-app">
-    <div class="grid md:grid-cols-2 gap-6">
-      <div class="card-feature-teal space-y-4">
-        <div class="flex h-12 w-12 items-center justify-center rounded-full bg-canvas">
-          <i class="pi pi-heart text-2xl text-ink"></i>
+    <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+      <span class="badge-tag-primary">ميزات مبتكرة</span>
+      <h2 class="type-display-xl text-ink-deep">رعاية صحية ممتازة تليق بك</h2>
+      <p class="type-subtitle">
+        نوفر لك أفضل الأدوات الرقمية لضمان سلامتك وسلامة عائلتك وتسهيل متابعة الأدوية الدورية.
+      </p>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-8">
+      <!-- Feature 1 -->
+      <div class="card-feature-primary space-y-4 text-right">
+        <div class="flex h-12 w-12 items-center justify-center rounded-full bg-canvas text-primary">
+          <i class="pi pi-verified text-2xl"></i>
         </div>
-        <h2 class="type-display-md">Safety, simplified</h2>
-        <p class="type-body-md text-body">
-          Verified accounts, clear prescription flows, and a network you can trust — without the clutter.
+        <h3 class="type-display-sm text-primary-900">أمان وتحقق تام</h3>
+        <p class="type-body-md text-primary-800">
+          حسابات موثقة وفحوصات دقيقة للوصفات الطبية لضمان صرف الجرعات الصحيحة والمعتمدة من وزارة الصحة المصرية بدون أي أخطاء.
         </p>
-        <a routerLink="/auth/register" class="btn-secondary inline-flex">Learn more</a>
+        <a routerLink="/auth/register" class="btn-primary inline-flex text-sm py-2 px-5">سجل الآن</a>
       </div>
-      <div class="card-feature-rose space-y-4">
-        <div class="flex h-12 w-12 items-center justify-center rounded-full bg-canvas">
-          <i class="pi pi-clock text-2xl text-ink"></i>
+
+      <!-- Feature 2 -->
+      <div class="card-feature-coral space-y-4 text-right">
+        <div class="flex h-12 w-12 items-center justify-center rounded-full bg-canvas text-accent-coral">
+          <i class="pi pi-calendar text-2xl"></i>
         </div>
-        <h2 class="type-display-md">Plan for later</h2>
-        <p class="type-body-md text-body">
-          Save your profile, revisit prescriptions, and pick up where you left off whenever care matters most.
+        <h3 class="type-display-sm text-accent-coral-deep">جدولة وتذكير بالأدوية</h3>
+        <p class="type-body-md text-charcoal">
+          احفظ ملفك الشخصي وعناوينك وتاريخك الطبي، مع تفعيل خاصية التذكير بمواعيد تجديد الوصفات الشهرية للأمراض المزمنة.
         </p>
-        <a routerLink="/profile" class="btn-secondary inline-flex">View profile</a>
+        <a routerLink="/profile" class="btn-coral inline-flex text-sm py-2 px-5">عرض الملف الشخصي</a>
       </div>
-      <div class="card-feature-coral space-y-4">
-        <div class="flex h-12 w-12 items-center justify-center rounded-full bg-canvas">
-          <i class="pi pi-building text-2xl text-ink"></i>
+
+      <!-- Feature 3 -->
+      <div class="card-feature space-y-4 border border-hairline-soft bg-canvas text-right">
+        <div class="flex h-12 w-12 items-center justify-center rounded-full bg-primary-50 text-primary">
+          <i class="pi pi-building text-2xl"></i>
         </div>
-        <h2 class="type-display-md">Built for pharmacies</h2>
-        <p class="type-body-md text-body">
-          Onboard locations, manage inventory partners, and serve patients with tools designed for healthcare teams.
+        <h3 class="type-display-sm text-ink-deep">شريك الصيدليات الأول</h3>
+        <p class="type-body-md text-slate">
+          لوحة تحكم ذكية لإدارة الفروع المتعددة، ومراقبة المخزون الدوائي، وتحديث نواقص الأدوية والوصول لآلاف المرضى يومياً.
         </p>
-        <a routerLink="/auth/register" class="btn-secondary inline-flex">Join as pharmacy</a>
+        <a routerLink="/auth/register" class="btn-secondary inline-flex text-sm py-2 px-5">سجل كصيدلية</a>
       </div>
-      <div class="card-feature-yellow space-y-4">
-        <div class="flex h-12 w-12 items-center justify-center rounded-full bg-canvas">
-          <i class="pi pi-check text-2xl text-ink"></i>
+
+      <!-- Feature 4 -->
+      <div class="card-feature space-y-4 border border-hairline-soft bg-canvas text-right">
+        <div class="flex h-12 w-12 items-center justify-center rounded-full bg-accent-blue-light text-accent-blue">
+          <i class="pi pi-search-plus text-2xl"></i>
         </div>
-        <h2 class="type-display-md">Stay ahead</h2>
-        <p class="type-body-md text-body">
-          Keep every conversation, order, and prescription moving with a calmer, more connected workflow.
+        <h3 class="type-display-sm text-ink-deep">دليل أدوية محدّث وبدائل</h3>
+        <p class="type-body-md text-slate">
+          ابحث في دليل الأدوية المصري الشامل، واعرف الأسعار الرسمية والبدائل المتاحة بنفس المادة الفعالة مع فارما لينك.
         </p>
-        <a routerLink="/auth/forgot-password" class="btn-secondary inline-flex">Need help signing in?</a>
+        <a routerLink="/auth/forgot-password" class="btn-ghost inline-flex text-sm">هل تواجه مشكلة؟</a>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Dark promo band -->
-<section class="bg-ink text-on-dark py-12 md:py-16">
+<!-- Social Proof Stats Row -->
+<section class="bg-canvas py-16">
   <div class="container-app">
-    <div class="grid md:grid-cols-2 gap-8 items-center">
-      <div class="space-y-4">
-        <h2 class="type-display-xl text-on-dark">Drive your pharmacy forward</h2>
-        <p class="type-body-md text-mute max-w-md">
-          Onboard locations, manage inventory partners, and serve patients with tools built for healthcare.
-        </p>
-        <a routerLink="/auth/register" class="btn-secondary inline-flex">Join as pharmacy</a>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+      <div class="card-stat border-l md:border-l border-hairline-soft">
+        <div class="text-primary font-bold type-display-xl font-sans">+٥٠,٠٠٠</div>
+        <p class="type-body-sm text-slate">عميل سعيد بخدماتنا</p>
       </div>
-      <div class="aspect-[4/3] bg-black-elevated rounded-[28px] flex items-center justify-center">
-        <div class="text-center p-8 space-y-3">
-          <i class="pi pi-building text-4xl text-on-dark"></i>
-          <p class="type-body-md-strong text-on-dark">Built for pharmacies</p>
+      <div class="card-stat md:border-l border-hairline-soft">
+        <div class="text-primary font-bold type-display-xl font-sans">+١,٢٠٠</div>
+        <p class="type-body-sm text-slate">صيدلية شريكة بمصر</p>
+      </div>
+      <div class="card-stat border-l md:border-l border-hairline-soft">
+        <div class="text-primary font-bold type-display-xl font-sans">+٣٠٠,٠٠٠</div>
+        <p class="type-body-sm text-slate">طلب تم توصيله بنجاح</p>
+      </div>
+      <div class="card-stat">
+        <div class="text-primary font-bold type-display-xl font-sans">٩٩.٨٪</div>
+        <p class="type-body-sm text-slate">نسبة رضا العملاء</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="bg-surface py-16 md:py-24 border-t border-hairline-soft">
+  <div class="container-app text-center">
+    <span class="badge-tag-rose mb-4">آراء مستخدمينا</span>
+    <h2 class="type-display-xl text-ink-deep mb-12">ماذا يقول عملاؤنا عن فارما لينك؟</h2>
+
+    <div class="grid md:grid-cols-3 gap-8 text-right">
+      <!-- Testimonial 1 -->
+      <div class="card-testimonial space-y-6">
+        <p class="type-body-md text-charcoal italic">
+          "وفر عليّ فارما لينك مشوار البحث الطويل عن علاج والدي للأمراض المزمنة. رفعت صورة الروشتة وجاتلي أسعار وبدائل الأدوية خلال دقيقة، ووصلني البيت مغلف ونظيف جداً."
+        </p>
+        <div class="flex items-center gap-3 pt-4 border-t border-hairline-soft">
+          <div class="avatar-circle-large bg-primary-100 text-primary-700">م</div>
+          <div>
+            <h4 class="type-heading-5 text-ink-deep">محمد أحمد</h4>
+            <span class="badge-tag-primary text-xs mt-1">مريض مزمن</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Testimonial 2 -->
+      <div class="card-testimonial space-y-6">
+        <p class="type-body-md text-charcoal italic">
+          "بصفتي صاحب صيدلية، فارما لينك فتح لنا قناة تسويق ممتازة وربطنا بالمرضى القريبين في محيط صيدليتنا، التطوير مستمر وخدمة الدعم الفني متعاونة وسريعة الاستجابة."
+        </p>
+        <div class="flex items-center gap-3 pt-4 border-t border-hairline-soft">
+          <div class="avatar-circle-large bg-accent-coral-light text-accent-coral-deep">د</div>
+          <div>
+            <h4 class="type-heading-5 text-ink-deep">د. سارة محمود</h4>
+            <span class="badge-tag-coral text-xs mt-1">مديرة صيدلية</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Testimonial 3 -->
+      <div class="card-testimonial space-y-6">
+        <p class="type-body-md text-charcoal italic">
+          "سرعة استجابة مذهلة! الأوردرات بتوصل بسرعة، وإمكانية تتبع الأوردر لايف على الخريطة بتطمن، أفضل أبليكيشن لطلب الروشتات وتوصيل الدواء في مصر بدون منازع."
+        </p>
+        <div class="flex items-center gap-3 pt-4 border-t border-hairline-soft">
+          <div class="avatar-circle-large bg-accent-rose-light text-accent-rose">ي</div>
+          <div>
+            <h4 class="type-heading-5 text-ink-deep">ياسر عبد الهادي</h4>
+            <span class="badge-tag-rose text-xs mt-1">مستخدم متميز</span>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- FAQ -->
-<section class="bg-canvas py-8 md:py-12">
-  <div class="container-app max-w-3xl">
-    <h2 class="type-display-xl mb-6">Frequently asked questions</h2>
-    <div class="divide-y divide-surface-pressed">
-      <div *ngFor="let faq of faqs; let i = index" class="py-4">
+<!-- FAQ Section -->
+<section class="bg-canvas py-16">
+  <div class="container-app max-w-3xl text-right">
+    <h2 class="type-display-xl text-ink-deep mb-8 text-center">الأسئلة الشائعة</h2>
+    <div class="divide-y divide-hairline-soft border-t border-b border-hairline-soft">
+      <div *ngFor="let faq of faqs; let i = index" class="py-5">
         <button
           type="button"
-          class="w-full flex justify-between items-center gap-4 text-left type-body-md-strong"
+          class="w-full flex justify-between items-center gap-4 text-right type-body-md-strong text-ink-deep focus:outline-none"
           (click)="toggleFaq(i)"
         >
           <span>{{ faq.q }}</span>
-          <i class="pi text-sm shrink-0" [ngClass]="faq.open ? 'pi-minus' : 'pi-plus'"></i>
+          <i class="pi text-sm shrink-0" [ngClass]="faq.open ? 'pi-minus text-primary' : 'pi-plus text-slate'"></i>
         </button>
-        <p *ngIf="faq.open" class="type-body-md text-body mt-3 pr-8">{{ faq.a }}</p>
+        <p *ngIf="faq.open" class="type-body-sm text-slate mt-3 pr-4 leading-relaxed border-r-2 border-primary-200">
+          {{ faq.a }}
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Dark CTA Promo Band at bottom -->
+<section class="bg-primary-900 text-on-dark py-16">
+  <div class="container-app">
+    <div class="grid md:grid-cols-[1.2fr_0.8fr] gap-8 items-center text-right">
+      <div class="space-y-4">
+        <h2 class="type-display-xl text-on-dark">ادفع صيدليتك نحو الأمام</h2>
+        <p class="type-body-lg text-primary-100 max-w-xl">
+          انضم اليوم لشبكتنا الكبيرة، ابدأ باستلام روشتات وطلبات المرضى، وأدر مبيعاتك وفروعك بأدوات رقمية متقدمة صُممت خصيصاً لفرق الرعاية الصحية.
+        </p>
+        <a routerLink="/auth/register" class="btn-coral inline-flex">سجل صيدليتك الآن</a>
+      </div>
+      <div class="aspect-[4/3] bg-primary-800 rounded-xl flex items-center justify-center p-8 border border-primary-700 shadow-level-3">
+        <div class="text-center space-y-4">
+          <i class="pi pi-building text-6xl text-accent-coral"></i>
+          <h3 class="type-heading-3 text-on-dark font-bold">بوابة الصيدلية الذكية</h3>
+          <p class="type-body-sm text-primary-100">تحليلات ذكية، تتبع مباشر للمخزون، وتقارير مبيعات يومية دقيقة.</p>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
 <!-- App download style CTA -->
-<section class="bg-canvas pb-12">
-  <div class="container-app flex flex-wrap gap-3">
-    <a routerLink="/auth/register" class="inline-flex items-center gap-2 bg-ink text-on-dark type-body-md-strong rounded-full px-5 py-3">
-      <i class="pi pi-user"></i>
-      Create patient account
+<section class="bg-canvas py-12 border-t border-hairline-soft">
+  <div class="container-app flex flex-wrap justify-center gap-4">
+    <a routerLink="/auth/register" class="inline-flex items-center gap-2 bg-ink-deep text-on-dark type-body-md-strong rounded-lg px-6 py-3.5 hover:bg-footer-bg transition-colors shadow-level-1">
+      <i class="pi pi-user-plus text-primary"></i>
+      <span>إنشاء حساب مريض جديد</span>
     </a>
-    <a routerLink="/auth/login" class="inline-flex items-center gap-2 bg-ink text-on-dark type-body-md-strong rounded-full px-5 py-3">
-      <i class="pi pi-sign-in"></i>
-      Sign in to continue
+    <a routerLink="/auth/login" class="inline-flex items-center gap-2 bg-ink-deep text-on-dark type-body-md-strong rounded-lg px-6 py-3.5 hover:bg-footer-bg transition-colors shadow-level-1">
+      <i class="pi pi-sign-in text-accent-coral"></i>
+      <span>تسجيل الدخول للمتابعة</span>
     </a>
   </div>
 </section>

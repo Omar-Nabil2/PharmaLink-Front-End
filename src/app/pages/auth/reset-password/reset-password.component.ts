@@ -77,15 +77,15 @@ export class ResetPasswordComponent implements OnInit {
         this.isLoading = false;
         this.messageService.add({
           severity: 'success',
-          summary: 'Password Updated',
-          detail: 'Your password has been reset successfully. Please login.',
+          summary: 'تم تحديث كلمة المرور',
+          detail: 'تم إعادة تعيين كلمة المرور بنجاح. يرجى تسجيل الدخول باستخدام بياناتك الجديدة.',
           life: 4000,
         });
         this.router.navigate(['/auth/login']);
       },
       error: (err) => {
         this.isLoading = false;
-        this.errorHandler.handleError(err, 'Failed to reset password');
+        this.errorHandler.handleError(err, 'فشل إعادة تعيين كلمة المرور');
       },
     });
   }

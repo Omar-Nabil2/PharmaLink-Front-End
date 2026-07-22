@@ -1,49 +1,49 @@
-<nav class="sticky top-0 z-50 w-full border-b border-hairline-soft bg-canvas">
+<nav class="sticky top-0 z-50 w-full border-b border-hairline-soft bg-canvas shadow-level-1">
   <div class="container-app">
     <div class="flex justify-between items-center py-4">
       <a routerLink="/" class="flex items-center gap-3 cursor-pointer select-none">
-        <span class="flex h-10 w-10 items-center justify-center rounded-full bg-brand-yellow text-sm font-semibold text-ink">
+        <span class="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-sm font-semibold text-on-primary">
           PL
         </span>
-        <span class="type-display-sm hidden sm:inline">Pharma Link</span>
+        <span class="type-heading-4 hidden sm:inline text-primary">فارما لينك</span>
       </a>
 
       <div class="hidden lg:flex items-center gap-8">
         <a
           routerLink="/"
-          routerLinkActive="opacity-100"
+          routerLinkActive="!opacity-100 text-primary font-bold"
           [routerLinkActiveOptions]="{ exact: true }"
           class="type-body-md-strong text-ink opacity-70 hover:opacity-100 transition-opacity"
         >
-          Home
+          الرئيسية
         </a>
         <a
           routerLink="/products"
-          routerLinkActive="opacity-100"
+          routerLinkActive="!opacity-100 text-primary font-bold"
           class="type-body-md-strong text-ink opacity-70 hover:opacity-100 transition-opacity"
         >
-          Products
+          المنتجات
         </a>
         <a
           routerLink="/services"
-          routerLinkActive="opacity-100"
+          routerLinkActive="!opacity-100 text-primary font-bold"
           class="type-body-md-strong text-ink opacity-70 hover:opacity-100 transition-opacity"
         >
-          Services
+          الخدمات
         </a>
         <a
           routerLink="/contact"
-          routerLinkActive="opacity-100"
+          routerLinkActive="!opacity-100 text-primary font-bold"
           class="type-body-md-strong text-ink opacity-70 hover:opacity-100 transition-opacity"
         >
-          Contact
+          اتصل بنا
         </a>
       </div>
 
       <div class="hidden md:flex items-center gap-3">
         <ng-container *ngIf="!isLoggedIn">
-          <a routerLink="/auth/login" class="btn-secondary">Log in</a>
-          <a routerLink="/auth/register" class="btn-primary">Sign up</a>
+          <a routerLink="/auth/login" class="btn-secondary">تسجيل الدخول</a>
+          <a routerLink="/auth/register" class="btn-primary">إنشاء حساب</a>
         </ng-container>
 
         <ng-container *ngIf="isLoggedIn">
@@ -51,14 +51,14 @@
             <i class="pi pi-user text-sm"></i>
             <span>{{ fullName }}</span>
           </a>
-          <a routerLink="/change-password" class="btn-secondary">Change password</a>
-          <button type="button" (click)="logout()" class="btn-primary">Logout</button>
+          <a routerLink="/change-password" class="btn-secondary">تغيير كلمة المرور</a>
+          <button type="button" (click)="logout()" class="btn-primary">تسجيل الخروج</button>
         </ng-container>
       </div>
 
       <button
         type="button"
-        class="md:hidden flex items-center justify-center w-10 h-10 rounded-full border border-hairline-soft bg-canvas-soft text-ink"
+        class="md:hidden flex items-center justify-center w-10 h-10 rounded-full border border-hairline-soft bg-surface text-ink"
         (click)="menuOpen = !menuOpen"
         [attr.aria-expanded]="menuOpen"
         aria-label="Toggle menu"
@@ -68,20 +68,20 @@
     </div>
 
     <div *ngIf="menuOpen" class="md:hidden pb-6 space-y-4 border-t border-hairline-soft pt-4">
-      <a routerLink="/" (click)="menuOpen = false" class="block type-body-md-strong py-2">Home</a>
-      <a routerLink="/products" (click)="menuOpen = false" class="block type-body-md-strong py-2">Products</a>
-      <a routerLink="/services" (click)="menuOpen = false" class="block type-body-md-strong py-2">Services</a>
-      <a routerLink="/contact" (click)="menuOpen = false" class="block type-body-md-strong py-2">Contact</a>
+      <a routerLink="/" (click)="menuOpen = false" class="block type-body-md-strong py-2">الرئيسية</a>
+      <a routerLink="/products" (click)="menuOpen = false" class="block type-body-md-strong py-2">المنتجات</a>
+      <a routerLink="/services" (click)="menuOpen = false" class="block type-body-md-strong py-2">الخدمات</a>
+      <a routerLink="/contact" (click)="menuOpen = false" class="block type-body-md-strong py-2">اتصل بنا</a>
 
       <div class="flex flex-col gap-3 pt-2">
         <ng-container *ngIf="!isLoggedIn">
-          <a routerLink="/auth/login" (click)="menuOpen = false" class="btn-secondary w-full">Log in</a>
-          <a routerLink="/auth/register" (click)="menuOpen = false" class="btn-primary w-full">Sign up</a>
+          <a routerLink="/auth/login" (click)="menuOpen = false" class="btn-secondary w-full">تسجيل الدخول</a>
+          <a routerLink="/auth/register" (click)="menuOpen = false" class="btn-primary w-full">إنشاء حساب</a>
         </ng-container>
         <ng-container *ngIf="isLoggedIn">
-          <a routerLink="/profile" (click)="menuOpen = false" class="btn-subtle w-full">{{ fullName }}</a>
-          <a routerLink="/change-password" (click)="menuOpen = false" class="btn-secondary w-full">Change password</a>
-          <button type="button" (click)="logout(); menuOpen = false" class="btn-primary w-full">Logout</button>
+          <a routerLink="/profile" (click)="menuOpen = false" class="btn-subtle w-full text-center">{{ fullName }}</a>
+          <a routerLink="/change-password" (click)="menuOpen = false" class="btn-secondary w-full text-center">تغيير كلمة المرور</a>
+          <button type="button" (click)="logout(); menuOpen = false" class="btn-primary w-full">تسجيل الخروج</button>
         </ng-container>
       </div>
     </div>

@@ -1,12 +1,12 @@
-<div class="auth-card space-y-6">
+<div class="auth-card space-y-6 text-right">
   <div class="space-y-2">
-    <h2 class="type-display-md text-ink">OTP verification</h2>
-    <p class="type-body-sm text-body">
-      Enter the one-time password sent to your registered phone number to complete verification.
+    <h2 class="type-display-md text-ink-deep">تأكيد رمز التحقق</h2>
+    <p class="type-body-sm text-slate">
+      يرجى إدخال رمز التحقق (OTP) المرسل في رسالة نصية إلى رقم هاتفك المحمول المسجل لإتمام تفعيل الحساب.
     </p>
   </div>
 
-  <div class="flex gap-2 justify-between py-2">
+  <div class="flex gap-2 justify-between py-2" dir="ltr">
     <input
       *ngFor="let digit of otpDigits; let i = index"
       #digitInput
@@ -17,24 +17,24 @@
       [value]="otpDigits[i]"
       (keydown)="onKeyDown($event, i)"
       (paste)="onPaste($event)"
-      class="w-11 h-11 sm:w-12 sm:h-12 text-center type-display-sm bg-canvas rounded-[20px] border border-hairline-soft outline-none focus:border-brand-blue focus:shadow-[0_0_0_4px_rgba(66,98,255,0.12)]"
-      [ngClass]="{ 'border-brand-blue shadow-[0_0_0_4px_rgba(66,98,255,0.12)]': otpDigits[i] !== '' }"
+      class="w-11 h-11 sm:w-12 sm:h-12 text-center type-heading-3 bg-canvas rounded-lg border border-hairline-strong outline-none focus:border-primary focus:shadow-[0_0_0_4px_var(--color-primary-100)] transition-all"
+      [ngClass]="{ 'border-primary shadow-[0_0_0_4px_var(--color-primary-100)]': otpDigits[i] !== '' }"
     />
   </div>
 
   <div class="flex justify-between items-center type-caption">
-    <span class="text-body">
-      Remaining time: <span class="text-ink font-medium">{{ formattedTime }}</span>
+    <span class="text-slate">
+      الوقت المتبقي: <span class="text-ink-deep font-semibold">{{ formattedTime }}</span>
     </span>
-    <span class="text-body">
-      Didn't get the code?
+    <span class="text-slate">
+      لم يصلك الرمز؟
       <button
         type="button"
         (click)="sendOtpRequest()"
         [disabled]="!canResend"
         class="link-ink disabled:opacity-40 disabled:no-underline disabled:cursor-not-allowed bg-transparent border-none p-0 cursor-pointer"
       >
-        Resend
+        إعادة الإرسال
       </button>
     </span>
   </div>
@@ -46,8 +46,8 @@
       [disabled]="isLoading || isResending || !isCodeComplete"
       class="btn-large"
     >
-      <i *ngIf="isLoading" class="pi pi-spin pi-spinner text-xs"></i>
-      <span>Verify</span>
+      <i *ngIf="isLoading" class="pi pi-spin pi-spinner text-sm"></i>
+      <span>تأكيد الرمز</span>
     </button>
 
     <button
@@ -56,7 +56,7 @@
       [disabled]="isLoading || isResending"
       class="btn-secondary w-full"
     >
-      Cancel
+      إلغاء
     </button>
   </div>
 </div>

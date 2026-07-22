@@ -1,24 +1,25 @@
-<div class="auth-card space-y-6">
+<div class="auth-card space-y-6 text-right">
   <div class="space-y-2">
-    <h2 class="type-display-md text-ink">Create account</h2>
-    <p class="type-body-sm text-body">
-      Register as a patient to start managing your health connections.
+    <h2 class="type-display-md text-ink-deep">إنشاء حساب جديد</h2>
+    <p class="type-body-sm text-slate">
+      سجل الآن كأول خطوة لإدارة وصفتك الطبية والتواصل مع صيدليتك.
     </p>
   </div>
 
   <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="space-y-4">
+    <!-- Full name -->
     <div>
-      <label for="fullName" class="field-label">Full name</label>
+      <label for="fullName" class="field-label">الاسم الكامل</label>
       <div class="relative">
-        <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-mute pointer-events-none">
+        <span class="absolute inset-y-0 right-0 pr-4 flex items-center text-placeholder pointer-events-none">
           <i class="pi pi-user text-sm"></i>
         </span>
         <input
           id="fullName"
           type="text"
           formControlName="fullName"
-          placeholder="Enter your full name"
-          class="field-input pl-11"
+          placeholder="أدخل اسمك بالكامل"
+          class="field-input pr-11 pl-4"
           [ngClass]="{
             'is-invalid':
               (f['fullName'].touched || f['fullName'].dirty) &&
@@ -28,8 +29,8 @@
       </div>
       <div *ngIf="(f['fullName'].touched || f['fullName'].dirty) && f['fullName'].invalid" class="field-error">
         <i class="pi pi-exclamation-circle text-[10px]"></i>
-        <span *ngIf="f['fullName'].errors?.['required']">Please enter your full name.</span>
-        <span *ngIf="f['fullName'].errors?.['maxlength']">Name must be under 100 characters.</span>
+        <span *ngIf="f['fullName'].errors?.['required']">يرجى إدخال الاسم الكامل.</span>
+        <span *ngIf="f['fullName'].errors?.['maxlength']">يجب أن يكون الاسم أقل من 100 حرف.</span>
       </div>
       <div *ngIf="f['fullName'].errors?.['serverError']" class="field-error">
         <i class="pi pi-exclamation-circle text-[10px]"></i>
@@ -37,10 +38,11 @@
       </div>
     </div>
 
+    <!-- Email address -->
     <div>
-      <label for="email" class="field-label">Email address</label>
+      <label for="email" class="field-label">البريد الإلكتروني</label>
       <div class="relative">
-        <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-mute pointer-events-none">
+        <span class="absolute inset-y-0 right-0 pr-4 flex items-center text-placeholder pointer-events-none">
           <i class="pi pi-envelope text-sm"></i>
         </span>
         <input
@@ -48,7 +50,8 @@
           type="email"
           formControlName="email"
           placeholder="name@example.com"
-          class="field-input pl-11"
+          class="field-input pr-11 pl-4 text-left"
+          dir="ltr"
           [ngClass]="{
             'is-invalid':
               (f['email'].touched || f['email'].dirty) && (f['email'].invalid || f['email'].errors?.['serverError'])
@@ -57,9 +60,9 @@
       </div>
       <div *ngIf="(f['email'].touched || f['email'].dirty) && f['email'].invalid" class="field-error">
         <i class="pi pi-exclamation-circle text-[10px]"></i>
-        <span *ngIf="f['email'].errors?.['required']">Email is required.</span>
-        <span *ngIf="f['email'].errors?.['email']">Please enter a valid email address.</span>
-        <span *ngIf="f['email'].errors?.['maxlength']">This email is too long.</span>
+        <span *ngIf="f['email'].errors?.['required']">البريد الإلكتروني مطلوب.</span>
+        <span *ngIf="f['email'].errors?.['email']">يرجى إدخال بريد إلكتروني صحيح.</span>
+        <span *ngIf="f['email'].errors?.['maxlength']">البريد الإلكتروني طويل جداً.</span>
       </div>
       <div *ngIf="f['email'].errors?.['serverError']" class="field-error">
         <i class="pi pi-exclamation-circle text-[10px]"></i>
@@ -67,10 +70,11 @@
       </div>
     </div>
 
+    <!-- Phone number -->
     <div>
-      <label for="phoneNumber" class="field-label">Phone number</label>
+      <label for="phoneNumber" class="field-label">رقم الهاتف المحمول</label>
       <div class="relative">
-        <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-mute pointer-events-none">
+        <span class="absolute inset-y-0 right-0 pr-4 flex items-center text-placeholder pointer-events-none">
           <i class="pi pi-phone text-sm"></i>
         </span>
         <input
@@ -78,7 +82,8 @@
           type="tel"
           formControlName="phoneNumber"
           placeholder="01xxxxxxxxx"
-          class="field-input pl-11"
+          class="field-input pr-11 pl-4 text-left"
+          dir="ltr"
           [ngClass]="{
             'is-invalid':
               (f['phoneNumber'].touched || f['phoneNumber'].dirty) &&
@@ -88,8 +93,8 @@
       </div>
       <div *ngIf="(f['phoneNumber'].touched || f['phoneNumber'].dirty) && f['phoneNumber'].invalid" class="field-error">
         <i class="pi pi-exclamation-circle text-[10px]"></i>
-        <span *ngIf="f['phoneNumber'].errors?.['required']">Phone number is required.</span>
-        <span *ngIf="f['phoneNumber'].errors?.['pattern']">Enter a valid Egyptian phone number.</span>
+        <span *ngIf="f['phoneNumber'].errors?.['required']">رقم الهاتف مطلوب.</span>
+        <span *ngIf="f['phoneNumber'].errors?.['pattern']">يرجى إدخال رقم هاتف مصري صحيح.</span>
       </div>
       <div *ngIf="f['phoneNumber'].errors?.['serverError']" class="field-error">
         <i class="pi pi-exclamation-circle text-[10px]"></i>
@@ -97,10 +102,11 @@
       </div>
     </div>
 
+    <!-- Password -->
     <div>
-      <label for="password" class="field-label">Password</label>
+      <label for="password" class="field-label">كلمة المرور</label>
       <div class="relative">
-        <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-mute pointer-events-none">
+        <span class="absolute inset-y-0 right-0 pr-4 flex items-center text-placeholder pointer-events-none">
           <i class="pi pi-lock text-sm"></i>
         </span>
         <input
@@ -108,7 +114,8 @@
           [type]="showPassword ? 'text' : 'password'"
           formControlName="password"
           placeholder="••••••••"
-          class="field-input pl-11 pr-11"
+          class="field-input pr-11 pl-12 text-left"
+          dir="ltr"
           [ngClass]="{
             'is-invalid':
               (f['password'].touched || f['password'].dirty) &&
@@ -118,49 +125,50 @@
         <button
           type="button"
           (click)="showPassword = !showPassword"
-          class="absolute inset-y-0 right-0 pr-4 flex items-center text-mute hover:text-ink transition-colors"
+          class="absolute inset-y-0 left-0 pl-4 flex items-center text-placeholder hover:text-ink transition-colors"
         >
           <i class="pi text-sm" [ngClass]="showPassword ? 'pi-eye-slash' : 'pi-eye'"></i>
         </button>
       </div>
 
-      <div *ngIf="passwordValue()" class="mt-3 p-4 bg-canvas-soft rounded-[28px] space-y-2 border border-hairline-soft">
-        <p class="type-body-sm-strong text-ink">Password requirements</p>
+      <!-- Password requirements check list -->
+      <div *ngIf="passwordValue()" class="mt-3 p-4 bg-surface rounded-lg space-y-2 border border-hairline-soft">
+        <p class="type-body-sm-strong text-ink-deep">متطلبات كلمة المرور</p>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-3 gap-y-1.5 type-caption">
           <div class="flex items-center gap-1.5">
             <i
               class="pi text-[10px]"
-              [ngClass]="checkPasswordRule('length') ? 'pi-check text-ink' : 'pi-times text-mute'"
+              [ngClass]="checkPasswordRule('length') ? 'pi-check text-success' : 'pi-times text-slate'"
             ></i>
-            <span [ngClass]="checkPasswordRule('length') ? 'text-ink' : 'text-body'">At least 8 characters</span>
+            <span [ngClass]="checkPasswordRule('length') ? 'text-ink-deep' : 'text-slate'">على الأقل 8 أحرف</span>
           </div>
           <div class="flex items-center gap-1.5">
             <i
               class="pi text-[10px]"
-              [ngClass]="checkPasswordRule('upper') ? 'pi-check text-ink' : 'pi-times text-mute'"
+              [ngClass]="checkPasswordRule('upper') ? 'pi-check text-success' : 'pi-times text-slate'"
             ></i>
-            <span [ngClass]="checkPasswordRule('upper') ? 'text-ink' : 'text-body'">One uppercase letter</span>
+            <span [ngClass]="checkPasswordRule('upper') ? 'text-ink-deep' : 'text-slate'">حرف كبير واحد (A-Z)</span>
           </div>
           <div class="flex items-center gap-1.5">
             <i
               class="pi text-[10px]"
-              [ngClass]="checkPasswordRule('lower') ? 'pi-check text-ink' : 'pi-times text-mute'"
+              [ngClass]="checkPasswordRule('lower') ? 'pi-check text-success' : 'pi-times text-slate'"
             ></i>
-            <span [ngClass]="checkPasswordRule('lower') ? 'text-ink' : 'text-body'">One lowercase letter</span>
+            <span [ngClass]="checkPasswordRule('lower') ? 'text-ink-deep' : 'text-slate'">حرف صغير واحد (a-z)</span>
           </div>
           <div class="flex items-center gap-1.5">
             <i
               class="pi text-[10px]"
-              [ngClass]="checkPasswordRule('digit') ? 'pi-check text-ink' : 'pi-times text-mute'"
+              [ngClass]="checkPasswordRule('digit') ? 'pi-check text-success' : 'pi-times text-slate'"
             ></i>
-            <span [ngClass]="checkPasswordRule('digit') ? 'text-ink' : 'text-body'">One numeric digit</span>
+            <span [ngClass]="checkPasswordRule('digit') ? 'text-ink-deep' : 'text-slate'">رقم واحد على الأقل (0-9)</span>
           </div>
           <div class="flex items-center gap-1.5 sm:col-span-2">
             <i
               class="pi text-[10px]"
-              [ngClass]="checkPasswordRule('special') ? 'pi-check text-ink' : 'pi-times text-mute'"
+              [ngClass]="checkPasswordRule('special') ? 'pi-check text-success' : 'pi-times text-slate'"
             ></i>
-            <span [ngClass]="checkPasswordRule('special') ? 'text-ink' : 'text-body'">One special character</span>
+            <span [ngClass]="checkPasswordRule('special') ? 'text-ink-deep' : 'text-slate'">رمز خاص واحد على الأقل (!@#$)</span>
           </div>
         </div>
       </div>
@@ -171,10 +179,11 @@
       </div>
     </div>
 
+    <!-- Confirm Password -->
     <div>
-      <label for="confirmPassword" class="field-label">Confirm password</label>
+      <label for="confirmPassword" class="field-label">تأكيد كلمة المرور</label>
       <div class="relative">
-        <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-mute pointer-events-none">
+        <span class="absolute inset-y-0 right-0 pr-4 flex items-center text-placeholder pointer-events-none">
           <i class="pi pi-lock text-sm"></i>
         </span>
         <input
@@ -182,7 +191,8 @@
           [type]="showConfirmPassword ? 'text' : 'password'"
           formControlName="confirmPassword"
           placeholder="••••••••"
-          class="field-input pl-11 pr-11"
+          class="field-input pr-11 pl-12 text-left"
+          dir="ltr"
           [ngClass]="{
             'is-invalid':
               (f['confirmPassword'].touched || f['confirmPassword'].dirty) &&
@@ -192,7 +202,7 @@
         <button
           type="button"
           (click)="showConfirmPassword = !showConfirmPassword"
-          class="absolute inset-y-0 right-0 pr-4 flex items-center text-mute hover:text-ink transition-colors"
+          class="absolute inset-y-0 left-0 pl-4 flex items-center text-placeholder hover:text-ink transition-colors"
         >
           <i class="pi text-sm" [ngClass]="showConfirmPassword ? 'pi-eye-slash' : 'pi-eye'"></i>
         </button>
@@ -202,8 +212,8 @@
         class="field-error"
       >
         <i class="pi pi-exclamation-circle text-[10px]"></i>
-        <span *ngIf="f['confirmPassword'].errors?.['required']">Please confirm your password.</span>
-        <span *ngIf="f['confirmPassword'].errors?.['mismatch']">Passwords do not match.</span>
+        <span *ngIf="f['confirmPassword'].errors?.['required']">يرجى تأكيد كلمة المرور.</span>
+        <span *ngIf="f['confirmPassword'].errors?.['mismatch']">كلمتا المرور غير متطابقتين.</span>
       </div>
       <div *ngIf="f['confirmPassword'].errors?.['serverError']" class="field-error">
         <i class="pi pi-exclamation-circle text-[10px]"></i>
@@ -213,12 +223,12 @@
 
     <button type="submit" [disabled]="isLoading || registerForm.invalid" class="btn-large mt-2">
       <i *ngIf="isLoading" class="pi pi-spin pi-spinner text-sm"></i>
-      <span>{{ isLoading ? 'Creating account...' : 'Register' }}</span>
+      <span>{{ isLoading ? 'جاري إنشاء الحساب...' : 'إنشاء حساب جديد' }}</span>
     </button>
   </form>
 
-  <p class="type-body-sm text-body text-center">
-    Already have an account?
-    <a routerLink="/auth/login" class="link-ink">Sign in</a>
+  <p class="type-body-sm text-slate text-center">
+    لديك حساب بالفعل؟
+    <a routerLink="/auth/login" class="link-ink">تسجيل الدخول</a>
   </p>
 </div>
