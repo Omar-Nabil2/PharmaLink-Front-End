@@ -125,9 +125,18 @@
             <div class="meta-row">
               <i class="pi pi-building meta-icon"></i>
               <span class="meta-label">الصيدلية المرتبطة:</span>
-              <span class="meta-value highlight-pharmacy">
-                {{ owner.pharmacy?.legalName || 'غير مرتبطة بصيدلية' }}
-              </span>
+              @if (owner.pharmacy?.pharmacyId || owner.pharmacyId) {
+                <a
+                  [routerLink]="['/admin/pharmacies', owner.pharmacy?.pharmacyId || owner.pharmacyId]"
+                  class="meta-value highlight-pharmacy clickable-pharmacy-link"
+                  title="الانتقال إلى صفحة تفاصيل الصيدلية"
+                >
+                  <span>{{ owner.pharmacy?.legalName || 'عرض تفاصيل الصيدلية' }}</span>
+                  <i class="pi pi-external-link link-icon"></i>
+                </a>
+              } @else {
+                <span class="meta-value" style="color: #6b7a76;">غير مرتبطة بصيدلية</span>
+              }
             </div>
           </div>
 
@@ -305,15 +314,118 @@
             }
           </div>
 
-          <!-- Pharmacy Selection -->
+          <!-- Pharmacy Selection (Async Search - Required) -->
           <div class="field">
-            <label class="field-label" for="pharmacyId">الصيدلية المرتبطة (اختياري)</label>
-            <select id="pharmacyId" class="field-select" formControlName="pharmacyId">
-              <option value="">-- اختر صيدلية --</option>
-              @for (pharmacy of availablePharmacies; track trackByPharmacyId($index, pharmacy)) {
-                <option [value]="pharmacy.pharmacyId">{{ pharmacy.legalName }} ({{ pharmacy.licenseNumber }})</option>
+            <label class="field-label">
+              الصيدلية المرتبطة <span style="color:#dc2626">*</span>
+            </label>
+
+            <!-- If a pharmacy is already selected -->
+            @if (selectedFormPharmacy) {
+              <div class="selected-pharmacy-card">
+                <div class="pharmacy-icon">
+                  @if (getLogoUrl(selectedFormPharmacy.logoUrl)) {
+                    <img [src]="getLogoUrl(selectedFormPharmacy.logoUrl)" [alt]="selectedFormPharmacy.legalName" class="pharmacy-logo-img" />
+                  } @else {
+                    <i class="pi pi-building"></i>
+                  }
+                </div>
+                <div class="pharmacy-info">
+                  <div class="pharmacy-name">{{ selectedFormPharmacy.legalName }}</div>
+                  <div class="pharmacy-sub">
+                    <span>ترخيص: {{ selectedFormPharmacy.licenseNumber }}</span>
+                    @if (selectedFormPharmacy.ownerName) {
+                      <span class="owner-tag">
+                        <i class="pi pi-user"></i>
+                        المالك: {{ selectedFormPharmacy.ownerName }}
+                      </span>
+                    }
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  class="btn-deselect"
+                  (click)="clearFormPharmacy()"
+                  title="تغيير الصيدلية"
+                >
+                  <i class="pi pi-times"></i>
+                </button>
+              </div>
+            } @else {
+              <!-- Async Search Input -->
+              <div class="pharmacy-search-wrap">
+                <input
+                  type="text"
+                  class="pharmacy-search-input"
+                  placeholder="ابحث باسم الصيدلية أو رقم الترخيص..."
+                  [value]="formPharmacySearchTerm"
+                  (input)="onFormPharmacySearchChange($any($event.target).value)"
+                  autocomplete="off"
+                  [class.is-invalid]="ownerForm.get('pharmacyId')!.invalid && ownerForm.get('pharmacyId')!.touched"
+                />
+                <i class="pi pi-search pharmacy-search-icon"></i>
+              </div>
+
+              <!-- Loading spinner -->
+              @if (isSearchingFormPharmacies) {
+                <div class="pharmacy-results">
+                  <div class="pharmacy-loading">
+                    <span class="spinner"></span>
+                    <span>جاري البحث في الصيدليات...</span>
+                  </div>
+                </div>
               }
-            </select>
+
+              <!-- Search Results List -->
+              @if (!isSearchingFormPharmacies && formPharmacySearchResults.length > 0) {
+                <div class="pharmacy-results">
+                  @for (pharmacy of formPharmacySearchResults; track trackByPharmacyId($index, pharmacy)) {
+                    <div
+                      class="pharmacy-result-item"
+                      (click)="selectFormPharmacy(pharmacy)"
+                    >
+                      <div class="pharmacy-icon">
+                        @if (getLogoUrl(pharmacy.logoUrl)) {
+                          <img [src]="getLogoUrl(pharmacy.logoUrl)" [alt]="pharmacy.legalName" class="pharmacy-logo-img" />
+                        } @else {
+                          <i class="pi pi-building"></i>
+                        }
+                      </div>
+                      <div class="pharmacy-info">
+                        <div class="pharmacy-name">{{ pharmacy.legalName }}</div>
+                        <div class="pharmacy-sub">
+                          <span>ترخيص: {{ pharmacy.licenseNumber }}</span>
+                          @if (pharmacy.owner?.fullName) {
+                            <span class="owner-tag">
+                              <i class="pi pi-user"></i>
+                              المالك: {{ pharmacy.owner?.fullName }}
+                            </span>
+                          }
+                        </div>
+                      </div>
+                      <i class="pi pi-plus" style="color: #0f9d76; font-size: 0.85rem;"></i>
+                    </div>
+                  }
+                </div>
+              }
+
+              <!-- No results found message -->
+              @if (!selectedFormPharmacy && !isSearchingFormPharmacies && formPharmacySearchTerm.trim() && formPharmacySearchResults.length === 0) {
+                <div class="pharmacy-results">
+                  <div class="pharmacy-empty">
+                    <i class="pi pi-search"></i>
+                    <span>لم يتم العثور على صيدليات مطابقة للبحث</span>
+                  </div>
+                </div>
+              }
+            }
+
+            @if (ownerForm.get('pharmacyId')!.invalid && ownerForm.get('pharmacyId')!.touched) {
+              <span class="field-error">
+                <i class="pi pi-exclamation-circle"></i>
+                اختيار صيدلية إجباري لربطها بالمالك
+              </span>
+            }
           </div>
 
           <!-- Status (Edit Mode) -->
@@ -505,10 +617,24 @@
                 [class.selected-pharmacy]="selectedPharmacy?.pharmacyId === pharmacy.pharmacyId"
                 (click)="selectPharmacy(pharmacy)"
               >
-                <div class="pharmacy-icon"><i class="pi pi-building"></i></div>
+                <div class="pharmacy-icon">
+                  @if (getLogoUrl(pharmacy.logoUrl)) {
+                    <img [src]="getLogoUrl(pharmacy.logoUrl)" [alt]="pharmacy.legalName" class="pharmacy-logo-img" />
+                  } @else {
+                    <i class="pi pi-building"></i>
+                  }
+                </div>
                 <div class="pharmacy-info">
                   <div class="pharmacy-name">{{ pharmacy.legalName }}</div>
-                  <div class="pharmacy-sub">ترخيص: {{ pharmacy.licenseNumber }}</div>
+                  <div class="pharmacy-sub">
+                    <span>ترخيص: {{ pharmacy.licenseNumber }}</span>
+                    @if (pharmacy.owner?.fullName) {
+                      <span class="owner-tag">
+                        <i class="pi pi-user"></i>
+                        المالك: {{ pharmacy.owner?.fullName }}
+                      </span>
+                    }
+                  </div>
                 </div>
                 @if (selectedPharmacy?.pharmacyId === pharmacy.pharmacyId) {
                   <i class="pi pi-check" style="color: #0f9d76; font-size: 0.875rem;"></i>
@@ -519,7 +645,7 @@
         }
 
         <!-- No results -->
-        @if (!isSearchingPharmacies && pharmacySearchTerm.trim() && pharmacySearchResults.length === 0) {
+        @if (!selectedPharmacy && !isSearchingPharmacies && pharmacySearchTerm.trim() && pharmacySearchResults.length === 0) {
           <div class="pharmacy-results">
             <div class="pharmacy-empty">
               <i class="pi pi-search"></i>
@@ -531,10 +657,24 @@
         <!-- Selected pharmacy card -->
         @if (selectedPharmacy) {
           <div class="selected-pharmacy-card">
-            <div class="pharmacy-icon"><i class="pi pi-building"></i></div>
+            <div class="pharmacy-icon">
+              @if (getLogoUrl(selectedPharmacy.logoUrl)) {
+                <img [src]="getLogoUrl(selectedPharmacy.logoUrl)" [alt]="selectedPharmacy.legalName" class="pharmacy-logo-img" />
+              } @else {
+                <i class="pi pi-building"></i>
+              }
+            </div>
             <div class="pharmacy-info">
               <div class="pharmacy-name">{{ selectedPharmacy.legalName }}</div>
-              <div class="pharmacy-sub">ترخيص: {{ selectedPharmacy.licenseNumber }}</div>
+              <div class="pharmacy-sub">
+                <span>ترخيص: {{ selectedPharmacy.licenseNumber }}</span>
+                @if (selectedPharmacy.owner?.fullName) {
+                  <span class="owner-tag">
+                    <i class="pi pi-user"></i>
+                    المالك: {{ selectedPharmacy.owner?.fullName }}
+                  </span>
+                }
+              </div>
             </div>
             <button class="btn-deselect" (click)="selectedPharmacy = null; pharmacySearchTerm = ''; pharmacySearchResults = [];" title="إلغاء التحديد">
               <i class="pi pi-times"></i>

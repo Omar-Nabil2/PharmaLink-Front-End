@@ -8,8 +8,9 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { Subject, debounceTime, distinctUntilChanged, takeUntil, switchMap, of } from 'rxjs';
+import { environment } from '@environments/environment';
 import { AdminPharmacyService } from '@core/services/admin-pharmacy.service';
 import { ErrorHandlerService } from '@core/services/error-handler.service';
 import { MessageService } from 'primeng/api';
@@ -21,6 +22,7 @@ import {
   PaginatedList,
   UserStatus,
   AdminPharmacySummaryDto,
+  VerificationStatus,
 } from '@core/interfaces/admin-pharmacy.interface';
 
 type DialogMode = 'create' | 'edit';
@@ -29,7 +31,7 @@ type DialogMode = 'create' | 'edit';
   selector: 'app-admin-pharmacy-owners',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterLink],
   templateUrl: './admin-pharmacy-owners.component.html',
   styleUrl: './admin-pharmacy-owners.component.scss',
 })
@@ -73,9 +75,18 @@ export class AdminPharmacyOwnersComponent implements OnInit, OnDestroy {
   isSaving = false;
   ownerForm!: FormGroup;
 
-  // Available Pharmacies for selection in Create/Edit Dialog
-  availablePharmacies: AdminPharmacySummaryDto[] = [];
-  isLoadingPharmacies = false;
+  // Async Pharmacy Search inside Create/Edit Dialog
+  formPharmacySearchTerm = '';
+  formPharmacySearchResults: AdminPharmacySummaryDto[] = [];
+  isSearchingFormPharmacies = false;
+  selectedFormPharmacy: {
+    pharmacyId: string;
+    legalName: string;
+    licenseNumber: string;
+    logoUrl?: string | null;
+    ownerName?: string | null;
+  } | null = null;
+  private readonly formPharmacySearchSubject = new Subject<string>();
 
   // ─── Delete Dialog ────────────────────────────────────────────────────────────
   showDeleteDialog = false;
@@ -113,7 +124,6 @@ export class AdminPharmacyOwnersComponent implements OnInit, OnDestroy {
     this.setupSearchDebounce();
     this.setupPharmacySearchDebounce();
     this.loadOwners();
-    this.loadAvailablePharmacies();
   }
 
   ngOnDestroy(): void {
@@ -121,14 +131,33 @@ export class AdminPharmacyOwnersComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  // ─── Form Setup ──────────────────────────────────────────────────────────────
+  // ─── Form Setup with Complete Validation ──────────────────────────────────────
   private initForm(): void {
     this.ownerForm = this.fb.group({
-      fullName: ['', [Validators.required, Validators.minLength(2)]],
-      email: ['', [Validators.required, Validators.email]],
-      phoneNumber: ['', [Validators.required, Validators.pattern(/^[0-9+ ]{8,15}$/)]],
+      fullName: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(2),
+          Validators.maxLength(100),
+        ],
+      ],
+      email: [
+        '',
+        [
+          Validators.required,
+          Validators.email,
+        ],
+      ],
+      phoneNumber: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern(/^(01[0125][0-9]{8}|\+?[1-9][0-9]{7,14})$/),
+        ],
+      ],
       password: [''],
-      pharmacyId: [''],
+      pharmacyId: ['', [Validators.required]],
       status: [UserStatus.Active, Validators.required],
     });
   }
@@ -144,6 +173,7 @@ export class AdminPharmacyOwnersComponent implements OnInit, OnDestroy {
   }
 
   private setupPharmacySearchDebounce(): void {
+    // 1. Assign Pharmacy Modal search
     this.pharmacySearchSubject
       .pipe(
         debounceTime(350),
@@ -171,6 +201,38 @@ export class AdminPharmacyOwnersComponent implements OnInit, OnDestroy {
         },
         error: () => {
           this.isSearchingPharmacies = false;
+          this.cdr.markForCheck();
+        },
+      });
+
+    // 2. Create/Edit Form Modal pharmacy async search
+    this.formPharmacySearchSubject
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        takeUntil(this.destroy$),
+        switchMap((term) => {
+          if (!term.trim()) {
+            this.formPharmacySearchResults = [];
+            this.isSearchingFormPharmacies = false;
+            this.cdr.markForCheck();
+            return of(null);
+          }
+          this.isSearchingFormPharmacies = true;
+          this.cdr.markForCheck();
+          return this.service.getPharmacies({ search: term, pageSize: 10 });
+        }),
+      )
+      .subscribe({
+        next: (res) => {
+          if (res) {
+            this.formPharmacySearchResults = res.items;
+          }
+          this.isSearchingFormPharmacies = false;
+          this.cdr.markForCheck();
+        },
+        error: () => {
+          this.isSearchingFormPharmacies = false;
           this.cdr.markForCheck();
         },
       });
@@ -209,25 +271,37 @@ export class AdminPharmacyOwnersComponent implements OnInit, OnDestroy {
       });
   }
 
-  private loadAvailablePharmacies(): void {
-    this.isLoadingPharmacies = true;
-    this.service
-      .getPharmacies({ pageSize: 100 })
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res) => {
-          this.availablePharmacies = res.items;
-          this.isLoadingPharmacies = false;
-          this.cdr.markForCheck();
-        },
-        error: () => {
-          this.isLoadingPharmacies = false;
-          this.cdr.markForCheck();
-        },
-      });
+  // ─── Form Dialog Async Pharmacy Search Handlers ─────────────────────────────
+  onFormPharmacySearchChange(term: string): void {
+    this.formPharmacySearchTerm = term;
+    this.formPharmacySearchSubject.next(term);
   }
 
-  // ─── Filter handlers ─────────────────────────────────────────────────────────
+  selectFormPharmacy(pharmacy: AdminPharmacySummaryDto): void {
+    this.selectedFormPharmacy = {
+      pharmacyId: pharmacy.pharmacyId,
+      legalName: pharmacy.legalName,
+      licenseNumber: pharmacy.licenseNumber,
+      logoUrl: pharmacy.logoUrl,
+      ownerName: pharmacy.owner?.fullName || null,
+    };
+    this.ownerForm.patchValue({ pharmacyId: pharmacy.pharmacyId });
+    this.ownerForm.get('pharmacyId')?.markAsTouched();
+    this.formPharmacySearchTerm = '';
+    this.formPharmacySearchResults = [];
+    this.cdr.markForCheck();
+  }
+
+  clearFormPharmacy(): void {
+    this.selectedFormPharmacy = null;
+    this.ownerForm.patchValue({ pharmacyId: '' });
+    this.ownerForm.get('pharmacyId')?.markAsTouched();
+    this.formPharmacySearchTerm = '';
+    this.formPharmacySearchResults = [];
+    this.cdr.markForCheck();
+  }
+
+  // ─── Filter Handlers ─────────────────────────────────────────────────────────
   onSearchChange(value: string): void {
     this.searchTerm = value;
     this.searchSubject.next(value);
@@ -257,6 +331,10 @@ export class AdminPharmacyOwnersComponent implements OnInit, OnDestroy {
   openCreateDialog(): void {
     this.dialogMode = 'create';
     this.editingOwnerId = null;
+    this.selectedFormPharmacy = null;
+    this.formPharmacySearchTerm = '';
+    this.formPharmacySearchResults = [];
+
     this.ownerForm.reset({
       fullName: '',
       email: '',
@@ -265,6 +343,7 @@ export class AdminPharmacyOwnersComponent implements OnInit, OnDestroy {
       pharmacyId: '',
       status: UserStatus.Active,
     });
+
     this.ownerForm.get('password')?.setValidators([Validators.required, Validators.minLength(6)]);
     this.ownerForm.get('password')?.updateValueAndValidity();
     this.showFormDialog = true;
@@ -275,6 +354,29 @@ export class AdminPharmacyOwnersComponent implements OnInit, OnDestroy {
   openEditDialog(owner: PharmacyOwnerResponseDto): void {
     this.dialogMode = 'edit';
     this.editingOwnerId = owner.id;
+    this.formPharmacySearchTerm = '';
+    this.formPharmacySearchResults = [];
+
+    if (owner.pharmacy) {
+      this.selectedFormPharmacy = {
+        pharmacyId: owner.pharmacy.pharmacyId,
+        legalName: owner.pharmacy.legalName,
+        licenseNumber: owner.pharmacy.licenseNumber,
+        logoUrl: owner.pharmacy.logoUrl,
+        ownerName: owner.fullName,
+      };
+    } else if (owner.pharmacyId) {
+      this.selectedFormPharmacy = {
+        pharmacyId: owner.pharmacyId,
+        legalName: 'الصيدلية المرتبطة',
+        licenseNumber: owner.pharmacyId.slice(0, 8).toUpperCase(),
+        logoUrl: null,
+        ownerName: owner.fullName,
+      };
+    } else {
+      this.selectedFormPharmacy = null;
+    }
+
     this.ownerForm.reset({
       fullName: owner.fullName,
       email: owner.email,
@@ -283,8 +385,11 @@ export class AdminPharmacyOwnersComponent implements OnInit, OnDestroy {
       pharmacyId: owner.pharmacyId || '',
       status: this.normalizeStatus(owner.status) ?? UserStatus.Active,
     });
+
     this.ownerForm.get('password')?.clearValidators();
+    this.ownerForm.get('password')?.setValidators([Validators.minLength(6)]);
     this.ownerForm.get('password')?.updateValueAndValidity();
+
     this.showFormDialog = true;
     this.cdr.markForCheck();
   }
@@ -292,6 +397,9 @@ export class AdminPharmacyOwnersComponent implements OnInit, OnDestroy {
   closeFormDialog(): void {
     this.showFormDialog = false;
     this.editingOwnerId = null;
+    this.selectedFormPharmacy = null;
+    this.formPharmacySearchTerm = '';
+    this.formPharmacySearchResults = [];
     this.cdr.markForCheck();
   }
 
@@ -299,6 +407,7 @@ export class AdminPharmacyOwnersComponent implements OnInit, OnDestroy {
   submitOwnerForm(): void {
     if (this.ownerForm.invalid) {
       this.ownerForm.markAllAsTouched();
+      this.cdr.markForCheck();
       return;
     }
 
@@ -312,7 +421,7 @@ export class AdminPharmacyOwnersComponent implements OnInit, OnDestroy {
         email: email.trim(),
         phoneNumber: phoneNumber.trim(),
         password: password ? password.trim() : '',
-        pharmacyId: pharmacyId || undefined,
+        pharmacyId: pharmacyId,
       };
 
       this.service
@@ -455,7 +564,21 @@ export class AdminPharmacyOwnersComponent implements OnInit, OnDestroy {
     this.assignTargetOwner = owner;
     this.pharmacySearchTerm = '';
     this.pharmacySearchResults = [];
-    this.selectedPharmacy = null;
+    if (owner.pharmacy) {
+      this.selectedPharmacy = {
+        pharmacyId: owner.pharmacy.pharmacyId,
+        legalName: owner.pharmacy.legalName,
+        licenseNumber: owner.pharmacy.licenseNumber,
+        logoUrl: owner.pharmacy.logoUrl,
+        verificationStatus: VerificationStatus.Verified,
+        branchesCount: 0,
+        drugsCount: 0,
+        owner: null,
+        branches: [],
+      };
+    } else {
+      this.selectedPharmacy = null;
+    }
     this.showAssignPharmacyDialog = true;
     this.cdr.markForCheck();
   }
@@ -476,7 +599,7 @@ export class AdminPharmacyOwnersComponent implements OnInit, OnDestroy {
 
   selectPharmacy(pharmacy: AdminPharmacySummaryDto): void {
     this.selectedPharmacy = pharmacy;
-    this.pharmacySearchTerm = pharmacy.legalName;
+    this.pharmacySearchTerm = '';
     this.pharmacySearchResults = [];
     this.cdr.markForCheck();
   }
@@ -535,6 +658,23 @@ export class AdminPharmacyOwnersComponent implements OnInit, OnDestroy {
       case UserStatus.Suspended: return 'status-suspended';
       default:                   return 'status-default';
     }
+  }
+
+  // ─── Logo Helper ─────────────────────────────────────────────────────────────
+  getLogoUrl(logoUrl?: string | null): string {
+    if (!logoUrl || !logoUrl.trim()) return '';
+    if (
+      logoUrl.startsWith('http://') ||
+      logoUrl.startsWith('https://') ||
+      logoUrl.startsWith('data:') ||
+      logoUrl.startsWith('blob:')
+    ) {
+      return logoUrl;
+    }
+    const baseUrl = environment.localUrl || 'https://localhost:5001';
+    const host = baseUrl.replace(/\/api\/v1\/?$/, '').replace(/\/$/, '');
+    const path = logoUrl.startsWith('/') ? logoUrl : `/${logoUrl}`;
+    return `${host}${path}`;
   }
 
   trackByOwnerId(_: number, item: PharmacyOwnerResponseDto): string {
