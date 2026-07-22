@@ -552,13 +552,26 @@ export class AdminPharmaciesComponent implements OnInit, OnDestroy {
     this.router.navigate(['/admin/pharmacies', pharmacy.pharmacyId]);
   }
 
-  /** Concatenates branch cities with ", " separator */
+  /** Concatenates unique branch locations using Set to avoid duplicate addresses/cities */
   getBranchLocations(pharmacy: AdminPharmacySummaryDto): string {
     if (!pharmacy.branches || pharmacy.branches.length === 0) return '—';
-    const locations = pharmacy.branches.map((b) =>
-      [b.city, b.governorate].filter(Boolean).join('، '),
-    );
-    return [...new Set(locations)].join('، ');
+
+    const locationSet = new Set<string>();
+
+    for (const branch of pharmacy.branches) {
+      const city = branch.city?.trim();
+      const governorate = branch.governorate?.trim();
+
+      const partsSet = new Set<string>();
+      if (city) partsSet.add(city);
+      if (governorate) partsSet.add(governorate);
+
+      if (partsSet.size > 0) {
+        locationSet.add(Array.from(partsSet).join('، '));
+      }
+    }
+
+    return locationSet.size > 0 ? Array.from(locationSet).join(' ، ') : '—';
   }
 
   /** Resolves absolute logo URL using environment.localUrl server host */

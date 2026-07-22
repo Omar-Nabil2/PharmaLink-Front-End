@@ -198,32 +198,53 @@
 
               <!-- Branch info -->
               <div class="branch-rows">
+                <!-- Governorate & City -->
                 <div class="branch-row">
                   <i class="pi pi-map-marker"></i>
-                  <span>{{ branch.city }}، {{ branch.governorate }}</span>
+                  <span class="branch-label">العنوان:</span>
+                  <span class="branch-val">
+                    {{ branch.governorate || '' }}@if (branch.governorate && branch.city) {، }{{ branch.city || '' }}
+                  </span>
                 </div>
-                @if (branch.phoneNumber) {
-                  <div class="branch-row">
-                    <i class="pi pi-phone"></i>
-                    <span>{{ branch.phoneNumber }}</span>
-                  </div>
-                }
-                @if (branch.workingHours) {
-                  <div class="branch-row">
-                    <i class="pi pi-clock"></i>
-                    <span>{{ branch.workingHours }}</span>
-                  </div>
-                }
+
+                <!-- Phone Number -->
+                <div class="branch-row">
+                  <i class="pi pi-phone"></i>
+                  <span class="branch-label">رقم الهاتف:</span>
+                  <span class="branch-val">{{ branch.phoneNumber || 'غير محدد' }}</span>
+                </div>
+
+                <!-- Working Hours -->
+                <div class="branch-row">
+                  <i class="pi pi-clock"></i>
+                  <span class="branch-label">ساعات العمل:</span>
+                  <span class="branch-val">{{ branch.workingHours || 'غير محددة' }}</span>
+                </div>
+
+                <!-- Service Radius -->
                 <div class="branch-row">
                   <i class="pi pi-send"></i>
-                  <span>نطاق التوصيل: {{ branch.serviceRadiusKm }} كم</span>
+                  <span class="branch-label">نطاق التوصيل:</span>
+                  <span class="branch-val">{{ branch.serviceRadiusKm }} كم</span>
                 </div>
-                @if (branch.latitude && branch.longitude) {
+
+                <!-- Latitude & Longitude -->
+                @if (branch.latitude || branch.longitude) {
                   <div class="branch-row">
                     <i class="pi pi-compass"></i>
-                    <span>{{ branch.latitude | number:'1.4-4' }}، {{ branch.longitude | number:'1.4-4' }}</span>
+                    <span class="branch-label">الإحداثيات:</span>
+                    <span class="branch-val branch-geo">
+                      {{ branch.latitude | number:'1.4-4' }} , {{ branch.longitude | number:'1.4-4' }}
+                    </span>
                   </div>
                 }
+
+                <!-- Branch ID -->
+                <div class="branch-row">
+                  <i class="pi pi-key"></i>
+                  <span class="branch-label">معرف الفرع:</span>
+                  <span class="branch-val branch-id">{{ branch.branchId }}</span>
+                </div>
               </div>
             </div>
           }
