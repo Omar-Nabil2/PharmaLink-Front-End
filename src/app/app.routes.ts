@@ -248,6 +248,13 @@ export const routes: Routes = [
             (m) => m.AdminOrderDetailComponent,
           ),
       },
+      {
+        path: 'drugs',
+        loadComponent: () =>
+          import('./pages/admin/drugs/admin-drugs.component').then(
+            (m) => m.AdminDrugsComponent,
+          ),
+      },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
     ],
   },

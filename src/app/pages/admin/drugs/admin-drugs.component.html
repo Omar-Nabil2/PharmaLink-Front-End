@@ -1,0 +1,360 @@
+<div class="space-y-6" dir="rtl">
+  <p-toast />
+
+  <!-- Header & Breadcrumbs -->
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div>
+      <div class="flex items-center gap-2 text-slate-500 text-sm mb-1">
+        <span>كتالوج الأدوية</span>
+        <i class="pi pi-chevron-left text-xs"></i>
+        <span>المسؤول</span>
+      </div>
+      <h1 class="text-2xl md:text-3xl font-bold text-slate-800">كتالوج الأدوية</h1>
+    </div>
+  </div>
+
+  <!-- Actions & Filters Bar -->
+  <div class="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+    
+    <!-- Right side primary actions (in RTL) -->
+    <div class="flex flex-wrap items-center gap-3">
+      <!-- Add Drug Button -->
+      <button type="button" class="btn-add-drug" (click)="openCreateDialog()">
+        <i class="pi pi-plus text-xs"></i>
+        <span>إضافة دواء</span>
+      </button>
+
+      <!-- Seed Database Button -->
+      <button 
+        type="button" 
+        class="btn-seed-db" 
+        [disabled]="isSeeding()"
+        (click)="seedDatabase()">
+        <i class="pi pi-database text-xs" [class.pi-spin]="isSeeding()"></i>
+        <span>تفعيل قاعدة البيانات</span>
+      </button>
+    </div>
+
+    <!-- Left side controls: Search, Category Filter, Reset -->
+    <div class="flex flex-wrap items-center gap-3">
+      
+      <!-- Search Input -->
+      <div class="relative flex items-center w-full sm:w-72">
+        <i class="pi pi-search absolute right-3.5 text-slate-400 text-sm pointer-events-none"></i>
+        <input 
+          type="text" 
+          placeholder="ابحث في الكتالوج..." 
+          class="filter-input pr-10 pl-8 w-full"
+          [ngModel]="searchValue()"
+          (ngModelChange)="searchValue.set($event)"
+          (keyup.enter)="onSearch()"
+        />
+        <button 
+          type="button"
+          *ngIf="searchValue()" 
+          (click)="searchValue.set(''); onSearch()" 
+          class="absolute left-3 text-slate-400 hover:text-slate-600 transition-colors">
+          <i class="pi pi-times text-xs"></i>
+        </button>
+      </div>
+
+      <!-- Category Filter Dropdown -->
+      <div class="w-full sm:w-48">
+        <p-select 
+          [options]="categoryOptions" 
+          [ngModel]="selectedCategory()"
+          (ngModelChange)="selectedCategory.set($event); onCategoryChange()"
+          optionLabel="label" 
+          optionValue="value"
+          placeholder="جميع التصنيفات"
+          styleClass="w-full filter-dropdown"
+        />
+      </div>
+
+      <!-- Search Trigger Action -->
+      <button type="button" class="btn-search" (click)="onSearch()">
+        <i class="pi pi-search text-xs"></i>
+        <span>بحث</span>
+      </button>
+
+      <!-- Reset Filters Button -->
+      <button type="button" class="btn-reset" (click)="resetFilters()" title="إعادة تعيين">
+        <i class="pi pi-refresh text-xs"></i>
+      </button>
+
+    </div>
+
+  </div>
+
+  <!-- Drug Catalog Data Table -->
+  <div class="bg-white border border-slate-200/80 rounded-2xl overflow-hidden shadow-sm">
+    <p-table 
+      [value]="drugs()" 
+      [lazy]="true" 
+      [rows]="pageSize()" 
+      [first]="first()"
+      [paginator]="true" 
+      [totalRecords]="totalRecords()" 
+      [loading]="isLoading()"
+      (onLazyLoad)="onPageChange($event)"
+      [rowsPerPageOptions]="[10, 20, 50]"
+      styleClass="p-datatable-responsive">
+      
+      <ng-template pTemplate="header">
+        <tr class="bg-slate-50 border-b border-slate-200">
+          <th class="py-4 px-6 text-right text-slate-700 font-bold text-sm cursor-pointer" (click)="onSortChange('BrandName')">
+            <span>اسم الدواء</span>
+            <i class="pi pi-sort text-xs text-slate-400 mr-1"></i>
+          </th>
+          <th class="py-4 px-6 text-right text-slate-700 font-bold text-sm">التصنيف</th>
+          <th class="py-4 px-6 text-right text-slate-700 font-bold text-sm cursor-pointer" (click)="onSortChange('Price')">
+            <span>السعر</span>
+            <i class="pi pi-sort text-xs text-slate-400 mr-1"></i>
+          </th>
+          <th class="py-4 px-6 text-right text-slate-700 font-bold text-sm">الحالة</th>
+          <th class="py-4 px-6 text-right text-slate-700 font-bold text-sm">تاريخ الإضافة</th>
+          <th class="py-4 px-6 text-center text-slate-700 font-bold text-sm">إجراءات</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-drug>
+        <tr class="border-b border-slate-100 hover:bg-slate-50/70 transition-colors">
+          <!-- Drug Name (Arabic + English) -->
+          <td class="py-4 px-6">
+            <div class="font-bold text-slate-800 text-base mb-0.5">{{ drug.arabicName || drug.brandName }}</div>
+            <div class="text-xs text-slate-400 font-mono">{{ drug.brandName }} {{ drug.strength }}</div>
+          </td>
+
+          <!-- Category Badge -->
+          <td class="py-4 px-6">
+            <p-tag 
+              [value]="getCategoryLabel(drug.category)" 
+              [severity]="getCategorySeverity(drug.category)"
+              styleClass="text-xs font-semibold px-3 py-1 rounded-full"
+            />
+          </td>
+
+          <!-- Price -->
+          <td class="py-4 px-6 font-bold text-slate-800 text-sm">
+            ج {{ drug.price | number:'1.2-2' }}
+          </td>
+
+          <!-- Status Badge -->
+          <td class="py-4 px-6">
+            <p-tag 
+              [value]="getStatusLabel(drug)" 
+              [severity]="getStatusSeverity(drug)"
+              styleClass="text-xs font-semibold px-3 py-1 rounded-full"
+            />
+          </td>
+
+          <!-- Created Date / ID -->
+          <td class="py-4 px-6 text-slate-500 text-sm font-mono">
+            2024-01-10
+          </td>
+
+          <!-- Actions -->
+          <td class="py-4 px-6 text-center">
+            <div class="flex items-center justify-center gap-2">
+              <button 
+                type="button" 
+                class="action-btn text-blue-600 hover:bg-blue-50" 
+                (click)="openDetailsDialog(drug)"
+                title="عرض التفاصيل">
+                <i class="pi pi-eye text-sm"></i>
+              </button>
+              <button 
+                type="button" 
+                class="action-btn text-emerald-600 hover:bg-emerald-50" 
+                (click)="openEditDialog(drug)"
+                title="تعديل">
+                <i class="pi pi-pencil text-sm"></i>
+              </button>
+              <button 
+                type="button" 
+                class="action-btn text-rose-600 hover:bg-rose-50" 
+                (click)="openDeleteDialog(drug)"
+                title="حذف">
+                <i class="pi pi-trash text-sm"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="6" class="text-center py-10 text-slate-500 text-sm">
+            @if (isLoading()) {
+              جاري تحميل الأدوية...
+            } @else {
+              لا توجد أدوية تطابق معايير البحث.
+            }
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+
+<!-- Add / Edit Drug Dialog -->
+<p-dialog 
+  [(visible)]="isFormDialogOpen" 
+  [header]="isEditing() ? 'تعديل بيانات الدواء' : 'إضافة دواء جديد'" 
+  [modal]="true" 
+  [style]="{ width: '90vw', maxWidth: '600px' }"
+  [draggable]="false"
+  [resizable]="false"
+  dir="rtl">
+  
+  <div class="space-y-4 pt-2">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <label class="block text-xs font-bold text-slate-700 mb-1">الاسم بالعربية *</label>
+        <input type="text" class="field-input w-full" [ngModel]="formArabicName()" (ngModelChange)="formArabicName.set($event)" placeholder="مثال: باراسيتامول" />
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-slate-700 mb-1">الاسم التجاري (إنجليزي) *</label>
+        <input type="text" class="field-input w-full" [ngModel]="formBrandName()" (ngModelChange)="formBrandName.set($event)" placeholder="مثال: Paracetamol" />
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <label class="block text-xs font-bold text-slate-700 mb-1">الاسم العلمي (Generic) *</label>
+        <input type="text" class="field-input w-full" [ngModel]="formGenericName()" (ngModelChange)="formGenericName.set($event)" placeholder="مثال: Acetaminophen" />
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-slate-700 mb-1">التصنيف الدوائي *</label>
+        <p-select 
+          [options]="formCategoryOptions" 
+          [ngModel]="formCategory()" 
+          (ngModelChange)="formCategory.set($event)"
+          optionLabel="label" 
+          optionValue="value"
+          styleClass="w-full field-dropdown"
+        />
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div>
+        <label class="block text-xs font-bold text-slate-700 mb-1">التركيز</label>
+        <input type="text" class="field-input w-full" [ngModel]="formStrength()" (ngModelChange)="formStrength.set($event)" placeholder="500mg" />
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-slate-700 mb-1">الشكل الدوائي</label>
+        <input type="text" class="field-input w-full" [ngModel]="formForm()" (ngModelChange)="formForm.set($event)" placeholder="أقراص / Tablet" />
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-slate-700 mb-1">السعر (جنيه) *</label>
+        <input type="number" step="0.5" class="field-input w-full" [ngModel]="formPrice()" (ngModelChange)="formPrice.set($event)" />
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <label class="block text-xs font-bold text-slate-700 mb-1">الشركة المصنعة</label>
+        <input type="text" class="field-input w-full" [ngModel]="formManufacturer()" (ngModelChange)="formManufacturer.set($event)" placeholder="اسم الشركة" />
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-slate-700 mb-1">الفئة الدوائية (Drug Class)</label>
+        <input type="text" class="field-input w-full" [ngModel]="formDrugClass()" (ngModelChange)="formDrugClass.set($event)" placeholder="Analgesic" />
+      </div>
+    </div>
+
+    <div class="flex items-center gap-6 pt-2">
+      <div class="flex items-center gap-2">
+        <p-checkbox [binary]="true" [ngModel]="formRequiresPrescription()" (ngModelChange)="formRequiresPrescription.set($event)" inputId="reqRx" />
+        <label for="reqRx" class="text-xs font-semibold text-slate-700 cursor-pointer">يتطلب وصفة طبية (روشتة)</label>
+      </div>
+
+      <div class="flex items-center gap-2" *ngIf="isEditing()">
+        <p-checkbox [binary]="true" [ngModel]="formIsActive()" (ngModelChange)="formIsActive.set($event)" inputId="isActive" />
+        <label for="isActive" class="text-xs font-semibold text-slate-700 cursor-pointer">نشط في الكتالوج</label>
+      </div>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="flex items-center justify-end gap-2 pt-4">
+      <button type="button" class="btn-cancel" (click)="isFormDialogOpen.set(false)">إلغاء</button>
+      <button type="button" class="btn-save" (click)="saveDrug()">حفظ البيانات</button>
+    </div>
+  </ng-template>
+</p-dialog>
+
+<!-- View Details Dialog -->
+<p-dialog 
+  [(visible)]="isDetailsDialogOpen" 
+  header="تفاصيل الدواء" 
+  [modal]="true" 
+  [style]="{ width: '90vw', maxWidth: '550px' }"
+  [draggable]="false"
+  [resizable]="false"
+  dir="rtl"
+  *ngIf="selectedDrug() as drug">
+  
+  <div class="space-y-4 pt-2">
+    <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
+      <h3 class="font-bold text-lg text-slate-800">{{ drug.arabicName || drug.brandName }}</h3>
+      <p class="text-xs text-slate-500 font-mono">{{ drug.brandName }} ({{ drug.genericName }})</p>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4 text-sm">
+      <div class="p-3 bg-white border border-slate-100 rounded-lg">
+        <span class="text-xs text-slate-400 block">التصنيف:</span>
+        <span class="font-bold text-slate-700">{{ getCategoryLabel(drug.category) }}</span>
+      </div>
+      <div class="p-3 bg-white border border-slate-100 rounded-lg">
+        <span class="text-xs text-slate-400 block">السعر الرسمي:</span>
+        <span class="font-bold text-emerald-600">ج {{ drug.price | number:'1.2-2' }}</span>
+      </div>
+      <div class="p-3 bg-white border border-slate-100 rounded-lg">
+        <span class="text-xs text-slate-400 block">التركيز / الشكل:</span>
+        <span class="font-bold text-slate-700">{{ drug.strength }} - {{ drug.form }}</span>
+      </div>
+      <div class="p-3 bg-white border border-slate-100 rounded-lg">
+        <span class="text-xs text-slate-400 block">المصنع:</span>
+        <span class="font-bold text-slate-700">{{ drug.manufacturer || 'غير محدد' }}</span>
+      </div>
+      <div class="p-3 bg-white border border-slate-100 rounded-lg">
+        <span class="text-xs text-slate-400 block">الوصفة الطبية:</span>
+        <span class="font-bold text-slate-700">{{ drug.requiresPrescription ? 'يتطلب روشتة' : 'بدون روشتة (OTC)' }}</span>
+      </div>
+      <div class="p-3 bg-white border border-slate-100 rounded-lg">
+        <span class="text-xs text-slate-400 block">الحالة:</span>
+        <span class="font-bold text-slate-700">{{ getStatusLabel(drug) }}</span>
+      </div>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="flex justify-end pt-4">
+      <button type="button" class="btn-cancel" (click)="isDetailsDialogOpen.set(false)">إغلاق</button>
+    </div>
+  </ng-template>
+</p-dialog>
+
+<!-- Delete Confirmation Dialog -->
+<p-dialog 
+  [(visible)]="isDeleteConfirmOpen" 
+  header="تأكيد الحذف" 
+  [modal]="true" 
+  [style]="{ width: '90vw', maxWidth: '420px' }"
+  [draggable]="false"
+  [resizable]="false"
+  dir="rtl">
+  
+  <div class="flex items-center gap-3 pt-2 text-slate-700">
+    <i class="pi pi-exclamation-triangle text-rose-500 text-2xl"></i>
+    <p class="text-sm">هل أنت تأكد من رغبتك في حذف الدواء <strong>"{{ selectedDrug()?.arabicName || selectedDrug()?.brandName }}"</strong> من الكتالوج؟</p>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="flex items-center justify-end gap-2 pt-4">
+      <button type="button" class="btn-cancel" (click)="isDeleteConfirmOpen.set(false)">إلغاء</button>
+      <button type="button" class="btn-danger" (click)="confirmDelete()">حذف الدواء</button>
+    </div>
+  </ng-template>
+</p-dialog>
