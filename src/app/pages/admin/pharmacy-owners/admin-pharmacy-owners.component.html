@@ -394,7 +394,7 @@
               }
 
               <!-- No results found message -->
-              @if (!isSearchingFormPharmacies && formPharmacySearchTerm.trim() && formPharmacySearchResults.length === 0) {
+              @if (!selectedFormPharmacy && !isSearchingFormPharmacies && formPharmacySearchTerm.trim() && formPharmacySearchResults.length === 0) {
                 <div class="pharmacy-results">
                   <div class="pharmacy-empty">
                     <i class="pi pi-search"></i>
@@ -621,7 +621,7 @@
         }
 
         <!-- No results -->
-        @if (!isSearchingPharmacies && pharmacySearchTerm.trim() && pharmacySearchResults.length === 0) {
+        @if (!selectedPharmacy && !isSearchingPharmacies && pharmacySearchTerm.trim() && pharmacySearchResults.length === 0) {
           <div class="pharmacy-results">
             <div class="pharmacy-empty">
               <i class="pi pi-search"></i>

@@ -22,6 +22,7 @@ import {
   PaginatedList,
   UserStatus,
   AdminPharmacySummaryDto,
+  VerificationStatus,
 } from '@core/interfaces/admin-pharmacy.interface';
 
 type DialogMode = 'create' | 'edit';
@@ -554,7 +555,21 @@ export class AdminPharmacyOwnersComponent implements OnInit, OnDestroy {
     this.assignTargetOwner = owner;
     this.pharmacySearchTerm = '';
     this.pharmacySearchResults = [];
-    this.selectedPharmacy = null;
+    if (owner.pharmacy) {
+      this.selectedPharmacy = {
+        pharmacyId: owner.pharmacy.pharmacyId,
+        legalName: owner.pharmacy.legalName,
+        licenseNumber: owner.pharmacy.licenseNumber,
+        logoUrl: owner.pharmacy.logoUrl,
+        verificationStatus: VerificationStatus.Verified,
+        branchesCount: 0,
+        drugsCount: 0,
+        owner: null,
+        branches: [],
+      };
+    } else {
+      this.selectedPharmacy = null;
+    }
     this.showAssignPharmacyDialog = true;
     this.cdr.markForCheck();
   }
@@ -575,7 +590,7 @@ export class AdminPharmacyOwnersComponent implements OnInit, OnDestroy {
 
   selectPharmacy(pharmacy: AdminPharmacySummaryDto): void {
     this.selectedPharmacy = pharmacy;
-    this.pharmacySearchTerm = pharmacy.legalName;
+    this.pharmacySearchTerm = '';
     this.pharmacySearchResults = [];
     this.cdr.markForCheck();
   }
