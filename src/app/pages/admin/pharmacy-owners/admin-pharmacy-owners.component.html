@@ -305,15 +305,90 @@
             }
           </div>
 
-          <!-- Pharmacy Selection -->
+          <!-- Pharmacy Selection (Async Search - Required) -->
           <div class="field">
-            <label class="field-label" for="pharmacyId">الصيدلية المرتبطة (اختياري)</label>
-            <select id="pharmacyId" class="field-select" formControlName="pharmacyId">
-              <option value="">-- اختر صيدلية --</option>
-              @for (pharmacy of availablePharmacies; track trackByPharmacyId($index, pharmacy)) {
-                <option [value]="pharmacy.pharmacyId">{{ pharmacy.legalName }} ({{ pharmacy.licenseNumber }})</option>
+            <label class="field-label">
+              الصيدلية المرتبطة <span style="color:#dc2626">*</span>
+            </label>
+
+            <!-- If a pharmacy is already selected -->
+            @if (selectedFormPharmacy) {
+              <div class="selected-pharmacy-card">
+                <div class="pharmacy-icon"><i class="pi pi-building"></i></div>
+                <div class="pharmacy-info">
+                  <div class="pharmacy-name">{{ selectedFormPharmacy.legalName }}</div>
+                  <div class="pharmacy-sub">ترخيص: {{ selectedFormPharmacy.licenseNumber }}</div>
+                </div>
+                <button
+                  type="button"
+                  class="btn-deselect"
+                  (click)="clearFormPharmacy()"
+                  title="تغيير الصيدلية"
+                >
+                  <i class="pi pi-times"></i>
+                </button>
+              </div>
+            } @else {
+              <!-- Async Search Input -->
+              <div class="pharmacy-search-wrap">
+                <input
+                  type="text"
+                  class="pharmacy-search-input"
+                  placeholder="ابحث باسم الصيدلية أو رقم الترخيص..."
+                  [value]="formPharmacySearchTerm"
+                  (input)="onFormPharmacySearchChange($any($event.target).value)"
+                  autocomplete="off"
+                  [class.is-invalid]="ownerForm.get('pharmacyId')!.invalid && ownerForm.get('pharmacyId')!.touched"
+                />
+                <i class="pi pi-search pharmacy-search-icon"></i>
+              </div>
+
+              <!-- Loading spinner -->
+              @if (isSearchingFormPharmacies) {
+                <div class="pharmacy-results">
+                  <div class="pharmacy-loading">
+                    <span class="spinner"></span>
+                    <span>جاري البحث في الصيدليات...</span>
+                  </div>
+                </div>
               }
-            </select>
+
+              <!-- Search Results List -->
+              @if (!isSearchingFormPharmacies && formPharmacySearchResults.length > 0) {
+                <div class="pharmacy-results">
+                  @for (pharmacy of formPharmacySearchResults; track trackByPharmacyId($index, pharmacy)) {
+                    <div
+                      class="pharmacy-result-item"
+                      (click)="selectFormPharmacy(pharmacy)"
+                    >
+                      <div class="pharmacy-icon"><i class="pi pi-building"></i></div>
+                      <div class="pharmacy-info">
+                        <div class="pharmacy-name">{{ pharmacy.legalName }}</div>
+                        <div class="pharmacy-sub">ترخيص: {{ pharmacy.licenseNumber }}</div>
+                      </div>
+                      <i class="pi pi-plus" style="color: #0f9d76; font-size: 0.85rem;"></i>
+                    </div>
+                  }
+                </div>
+              }
+
+              <!-- No results found message -->
+              @if (!isSearchingFormPharmacies && formPharmacySearchTerm.trim() && formPharmacySearchResults.length === 0) {
+                <div class="pharmacy-results">
+                  <div class="pharmacy-empty">
+                    <i class="pi pi-search"></i>
+                    <span>لم يتم العثور على صيدليات مطابقة للبحث</span>
+                  </div>
+                </div>
+              }
+            }
+
+            @if (ownerForm.get('pharmacyId')!.invalid && ownerForm.get('pharmacyId')!.touched) {
+              <span class="field-error">
+                <i class="pi pi-exclamation-circle"></i>
+                اختيار صيدلية إجباري لربطها بالمالك
+              </span>
+            }
           </div>
 
           <!-- Status (Edit Mode) -->
