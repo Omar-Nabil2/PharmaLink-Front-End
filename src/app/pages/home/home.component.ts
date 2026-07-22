@@ -2,50 +2,31 @@ import { Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
-export interface CategoryItem {
-  name: string;
-  icon: string;
-  link: string;
-}
-
 @Component({
   selector: 'app-home',
   standalone: true,
   imports: [CommonModule, RouterLink],
   templateUrl: './home.component.html',
-  styleUrl: './home.component.scss',
 })
 export class HomeComponent {
-  protected readonly title = signal('فارما لينك');
+  protected readonly title = signal('Pharma Link');
 
-  categories: CategoryItem[] = [
-    { name: 'مسكنات الألم', icon: 'pi pi-bolt', link: '/products' },
-    { name: 'مضادات حيوية', icon: 'pi pi-shield', link: '/products' },
-    { name: 'الجهاز الهضمي', icon: 'pi pi-heart', link: '/products' },
-    { name: 'السكري', icon: 'pi pi-chart-line', link: '/products' },
-    { name: 'ضغط الدم', icon: 'pi pi-heart-fill', link: '/products' },
-    { name: 'القلب والأوعية', icon: 'pi pi-sync', link: '/products' },
-  ];
+  categories = ['Prescriptions', 'Pharmacies', 'Orders', 'Inventory', 'Support'];
 
   faqs = [
     {
-      q: 'كيف يمكنني طلب دواء بواسطة صورة الروشتة الطبية؟',
-      a: 'يمكنك الدخول على قسم "رفع روشتة"، التقاط صورة سريعة للروشتة، وسيتم توجيهها فوراً لأقرب صيدلي معتمد لمراجعتها وتجهيز الطلب.',
-      open: true,
-    },
-    {
-      q: 'كيف تضمن فارما لينك سلامة ودقة صرف الأدوية؟',
-      a: 'جميع الطلبات تمر بمراجعة دقيقة من قبل صيدلي مرخص قبل الاعتماد، وتُصرف مباشرة من صيدليات معتمدة رسمياً.',
+      q: 'How do I create a patient account?',
+      a: 'Sign up with your email and phone number, then verify with the OTP sent to your phone.',
       open: false,
     },
     {
-      q: 'هل يمكن للصيدليات إدارة أكثر من فرع ومتابعة الطلبات لحظياً؟',
-      a: 'نعم، توفر فارما لينك لوحة تحكم متكاملة للصيدليات وملاك الفروع لإدارة المخزون، توزيع الأدوار، وتتبع طلبات المرضى والتوصيل.',
+      q: 'Can pharmacies manage multiple locations?',
+      a: 'Yes. Administered pharmacies appear on your profile so you can switch and manage each location.',
       open: false,
     },
     {
-      q: 'ما هي طرق الدفع المتاحة على المنصة؟',
-      a: 'نوفر خيارات الدفع عند الاستلام (نقداً)، بالإضافة للدفع الإلكتروني الآمن بواسطة بطاقات البنك والمحافظ الإلكترونية.',
+      q: 'Is my data secure?',
+      a: 'Pharma Link uses authenticated sessions and verification flows to keep patient and pharmacy data protected.',
       open: false,
     },
   ];
