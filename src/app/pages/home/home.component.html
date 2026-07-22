@@ -1,140 +1,265 @@
-<!-- Hero -->
-<section class="bg-canvas">
-  <div class="container-app py-8 md:py-12">
-    <div class="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-      <div class="space-y-6">
-        <h1 class="type-display-xxl text-ink">
-          اذهب إلى أي مكان مع فارما لينك
-        </h1>
-        <p class="type-body-lg text-body max-w-md">
-          اربط بين المرضى والصيدليات في مكان واحد — الوصفات الطبية، الطلبات، والرعاية أصبحت بسيطة.
-        </p>
-        <div class="flex flex-wrap gap-3">
-          <a routerLink="/auth/register" class="btn-primary">ابدأ الآن</a>
-          <a routerLink="/auth/login" class="btn-subtle">تسجيل الدخول</a>
-        </div>
-      </div>
+<div class="min-h-screen bg-slate-950 text-slate-100 font-sans" dir="rtl">
+  
+  <!-- Hero Section -->
+  <section class="relative pt-12 pb-20 md:pt-20 md:pb-28 overflow-hidden bg-gradient-to-b from-slate-900 via-teal-950 to-slate-950">
+    <!-- Glow Background Accents -->
+    <div class="absolute top-1/4 right-10 w-96 h-96 bg-emerald-500/15 blur-[120px] rounded-full pointer-events-none"></div>
+    <div class="absolute bottom-10 left-10 w-96 h-96 bg-teal-500/10 blur-[140px] rounded-full pointer-events-none"></div>
 
-      <!-- Request-style card -->
-      <div class="card-elevated max-w-[490px] w-full mx-auto lg:ms-auto space-y-4">
-        <h2 class="type-display-md">ابحث عن الرعاية بالقرب منك</h2>
-        <p class="type-body-sm text-body">ابحث في الصيدليات أو قم بإدارة وصفاتك الطبية في ثوانٍ.</p>
-
-        <div class="space-y-3">
-          <div class="field-input flex items-center gap-3 cursor-default">
-            <i class="pi pi-map-marker text-ink"></i>
-            <span class="text-mute">أدخل موقعك</span>
+    <div class="w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto relative z-10">
+      <div class="grid lg:grid-cols-12 gap-12 items-center">
+        
+        <!-- Hero Text Content -->
+        <div class="lg:col-span-7 space-y-6 text-right">
+          
+          <div class="inline-flex items-center gap-2.5 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 backdrop-blur-md rounded-full text-emerald-400 text-xs font-bold tracking-wide">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span>المنصة الأولى المعتمدة لربط المرضى بالصيدليات</span>
           </div>
-          <div class="field-input flex items-center gap-3 cursor-default">
-            <i class="pi pi-building text-ink"></i>
-            <span class="text-mute">اسم الصيدلية أو الدواء</span>
+
+          <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black text-white leading-tight tracking-tight">
+            رعايتك الصحية تبدأ هنا — <br class="hidden sm:inline" />
+            <span class="bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent">
+              سهولة، سرعة، وأمان
+            </span>
+          </h1>
+
+          <p class="text-slate-300 text-base md:text-lg max-w-2xl leading-relaxed">
+            منصة فارما لينك تربطك مباشرة بأقرب الصيدليات المعتمدة. ارفع روشتتك الطبية، تصفح كتالوج الأدوية الموحد، وتتبع وصول طلبك خطوة بخطوة.
+          </p>
+
+          <!-- Main CTA Action Buttons -->
+          <div class="flex flex-wrap items-center gap-4 pt-2">
+            <a 
+              routerLink="/products" 
+              class="px-7 py-3.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-slate-950 font-black rounded-2xl shadow-lg shadow-emerald-500/25 transition-all duration-200 flex items-center gap-3 text-base">
+              <i class="pi pi-search text-sm"></i>
+              <span>تصفح كشف الأدوية</span>
+            </a>
+
+            <a 
+              routerLink="/auth/register" 
+              class="px-7 py-3.5 bg-white/10 hover:bg-white/15 text-white border border-white/20 backdrop-blur-md font-bold rounded-2xl transition-all duration-200 flex items-center gap-2.5 text-base">
+              <i class="pi pi-user-plus text-sm text-emerald-400"></i>
+              <span>إنشاء حساب جديد</span>
+            </a>
+          </div>
+
+          <!-- Trust Indicators Badge Row -->
+          <div class="pt-6 border-t border-slate-800/80 grid grid-cols-3 gap-4 max-w-xl">
+            <div class="space-y-1">
+              <div class="text-2xl md:text-3xl font-black text-emerald-400">+500</div>
+              <div class="text-xs text-slate-400 font-semibold">صيدلية معتمدة</div>
+            </div>
+            <div class="space-y-1">
+              <div class="text-2xl md:text-3xl font-black text-emerald-400">35 دقيقة</div>
+              <div class="text-xs text-slate-400 font-semibold">متوسط التوصيل</div>
+            </div>
+            <div class="space-y-1">
+              <div class="text-2xl md:text-3xl font-black text-emerald-400">100%</div>
+              <div class="text-xs text-slate-400 font-semibold">مراجعة طبية مرخصة</div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Interactive Search & Quick Action Glass Card -->
+        <div class="lg:col-span-5">
+          <div class="bg-slate-900/80 border border-slate-800 backdrop-blur-xl rounded-3xl p-6 sm:p-8 shadow-2xl shadow-emerald-950/50 space-y-6">
+            
+            <div class="space-y-2">
+              <div class="flex items-center justify-between">
+                <h2 class="text-xl font-bold text-white">البحث السريع في الكتالوج</h2>
+                <span class="text-xs font-semibold px-2.5 py-1 bg-emerald-500/20 text-emerald-300 rounded-lg">محدث لحظياً</span>
+              </div>
+              <p class="text-xs text-slate-400">ابحث باسم الدواء التجاري أو العلمي أو تصفح حسب التصنيف الطبي</p>
+            </div>
+
+            <!-- Search Input Box -->
+            <div class="relative">
+              <i class="pi pi-search absolute right-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+              <input 
+                type="text" 
+                placeholder="ادخل اسم الدواء بالعربية أو الإنجليزية..." 
+                class="w-full pr-11 pl-4 py-3.5 bg-slate-950 border border-slate-700/80 rounded-2xl text-slate-200 text-sm placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all"
+              />
+            </div>
+
+            <!-- Popular Categories Pills -->
+            <div class="space-y-2.5">
+              <span class="text-xs font-bold text-slate-400 block">التصنيفات الأكثر طلباً:</span>
+              <div class="flex flex-wrap gap-2">
+                @for (cat of categories; track cat.name) {
+                  <a 
+                    [routerLink]="cat.link"
+                    class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-800/80 hover:bg-emerald-600/30 hover:border-emerald-500/50 text-slate-300 hover:text-emerald-300 border border-slate-700 rounded-xl text-xs font-semibold transition-all">
+                    <i [class]="cat.icon" class="text-emerald-400 text-xs"></i>
+                    <span>{{ cat.name }}</span>
+                  </a>
+                }
+              </div>
+            </div>
+
+            <!-- Action Button -->
+            <a 
+              routerLink="/products" 
+              class="w-full py-3.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-2xl transition-all text-center block text-sm shadow-md">
+              البحث في المنتجات المتاحة
+            </a>
+
           </div>
         </div>
 
-        <div class="flex flex-wrap gap-2">
-          <button
-            *ngFor="let cat of categories"
-            type="button"
-            class="type-body-sm-strong bg-canvas-soft text-ink rounded-pill px-4 py-2"
-          >
-            {{ cat }}
-          </button>
-        </div>
-
-        <a routerLink="/auth/register" class="btn-large">رؤية الخيارات</a>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- Feature promo -->
-<section class="bg-canvas py-8">
-  <div class="container-app">
-    <div class="grid md:grid-cols-2 gap-8 items-center rounded-xl overflow-hidden">
-      <div class="aspect-[4/3] bg-canvas-soft rounded-xl flex items-center justify-center">
-        <div class="text-center p-8 space-y-3">
-          <i class="pi pi-heart text-4xl text-ink"></i>
-          <p class="type-body-md-strong">رعاية المرضى، متصلة</p>
+  <!-- Key Value Pillars Section -->
+  <section class="py-16 md:py-24 bg-slate-950 border-t border-slate-900">
+    <div class="w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-12">
+      
+      <div class="text-center space-y-3 max-w-2xl mx-auto">
+        <h2 class="text-xs font-bold text-emerald-400 tracking-wider uppercase">منظومة صحية متكاملة</h2>
+        <p class="text-2xl sm:text-4xl font-extrabold text-white">خدمات مصممة لكل طرف في العملية الطبية</p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-8">
+        
+        <!-- Patient Card -->
+        <div class="bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-800 hover:border-emerald-500/40 p-8 rounded-3xl space-y-5 transition-all duration-300 hover:-translate-y-1 shadow-lg">
+          <div class="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center text-2xl font-bold">
+            <i class="pi pi-heart"></i>
+          </div>
+          <h3 class="text-xl font-bold text-white">خدمات المرضى</h3>
+          <p class="text-slate-400 text-sm leading-relaxed">
+            رفع الروشتة بضغطة زر، الحصول على الدواء من أقرب صيدلية، وتتبع التوصيل حتى باب بيتك بسهولة وأمان.
+          </p>
+          <a routerLink="/auth/register" class="inline-flex items-center gap-2 text-xs font-bold text-emerald-400 hover:text-emerald-300">
+            <span>انضم كـ مريض</span>
+            <i class="pi pi-arrow-left text-xs"></i>
+          </a>
         </div>
-      </div>
-      <div class="space-y-4 md:py-4">
-        <h2 class="type-display-xl">الأمان، ببساطة</h2>
-        <p class="type-body-md text-body">
-          حسابات موثقة، إجراءات واضحة للوصفات الطبية، وشبكة يمكنك الوثوق بها — بدون أي تعقيد.
-        </p>
-        <a routerLink="/auth/register" class="btn-subtle inline-flex">اعرف المزيد</a>
-      </div>
-    </div>
-  </div>
-</section>
 
-<!-- Dark promo band -->
-<section class="bg-ink text-on-dark py-12 md:py-16">
-  <div class="container-app">
-    <div class="grid md:grid-cols-2 gap-8 items-center">
+        <!-- Pharmacy Card -->
+        <div class="bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-800 hover:border-teal-500/40 p-8 rounded-3xl space-y-5 transition-all duration-300 hover:-translate-y-1 shadow-lg">
+          <div class="w-14 h-14 rounded-2xl bg-teal-500/10 border border-teal-500/20 text-teal-400 flex items-center justify-center text-2xl font-bold">
+            <i class="pi pi-building"></i>
+          </div>
+          <h3 class="text-xl font-bold text-white">أصحاب الصيدليات</h3>
+          <p class="text-slate-400 text-sm leading-relaxed">
+            إدارة الفروع والمخزون، استقبال الوصفات الطبية الرقمية، وزيادة المبيعات والوصول لمرضى جدد.
+          </p>
+          <a routerLink="/auth/register" class="inline-flex items-center gap-2 text-xs font-bold text-teal-400 hover:text-teal-300">
+            <span>سجّل صيدليتك الآن</span>
+            <i class="pi pi-arrow-left text-xs"></i>
+          </a>
+        </div>
+
+        <!-- Pharmacist & System Admin Card -->
+        <div class="bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-800 hover:border-cyan-500/40 p-8 rounded-3xl space-y-5 transition-all duration-300 hover:-translate-y-1 shadow-lg">
+          <div class="w-14 h-14 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center text-2xl font-bold">
+            <i class="pi pi-shield"></i>
+          </div>
+          <h3 class="text-xl font-bold text-white">الصيادلة والمسؤولون</h3>
+          <p class="text-slate-400 text-sm leading-relaxed">
+            دليل دوائي موحد، مراجعة وصرف الوصفات الطبية بدقة، ورقابة كاملة على الجودة ومعايير الأمان.
+          </p>
+          <a routerLink="/auth/login" class="inline-flex items-center gap-2 text-xs font-bold text-cyan-400 hover:text-cyan-300">
+            <span>تسجيل دخول المسؤولين</span>
+            <i class="pi pi-arrow-left text-xs"></i>
+          </a>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- How It Works Workflow Section -->
+  <section class="py-16 md:py-24 bg-slate-900/50 border-t border-slate-900">
+    <div class="w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-12">
+      
+      <div class="text-center space-y-3 max-w-2xl mx-auto">
+        <h2 class="text-xs font-bold text-emerald-400 tracking-wider uppercase">طريقة العمل</h2>
+        <p class="text-2xl sm:text-4xl font-extrabold text-white">3 خطوات بسيطة للحصول على دوائك</p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-8 text-center">
+        
+        <div class="space-y-4 p-6 rounded-2xl bg-slate-900 border border-slate-800">
+          <div class="w-12 h-12 rounded-full bg-emerald-500 text-slate-950 font-black text-xl flex items-center justify-center mx-auto shadow-md">1</div>
+          <h4 class="text-lg font-bold text-white">ارفع الروشتة أو حدد الدواء</h4>
+          <p class="text-slate-400 text-xs leading-relaxed">قم بتصوير الروشتة الطبية أو ابحث عن الدواء في الكتالوج الموحد.</p>
+        </div>
+
+        <div class="space-y-4 p-6 rounded-2xl bg-slate-900 border border-slate-800">
+          <div class="w-12 h-12 rounded-full bg-emerald-500 text-slate-950 font-black text-xl flex items-center justify-center mx-auto shadow-md">2</div>
+          <h4 class="text-lg font-bold text-white">مراجعة الصيدلي المعتمد</h4>
+          <p class="text-slate-400 text-xs leading-relaxed">يتولى الصيدلي فحص الوصفة وتأكيد توفر الجرعات والسعر الدقيق.</p>
+        </div>
+
+        <div class="space-y-4 p-6 rounded-2xl bg-slate-900 border border-slate-800">
+          <div class="w-12 h-12 rounded-full bg-emerald-500 text-slate-950 font-black text-xl flex items-center justify-center mx-auto shadow-md">3</div>
+          <h4 class="text-lg font-bold text-white">التوصيل السريع إلى منزلكم</h4>
+          <p class="text-slate-400 text-xs leading-relaxed">يصلك الدواء مغلفاً بأمان مع تتبع مباشر لمسار المندوب.</p>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Interactive FAQ Section -->
+  <section class="py-16 md:py-24 bg-slate-950 border-t border-slate-900">
+    <div class="w-full px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto space-y-10">
+      
+      <div class="text-center space-y-3">
+        <h2 class="text-xs font-bold text-emerald-400 tracking-wider uppercase">الأسئلة الشائعة</h2>
+        <p class="text-2xl sm:text-4xl font-extrabold text-white">كل ما تحتاج معرفته عن المنصة</p>
+      </div>
+
       <div class="space-y-4">
-        <h2 class="type-display-xl text-on-dark">ارتقِ بصيدليتك</h2>
-        <p class="type-body-md text-mute max-w-md">
-          سجّل فروعك، أدر المخزون، واخدم المرضى بأدوات مصممة خصيصًا للرعاية الصحية.
-        </p>
-        <a routerLink="/auth/register" class="btn-secondary inline-flex">انضم كصيدلية</a>
+        @for (faq of faqs; track $index) {
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden transition-all">
+            <button 
+              type="button" 
+              (click)="toggleFaq($index)"
+              class="w-full p-5 text-right font-bold text-slate-200 hover:text-white flex items-center justify-between gap-4 transition-colors">
+              <span>{{ faq.q }}</span>
+              <i class="pi text-xs text-emerald-400 shrink-0" [class.pi-minus]="faq.open" [class.pi-plus]="!faq.open"></i>
+            </button>
+            @if (faq.open) {
+              <div class="p-5 pt-0 text-slate-400 text-sm border-t border-slate-800/60 leading-relaxed">
+                {{ faq.a }}
+              </div>
+            }
+          </div>
+        }
       </div>
-      <div class="aspect-[4/3] bg-black-elevated rounded-xl flex items-center justify-center">
-        <div class="text-center p-8 space-y-3">
-          <i class="pi pi-building text-4xl text-on-dark"></i>
-          <p class="type-body-md-strong text-on-dark">مصمم للصيدليات</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
 
-<!-- Soft tinted section -->
-<section class="bg-canvas py-8 md:py-12">
-  <div class="container-app">
-    <div class="bg-canvas-soft rounded-xl p-6 md:p-8 space-y-4">
-      <h2 class="type-display-xl">خطط للمستقبل</h2>
-      <p class="type-body-md text-body max-w-xl">
-        احفظ ملفك الشخصي، تتبع وصفاتك الطبية، وأكمل من حيث توقفت — متى ما احتجت للرعاية.
+    </div>
+  </section>
+
+  <!-- Final CTA Callout Banner -->
+  <section class="py-16 bg-gradient-to-r from-emerald-900 via-teal-900 to-slate-900 border-t border-slate-800">
+    <div class="w-full px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto text-center space-y-6">
+      <h2 class="text-3xl sm:text-4xl font-black text-white">جاهز لبدء تجربتك الصحية مع فارما لينك؟</h2>
+      <p class="text-emerald-100 text-sm sm:text-base max-w-xl mx-auto">
+        سجّل الآن في أقل من دقيقتين واستفد من خدمات الوصفات الطبية والتوصيل الفوري.
       </p>
-      <div class="flex flex-wrap gap-3">
-        <a routerLink="/profile" class="btn-primary">عرض الملف الشخصي</a>
-        <a routerLink="/auth/forgot-password" class="btn-subtle">تحتاج مساعدة في تسجيل الدخول؟</a>
+      <div class="flex flex-wrap justify-center gap-4 pt-2">
+        <a 
+          routerLink="/auth/register" 
+          class="px-8 py-3.5 bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-black rounded-2xl transition-all text-base shadow-lg">
+          إنشاء حساب مريض
+        </a>
+        <a 
+          routerLink="/auth/login" 
+          class="px-8 py-3.5 bg-slate-900/80 hover:bg-slate-900 text-white border border-slate-700 font-bold rounded-2xl transition-all text-base">
+          تسجيل الدخول
+        </a>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- FAQ -->
-<section class="bg-canvas py-8 md:py-12">
-  <div class="container-app max-w-3xl">
-    <h2 class="type-display-xl mb-6">الأسئلة الشائعة</h2>
-    <div class="divide-y divide-surface-pressed">
-      <div *ngFor="let faq of faqs; let i = index" class="py-4">
-        <button
-          type="button"
-          class="w-full flex justify-between items-center gap-4 text-start type-body-md-strong"
-          (click)="toggleFaq(i)"
-        >
-          <span>{{ faq.q }}</span>
-          <i class="pi text-sm shrink-0" [ngClass]="faq.open ? 'pi-minus' : 'pi-plus'"></i>
-        </button>
-        <p *ngIf="faq.open" class="type-body-md text-body mt-3 pe-8">{{ faq.a }}</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- App download style CTA -->
-<section class="bg-canvas pb-12">
-  <div class="container-app flex flex-wrap gap-3">
-    <a routerLink="/auth/register" class="inline-flex items-center gap-2 bg-ink text-on-dark type-body-md-strong rounded-pill px-5 py-3">
-      <i class="pi pi-user"></i>
-      إنشاء حساب مريض
-    </a>
-    <a routerLink="/auth/login" class="inline-flex items-center gap-2 bg-ink text-on-dark type-body-md-strong rounded-pill px-5 py-3">
-      <i class="pi pi-sign-in"></i>
-      تسجيل الدخول للمتابعة
-    </a>
-  </div>
-</section>
+</div>
