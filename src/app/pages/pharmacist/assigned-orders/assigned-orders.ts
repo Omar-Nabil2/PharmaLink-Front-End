@@ -1,5 +1,6 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { PrescriptionReviewService } from '../../../core/services/prescription-review.service';
 import { BranchOrderRowDto } from '../../../core/interfaces/prescription-review.interface';
 
@@ -14,6 +15,7 @@ import { ButtonModule } from 'primeng/button';
 })
 export class AssignedOrders {
   private fulfillmentService = inject(PrescriptionReviewService);
+  private router = inject(Router);
 
   // Signals
   orders = signal<BranchOrderRowDto[]>([]);
@@ -52,5 +54,9 @@ export class AssignedOrders {
     };
 
     return statusMap[status] || { label: 'غير معروف', badgeClass: 'bg-gray-100 text-gray-600' };
+  }
+
+  viewOrderDetails(orderId: string) {
+    this.router.navigate(['/pharmacist/assigned-orders', orderId]);
   }
 }

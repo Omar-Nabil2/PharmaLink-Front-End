@@ -22,7 +22,7 @@
         </ng-template>
 
         <ng-template pTemplate="body" let-order>
-            <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+            <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer" (click)="viewOrderDetails(order.orderId)">
                 <td class="py-4 text-gray-700 text-sm font-medium">
                     {{ order.orderNumber }}
                 </td>

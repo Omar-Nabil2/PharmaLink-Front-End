@@ -1,0 +1,84 @@
+<div class="card bg-white p-6 rounded-xl shadow-sm border border-gray-100" dir="rtl">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-xl font-bold text-gray-800">تفاصيل الطلب</h2>
+        <p-button icon="pi pi-arrow-right" label="عودة للطلبات" (onClick)="goBack()" styleClass="p-button-outlined p-button-sm"></p-button>
+    </div>
+
+    @if (loading()) {
+        <div class="text-center py-8">جاري التحميل...</div>
+    }
+
+    @if (error()) {
+        <div class="text-center text-red-500 py-8">{{ error() }}</div>
+    }
+
+    @if (order() && !loading()) {
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div class="p-4 border border-gray-200 rounded-lg">
+                <h3 class="font-semibold text-lg mb-4 text-gray-700 border-b pb-2">معلومات الطلب</h3>
+                <div class="space-y-3">
+                    <div class="flex justify-between"><span class="text-gray-500">رقم الطلب:</span> <span class="font-medium">{{ order()?.orderNumber }}</span></div>
+                    <div class="flex justify-between"><span class="text-gray-500">التاريخ:</span> <span class="font-medium">{{ order()?.createdAt | date:'yyyy-MM-dd hh:mm a' }}</span></div>
+                    <div class="flex justify-between"><span class="text-gray-500">الحالة:</span> 
+                        <span class="px-3 py-1 rounded-full text-xs font-bold transition-all" [ngClass]="getStatusInfo(order()?.orderStatus || '').badgeClass">
+                            {{ getStatusInfo(order()?.orderStatus || '').label }}
+                        </span>
+                    </div>
+                    <div class="flex justify-between"><span class="text-gray-500">طريقة التوصيل:</span> <span class="font-medium">{{ order()?.fulfillmentMode }}</span></div>
+                    <div class="flex justify-between"><span class="text-gray-500">الإجمالي:</span> <span class="font-medium text-blue-600">{{ order()?.totalAmount }} ج</span></div>
+                </div>
+            </div>
+
+            <div class="p-4 border border-gray-200 rounded-lg">
+                <h3 class="font-semibold text-lg mb-4 text-gray-700 border-b pb-2">معلومات المريض</h3>
+                <div class="space-y-3">
+                    <div class="flex justify-between"><span class="text-gray-500">الاسم:</span> <span class="font-medium">{{ order()?.patient?.fullName }}</span></div>
+                    <div class="flex justify-between"><span class="text-gray-500">رقم الهاتف:</span> <span class="font-medium">{{ order()?.patient?.phoneNumber || 'غير متوفر' }}</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <h3 class="font-semibold text-lg mb-4 text-gray-700">الأدوية المطلوبة</h3>
+            <p-table [value]="order()?.items || []" styleClass="p-datatable-striped p-datatable-sm" responsiveLayout="scroll">
+                <ng-template pTemplate="header">
+                    <tr class="bg-gray-50 border-b border-gray-200">
+                        <th class="py-3 text-right text-sm font-semibold text-gray-600">الدواء</th>
+                        <th class="py-3 text-center text-sm font-semibold text-gray-600">الكمية</th>
+                        <th class="py-3 text-center text-sm font-semibold text-gray-600">الشكل الدوائي</th>
+                        <th class="py-3 text-center text-sm font-semibold text-gray-600">التركيز</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-item>
+                    <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                        <td class="py-3 font-medium">
+                            <div class="flex items-center gap-3">
+                                @if (item.imageUrl) {
+                                    <img [src]="item.imageUrl" [alt]="item.drugName" class="w-10 h-10 object-cover rounded shadow-sm">
+                                }
+                                <span>{{ item.drugName }}</span>
+                            </div>
+                        </td>
+                        <td class="py-3 text-center font-bold">{{ item.quantity }}</td>
+                        <td class="py-3 text-center text-gray-600">{{ item.dosageForm }}</td>
+                        <td class="py-3 text-center text-gray-600">{{ item.strength }}</td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="4" class="text-center py-8 text-gray-500 font-medium">
+                            لا توجد أدوية.
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+        
+        @if (order()?.notes) {
+            <div class="mt-6 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                <h4 class="font-semibold text-yellow-800 mb-2">ملاحظات:</h4>
+                <p class="text-sm text-yellow-700">{{ order()?.notes }}</p>
+            </div>
+        }
+    }
+</div>

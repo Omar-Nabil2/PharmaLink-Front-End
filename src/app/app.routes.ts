@@ -190,6 +190,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'assigned-orders/:id',
+        loadComponent: () =>
+          import('./pages/pharmacist/order-details/order-details.component').then(
+            (m) => m.OrderDetailsComponent,
+          ),
+      },
+      {
         path: 'preparation-list',
         loadComponent: () => import('./pages/pharmacist/preparation-list/preparation-list').then((m) => m.PreparationListComponent),
       },

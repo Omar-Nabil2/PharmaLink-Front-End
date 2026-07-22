@@ -95,3 +95,41 @@ export interface ApiResponse<T> {
   value: T;
   error?: any;
 }
+
+export interface OrderItemDto {
+  drugId: string;
+  drugName: string;
+  imageUrl: string;
+  quantity: number;
+  strength: string;
+  dosageForm: string;
+}
+
+export interface OrderPatientDto {
+  patientId: string;
+  fullName: string;
+  phoneNumber: string;
+}
+
+export interface AssignedLegDto {
+  legId: string;
+  orderId: string;
+  branchId: string;
+  legType: string;
+  legStatus: string;
+  readyByEstimate: string;
+  completedAt: string;
+}
+
+export interface PharmacistOrderDetailsDto {
+  orderId: string;
+  orderNumber: string;
+  createdAt: string;
+  totalAmount: number;
+  orderStatus: string;
+  fulfillmentMode: string;
+  patient: OrderPatientDto;
+  items: OrderItemDto[];
+  notes: string | null;
+  assignedLeg: AssignedLegDto;
+}

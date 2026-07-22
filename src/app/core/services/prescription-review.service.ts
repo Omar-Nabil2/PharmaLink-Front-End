@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpEvent, HttpParams, HttpRequest } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '@environments/environment';
-import { ApiResponse, BranchOrderRowDto, FulfillmentTask, GetAllPrescriptionReviewDto, InventoryAlert, PaginatedResponse, PharmacistDailyMetrics, PrescriptionReviewDto, PrescriptionReviewQueryDto, Result } from '@core/interfaces/prescription-review.interface';
+import { ApiResponse, BranchOrderRowDto, FulfillmentTask, GetAllPrescriptionReviewDto, InventoryAlert, PaginatedResponse, PharmacistDailyMetrics, PharmacistOrderDetailsDto, PrescriptionReviewDto, PrescriptionReviewQueryDto, Result } from '@core/interfaces/prescription-review.interface';
 
 export interface PrescriptionReviewUploadResponse {
   reviewId: string;
@@ -103,5 +103,9 @@ export class PrescriptionReviewService {
 
   getPendingTasks(): Observable<ApiResponse<FulfillmentTask[]>> {
     return this.http.get<ApiResponse<FulfillmentTask[]>>(`${this.localUrl}/pharmacist/PharmacistDashboard/pending-tasks?limit=5`);
+  }
+
+  getPharmacistOrderDetails(id: string): Observable<PharmacistOrderDetailsDto> {
+    return this.http.get<PharmacistOrderDetailsDto>(`${this.localUrl}/PharmacistOrders/${id}`);
   }
 }
