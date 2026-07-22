@@ -13,4 +13,5 @@ export interface UserAuthData {
   fullName: string;
   email: string;
   roleName: AppRole;
+  refreshToken?: string;
 }

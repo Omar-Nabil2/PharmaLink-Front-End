@@ -235,6 +235,13 @@ export const routes: Routes = [
             (m) => m.AdminDashboardComponent,
           ),
       },
+      {
+        path: 'pharmacies',
+        loadComponent: () =>
+          import('./pages/admin/pharmacies/admin-pharmacies.component').then(
+            (m) => m.AdminPharmaciesComponent,
+          ),
+      },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
     ],
   },

@@ -8,27 +8,34 @@ import { PagedPharmacyResponse, PharmacyItem } from '../interfaces/pharmacy.inte
   providedIn: 'root',
 })
 export class PharmacyService {
-  private readonly baseUrl = environment.baseUrl;
+  private readonly baseUrl = environment.localUrl;
 
   constructor(private readonly http: HttpClient) {}
 
   /**
-   * Retrieves all pharmacies with pagination.
    * GET /api/v1/Pharmacies?PageNumber=1&PageSize=10
+   * Retrieves paginated list of all pharmacies.
    */
   getPharmacies(pageNumber: number = 1, pageSize: number = 10): Observable<PagedPharmacyResponse> {
+    const url = `${this.baseUrl}/Pharmacies`;
+    console.log(
+      `[PharmacyService] Requesting: GET ${url}?PageNumber=${pageNumber}&PageSize=${pageSize}`,
+    );
+
     const params = new HttpParams()
       .set('PageNumber', pageNumber.toString())
       .set('PageSize', pageSize.toString());
 
-    return this.http.get<PagedPharmacyResponse>(`${this.baseUrl}/Pharmacies`, { params });
+    return this.http.get<PagedPharmacyResponse>(url, { params });
   }
 
   /**
-   * Retrieves a single pharmacy by ID.
    * GET /api/v1/Pharmacies/{id}
+   * Retrieves single pharmacy details by ID.
    */
   getPharmacyById(id: string): Observable<PharmacyItem> {
-    return this.http.get<PharmacyItem>(`${this.baseUrl}/Pharmacies/${id}`);
+    const url = `${this.baseUrl}/Pharmacies/${id}`;
+    console.log(`[PharmacyService] Requesting Single Pharmacy: GET ${url}`);
+    return this.http.get<PharmacyItem>(url);
   }
 }

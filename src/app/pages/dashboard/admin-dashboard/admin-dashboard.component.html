@@ -20,14 +20,14 @@
         </div>
       </div>
     </p-card>
-    <p-card styleClass="shadow-none border border-surface-pressed rounded-xl bg-canvas">
+    <p-card routerLink="/admin/pharmacies" styleClass="shadow-none border border-surface-pressed rounded-xl bg-canvas cursor-pointer hover:border-emerald-300 hover:shadow-xs transition">
       <div class="flex items-center justify-between">
         <div>
           <span class="block text-mute type-body-md-strong mb-1">الصيدليات</span>
           <div class="text-ink type-display-xl font-bold">{{ totalPharmacies | number }}</div>
         </div>
-        <div class="w-12 h-12 rounded-full bg-canvas-soft flex items-center justify-center">
-          <i class="pi pi-shop text-xl text-ink"></i>
+        <div class="w-12 h-12 rounded-full bg-canvas-soft flex items-center justify-center text-emerald-600">
+          <i class="pi pi-shop text-xl"></i>
         </div>
       </div>
     </p-card>

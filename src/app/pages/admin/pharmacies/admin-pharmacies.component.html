@@ -1,5 +1,5 @@
 <div class="space-y-6 text-slate-800 font-sans" dir="rtl">
-  <!-- Top Navigation / Breadcrumb Header -->
+  <!-- Top Navigation & Breadcrumb Header -->
   <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200/80">
     <!-- Breadcrumb Title -->
     <div>
@@ -7,7 +7,7 @@
       <p class="text-xs text-slate-400 font-medium mt-0.5">لوحة التحكم / المسؤول</p>
     </div>
 
-    <!-- Header Actions & Profile (Matching Screenshot) -->
+    <!-- Header Notification & Admin Profile (Matching Mockup Image) -->
     <div class="flex items-center gap-4">
       <!-- Notification Icon -->
       <button type="button" class="relative p-2 rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition cursor-pointer">
@@ -17,7 +17,7 @@
         </span>
       </button>
 
-      <!-- Admin Profile Info -->
+      <!-- Admin User Pill -->
       <div class="flex items-center gap-2.5 bg-white px-3 py-1.5 rounded-full border border-slate-200/70 shadow-2xs">
         <div class="w-8 h-8 rounded-full bg-emerald-50 border border-emerald-200 text-[#0d7a63] font-bold flex items-center justify-center text-xs">
           م
@@ -32,7 +32,7 @@
 
   <!-- Main Section Top Action Bar -->
   <div class="flex items-center justify-between">
-    <!-- Add Pharmacy Button -->
+    <!-- Add Pharmacy Action Button -->
     <button
       type="button"
       class="bg-[#0d7a63] hover:bg-[#0b6451] text-white px-5 py-2.5 rounded-xl font-bold transition flex items-center gap-2 shadow-xs cursor-pointer text-sm"
@@ -42,8 +42,8 @@
     </button>
   </div>
 
-  <!-- Loading State -->
-  <div *ngIf="isLoading" class="grid grid-cols-1 md:grid-cols-2 gap-6 py-8">
+  <!-- Loading Skeletons -->
+  <div *ngIf="isLoading" class="grid grid-cols-1 md:grid-cols-2 gap-6 py-4">
     <div *ngFor="let i of [1, 2, 3, 4]" class="bg-white border border-slate-200/70 rounded-2xl p-6 space-y-4 animate-pulse">
       <div class="flex justify-between items-center">
         <div class="h-6 w-16 bg-slate-100 rounded-full"></div>
@@ -67,7 +67,7 @@
     <p class="text-xs text-slate-500 max-w-sm mx-auto">لم يتم العثور على أي صيدليات في النظام حالياً.</p>
   </div>
 
-  <!-- Pharmacies Cards Grid (Matching Screenshot Design) -->
+  <!-- Pharmacies Cards Grid (Matching Mockup Image) -->
   <div *ngIf="!isLoading && pharmacies.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-6">
     <div
       *ngFor="let pharmacy of pharmacies"
@@ -84,13 +84,20 @@
             {{ getStatusLabel(pharmacy.verificationStatus) }}
           </span>
 
-          <!-- Pharmacy Logo or Icon if available -->
-          <div *ngIf="pharmacy.logoUrl" class="w-9 h-9 rounded-xl border border-slate-100 overflow-hidden bg-slate-50 p-1 flex items-center justify-center">
-            <img [src]="pharmacy.logoUrl" [alt]="pharmacy.legalName" class="w-full h-full object-contain" />
+          <!-- Pharmacy Logo if available -->
+          <div class="w-10 h-10 rounded-xl border border-slate-100 overflow-hidden bg-slate-50 p-1 flex items-center justify-center shrink-0">
+            <img
+              *ngIf="pharmacy.logoUrl"
+              [src]="pharmacy.logoUrl"
+              [alt]="pharmacy.legalName"
+              class="w-full h-full object-contain"
+              (error)="pharmacy.logoUrl = ''"
+            />
+            <i *ngIf="!pharmacy.logoUrl" class="pi pi-building text-slate-400 text-lg"></i>
           </div>
         </div>
 
-        <!-- Pharmacy Title & Main Details -->
+        <!-- Pharmacy Title & Content -->
         <div class="text-center space-y-2 py-2">
           <h3 class="text-xl font-extrabold text-slate-900 tracking-tight">
             {{ pharmacy.legalName }}
@@ -106,18 +113,18 @@
           <!-- Info Specs -->
           <div class="space-y-1 text-xs text-slate-500 font-medium pt-1">
             <p class="flex items-center justify-center gap-1.5">
-              <i class="pi pi-[#0d7a63] text-slate-400"></i>
+              <i class="pi pi-id-card text-slate-400"></i>
               <span>رقم الترخيص: <strong class="text-slate-700 font-bold">{{ pharmacy.licenseNumber }}</strong></span>
             </p>
             <p class="flex items-center justify-center gap-1.5">
-              <i class="pi pi-id-card text-slate-400"></i>
+              <i class="pi pi-user text-slate-400"></i>
               <span class="text-slate-400 truncate max-w-xs">معرف المالك: {{ pharmacy.ownerUserId }}</span>
             </p>
           </div>
         </div>
       </div>
 
-      <!-- Card Action Buttons (Matching Screenshot) -->
+      <!-- Card Action Buttons (Matching Mockup Image) -->
       <div class="pt-4 mt-4 border-t border-slate-100 flex items-center gap-3">
         <!-- Edit Button -->
         <button
@@ -140,7 +147,7 @@
     </div>
   </div>
 
-  <!-- Pagination Controls (Linked to API) -->
+  <!-- Pagination Controls (Linked to API GET parameters) -->
   <div *ngIf="!isLoading && totalPages > 1" class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-slate-200/80">
     <!-- Info count -->
     <p class="text-xs text-slate-500 font-medium">

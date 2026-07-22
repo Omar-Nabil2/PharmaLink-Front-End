@@ -43,7 +43,7 @@ export class AuthService {
         userId: localStorage.getItem('userId') || '',
         fullName: localStorage.getItem('fullName') || '',
         email: localStorage.getItem('email') || '',
-        roleName
+        roleName,
       };
     }
     return null;
@@ -61,7 +61,8 @@ export class AuthService {
     const r = role.toLowerCase().replace(/\s+/g, '');
     if (r === 'admin' || r === 'systemadmin' || r === 'administrator') return AppRoles.Admin;
     if (r === 'pharmacist') return AppRoles.Pharmacist;
-    if (r === 'pharmacyadmin' || r === 'owner' || r === 'pharmacyowner') return AppRoles.PharmacyAdmin;
+    if (r === 'pharmacyadmin' || r === 'owner' || r === 'pharmacyowner')
+      return AppRoles.PharmacyAdmin;
     if (r === 'patient') return AppRoles.Patient;
     return null;
   }
@@ -83,7 +84,7 @@ export class AuthService {
       // Best effort revocation
       this.revokeToken({ token, refreshToken }).subscribe({
         next: () => this.clearSession(),
-        error: () => this.clearSession()
+        error: () => this.clearSession(),
       });
     } else {
       this.clearSession();
@@ -157,11 +158,11 @@ export class AuthService {
     return this.http.post<LoginResponse>(`${this.localUrl}/Auth/login`, data);
   }
 
-  refreshToken(data: { token: string, refreshToken: string }): Observable<LoginResponse> {
+  refreshToken(data: { token: string; refreshToken: string }): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${this.localUrl}/Auth/refresh`, data);
   }
 
-  revokeToken(data: { token: string, refreshToken: string }): Observable<any> {
+  revokeToken(data: { token: string; refreshToken: string }): Observable<any> {
     return this.http.post(`${this.localUrl}/Auth/revoke-refresh-token`, data);
   }
 }
