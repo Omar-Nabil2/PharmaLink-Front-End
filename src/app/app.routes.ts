@@ -29,6 +29,18 @@ export const routes: Routes = [
       {
         path: 'prescriptions/review/:id',
         loadComponent: () => import('./pages/prescriptions/review-prescription/review-prescription.component').then(m => m.ReviewPrescriptionComponent)
+      },
+      {
+        path: 'privacy',
+        loadComponent: () => import('./pages/static/privacy-policy/privacy-policy.component').then(m => m.PrivacyPolicyComponent)
+      },
+      {
+        path: 'terms',
+        loadComponent: () => import('./pages/static/terms/terms.component').then(m => m.TermsComponent)
+      },
+      {
+        path: 'faq',
+        loadComponent: () => import('./pages/static/faq/faq.component').then(m => m.FaqComponent)
       }
     ],
   },
