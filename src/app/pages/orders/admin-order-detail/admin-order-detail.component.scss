@@ -1,0 +1,13 @@
+// Minimal layout adjustments for admin order details
+.border-collapse {
+  border-collapse: collapse;
+}
+
+ul {
+  list-style-type: disc !important;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

@@ -1,0 +1,214 @@
+<div class="space-y-6" dir="rtl">
+  <p-toast />
+
+  <!-- Page Header -->
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    <div>
+      <div class="flex items-center gap-2 text-mute type-body-sm-strong mb-1">
+        <span>جميع الطلبات</span>
+        <i class="pi pi-chevron-left text-xs"></i>
+        <span>المسؤول</span>
+      </div>
+      <h1 class="type-display-lg text-ink font-bold">جميع الطلبات</h1>
+    </div>
+  </div>
+
+  <!-- Enhanced Filters & Actions Bar -->
+  <div class="filter-actions-bar bg-white border border-slate-200/80 rounded-2xl p-4 shadow-sm space-y-4">
+    
+    <!-- Top Row: Status Tabs Segmented Control & Actions -->
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+      
+      <!-- Segmented Status Tabs -->
+      <div class="segmented-control bg-slate-100/80 p-1.5 rounded-xl flex items-center gap-1 overflow-x-auto w-full lg:w-auto">
+        <button 
+          type="button"
+          class="segmented-btn" 
+          [class.active]="selectedStatusTab() === 'all'" 
+          (click)="onStatusTabChange('all')">
+          <i class="pi pi-th-large text-xs"></i>
+          <span>الكل</span>
+        </button>
+        <button 
+          type="button"
+          class="segmented-btn" 
+          [class.active]="selectedStatusTab() === 'active'" 
+          (click)="onStatusTabChange('active')">
+          <i class="pi pi-clock text-xs"></i>
+          <span>نشط</span>
+        </button>
+        <button 
+          type="button"
+          class="segmented-btn" 
+          [class.active]="selectedStatusTab() === 'completed'" 
+          (click)="onStatusTabChange('completed')">
+          <i class="pi pi-check-circle text-xs"></i>
+          <span>مكتمل</span>
+        </button>
+        <button 
+          type="button"
+          class="segmented-btn" 
+          [class.active]="selectedStatusTab() === 'cancelled'" 
+          (click)="onStatusTabChange('cancelled')">
+          <i class="pi pi-times-circle text-xs"></i>
+          <span>ملغي</span>
+        </button>
+      </div>
+
+      <!-- Quick Action Buttons: Export & Reset -->
+      <div class="flex items-center gap-2 flex-wrap">
+        <!-- Export Group -->
+        <div class="flex items-center rounded-xl border border-emerald-200 bg-emerald-50/60 p-1">
+          <button 
+            type="button"
+            class="export-btn export-btn--excel" 
+            (click)="exportOrders('xlsx')"
+            title="تصدير ملف Excel">
+            <i class="pi pi-file-excel text-emerald-600"></i>
+            <span>تصدير Excel</span>
+          </button>
+          <div class="w-[1px] h-4 bg-emerald-200 mx-1"></div>
+          <button 
+            type="button"
+            class="export-btn export-btn--csv" 
+            (click)="exportOrders('csv')"
+            title="تصدير ملف CSV">
+            <i class="pi pi-file text-emerald-700"></i>
+            <span>CSV</span>
+          </button>
+        </div>
+
+        <!-- Reset Filters Button -->
+        <button 
+          type="button"
+          class="reset-btn" 
+          (click)="resetFilters()"
+          title="إعادة تعيين كافة الفلاتر">
+          <i class="pi pi-refresh text-xs"></i>
+          <span>إعادة تعيين</span>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Bottom Row: Search & Date Range Filters -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pt-3 border-t border-slate-100">
+      
+      <!-- Search Input -->
+      <div class="relative flex items-center">
+        <i class="pi pi-search absolute right-3.5 text-slate-400 text-sm"></i>
+        <input 
+          type="text" 
+          placeholder="بحث برقم الطلب أو اسم المريض..." 
+          class="filter-input pr-10 pl-8 w-full"
+          [ngModel]="searchQuery()"
+          (ngModelChange)="searchQuery.set($event)"
+          (keyup.enter)="onSearch()"
+        />
+        <button 
+          type="button"
+          *ngIf="searchQuery()" 
+          (click)="searchQuery.set(''); onSearch()" 
+          class="absolute left-3 text-slate-400 hover:text-slate-600 transition-colors">
+          <i class="pi pi-times text-xs"></i>
+        </button>
+      </div>
+
+      <!-- Date Range Picker -->
+      <div class="relative flex items-center">
+        <p-datepicker 
+          [ngModel]="dateRange()"
+          (ngModelChange)="dateRange.set($event)"
+          selectionMode="range" 
+          [readonlyInput]="true" 
+          placeholder="اختر نطاق التاريخ..."
+          styleClass="w-full"
+          inputStyleClass="filter-input w-full pr-10"
+          (onSelect)="onDateRangeChange()"
+          (onClearClick)="onDateRangeChange()"
+          [showButtonBar]="true"
+          dateFormat="dd/mm/yy"
+        />
+        <i class="pi pi-calendar absolute right-3.5 text-slate-400 text-sm pointer-events-none"></i>
+      </div>
+
+      <!-- Execute Search Button -->
+      <div class="flex items-center">
+        <button type="button" class="btn-search-action w-full" (click)="onSearch()">
+          <i class="pi pi-search text-xs"></i>
+          <span>بحث</span>
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Orders Data Table -->
+  <div class="bg-canvas border border-surface-pressed rounded-xl overflow-hidden shadow-none">
+    <p-table 
+      [value]="orders()" 
+      [lazy]="true" 
+      [rows]="pageSize()" 
+      [first]="first()"
+      [paginator]="true" 
+      [totalRecords]="totalRecords()" 
+      [loading]="isLoading()"
+      (onLazyLoad)="onPageChange($event)"
+      [rowsPerPageOptions]="[10, 20, 50]"
+      styleClass="p-datatable-responsive">
+      
+      <ng-template pTemplate="header">
+        <tr>
+          <th class="bg-canvas-soft text-ink type-body-sm-strong border-b border-surface-pressed py-4 px-6 text-right">الرقم</th>
+          <th class="bg-canvas-soft text-ink type-body-sm-strong border-b border-surface-pressed py-4 px-6 text-right">المريض</th>
+          <th class="bg-canvas-soft text-ink type-body-sm-strong border-b border-surface-pressed py-4 px-6 text-right">الصيدلية</th>
+          <th class="bg-canvas-soft text-ink type-body-sm-strong border-b border-surface-pressed py-4 px-6 text-right">الأدوية</th>
+          <th class="bg-canvas-soft text-ink type-body-sm-strong border-b border-surface-pressed py-4 px-6 text-right">الإجمالي</th>
+          <th class="bg-canvas-soft text-ink type-body-sm-strong border-b border-surface-pressed py-4 px-6 text-right">الحالة</th>
+          <th class="bg-canvas-soft text-ink type-body-sm-strong border-b border-surface-pressed py-4 px-6 text-right">التاريخ</th>
+          <th class="bg-canvas-soft text-ink type-body-sm-strong border-b border-surface-pressed py-4 px-6 text-center">الإجراء</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-order>
+        <tr class="border-b border-surface-pressed hover:bg-canvas-softer transition-colors">
+          <td class="py-4 px-6 text-mute font-mono text-sm font-bold">{{ order.orderNumber }}</td>
+          <td class="py-4 px-6 text-ink type-body-sm-strong">{{ order.patientName }}</td>
+          <td class="py-4 px-6 text-ink type-body-sm">{{ order.primaryPharmacyName }}</td>
+          <td class="py-4 px-6 text-mute type-body-sm truncate max-w-xs" [title]="order.medicineNames.join(', ')">
+            {{ order.medicineNames.join(', ') }}
+          </td>
+          <td class="py-4 px-6 text-ink type-body-sm-strong font-bold">ج {{ order.totalAmount | number:'1.2-2' }}</td>
+          <td class="py-4 px-6">
+            <p-tag 
+              [value]="order.orderStatus | statusTranslate:'OrderStatus'" 
+              [severity]="getStatusSeverity(order.orderStatus)"
+              styleClass="text-xs font-semibold px-3 py-1 rounded-full"
+            />
+          </td>
+          <td class="py-4 px-6 text-mute type-body-sm">{{ order.createdAt | date:'yyyy-MM-dd' }}</td>
+          <td class="py-4 px-6 text-center">
+            <a 
+              [routerLink]="['/admin/orders', order.orderId]" 
+              class="text-link type-body-sm-strong hover:underline text-[#0f9d76]">
+              التفاصيل
+            </a>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="8" class="text-center py-8 text-mute type-body-md">
+            @if (isLoading()) {
+              جاري تحميل الطلبات...
+            } @else {
+              لا توجد طلبات تطابق معايير البحث.
+            }
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>

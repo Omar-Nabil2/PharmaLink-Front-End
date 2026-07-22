@@ -256,6 +256,20 @@ export const routes: Routes = [
             (m) => m.PharmacyDetailComponent,
           ),
       },
+      {
+        path: 'orders',
+        loadComponent: () =>
+          import('./pages/orders/admin-orders/admin-orders.component').then(
+            (m) => m.AdminOrdersComponent,
+          ),
+      },
+      {
+        path: 'orders/:id',
+        loadComponent: () =>
+          import('./pages/orders/admin-order-detail/admin-order-detail.component').then(
+            (m) => m.AdminOrderDetailComponent,
+          ),
+      },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
     ],
   },
