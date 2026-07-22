@@ -9,11 +9,12 @@ import { debounceTime, distinctUntilChanged, finalize, switchMap } from 'rxjs/op
 
 import { GetAllPrescriptionReviewDto, PrescriptionReviewQueryDto } from '@core/interfaces/prescription-review.interface';
 import { PrescriptionReviewService } from '@core/services/prescription-review.service';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-prescription-queue',
   standalone: true,
-  imports: [CommonModule, FormsModule, TableModule, ButtonModule, InputTextModule],
+  imports: [CommonModule, FormsModule, TableModule, ButtonModule, InputTextModule, RouterLink],
   templateUrl: './prescription-queue.html',
   styleUrl: './prescription-queue.scss',
 })
