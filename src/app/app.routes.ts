@@ -213,6 +213,10 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/pharmacist/preparation-list/preparation-list').then((m) => m.PreparationListComponent),
       },
       {
+        path: 'inventory',
+        loadComponent: () => import('./pages/pharmacist/inventory/inventory.component').then(m => m.InventoryComponent)
+      },
+      {
         path: 'prescription-queue',
         loadComponent: () =>
           import('./pages/pharmacist/prescription-queue/prescription-queue').then(
@@ -220,6 +224,7 @@ export const routes: Routes = [
           ),
       },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
+
     ],
   },
   {
