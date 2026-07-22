@@ -1,0 +1,446 @@
+// ─── Design tokens (match admin-dashboard + pharmacies list) ─────────────────
+$accent:        #0f9d76;
+$accent-hover:  #0d8b67;
+$accent-light:  rgba(15, 157, 118, 0.10);
+$surface:       #ffffff;
+$surface-soft:  #f6f9f8;
+$surface-muted: #eef2f1;
+$border:        #e2e8e6;
+$border-light:  rgba(226, 232, 230, 0.6);
+$text-ink:      #1a2b28;
+$text-mute:     #6b7a76;
+$radius-xl:     1rem;
+$radius-lg:     0.75rem;
+$radius-md:     0.5rem;
+$radius-pill:   999px;
+$shadow-card:   0 1px 4px rgba(0, 0, 0, 0.06), 0 4px 16px rgba(0, 0, 0, 0.04);
+
+// ─── Page wrapper ─────────────────────────────────────────────────────────────
+.detail-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+// ─── Breadcrumb / Back ────────────────────────────────────────────────────────
+.detail-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.875rem;
+  border: 1px solid $border;
+  border-radius: $radius-lg;
+  background: $surface;
+  color: $text-mute;
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+
+  &:hover { background: $surface-soft; color: $text-ink; }
+}
+
+.breadcrumb-sep { color: $text-mute; font-size: 0.9rem; }
+
+.breadcrumb-current {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: $text-ink;
+}
+
+// ─── Skeleton ─────────────────────────────────────────────────────────────────
+.detail-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+.sk-header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  background: $surface;
+  border: 1px solid $border;
+  border-radius: $radius-xl;
+  padding: 1.75rem;
+}
+
+.sk-logo-lg {
+  width: 5rem;
+  height: 5rem;
+  border-radius: $radius-lg;
+  background: $surface-muted;
+  flex-shrink: 0;
+}
+
+.sk-header-info { flex: 1; }
+
+.sk-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.sk-card-box {
+  height: 8rem;
+  border-radius: $radius-xl;
+  background: $surface-muted;
+}
+
+.sk-line {
+  height: 0.875rem;
+  border-radius: 999px;
+  background: $surface-muted;
+
+  & + & { margin-top: 0.5rem; }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.55; }
+}
+
+// ─── Error banner ─────────────────────────────────────────────────────────────
+.error-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: $radius-lg;
+  color: #dc2626;
+  font-size: 0.875rem;
+}
+
+// ─── Hero card ────────────────────────────────────────────────────────────────
+.hero-card {
+  background: $surface;
+  border: 1px solid $border-light;
+  border-radius: $radius-xl;
+  padding: 1.75rem 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  box-shadow: $shadow-card;
+}
+
+.hero-logo {
+  flex-shrink: 0;
+  width: 5rem;
+  height: 5rem;
+  border-radius: $radius-lg;
+  border: 1px solid $border;
+  background: $surface-soft;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  font-size: 2rem;
+  color: $text-mute;
+
+  img { width: 100%; height: 100%; object-fit: contain; }
+}
+
+.hero-info { flex: 1; min-width: 0; }
+
+.hero-name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: $text-ink;
+  margin: 0 0 0.5rem;
+  line-height: 1.2;
+}
+
+.hero-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.hero-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.65rem;
+  background: $surface-soft;
+  border: 1px solid $border;
+  border-radius: $radius-pill;
+  font-size: 0.78rem;
+  color: $text-mute;
+}
+
+.hero-stats {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-shrink: 0;
+  background: $surface-soft;
+  border: 1px solid $border;
+  border-radius: $radius-lg;
+  padding: 1rem 1.5rem;
+}
+
+.hero-stat { text-align: center; }
+
+.hero-stat-value {
+  display: block;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: $accent;
+  line-height: 1;
+}
+
+.hero-stat-label {
+  display: block;
+  font-size: 0.72rem;
+  color: $text-mute;
+  margin-top: 0.25rem;
+}
+
+.hero-stat-divider {
+  width: 1px;
+  height: 2.5rem;
+  background: $border;
+}
+
+// ─── Status badges ────────────────────────────────────────────────────────────
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.65rem;
+  border-radius: $radius-pill;
+  font-size: 0.72rem;
+  font-weight: 600;
+  border: 1px solid transparent;
+}
+
+.status-verified { background: #ecfdf5; color: #059669; border-color: #a7f3d0; }
+.status-pending  { background: #fffbeb; color: #d97706; border-color: #fde68a; }
+.status-rejected { background: #fff1f2; color: #e11d48; border-color: #fecdd3; }
+.status-deleted  { background: #f3f4f6; color: #6b7280; border-color: #e5e7eb; }
+.status-default  { background: $surface-muted; color: $text-mute; }
+
+// ─── Info grid ────────────────────────────────────────────────────────────────
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.info-card {
+  background: $surface;
+  border: 1px solid $border-light;
+  border-radius: $radius-xl;
+  padding: 1.5rem;
+  box-shadow: $shadow-card;
+}
+
+.info-card-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: $text-ink;
+  margin: 0 0 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid $border;
+
+  i { color: $accent; font-size: 0.875rem; }
+}
+
+.info-rows { display: flex; flex-direction: column; gap: 0.5rem; }
+
+.info-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid $border-light;
+
+  &:last-child { border-bottom: none; }
+}
+
+.info-label {
+  font-size: 0.78rem;
+  color: $text-mute;
+  font-weight: 500;
+  flex-shrink: 0;
+  min-width: 110px;
+}
+
+.info-value {
+  font-size: 0.825rem;
+  color: $text-ink;
+  font-weight: 500;
+  flex: 1;
+  min-width: 0;
+  word-break: break-all;
+}
+
+.info-id {
+  font-size: 0.7rem;
+  font-family: monospace;
+  color: $text-mute;
+  word-break: break-all;
+}
+
+.info-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1.5rem;
+  color: $text-mute;
+  font-size: 0.8rem;
+  text-align: center;
+
+  i { font-size: 1.5rem; }
+}
+
+// ─── Branches section ─────────────────────────────────────────────────────────
+.branches-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.section-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: $text-ink;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  i { color: $accent; }
+}
+
+.section-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.5rem;
+  height: 1.5rem;
+  padding: 0 0.4rem;
+  background: $accent-light;
+  color: $accent;
+  border-radius: $radius-pill;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.branches-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 3rem;
+  background: $surface;
+  border: 1px dashed $border;
+  border-radius: $radius-xl;
+  color: $text-mute;
+  font-size: 0.875rem;
+  text-align: center;
+
+  i { font-size: 1.75rem; }
+}
+
+.branches-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.branch-card {
+  background: $surface;
+  border: 1px solid $border-light;
+  border-radius: $radius-xl;
+  padding: 1.25rem;
+  box-shadow: $shadow-card;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  transition: box-shadow 0.2s, border-color 0.2s;
+
+  &:hover {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.09);
+    border-color: rgba(15, 157, 118, 0.25);
+  }
+}
+
+.branch-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.branch-name {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: $text-ink;
+  margin: 0;
+  flex: 1;
+}
+
+.branch-badges {
+  display: flex;
+  gap: 0.3rem;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+.branch-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.18rem 0.5rem;
+  border-radius: $radius-pill;
+  font-size: 0.65rem;
+  font-weight: 600;
+
+  &.delivery { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+  &.pickup   { background: #f5f3ff; color: #7c3aed; border: 1px solid #c4b5fd; }
+}
+
+.branch-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.branch-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-size: 0.78rem;
+  color: $text-mute;
+
+  i {
+    color: $accent;
+    font-size: 0.8rem;
+    margin-top: 0.05rem;
+    flex-shrink: 0;
+  }
+
+  span { line-height: 1.4; }
+}
