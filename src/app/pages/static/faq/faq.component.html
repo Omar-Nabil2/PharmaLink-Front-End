@@ -1,0 +1,103 @@
+<div class="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8" dir="rtl">
+  <div class="max-w-4xl mx-auto space-y-8">
+    
+    <!-- Hero Header -->
+    <div class="bg-gradient-to-r from-emerald-700 via-teal-800 to-slate-900 rounded-3xl p-8 md:p-12 text-white shadow-xl relative overflow-hidden text-center space-y-4">
+      <div class="inline-flex items-center gap-2 px-3 py-1 bg-white/10 backdrop-blur-md rounded-full text-xs font-semibold text-emerald-200 mx-auto">
+        <i class="pi pi-question-circle"></i>
+        <span>مركز الدعم والمساعدة</span>
+      </div>
+      <h1 class="text-3xl md:text-5xl font-black tracking-tight">الأسئلة الشائعة ومركز المساعدة</h1>
+      <p class="text-emerald-100 text-sm md:text-base max-w-xl mx-auto">
+        إليك إجابات لأبرز الأسئلة المتكررة حول استخدام منصة فارما لينك وطلب الدواء وتتبع الوصفات الطبية.
+      </p>
+    </div>
+
+    <!-- Category Tabs -->
+    <div class="flex flex-wrap items-center justify-center gap-3">
+      <button 
+        type="button" 
+        (click)="setCategory('all')" 
+        class="px-5 py-2.5 rounded-xl text-xs font-bold transition-all border"
+        [class.bg-emerald-600]="activeCategory() === 'all'"
+        [class.text-white]="activeCategory() === 'all'"
+        [class.border-emerald-600]="activeCategory() === 'all'"
+        [class.bg-white]="activeCategory() !== 'all'"
+        [class.text-slate-600]="activeCategory() !== 'all'"
+        [class.border-slate-200]="activeCategory() !== 'all'">
+        الكل
+      </button>
+
+      <button 
+        type="button" 
+        (click)="setCategory('orders')" 
+        class="px-5 py-2.5 rounded-xl text-xs font-bold transition-all border"
+        [class.bg-emerald-600]="activeCategory() === 'orders'"
+        [class.text-white]="activeCategory() === 'orders'"
+        [class.border-emerald-600]="activeCategory() === 'orders'"
+        [class.bg-white]="activeCategory() !== 'orders'"
+        [class.text-slate-600]="activeCategory() !== 'orders'"
+        [class.border-slate-200]="activeCategory() !== 'orders'">
+        الطلبات والروشتات
+      </button>
+
+      <button 
+        type="button" 
+        (click)="setCategory('pharmacies')" 
+        class="px-5 py-2.5 rounded-xl text-xs font-bold transition-all border"
+        [class.bg-emerald-600]="activeCategory() === 'pharmacies'"
+        [class.text-white]="activeCategory() === 'pharmacies'"
+        [class.border-emerald-600]="activeCategory() === 'pharmacies'"
+        [class.bg-white]="activeCategory() !== 'pharmacies'"
+        [class.text-slate-600]="activeCategory() !== 'pharmacies'"
+        [class.border-slate-200]="activeCategory() !== 'pharmacies'">
+        الصيدليات
+      </button>
+
+      <button 
+        type="button" 
+        (click)="setCategory('account')" 
+        class="px-5 py-2.5 rounded-xl text-xs font-bold transition-all border"
+        [class.bg-emerald-600]="activeCategory() === 'account'"
+        [class.text-white]="activeCategory() === 'account'"
+        [class.border-emerald-600]="activeCategory() === 'account'"
+        [class.bg-white]="activeCategory() !== 'account'"
+        [class.text-slate-600]="activeCategory() !== 'account'"
+        [class.border-slate-200]="activeCategory() !== 'account'">
+        الحساب والعناوين
+      </button>
+    </div>
+
+    <!-- Accordion Items -->
+    <div class="space-y-4">
+      @for (faq of filteredFaqs; track faq.id) {
+        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden transition-all">
+          <button 
+            type="button" 
+            (click)="toggleFaq(faq.id)" 
+            class="w-full p-5 text-right font-bold text-slate-800 hover:bg-slate-50 transition-colors flex items-center justify-between gap-4 text-base">
+            <span>{{ faq.question }}</span>
+            <i class="pi" [class.pi-chevron-down]="!faq.isOpen" [class.pi-chevron-up]="faq.isOpen" class="text-emerald-600"></i>
+          </button>
+
+          @if (faq.isOpen) {
+            <div class="p-5 pt-0 text-sm text-slate-600 border-t border-slate-100 bg-slate-50/50 leading-relaxed">
+              {{ faq.answer }}
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Help Banner -->
+    <div class="bg-white rounded-3xl p-8 border border-slate-200 text-center space-y-4 shadow-sm">
+      <h3 class="text-lg font-bold text-slate-800">لم تجد إجابة لسؤالك؟</h3>
+      <p class="text-xs text-slate-500 max-w-md mx-auto">فريق الدعم في فارما لينك جاهز للمساعدة على مدار الساعة.</p>
+      <a routerLink="/contact" class="inline-flex items-center gap-2 px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-sm transition-colors shadow-md">
+        <i class="pi pi-envelope"></i>
+        <span>تواصل معنا الآن</span>
+      </a>
+    </div>
+
+  </div>
+</div>
