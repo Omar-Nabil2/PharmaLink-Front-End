@@ -156,6 +156,13 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./pages/profile/addresses/address-form/address-form.component').then((m) => m.AddressFormComponent),
       },
+      {
+        path: 'cart',
+        canActivate: [authGuard],
+        data: { role: AppRoles.Patient },
+        loadComponent: () =>
+          import('./pages/cart/cart.component').then((m) => m.CartComponent),
+      },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
     ],
   },
@@ -253,6 +260,11 @@ export const routes: Routes = [
     ],
   },
   // Unknown routes → Not Found (keeps main layout: navbar + footer)
+  {
+    path: 'cart',
+    redirectTo: '/patient/cart',
+    pathMatch: 'full'
+  },
   {
     path: '**',
     component: MainLayoutComponent,
