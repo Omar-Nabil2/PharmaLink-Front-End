@@ -125,9 +125,18 @@
             <div class="meta-row">
               <i class="pi pi-building meta-icon"></i>
               <span class="meta-label">الصيدلية المرتبطة:</span>
-              <span class="meta-value highlight-pharmacy">
-                {{ owner.pharmacy?.legalName || 'غير مرتبطة بصيدلية' }}
-              </span>
+              @if (owner.pharmacy?.pharmacyId || owner.pharmacyId) {
+                <a
+                  [routerLink]="['/admin/pharmacies', owner.pharmacy?.pharmacyId || owner.pharmacyId]"
+                  class="meta-value highlight-pharmacy clickable-pharmacy-link"
+                  title="الانتقال إلى صفحة تفاصيل الصيدلية"
+                >
+                  <span>{{ owner.pharmacy?.legalName || 'عرض تفاصيل الصيدلية' }}</span>
+                  <i class="pi pi-external-link link-icon"></i>
+                </a>
+              } @else {
+                <span class="meta-value" style="color: #6b7a76;">غير مرتبطة بصيدلية</span>
+              }
             </div>
           </div>
 
@@ -314,7 +323,13 @@
             <!-- If a pharmacy is already selected -->
             @if (selectedFormPharmacy) {
               <div class="selected-pharmacy-card">
-                <div class="pharmacy-icon"><i class="pi pi-building"></i></div>
+                <div class="pharmacy-icon">
+                  @if (getLogoUrl(selectedFormPharmacy.logoUrl)) {
+                    <img [src]="getLogoUrl(selectedFormPharmacy.logoUrl)" [alt]="selectedFormPharmacy.legalName" class="pharmacy-logo-img" />
+                  } @else {
+                    <i class="pi pi-building"></i>
+                  }
+                </div>
                 <div class="pharmacy-info">
                   <div class="pharmacy-name">{{ selectedFormPharmacy.legalName }}</div>
                   <div class="pharmacy-sub">ترخيص: {{ selectedFormPharmacy.licenseNumber }}</div>
@@ -361,7 +376,13 @@
                       class="pharmacy-result-item"
                       (click)="selectFormPharmacy(pharmacy)"
                     >
-                      <div class="pharmacy-icon"><i class="pi pi-building"></i></div>
+                      <div class="pharmacy-icon">
+                        @if (getLogoUrl(pharmacy.logoUrl)) {
+                          <img [src]="getLogoUrl(pharmacy.logoUrl)" [alt]="pharmacy.legalName" class="pharmacy-logo-img" />
+                        } @else {
+                          <i class="pi pi-building"></i>
+                        }
+                      </div>
                       <div class="pharmacy-info">
                         <div class="pharmacy-name">{{ pharmacy.legalName }}</div>
                         <div class="pharmacy-sub">ترخيص: {{ pharmacy.licenseNumber }}</div>
@@ -580,7 +601,13 @@
                 [class.selected-pharmacy]="selectedPharmacy?.pharmacyId === pharmacy.pharmacyId"
                 (click)="selectPharmacy(pharmacy)"
               >
-                <div class="pharmacy-icon"><i class="pi pi-building"></i></div>
+                <div class="pharmacy-icon">
+                  @if (getLogoUrl(pharmacy.logoUrl)) {
+                    <img [src]="getLogoUrl(pharmacy.logoUrl)" [alt]="pharmacy.legalName" class="pharmacy-logo-img" />
+                  } @else {
+                    <i class="pi pi-building"></i>
+                  }
+                </div>
                 <div class="pharmacy-info">
                   <div class="pharmacy-name">{{ pharmacy.legalName }}</div>
                   <div class="pharmacy-sub">ترخيص: {{ pharmacy.licenseNumber }}</div>
@@ -606,7 +633,13 @@
         <!-- Selected pharmacy card -->
         @if (selectedPharmacy) {
           <div class="selected-pharmacy-card">
-            <div class="pharmacy-icon"><i class="pi pi-building"></i></div>
+            <div class="pharmacy-icon">
+              @if (getLogoUrl(selectedPharmacy.logoUrl)) {
+                <img [src]="getLogoUrl(selectedPharmacy.logoUrl)" [alt]="selectedPharmacy.legalName" class="pharmacy-logo-img" />
+              } @else {
+                <i class="pi pi-building"></i>
+              }
+            </div>
             <div class="pharmacy-info">
               <div class="pharmacy-name">{{ selectedPharmacy.legalName }}</div>
               <div class="pharmacy-sub">ترخيص: {{ selectedPharmacy.licenseNumber }}</div>

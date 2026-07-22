@@ -332,6 +332,30 @@ $shadow-dialog: 0 20px 60px rgba(0, 0, 0, 0.18);
       font-weight: 600;
       color: $accent;
     }
+
+    &.clickable-pharmacy-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      text-decoration: none;
+      transition: color 0.15s;
+
+      .link-icon {
+        font-size: 0.7rem;
+        opacity: 0.7;
+        transition: opacity 0.15s, transform 0.15s;
+      }
+
+      &:hover {
+        color: $accent-hover;
+        text-decoration: underline;
+
+        .link-icon {
+          opacity: 1;
+          transform: translateY(-1px);
+        }
+      }
+    }
   }
 }
 
@@ -723,6 +747,14 @@ $shadow-dialog: 0 20px 60px rgba(0, 0, 0, 0.18);
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    overflow: hidden;
+
+    .pharmacy-logo-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: inherit;
+    }
   }
 
   .pharmacy-info { flex: 1; min-width: 0; }
@@ -763,6 +795,14 @@ $shadow-dialog: 0 20px 60px rgba(0, 0, 0, 0.18);
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    overflow: hidden;
+
+    .pharmacy-logo-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: inherit;
+    }
   }
 
   .pharmacy-info { flex: 1; }

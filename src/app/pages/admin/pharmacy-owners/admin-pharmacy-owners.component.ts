@@ -8,8 +8,9 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { Subject, debounceTime, distinctUntilChanged, takeUntil, switchMap, of } from 'rxjs';
+import { environment } from '@environments/environment';
 import { AdminPharmacyService } from '@core/services/admin-pharmacy.service';
 import { ErrorHandlerService } from '@core/services/error-handler.service';
 import { MessageService } from 'primeng/api';
@@ -29,7 +30,7 @@ type DialogMode = 'create' | 'edit';
   selector: 'app-admin-pharmacy-owners',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterLink],
   templateUrl: './admin-pharmacy-owners.component.html',
   styleUrl: './admin-pharmacy-owners.component.scss',
 })
@@ -77,7 +78,7 @@ export class AdminPharmacyOwnersComponent implements OnInit, OnDestroy {
   formPharmacySearchTerm = '';
   formPharmacySearchResults: AdminPharmacySummaryDto[] = [];
   isSearchingFormPharmacies = false;
-  selectedFormPharmacy: { pharmacyId: string; legalName: string; licenseNumber: string } | null = null;
+  selectedFormPharmacy: { pharmacyId: string; legalName: string; licenseNumber: string; logoUrl?: string | null } | null = null;
   private readonly formPharmacySearchSubject = new Subject<string>();
 
   // ─── Delete Dialog ────────────────────────────────────────────────────────────
@@ -274,6 +275,7 @@ export class AdminPharmacyOwnersComponent implements OnInit, OnDestroy {
       pharmacyId: pharmacy.pharmacyId,
       legalName: pharmacy.legalName,
       licenseNumber: pharmacy.licenseNumber,
+      logoUrl: pharmacy.logoUrl,
     };
     this.ownerForm.patchValue({ pharmacyId: pharmacy.pharmacyId });
     this.ownerForm.get('pharmacyId')?.markAsTouched();
@@ -352,12 +354,14 @@ export class AdminPharmacyOwnersComponent implements OnInit, OnDestroy {
         pharmacyId: owner.pharmacy.pharmacyId,
         legalName: owner.pharmacy.legalName,
         licenseNumber: owner.pharmacy.licenseNumber,
+        logoUrl: owner.pharmacy.logoUrl,
       };
     } else if (owner.pharmacyId) {
       this.selectedFormPharmacy = {
         pharmacyId: owner.pharmacyId,
         legalName: 'الصيدلية المرتبطة',
         licenseNumber: owner.pharmacyId.slice(0, 8).toUpperCase(),
+        logoUrl: null,
       };
     } else {
       this.selectedFormPharmacy = null;
@@ -630,6 +634,23 @@ export class AdminPharmacyOwnersComponent implements OnInit, OnDestroy {
       case UserStatus.Suspended: return 'status-suspended';
       default:                   return 'status-default';
     }
+  }
+
+  // ─── Logo Helper ─────────────────────────────────────────────────────────────
+  getLogoUrl(logoUrl?: string | null): string {
+    if (!logoUrl || !logoUrl.trim()) return '';
+    if (
+      logoUrl.startsWith('http://') ||
+      logoUrl.startsWith('https://') ||
+      logoUrl.startsWith('data:') ||
+      logoUrl.startsWith('blob:')
+    ) {
+      return logoUrl;
+    }
+    const baseUrl = environment.localUrl || 'https://localhost:5001';
+    const host = baseUrl.replace(/\/api\/v1\/?$/, '').replace(/\/$/, '');
+    const path = logoUrl.startsWith('/') ? logoUrl : `/${logoUrl}`;
+    return `${host}${path}`;
   }
 
   trackByOwnerId(_: number, item: PharmacyOwnerResponseDto): string {
