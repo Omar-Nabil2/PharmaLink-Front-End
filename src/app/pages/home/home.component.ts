@@ -9,24 +9,30 @@ import { CommonModule } from '@angular/common';
   templateUrl: './home.component.html',
 })
 export class HomeComponent {
-  protected readonly title = signal('Pharma Link');
+  protected readonly title = signal('فارما لينك');
 
-  categories = ['Prescriptions', 'Pharmacies', 'Orders', 'Inventory', 'Support'];
+  categories = [
+    'الروشتات والوصفات',
+    'دليل الصيدليات',
+    'متابعة الطلبات',
+    'المخزون الدوائي',
+    'الدعم المباشر',
+  ];
 
   faqs = [
     {
-      q: 'How do I create a patient account?',
-      a: 'Sign up with your email and phone number, then verify with the OTP sent to your phone.',
+      q: 'كيف يمكنني إنشاء حساب مريض جديد؟',
+      a: 'يمكنك التسجيل بسهولة بإدخال الاسم ورقم الهاتف والبريد الإلكتروني، ثم تفعيل الحساب عبر رمز التحقيق المرسل لهاتفك.',
       open: false,
     },
     {
-      q: 'Can pharmacies manage multiple locations?',
-      a: 'Yes. Administered pharmacies appear on your profile so you can switch and manage each location.',
+      q: 'هل يمكن للصيدلية إدارة أكثر من فرع ومكان؟',
+      a: 'نعم، تتيح لك المنصة إضافة وإدارة جميع فروع صيدليتك ومتابعة طلبات كل فرع بشكل مستقل ومباشر.',
       open: false,
     },
     {
-      q: 'Is my data secure?',
-      a: 'Pharma Link uses authenticated sessions and verification flows to keep patient and pharmacy data protected.',
+      q: 'كيف تضمن فارما لينك أمان البيانات والوصفات الطبية؟',
+      a: 'نستخدم أعلى معايير التشفير وحماية البيانات مع مراجعة دقيقة لكل وصفة من صيادلة مرخصين لضمان أعلى درجات الأمان.',
       open: false,
     },
   ];
