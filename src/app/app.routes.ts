@@ -276,6 +276,18 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'pharmacy-owners',
+        loadComponent: () =>
+          import('./pages/admin/pharmacy-owners/admin-pharmacy-owners.component').then(
+            (m) => m.AdminPharmacyOwnersComponent,
+          ),
+      },
+      {
+        path: 'owners',
+        redirectTo: 'pharmacy-owners',
+        pathMatch: 'full',
+      },
+      {
         path: 'orders',
         loadComponent: () =>
           import('./pages/orders/admin-orders/admin-orders.component').then(
