@@ -1,56 +1,77 @@
 <div class="preparation-container" dir="rtl">
 
-    <!-- الـ Pop up (Toast Notification) -->
-    <div class="toast-notification" *ngIf="toastMessage">
-        <span class="toast-icon">✓</span>
-        {{ toastMessage }}
+    <!-- 1. الـ Pop-up (Toast Notification) -->
+    <div class="custom-toast" *ngIf="toastMessage" [ngClass]="toastType">
+        <div class="toast-content">
+            <i class="fas" [ngClass]="toastType === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'"></i>
+            <span>{{ toastMessage }}</span>
+        </div>
     </div>
 
-    <div class="loading-spinner" *ngIf="isLoading">
-        جاري التحميل...
-    </div>
+    <div class="page-container">
 
-    <div class="orders-grid" *ngIf="!isLoading">
-        <div class="order-card" *ngFor="let order of orders">
+        <!-- 2. حالة التحميل (Loading State) -->
+        <div class="state-container" *ngIf="isLoading">
+            <div class="spinner"></div>
+            <p>جاري تحميل الطلبات...</p>
+        </div>
 
-            <div class="card-header">
-                <div class="patient-info">
-                    <span class="order-number">{{ order.orderNumber }}</span>
-                    <h3 class="patient-name">{{ order.patientName }}</h3>
-                </div>
-
-                <div class="status-container">
-                    <span class="status-badge" [ngClass]="getStatusBadgeClass(order.status)">
-                        <!-- هنا كان الخطأ، ضفنا order.legType -->
-                        {{ getStatusLabel(order.status, order.legType) }}
-                    </span>
-                </div>
+        <!-- 3. حالة عدم وجود طلبات (Empty State) -->
+        <div class="state-container empty-state" *ngIf="!isLoading && orders.length === 0">
+            <div class="empty-icon-wrapper">
+                <i class="fas fa-box-open"></i>
             </div>
+            <h3>لا توجد طلبات حالياً</h3>
+            <p>لم يتم العثور على أي طلبات في الوقت الحالي. استرح قليلاً!</p>
+        </div>
 
-            <div class="card-body">
-                <ul class="medicine-list">
-                    <li *ngFor="let med of order.medcineDTOs">
-                        <span class="bullet">▪</span>
-                        <span class="med-name">{{ med.name }}</span>
-                        <span class="med-qty">× {{ med.quantity }}</span>
-                    </li>
-                </ul>
-            </div>
+        <!-- 4. عرض الطلبات -->
+        <div class="orders-content" *ngIf="!isLoading && orders.length > 0">
 
-            <div class="card-footer">
-                <!-- رجعنا الـ Select عشان الصيدلي يقدر يغير الحالة -->
-                <select class="status-select" [(ngModel)]="order.selectedStatus" [disabled]="!!order.isUpdating">
-                    <option *ngFor="let status of getAllowedStatuses(order)" [value]="status.value">
-                        {{ status.label }}
-                    </option>
-                </select>
+            <div class="orders-grid">
+                <div class="order-card" *ngFor="let order of orders">
 
-                <button class="btn-update" (click)="updateStatus(order)"
-                    [disabled]="!!order.isUpdating || order.status === order.selectedStatus">
-                    {{ order.isUpdating ? 'جاري...' : 'تحديث' }}
-                </button>
+                    <div class="card-header">
+                        <div class="patient-info">
+                            <span class="order-number">{{ order.orderNumber }}</span>
+                            <h3 class="patient-name">{{ order.patientName }}</h3>
+                        </div>
+
+                        <div class="status-container">
+                            <span class="status-badge" [ngClass]="getStatusBadgeClass(order.status)">
+                                {{ getStatusLabel(order.status, order.legType) }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <ul class="medicine-list">
+                            <li *ngFor="let med of order.medcineDTOs">
+                                <span class="bullet">▪</span>
+                                <span class="med-name">{{ med.name }}</span>
+                                <span class="med-qty">× {{ med.quantity }}</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="card-footer">
+                        <select class="status-select" [(ngModel)]="order.selectedStatus"
+                            [disabled]="!!order.isUpdating">
+                            <option *ngFor="let status of order.allowedStatuses" [value]="status.value">
+                                {{ status.label }}
+                            </option>
+                        </select>
+
+                        <button class="btn-update" (click)="updateStatus(order)"
+                            [disabled]="!!order.isUpdating || order.status === order.selectedStatus">
+                            {{ order.isUpdating ? 'جاري...' : 'تحديث' }}
+                        </button>
+                    </div>
+
+                </div>
             </div>
 
         </div>
+
     </div>
 </div>

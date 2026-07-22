@@ -8,10 +8,7 @@
     </div>
     <div class="flex items-center gap-3 self-start flex-wrap">
       <!-- Edit Profile button next to change password -->
-      <a
-        routerLink="/profile/edit"
-        class="btn-subtle inline-flex gap-2"
-      >
+      <a routerLink="/profile/edit" class="btn-subtle inline-flex gap-2">
         <i class="pi pi-user-edit"></i>
         <span>تعديل الملف الشخصي</span>
       </a>
@@ -51,7 +48,8 @@
         </div>
         <div>
           <span class="block type-body-sm-strong text-body mb-1">الحالة</span>
-          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full type-body-sm bg-emerald-50 text-emerald-700 border border-emerald-200">
+          <span
+            class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full type-body-sm bg-emerald-50 text-emerald-700 border border-emerald-200">
             <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
             {{ patientData.status }}
           </span>
@@ -87,12 +85,15 @@
           <p class="type-body-md">ليس لديك أي عناوين مسجلة بعد.</p>
         </div>
 
-        <div *ngIf="patientData.addresses && patientData.addresses.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div *ngFor="let address of patientData.addresses; let i = index" class="bg-canvas-soft rounded-xl p-5 border border-surface-pressed flex flex-col justify-between gap-4">
+        <div *ngIf="patientData.addresses && patientData.addresses.length > 0"
+          class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div *ngFor="let address of patientData.addresses; let i = index"
+            class="bg-canvas-soft rounded-xl p-5 border border-surface-pressed flex flex-col justify-between gap-4">
             <div>
               <div class="flex items-center justify-between gap-2 mb-2">
                 <h3 class="type-display-sm">عنوان {{ i + 1 }}</h3>
-                <span *ngIf="isDefaultAddress(i)" class="text-xs font-semibold px-2.5 py-1 rounded-pill bg-blue-50 text-blue-700 border border-blue-200">
+                <span *ngIf="isDefaultAddress(i)"
+                  class="text-xs font-semibold px-2.5 py-1 rounded-pill bg-blue-50 text-blue-700 border border-blue-200">
                   الافتراضي
                 </span>
               </div>
@@ -104,11 +105,10 @@
             </div>
 
             <!-- Maps navigation link -->
-            <a *ngIf="address.latitude && address.longitude" 
-               [href]="'https://www.google.com/maps?q=' + address.latitude + ',' + address.longitude" 
-               target="_blank" 
-               rel="noopener noreferrer"
-               class="inline-flex items-center gap-1.5 type-body-sm text-blue-600 hover:text-blue-800 self-start transition-colors">
+            <a *ngIf="address.latitude && address.longitude"
+              [href]="'https://www.google.com/maps?q=' + address.latitude + ',' + address.longitude" target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-1.5 type-body-sm text-blue-600 hover:text-blue-800 self-start transition-colors">
               <i class="pi pi-directions"></i>
               <span>عرض على الخريطة</span>
             </a>
@@ -153,37 +153,41 @@
       </div>
 
       <div class="p-6">
-        <div
-          *ngIf="profileData.administeredPharmacies?.length === 0"
-          class="text-center py-8 text-body"
-        >
+        <!-- حالة عدم وجود صيدلية -->
+        <div *ngIf="!profileData.administeredPharmacies" class="text-center py-8 text-body">
           <i class="pi pi-info-circle text-2xl mb-2 text-mute"></i>
           <p class="type-body-md">ليس لديك أي صيدليات مسجلة بعد.</p>
         </div>
 
-        <div
-          *ngIf="profileData.administeredPharmacies?.length > 0"
-          class="grid grid-cols-1 gap-4"
-        >
-          <div
-            *ngFor="let pharmacy of profileData.administeredPharmacies"
-            class="bg-canvas-soft rounded-xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
-          >
-            <div>
+        <!-- حالة وجود الصيدلية (تم إزالة ngFor واستخدام as pharmacy) -->
+        <div *ngIf="profileData.administeredPharmacies as pharmacy"
+          class="bg-canvas-soft rounded-xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
               <h3 class="type-display-sm">{{ pharmacy.legalName }}</h3>
-              <div class="flex items-center gap-2 mt-1 type-body-sm text-body">
-                <i class="pi pi-id-card"></i>
-                <span>الترخيص: {{ pharmacy.licenseNumber }}</span>
-              </div>
+              <span class="type-body-sm text-body px-2 bg-canvas rounded-md border border-surface-pressed">
+                {{ pharmacy.branchName }}
+              </span>
             </div>
-            <span
-              class="type-body-sm-strong px-4 py-2 rounded-pill bg-canvas text-ink border border-surface-pressed self-start"
-            >
-              {{ pharmacy.verificationStatus || 'قيد الانتظار' }}
-            </span>
+
+            <div class="flex items-center gap-2 mt-2 type-body-sm text-body">
+              <i class="pi pi-id-card"></i>
+              <span>الترخيص: {{ pharmacy.licenseNumber }}</span>
+            </div>
+
+            <div class="flex items-center gap-2 mt-1 type-body-sm text-body">
+              <i class="pi pi-map-marker"></i>
+              <span>{{ pharmacy.city }}، {{ pharmacy.governorate }}</span>
+            </div>
           </div>
+
+          <span
+            class="type-body-sm-strong px-4 py-2 rounded-pill bg-canvas text-ink border border-surface-pressed self-start">
+            {{ pharmacy.verificationStatus || 'قيد الانتظار' }}
+          </span>
         </div>
       </div>
+
     </div>
   </div>
 </div>

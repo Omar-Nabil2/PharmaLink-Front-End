@@ -1,217 +1,277 @@
-.preparation-container {
-    padding: 24px;
-    background-color: #f8fafc; // لون خلفية هادئ جداً
-    min-height: 100vh;
-}
+/* =========================================
+   1. تنسيق الـ Pop-up (Toast) في الكورنر
+   ملاحظة: خليناه بره أي Container عشان يشتغل صح
+   ========================================= */
+.custom-toast {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    /* بما إن الصفحة عربي (dir="rtl") فالأفضل يظهر يمين من تحت */
+    min-width: 280px;
+    max-width: 380px;
+    padding: 16px 20px;
+    border-radius: 12px;
+    color: #ffffff !important;
+    font-weight: 600;
+    font-size: 1rem;
+    z-index: 999999;
+    /* زودنا ده عشان نضمن إنه فوق أي حاجة في الصفحة */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
 
-.orders-grid {
-    display: grid;
-    // الكروت هتكون عريضة شوية عشان تاخد مساحتها زي التصميم (2 في الصف على الشاشات الكبيرة)
-    grid-template-columns: repeat(auto-fill, minmax(480px, 1fr));
-    gap: 24px;
-}
+    /* حركة الظهور من اليمين للشمال */
+    animation: slideInCorner 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
 
-.order-card {
-    background: #ffffff;
-    border-radius: 16px; // حواف دائرية ناعمة زي التصميم
-    padding: 24px;
-    border: 1px solid #e2e8f0; // حدود رمادية خفيفة جداً
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
-
-    .card-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        margin-bottom: 16px;
-
-        .patient-info {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-
-            .order-number {
-                color: #64748b;
-                font-size: 0.8rem;
-                font-family: monospace;
-                letter-spacing: 0.5px;
-            }
-
-            .patient-name {
-                font-size: 1.25rem;
-                font-weight: 700;
-                color: #0f172a;
-                margin: 0;
-            }
-        }
-
-        .status-badge {
-            padding: 6px 14px;
-            border-radius: 50px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            white-space: nowrap;
-
-            // الألوان مطابقة للصورة
-            &.badge-primary {
-                background-color: #e0f2fe; // أزرق فاتح جداً
-                color: #0284c7; // أزرق داكن للنص
-            }
-
-            &.badge-success {
-                background-color: #d1fae5; // أخضر فاتح جداً
-                color: #059669; // أخضر داكن للنص
-            }
-        }
-    }
-
-    .card-body {
-        flex-grow: 1;
-        margin-bottom: 24px;
-
-        .medicine-list {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
-            padding-right: 14px;
-            border-right: 2px solid #0f766e; // الخط الأخضر الداكن اللي على اليمين
-
-            li {
-                display: flex;
-                align-items: center;
-                color: #475569;
-                font-size: 0.95rem;
-                margin-bottom: 10px;
-
-                &:last-child {
-                    margin-bottom: 0;
-                }
-
-                .bullet {
-                    color: #94a3b8;
-                    font-size: 10px;
-                    margin-left: 8px;
-                }
-
-                .med-qty {
-                    margin-right: 6px;
-                    color: #64748b;
-                    direction: ltr; // عشان علامة الـ X والكمية يظبطوا
-                }
-            }
-        }
-    }
-
-    .card-footer {
-        display: flex;
-        gap: 16px; // مسافة بين الـ Dropdown والزرار
-        align-items: stretch; // عشان الزرار والـ Select يبقوا نفس الارتفاع
-
-        .status-select {
-            flex-grow: 1; // تخلي الـ Select ياخد باقي المساحة
-            padding: 10px 14px;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            background-color: #ffffff;
-            font-family: inherit;
-            color: #334155;
-            font-size: 0.95rem;
-            outline: none;
-            transition: border-color 0.2s;
-
-            &:focus {
-                border-color: #0f766e;
-            }
-        }
-
-        .btn-update {
-            background-color: #00796b; // لون فارما لينك (Teal) للزرار
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 0 28px;
-            font-weight: 600;
-            font-size: 0.95rem;
-            cursor: pointer;
-            transition: opacity 0.2s;
-
-            &:hover {
-                opacity: 0.9;
-            }
-        }
-    }
-
-    // ... الكود بتاعك القديم زي ما هو ...
-
-    // تعديل بسيط على الزرار عشان يبان إنه مقفول
-    .btn-update {
-        background-color: #00796b;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        padding: 0 28px;
-        font-weight: 600;
-        font-size: 0.95rem;
-        cursor: pointer;
-        transition: all 0.2s;
-
-        &:hover:not(:disabled) {
-            opacity: 0.9;
-        }
-
-        // هنا شكل الزرار وهو Disabled
-        &:disabled {
-            background-color: #cbd5e1; // لون رمادي باهت
-            color: #64748b; // نص رمادي غامق
-            cursor: not-allowed; // شكل الماوس يتغير لعلامة المنع
-            opacity: 0.7;
-        }
-    }
-
-    // ستايل الـ Pop up (Toast)
-    .toast-notification {
-        position: fixed;
-        bottom: 30px;
-        left: 50%;
-        transform: translateX(-50%);
-        background-color: #059669; // أخضر يعبر عن النجاح
-        color: white;
-        padding: 12px 24px;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    .toast-content {
         display: flex;
         align-items: center;
         gap: 12px;
-        z-index: 1000;
-        font-weight: 600;
-        font-size: 0.95rem;
-        animation: slideUp 0.3s ease-out forwards;
 
-        .toast-icon {
-            background-color: white;
-            color: #059669;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: bold;
+        i {
+            font-size: 1.5rem;
+        }
+
+        span {
+            line-height: 1.4;
         }
     }
 
-    // حركة ظهور الـ Toast من تحت
-    @keyframes slideUp {
-        from {
-            transform: translate(-50%, 100%);
-            opacity: 0;
+    &.success {
+        background-color: #10b981 !important;
+        border-left: 5px solid #047857;
+        /* شريط غامق */
+    }
+
+    &.error {
+        background-color: #ef4444 !important;
+        border-left: 5px solid #b91c1c;
+    }
+}
+
+/* حركة دخول التوست من بره الشاشة (اليمين) للكورنر */
+@keyframes slideInCorner {
+    0% {
+        opacity: 0;
+        transform: translateX(50px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* =========================================
+   2. باقي تنسيقات الصفحة (الكونتينر والكروت)
+   ========================================= */
+.preparation-container {
+    padding: 24px;
+    background-color: #f8fafc;
+    min-height: 100vh;
+
+    .orders-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(480px, 1fr));
+        gap: 24px;
+    }
+
+    .order-card {
+        background: #ffffff;
+        border-radius: 16px;
+        padding: 24px;
+        border: 1px solid #e2e8f0;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+
+            .patient-info {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+
+                .order-number {
+                    color: #64748b;
+                    font-size: 0.8rem;
+                    font-family: monospace;
+                    letter-spacing: 0.5px;
+                }
+
+                .patient-name {
+                    font-size: 1.25rem;
+                    font-weight: 700;
+                    color: #0f172a;
+                    margin: 0;
+                }
+            }
+
+            .status-badge {
+                padding: 6px 14px;
+                border-radius: 50px;
+                font-size: 0.8rem;
+                font-weight: 600;
+                white-space: nowrap;
+
+                &.badge-primary {
+                    background-color: #e0f2fe;
+                    color: #0284c7;
+                }
+
+                &.badge-success {
+                    background-color: #d1fae5;
+                    color: #059669;
+                }
+
+                &.badge-danger {
+                    background-color: #fee2e2;
+                    color: #dc2626;
+                }
+            }
         }
 
+        .card-body {
+            flex-grow: 1;
+            margin-bottom: 24px;
+
+            .medicine-list {
+                list-style-type: none;
+                padding: 0;
+                margin: 0;
+                padding-right: 14px;
+                border-right: 2px solid #0f766e;
+
+                li {
+                    display: flex;
+                    align-items: center;
+                    color: #475569;
+                    font-size: 0.95rem;
+                    margin-bottom: 10px;
+
+                    &:last-child {
+                        margin-bottom: 0;
+                    }
+
+                    .bullet {
+                        color: #94a3b8;
+                        font-size: 10px;
+                        margin-left: 8px;
+                    }
+
+                    .med-qty {
+                        margin-right: 6px;
+                        color: #64748b;
+                        direction: ltr;
+                    }
+                }
+            }
+        }
+
+        .card-footer {
+            display: flex;
+            gap: 16px;
+            align-items: stretch;
+
+            .status-select {
+                flex-grow: 1;
+                padding: 10px 14px;
+                border: 1px solid #cbd5e1;
+                border-radius: 8px;
+                background-color: #ffffff;
+                font-family: inherit;
+                color: #334155;
+                font-size: 0.95rem;
+                outline: none;
+                transition: border-color 0.2s;
+
+                &:focus {
+                    border-color: #0f766e;
+                }
+            }
+
+            .btn-update {
+                background-color: #00796b;
+                color: white;
+                border: none;
+                border-radius: 8px;
+                padding: 0 28px;
+                font-weight: 600;
+                font-size: 0.95rem;
+                cursor: pointer;
+                transition: all 0.2s;
+
+                &:hover:not(:disabled) {
+                    opacity: 0.9;
+                }
+
+                &:disabled {
+                    background-color: #cbd5e1;
+                    color: #64748b;
+                    cursor: not-allowed;
+                    opacity: 0.7;
+                }
+            }
+        }
+    }
+
+    /* --- تنسيق حالات الفراغ والتحميل --- */
+    .state-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 60px 20px;
+        background-color: #f8fafc;
+        border-radius: 12px;
+        border: 1px dashed #cbd5e1;
+        text-align: center;
+        margin-top: 20px;
+        min-height: 300px;
+
+        p {
+            color: #64748b;
+            font-size: 1.1rem;
+            margin-top: 8px;
+        }
+    }
+
+    .empty-state {
+        .empty-icon-wrapper {
+            font-size: 4rem;
+            color: #94a3b8;
+            margin-bottom: 20px;
+            background: #f1f5f9;
+            width: 100px;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        h3 {
+            color: #334155;
+            font-size: 1.5rem;
+            margin: 0;
+        }
+    }
+
+    .spinner {
+        width: 50px;
+        height: 50px;
+        border: 4px solid #e2e8f0;
+        border-top-color: #3b82f6;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 16px;
+    }
+
+    @keyframes spin {
         to {
-            transform: translate(-50%, 0);
-            opacity: 1;
+            transform: rotate(360deg);
         }
     }
 }

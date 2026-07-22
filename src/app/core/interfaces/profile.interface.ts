@@ -6,12 +6,24 @@ export interface PharmacyDto {
     verificationStatus: string;
 }
 
+export interface PharmacyDto {
+    pharmacyId: string;
+    branchId: string;
+    ownerUserId: string;
+    legalName: string;
+    licenseNumber: string;
+    branchName: string;
+    city: string;
+    governorate: string;
+    verificationStatus: string;
+}
+
 export interface GetPharmacyProfileResponse {
     id: string;
     fullName: string;
     email: string;
     phoneNumber: string;
-    administeredPharmacies: PharmacyDto[];
+    administeredPharmacies: PharmacyDto | null;
 }
 
 export interface UpdatePatientProfileRequest {
