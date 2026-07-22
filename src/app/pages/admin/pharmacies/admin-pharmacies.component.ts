@@ -77,6 +77,7 @@ export class AdminPharmaciesComponent implements OnInit, OnDestroy {
   isSaving = false;
   logoPreview: string | null = null;
   selectedFile: File | null = null;
+  logoInputType: 'file' | 'url' = 'file';
 
   pharmacyForm!: FormGroup;
 
@@ -130,6 +131,7 @@ export class AdminPharmaciesComponent implements OnInit, OnDestroy {
       legalName: ['', [Validators.required, Validators.minLength(2)]],
       licenseNumber: ['', [Validators.required, Validators.minLength(3)]],
       verificationStatus: [VerificationStatus.Pending, Validators.required],
+      logoUrl: [''],
     });
   }
 
@@ -251,7 +253,9 @@ export class AdminPharmaciesComponent implements OnInit, OnDestroy {
       legalName: '',
       licenseNumber: '',
       verificationStatus: VerificationStatus.Pending,
+      logoUrl: '',
     });
+    this.logoInputType = 'file';
     this.logoPreview = null;
     this.selectedFile = null;
     this.showFormDialog = true;
@@ -262,12 +266,15 @@ export class AdminPharmaciesComponent implements OnInit, OnDestroy {
   openEditDialog(pharmacy: AdminPharmacySummaryDto): void {
     this.dialogMode = 'edit';
     this.editingPharmacyId = pharmacy.pharmacyId;
+    const url = pharmacy.logoUrl || '';
     this.pharmacyForm.patchValue({
       legalName: pharmacy.legalName,
       licenseNumber: pharmacy.licenseNumber,
       verificationStatus: pharmacy.verificationStatus,
+      logoUrl: url,
     });
-    this.logoPreview = pharmacy.logoUrl || null;
+    this.logoInputType = url && !url.startsWith('data:') ? 'url' : 'file';
+    this.logoPreview = url || null;
     this.selectedFile = null;
     this.showFormDialog = true;
     this.cdr.markForCheck();
@@ -281,12 +288,35 @@ export class AdminPharmaciesComponent implements OnInit, OnDestroy {
     this.cdr.markForCheck();
   }
 
+  setLogoInputType(type: 'file' | 'url'): void {
+    this.logoInputType = type;
+    if (type === 'file') {
+      this.pharmacyForm.patchValue({ logoUrl: '' });
+      this.logoPreview = this.selectedFile ? this.logoPreview : null;
+    } else {
+      this.selectedFile = null;
+      const url = this.pharmacyForm.get('logoUrl')?.value;
+      this.logoPreview = url || null;
+    }
+    this.cdr.markForCheck();
+  }
+
+  onLogoUrlChange(url: string): void {
+    if (this.logoInputType === 'url') {
+      this.selectedFile = null;
+      this.pharmacyForm.patchValue({ logoUrl: url });
+      this.logoPreview = url.trim() || null;
+      this.cdr.markForCheck();
+    }
+  }
+
   // ─── Logo file picker ─────────────────────────────────────────────────────────
   onLogoFileChange(event: Event): void {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
     if (!file) return;
     this.selectedFile = file;
+    this.pharmacyForm.patchValue({ logoUrl: '' });
     const reader = new FileReader();
     reader.onload = (e) => {
       this.logoPreview = e.target?.result as string;
@@ -298,6 +328,7 @@ export class AdminPharmaciesComponent implements OnInit, OnDestroy {
   clearLogoFile(): void {
     this.selectedFile = null;
     this.logoPreview = null;
+    this.pharmacyForm.patchValue({ logoUrl: '' });
     this.cdr.markForCheck();
   }
 
@@ -307,9 +338,11 @@ export class AdminPharmaciesComponent implements OnInit, OnDestroy {
       this.pharmacyForm.markAllAsTouched();
       return;
     }
-    const { legalName, licenseNumber, verificationStatus } = this.pharmacyForm.value;
+    const { legalName, licenseNumber, verificationStatus, logoUrl } = this.pharmacyForm.value;
     this.isSaving = true;
     this.cdr.markForCheck();
+
+    const trimmedUrl = logoUrl ? logoUrl.trim() : undefined;
 
     if (this.dialogMode === 'create') {
       const payload: AdminCreatePharmacyRequest = {
@@ -317,6 +350,7 @@ export class AdminPharmaciesComponent implements OnInit, OnDestroy {
         licenseNumber,
         verificationStatus: verificationStatus ?? VerificationStatus.Pending,
         logoFile: this.selectedFile ?? null,
+        logoUrl: !this.selectedFile ? trimmedUrl : undefined,
       };
       this.service
         .createPharmacy(payload)
@@ -344,7 +378,7 @@ export class AdminPharmaciesComponent implements OnInit, OnDestroy {
         licenseNumber,
         verificationStatus,
         logoFile: this.selectedFile ?? null,
-        logoUrl: !this.selectedFile ? (this.logoPreview ?? undefined) : undefined,
+        logoUrl: !this.selectedFile ? (trimmedUrl || (this.logoPreview ?? undefined)) : undefined,
       };
       this.service
         .updatePharmacy(this.editingPharmacyId!, payload)
