@@ -65,3 +65,33 @@ export interface Result<T> {
   isFailure: boolean;
   error: any;
 }
+
+
+export interface PharmacistDailyMetrics {
+  pendingPrescriptionReviews: number;
+  completedReviewsToday: number;
+  pendingFulfillmentOrders: number;
+  completedOrdersToday: number;
+}
+
+export interface InventoryAlert {
+  drugId: string;
+  brandName: string;
+  stockQuantity: number;
+  expiryDate: string;
+  alertType: string;
+}
+
+export interface FulfillmentTask {
+  legId: string;
+  orderId: string;
+  readyByEstimate: string;
+  totalAmount: number;
+  itemsCount: number;
+}
+
+export interface ApiResponse<T> {
+  isSuccess: boolean;
+  value: T;
+  error?: any;
+}

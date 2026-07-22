@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpEvent, HttpParams, HttpRequest } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '@environments/environment';
-import { BranchOrderRowDto, GetAllPrescriptionReviewDto, PaginatedResponse, PrescriptionReviewDto, PrescriptionReviewQueryDto, Result } from '@core/interfaces/prescription-review.interface';
+import { ApiResponse, BranchOrderRowDto, FulfillmentTask, GetAllPrescriptionReviewDto, InventoryAlert, PaginatedResponse, PharmacistDailyMetrics, PrescriptionReviewDto, PrescriptionReviewQueryDto, Result } from '@core/interfaces/prescription-review.interface';
 
 export interface PrescriptionReviewUploadResponse {
   reviewId: string;
@@ -91,5 +91,17 @@ export class PrescriptionReviewService {
       `${this.localUrl}/OrderFulfillmentLegs/assigned`,
       { params }
     );
+  }
+
+  getMetrics(): Observable<ApiResponse<PharmacistDailyMetrics>> {
+    return this.http.get<ApiResponse<PharmacistDailyMetrics>>(`${this.localUrl}/pharmacist/PharmacistDashboard/metrics`);
+  }
+
+  getInventoryAlerts(): Observable<ApiResponse<InventoryAlert[]>> {
+    return this.http.get<ApiResponse<InventoryAlert[]>>(`${this.localUrl}/pharmacist/PharmacistDashboard/inventory-alerts?stockThreshold=10&expiryThreshold=90`);
+  }
+
+  getPendingTasks(): Observable<ApiResponse<FulfillmentTask[]>> {
+    return this.http.get<ApiResponse<FulfillmentTask[]>>(`${this.localUrl}/pharmacist/PharmacistDashboard/pending-tasks?limit=5`);
   }
 }
