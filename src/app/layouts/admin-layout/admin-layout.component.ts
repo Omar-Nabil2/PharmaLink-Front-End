@@ -15,8 +15,9 @@ import { FooterComponent } from '../../shared/components/footer/footer.component
 export class AdminLayoutComponent {
   adminNavItems: SidebarItem[] = [
     { label: 'لوحة التحكم', icon: 'pi pi-th-large', routerLink: '/admin/dashboard' },
-    { label: 'كتالوج الأدوية', icon: 'pi pi-link', routerLink: '/admin/drugs' },
     { label: 'الصيدليات', icon: 'pi pi-building', routerLink: '/admin/pharmacies' },
+    { label: 'مالكو الصيدليات', icon: 'pi pi-user-edit', routerLink: '/admin/pharmacy-owners' },
+    { label: 'كتالوج الأدوية', icon: 'pi pi-link', routerLink: '/admin/drugs' },
     { label: 'جميع الطلبات', icon: 'pi pi-list', routerLink: '/admin/orders' },
     { label: 'إدارة المستخدمين', icon: 'pi pi-users', routerLink: '/admin/users' },
     { label: 'موافقات الصيدليات', icon: 'pi pi-verified', routerLink: '/admin/approvals' },

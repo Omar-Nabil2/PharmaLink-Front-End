@@ -6,6 +6,7 @@ import {
 } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { rxResource } from '@angular/core/rxjs-interop';
+import { ChartData } from 'chart.js';
 import { CardModule } from 'primeng/card';
 import { TableModule } from 'primeng/table';
 import { ChartModule } from 'primeng/chart';
@@ -135,7 +136,7 @@ export class AdminDashboardComponent {
   };
 
   // ── Chart: order status doughnut ────────────────────────────────────────────
-  readonly statusDoughnutData = computed(() => {
+  readonly statusDoughnutData = computed<ChartData<'doughnut'> | undefined>(() => {
     const a = this.dashboard()?.orderAnalytics;
     if (!a) return undefined;
     return {

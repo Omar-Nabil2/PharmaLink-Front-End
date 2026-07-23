@@ -1,0 +1,44 @@
+# ==========================================
+# Web & Node Dependencies / Frontend Build
+# ==========================================
+node_modules/
+.angular/
+dist/
+build/
+.next/
+
+# ==========================================
+# Caching, Databases & Local Logs
+# ==========================================
+*.log
+*.ldf
+*.mdf
+*.db
+*.sqlite
+.idea/
+.vscode/
+*.cache
+
+# ==========================================
+# Static Assets & Media (To save tokens)
+# ==========================================
+wwwroot/lib/
+wwwroot/images/
+wwwroot/uploads/
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.svg
+*.ico
+*.mp4
+*.pdf
+*.zip
+
+# ==========================================
+# Git & Environment Configs
+# ==========================================
+.git/
+.gitignore
+.env
+.env.local
