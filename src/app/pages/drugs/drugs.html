@@ -1,0 +1,89 @@
+<div class="max-w-6xl mx-auto space-y-6">
+  <div class="space-y-1">
+    <h1 class="type-display-md text-ink">Drug catalog</h1>
+    <p class="type-body-sm text-body">Search medicines, check availability near you, and add them to your cart.</p>
+  </div>
+
+  <div class="relative">
+    <i class="pi pi-search absolute left-4 top-1/2 -translate-y-1/2 text-mute"></i>
+    <input
+      type="text"
+      placeholder="Search by medicine name (English or Arabic)"
+      (input)="onSearchChange($any($event.target).value)"
+      class="w-full pl-11 pr-4 py-3 rounded-full bg-canvas-softer border border-transparent type-body-md text-ink outline-none focus:border-ink focus:bg-canvas transition-colors"
+    />
+  </div>
+
+  <div class="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
+    <button
+      *ngFor="let cat of categories"
+      type="button"
+      (click)="selectCategory(cat.value)"
+      class="flex-shrink-0"
+      [class]="selectedCategory === cat.value ? 'btn-primary' : 'btn-subtle'"
+    >
+      {{ cat.label }}
+    </button>
+  </div>
+
+  <div *ngIf="isLoading" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div *ngFor="let _ of [1, 2, 3, 4, 5, 6]" class="card-surface animate-pulse h-48"></div>
+  </div>
+
+  <div *ngIf="!isLoading && loadFailed" class="card-surface text-center space-y-4 py-12">
+    <p class="type-body-md text-ink">We couldn't load the catalog right now.</p>
+    <button type="button" (click)="loadDrugs()" class="btn-primary mx-auto">Try again</button>
+  </div>
+
+  <div
+    *ngIf="!isLoading && !loadFailed && drugs.length === 0"
+    class="card-surface text-center space-y-2 py-12"
+  >
+    <i class="pi pi-inbox text-3xl text-mute"></i>
+    <h2 class="type-display-sm text-ink">{{ isFiltered ? 'No medicines match your search' : 'No medicines available' }}</h2>
+    <p class="type-body-sm text-body">
+      {{ isFiltered ? 'Try a different name or category.' : 'Please check back later.' }}
+    </p>
+  </div>
+
+  <div *ngIf="!isLoading && !loadFailed && drugs.length > 0" class="space-y-6">
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div *ngFor="let drug of drugs" class="card-surface flex flex-col gap-3">
+        <div class="space-y-1">
+          <p class="type-body-md-strong text-ink truncate">{{ drug.brandName }}</p>
+          <p class="type-caption text-mute truncate" dir="rtl">{{ drug.arabicName }}</p>
+        </div>
+
+        <div class="flex items-center justify-between">
+          <span class="type-caption text-mute">{{ categoryLabel(drug.category) }}</span>
+          <p-tag [value]="availabilityLabel(drug.availabilityStatus)" [severity]="availabilitySeverity(drug.availabilityStatus)" />
+        </div>
+
+        <div class="mt-auto flex items-center justify-between pt-2">
+          <span class="type-body-md-strong text-ink">{{ drug.price | currency:'EGP' }}</span>
+          <button
+            type="button"
+            (click)="addToCart(drug)"
+            [disabled]="drug.availabilityStatus === 'OutOfStock' || addingDrugId === drug.drugId"
+            class="btn-subtle"
+          >
+            <i *ngIf="addingDrugId === drug.drugId" class="pi pi-spin pi-spinner text-xs"></i>
+            <span>{{ addingDrugId === drug.drugId ? 'Adding...' : 'Add to cart' }}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex items-center justify-center gap-4">
+      <button type="button" (click)="goToPage(pageNumber - 1)" [disabled]="!hasPreviousPage" class="btn-subtle">
+        <i class="pi pi-chevron-left text-xs"></i>
+        <span>Previous</span>
+      </button>
+      <span class="type-caption text-mute">Page {{ pageNumber }} of {{ totalPages }}</span>
+      <button type="button" (click)="goToPage(pageNumber + 1)" [disabled]="!hasNextPage" class="btn-subtle">
+        <span>Next</span>
+        <i class="pi pi-chevron-right text-xs"></i>
+      </button>
+    </div>
+  </div>
+</div>

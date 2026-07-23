@@ -1,41 +1,31 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { environment } from '@environments/environment';
-
-export interface Drug {
-  drugId: string;
-  genericName: string;
-  brandName: string;
-  drugBankId: string;
-  rxNormCui: string;
-  ndcCode: string;
-  strength: string;
-  form: string;
-  price: number;
-  manufacturer: string;
-  arabicName: string;
-  drugClass: string;
-  requiresPrescription: boolean;
-  isActive: boolean;
-  category: string;
-  availabilityStatus: string;
-}
+import { DrugDto, DrugSearchParams, PaginatedList } from '../interfaces/drug.interface';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class DrugService {
-  private readonly baseUrl = environment.localUrl + '/Drugs';
+  private readonly baseUrl =`https://localhost:5001/api/v1`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private readonly http: HttpClient) {}
 
-  getDrugById(id: string): Observable<Drug> {
-    return this.http.get<any>(`${this.baseUrl}/${id}`)
-      .pipe(map(response => {
-        if (!response) return response;
-        return response.value !== undefined ? response.value : response;
-      }));
+  searchDrugs(params: DrugSearchParams): Observable<PaginatedList<DrugDto>> {
+    let httpParams = new HttpParams()
+      .set('pageNumber', String(params.pageNumber ?? 1))
+      .set('pageSize', String(params.pageSize ?? 10));
+
+    if (params.searchValue) httpParams = httpParams.set('searchValue', params.searchValue);
+    if (params.category) httpParams = httpParams.set('category', params.category);
+    if (params.latitude != null) httpParams = httpParams.set('latitude', String(params.latitude));
+    if (params.longitude != null) httpParams = httpParams.set('longitude', String(params.longitude));
+
+    return this.http.get<PaginatedList<DrugDto>>(`${this.baseUrl}/Drugs`, { params: httpParams });
+  }
+
+  getDrugById(id: string): Observable<DrugDto> {
+    return this.http.get<DrugDto>(`${this.baseUrl}/Drugs/${id}`);
   }
 }

@@ -80,7 +80,7 @@
                                 <label class="block text-xs font-bold text-slate-600 mb-1">اسم الدواء التجاري <span
                                         class="text-red-500">*</span></label>
 
-                                <p-autoComplete formControlName="medicineName" [suggestions]="filteredMedicines"
+                                <p-autocomplete formControlName="medicineName" [suggestions]="filteredMedicines"
                                     (completeMethod)="searchMedicines($event)" (onSelect)="onMedicineSelect($event, i)"
                                     [readonly]="isReadOnly" styleClass="w-full block"
                                     inputStyleClass="w-full px-3 py-2 rounded-lg border border-slate-300 focus:border-emerald-500 focus:ring-1 outline-none transition-shadow disabled:bg-slate-100 disabled:text-slate-500 disabled:cursor-not-allowed">
@@ -96,7 +96,7 @@
                                         </div>
                                     </ng-template>
 
-                                </p-autoComplete>
+                                </p-autocomplete>
 
 
                             </div>
