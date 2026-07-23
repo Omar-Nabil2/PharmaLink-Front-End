@@ -175,6 +175,13 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./pages/cart/cart.component').then((m) => m.CartComponent),
       },
+      {
+        path: 'checkout',
+        canActivate: [authGuard],
+        data: { role: AppRoles.Patient },
+        loadComponent: () =>
+          import('./pages/checkout/checkout').then((m) => m.CheckoutComponent),
+      },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
     ],
   },

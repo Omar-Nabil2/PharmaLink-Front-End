@@ -1,0 +1,91 @@
+<div class="cart-container max-w-6xl mx-auto p-4 md:p-6 min-h-screen" dir="rtl">
+  
+  <div class="flex items-center justify-between mb-8">
+    <h1 class="text-2xl font-bold text-gray-800">
+      إتمام الطلب <span class="text-gray-400 text-lg font-normal mx-2">/ المريض</span>
+    </h1>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="flex justify-center items-center py-20">
+    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600"></div>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error" class="bg-red-50 text-red-600 p-4 rounded-lg text-center font-medium shadow-sm">
+    {{ error }}
+  </div>
+
+  <!-- Empty Cart State -->
+  <div *ngIf="!isLoading && !error && (!cart || !cart.items || cart.items.length === 0)" class="bg-white rounded-xl shadow-sm p-12 text-center border border-gray-100">
+    <div class="text-gray-400 mb-4">
+      <svg class="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+    </div>
+    <h2 class="text-xl font-semibold text-gray-700 mb-2">سلة المشتريات فارغة</h2>
+    <p class="text-gray-500 mb-6">قم بإضافة الأدوية إلى سلتك لإتمام الطلب.</p>
+    <a routerLink="/products" class="bg-teal-600 hover:bg-teal-700 text-white font-medium py-2 px-6 rounded-lg transition-colors">
+      تصفح الأدوية
+    </a>
+  </div>
+
+  <!-- Cart Content -->
+  <div *ngIf="!isLoading && !error && cart && cart.items && cart.items.length > 0" class="flex flex-col lg:flex-row gap-6 items-start">
+    
+    <!-- Items List (Right side in RTL) -->
+    <div class="w-full lg:w-2/3 flex flex-col gap-4">
+      <div *ngFor="let item of cart.items; trackBy: trackByItemId" class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm flex flex-col sm:flex-row items-center sm:justify-between gap-4">
+        
+        <!-- Drug Info -->
+        <div class="flex items-center gap-4 flex-1">
+          <div class="w-16 h-16 bg-teal-50 rounded-lg flex items-center justify-center text-teal-600 shrink-0">
+            <!-- Pill Icon -->
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547l-2.46 2.46a2.62 2.62 0 103.705 3.705l2.46-2.46a2 2 0 00.548-1.022l.477-2.387a6 6 0 00-.517-3.86l-.159-.318a6 6 0 01-.517-3.86l.38-1.93a2 2 0 00-.547-1.806l-2.46-2.46a2.62 2.62 0 013.705-3.705l2.46 2.46a2 2 0 001.022.548l2.387.477a6 6 0 003.86-.517l.318-.159a6 6 0 013.86-.517l1.93.38a2 2 0 001.806.547l2.46 2.46a2.62 2.62 0 11-3.705 3.705l-2.46-2.46z"></path></svg>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold text-gray-800">{{ item.drugArabicName || item.drugBrandName }}</h3>
+            <p class="text-teal-600 font-medium text-sm mt-1">{{ item.unitPriceSnapshot | number:'1.2-2' }} ج</p>
+          </div>
+        </div>
+
+        <!-- Quantity Display -->
+        <div class="flex items-center text-gray-600 bg-gray-50 px-4 py-2 rounded-lg text-sm font-medium">
+          <span>الكمية: </span>
+          <span class="font-bold text-gray-800 mx-2">{{ item.quantity }}</span>
+        </div>
+
+        <!-- Price (Left side in RTL) -->
+        <div class="flex flex-col items-end shrink-0 min-w-[80px]">
+          <span class="font-bold text-gray-800 text-lg">{{ item.lineTotal | number:'1.2-2' }} ج</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Summary (Left side in RTL) -->
+    <div class="w-full lg:w-1/3">
+      <div class="bg-white rounded-xl p-6 border border-gray-100 shadow-sm sticky top-6">
+        <h2 class="text-xl font-bold text-gray-800 mb-6">ملخص الطلب</h2>
+        
+        <div class="flex justify-between items-center mb-4 text-gray-600">
+          <span>المجموع الفرعي</span>
+          <span class="font-medium">{{ subtotal | number:'1.2-2' }} ج</span>
+        </div>
+        
+        <div class="flex justify-between items-center mb-6 text-gray-600">
+          <span>رسوم التوصيل</span>
+          <span class="font-medium text-green-600">{{ deliveryFee ? (deliveryFee | number:'1.2-2') + ' ج' : 'مجاني' }}</span>
+        </div>
+        
+        <div class="border-t border-gray-100 pt-4 mb-6 flex justify-between items-center">
+          <span class="text-lg font-bold text-gray-800">الإجمالي</span>
+          <span class="text-xl font-bold text-teal-600">{{ total | number:'1.2-2' }} ج</span>
+        </div>
+
+        <button (click)="confirmOrder()" [disabled]="!canConfirm" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 px-4 rounded-lg transition-colors flex justify-center items-center gap-2 disabled:opacity-50">
+          <span *ngIf="isSubmitting" class="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></span>
+          <span>تأكيد الطلب</span>
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>

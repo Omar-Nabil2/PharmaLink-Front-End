@@ -1,7 +1,7 @@
-
-scss_fixed = '''/* ─── Admin Dashboard Component Styles ─── */
 /* Self-contained — no external dependencies */
-
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 /* ─── Variables ─────────────────────────────────────────────────────────── */
 .admin-dashboard {
   --color-primary: #3b82f6;
