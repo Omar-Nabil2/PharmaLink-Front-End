@@ -6,7 +6,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { InventoryService } from '../../../core/services/inventory.service';
-import { InventoryItem, InventoryStatusFilter } from '../../../core/interfaces/inventory.interface';
+import { GetPharmacyInventoryDTO, InventoryStatusFilter, InventoryStockStatus } from '../../inventory/inventory.model';
 
 @Component({
     selector: 'app-inventory',
@@ -16,7 +16,7 @@ import { InventoryItem, InventoryStatusFilter } from '../../../core/interfaces/i
     styleUrls: ['./inventory.component.scss']
 })
 export class InventoryComponent {
-    inventoryItems: InventoryItem[] = [];
+    inventoryItems: GetPharmacyInventoryDTO[] = [];
     loading = true;
     totalRecords = 0;
 
@@ -58,7 +58,7 @@ export class InventoryComponent {
 
     loadData() {
         this.loading = true;
-        this.inventoryService.getInventory(this.currentPage, this.rows, this.searchTermInput, this.status)
+        this.inventoryService.getInventory({ pageNumber: this.currentPage, pageSize: this.rows, search: this.searchTermInput, statusFilter: this.status })
             .subscribe({
                 next: (res) => {
                     this.inventoryItems = res.items;
@@ -85,25 +85,25 @@ export class InventoryComponent {
         this.loadData();
     }
 
-    getStatusClasses(status: string): string {
+    getStatusClasses(status: InventoryStockStatus): string {
         switch (status) {
-            case 'Available':
+            case InventoryStockStatus.Available:
                 return 'bg-emerald-100 text-emerald-800 border border-emerald-200';
-            case 'LowStock':
+            case InventoryStockStatus.LowStock:
                 return 'bg-amber-100 text-amber-800 border border-amber-200';
-            case 'OutOfStock':
+            case InventoryStockStatus.OutOfStock:
                 return 'bg-red-100 text-red-800 border border-red-200';
             default:
                 return 'bg-gray-100 text-gray-800 border border-gray-200';
         }
     }
 
-    getStatusArabicLabel(status: string): string {
+    getStatusArabicLabel(status: InventoryStockStatus): string {
         switch (status) {
-            case 'Available': return 'متاح';
-            case 'LowStock': return 'قارب على النفاذ';
-            case 'OutOfStock': return 'غير متوفر';
-            default: return status;
+            case InventoryStockStatus.Available: return 'متاح';
+            case InventoryStockStatus.LowStock: return 'قارب على النفاذ';
+            case InventoryStockStatus.OutOfStock: return 'غير متوفر';
+            default: return '';
         }
     }
 }
