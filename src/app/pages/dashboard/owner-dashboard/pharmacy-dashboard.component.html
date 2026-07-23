@@ -13,7 +13,7 @@
       <div class="flex items-center gap-2">
         <label class="text-xs lg:text-[0.9375rem] text-muted-foreground font-medium">الفرع</label>
         <div class="relative min-w-[12rem]">
-          <p-autoComplete
+          <p-autocomplete
             [ngModel]="selectedBranchFilter()"
             (completeMethod)="onBranchFilterSearch($event.query)"
             (onSelect)="onBranchFilterSelected($event.value)"
@@ -21,7 +21,7 @@
             [suggestions]="branchFilterSuggestions()"
             optionLabel="branchName"
             [showClear]="true"
-            [minLength]="0"
+            /* [minLength]="0" */
             [delay]="0"
             placeholder="جميع الفروع"
             styleClass="w-full inv-autocomplete"
@@ -36,7 +36,7 @@
                 }
               </div>
             </ng-template>
-          </p-autoComplete>
+          </p-autocomplete>
         </div>
       </div>
     </div>
