@@ -12,7 +12,7 @@
   </div>
 
   <!-- Error State -->
-  <div *ngIf="error" class="bg-red-50 text-red-600 p-4 rounded-lg text-center font-medium shadow-sm">
+  <div *ngIf="error" class="bg-red-50 text-red-600 p-4 rounded-lg text-center font-medium shadow-sm mb-6">
     {{ error }}
   </div>
 
@@ -28,63 +28,139 @@
     </a>
   </div>
 
-  <!-- Cart Content -->
-  <div *ngIf="!isLoading && !error && cart && cart.items && cart.items.length > 0" class="flex flex-col lg:flex-row gap-6 items-start">
-    
-    <!-- Items List (Right side in RTL) -->
-    <div class="w-full lg:w-2/3 flex flex-col gap-4">
-      <div *ngFor="let item of cart.items; trackBy: trackByItemId" class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm flex flex-col sm:flex-row items-center sm:justify-between gap-4">
-        
-        <!-- Drug Info -->
-        <div class="flex items-center gap-4 flex-1">
-          <div class="w-16 h-16 bg-teal-50 rounded-lg flex items-center justify-center text-teal-600 shrink-0">
-            <!-- Pill Icon -->
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547l-2.46 2.46a2.62 2.62 0 103.705 3.705l2.46-2.46a2 2 0 00.548-1.022l.477-2.387a6 6 0 00-.517-3.86l-.159-.318a6 6 0 01-.517-3.86l.38-1.93a2 2 0 00-.547-1.806l-2.46-2.46a2.62 2.62 0 013.705-3.705l2.46 2.46a2 2 0 001.022.548l2.387.477a6 6 0 003.86-.517l.318-.159a6 6 0 013.86-.517l1.93.38a2 2 0 001.806.547l2.46 2.46a2.62 2.62 0 11-3.705 3.705l-2.46-2.46z"></path></svg>
-          </div>
-          <div>
-            <h3 class="text-lg font-bold text-gray-800">{{ item.drugArabicName || item.drugBrandName }}</h3>
-            <p class="text-teal-600 font-medium text-sm mt-1">{{ item.unitPriceSnapshot | number:'1.2-2' }} ج</p>
-          </div>
-        </div>
+  <!-- Main Checkout Content -->
+  <div *ngIf="!isLoading && !error && cart && cart.items && cart.items.length > 0" class="flex flex-col gap-6">
 
-        <!-- Quantity Display -->
-        <div class="flex items-center text-gray-600 bg-gray-50 px-4 py-2 rounded-lg text-sm font-medium">
-          <span>الكمية: </span>
-          <span class="font-bold text-gray-800 mx-2">{{ item.quantity }}</span>
-        </div>
+    <!-- Steps Indicator Header -->
+    <div class="flex items-center justify-center gap-4 mb-4 bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
+      <div class="flex items-center gap-2">
+        <span class="w-8 h-8 rounded-full bg-teal-600 text-white flex items-center justify-center font-bold text-sm">1</span>
+        <span class="font-semibold text-gray-800">العنوان</span>
+      </div>
+      <div class="w-12 h-0.5 bg-gray-200"></div>
+      <div class="flex items-center gap-2">
+        <span class="w-8 h-8 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center font-bold text-sm">2</span>
+        <span class="font-medium text-gray-500">مراجعة الأدوية</span>
+      </div>
+      <div class="w-12 h-0.5 bg-gray-200"></div>
+      <div class="flex items-center gap-2">
+        <span class="w-8 h-8 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center font-bold text-sm">3</span>
+        <span class="font-medium text-gray-500">الدفع</span>
+      </div>
+    </div>
 
-        <!-- Price (Left side in RTL) -->
-        <div class="flex flex-col items-end shrink-0 min-w-[80px]">
-          <span class="font-bold text-gray-800 text-lg">{{ item.lineTotal | number:'1.2-2' }} ج</span>
+    <!-- 1. Delivery Address Selection -->
+    <div class="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
+      <h2 class="text-lg font-bold text-gray-800 mb-4">اختر عنوان التوصيل</h2>
+      
+      <div *ngIf="addresses.length === 0" class="text-gray-500 text-sm py-2">
+        لا توجد عناوين مسجلة. يرجى إضافة عنوان جديد أولاً.
+        <a routerLink="/patient/addresses/new" class="text-teal-600 font-semibold mr-2 underline">إضافة عنوان</a>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div *ngFor="let address of addresses; trackBy: trackByAddressId" 
+             (click)="selectAddress(address.addressId)"
+             [class.border-teal-600]="selectedAddressId === address.addressId"
+             [class.bg-teal-50/20]="selectedAddressId === address.addressId"
+             class="border border-gray-200 rounded-xl p-4 cursor-pointer transition-all hover:border-teal-400 relative flex items-start justify-between">
+          
+          <div class="flex items-start gap-3">
+            <div class="text-teal-600 mt-1">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h3 class="font-bold text-gray-800">{{ address.addressLine || 'عنوان التوصيل' }}</h3>
+                <span *ngIf="address.isDefault" class="bg-teal-100 text-teal-800 text-xs px-2 py-0.5 rounded-full font-medium">افتراضي</span>
+              </div>
+              <p class="text-sm text-gray-600 mt-1">
+                {{ address.governorate }}، {{ address.city }}، {{ address.addressLine }}
+                <span *ngIf="address.floorNumber">، دور {{ address.floorNumber }}</span>
+              </p>            
+            </div>
+          </div>
+
+          <div *ngIf="selectedAddressId === address.addressId" class="text-teal-600">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Summary (Left side in RTL) -->
-    <div class="w-full lg:w-1/3">
-      <div class="bg-white rounded-xl p-6 border border-gray-100 shadow-sm sticky top-6">
-        <h2 class="text-xl font-bold text-gray-800 mb-6">ملخص الطلب</h2>
-        
-        <div class="flex justify-between items-center mb-4 text-gray-600">
-          <span>المجموع الفرعي</span>
-          <span class="font-medium">{{ subtotal | number:'1.2-2' }} ج</span>
+    <!-- 2. Review Drugs / Items Section -->
+    <div class="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
+      <h2 class="text-lg font-bold text-gray-800 mb-4">مراجعة الأدوية</h2>
+      <div class="divide-y divide-gray-100">
+        <div *ngFor="let item of cart.items; trackBy: trackByItemId" class="py-3 flex items-center justify-between text-sm">
+          <div class="font-medium text-gray-800">
+            {{ item.drugArabicName || item.drugBrandName }}
+          </div>
+          <div class="text-gray-600">
+            {{ item.unitPriceSnapshot | number:'1.2-2' }} ج × {{ item.quantity }} — <span class="font-bold text-teal-600">{{ item.lineTotal | number:'1.2-2' }} ج</span>
+          </div>
         </div>
+      </div>
+    </div>
+
+    <!-- 3. Payment Method Section -->
+    <div class="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
+      <h2 class="text-lg font-bold text-gray-800 mb-4">طريقة الدفع</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         
-        <div class="flex justify-between items-center mb-6 text-gray-600">
-          <span>رسوم التوصيل</span>
-          <span class="font-medium text-green-600">{{ deliveryFee ? (deliveryFee | number:'1.2-2') + ' ج' : 'مجاني' }}</span>
-        </div>
-        
-        <div class="border-t border-gray-100 pt-4 mb-6 flex justify-between items-center">
-          <span class="text-lg font-bold text-gray-800">الإجمالي</span>
-          <span class="text-xl font-bold text-teal-600">{{ total | number:'1.2-2' }} ج</span>
+        <!-- Cash on Delivery -->
+        <div (click)="selectPaymentMethod('cod')"
+             [class.border-teal-600]="paymentMethod === 'cod'"
+             [class.bg-teal-50/20]="paymentMethod === 'cod'"
+             class="border border-gray-200 rounded-xl p-4 cursor-pointer transition-all hover:border-teal-400 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="text-teal-600">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+            </div>
+            <span class="font-bold text-gray-800">الدفع عند الاستلام</span>
+          </div>
+          <div *ngIf="paymentMethod === 'cod'" class="text-teal-600">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+          </div>
         </div>
 
-        <button (click)="confirmOrder()" [disabled]="!canConfirm" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 px-4 rounded-lg transition-colors flex justify-center items-center gap-2 disabled:opacity-50">
-          <span *ngIf="isSubmitting" class="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></span>
-          <span>تأكيد الطلب</span>
-        </button>
+        <!-- Credit Card -->
+        <div (click)="selectPaymentMethod('card')"
+             [class.border-teal-600]="paymentMethod === 'card'"
+             [class.bg-teal-50/20]="paymentMethod === 'card'"
+             class="border border-gray-200 rounded-xl p-4 cursor-pointer transition-all hover:border-teal-400 flex items-center justify-between opacity-75">
+          <div class="flex items-center gap-3">
+            <div class="text-gray-500">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
+            </div>
+            <span class="font-bold text-gray-700">بطاقة ائتمان</span>
+          </div>
+        </div>
+
       </div>
+    </div>
+
+    <!-- Summary & Confirmation Button -->
+    <div class="bg-white rounded-xl p-6 border border-gray-100 shadow-sm flex flex-col gap-4">
+      <div class="flex justify-between items-center text-gray-600 text-sm">
+        <span>المجموع الفرعي</span>
+        <span class="font-medium">{{ subtotal | number:'1.2-2' }} ج</span>
+      </div>
+      
+      <div class="flex justify-between items-center text-gray-600 text-sm">
+        <span>التوصيل</span>
+        <span class="font-medium text-green-600">{{ deliveryFee ? (deliveryFee | number:'1.2-2') + ' ج' : 'مجاني' }}</span>
+      </div>
+      
+      <div class="border-t border-gray-100 pt-3 flex justify-between items-center">
+        <span class="text-lg font-bold text-gray-800">الإجمالي</span>
+        <span class="text-xl font-bold text-teal-600">{{ total | number:'1.2-2' }} ج</span>
+      </div>
+
+      <button (click)="confirmOrder()" [disabled]="!canConfirm" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 px-4 rounded-lg transition-colors flex justify-center items-center gap-2 disabled:opacity-50 mt-2">
+        <span *ngIf="isSubmitting" class="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></span>
+        <span>تأكيد الطلب</span>
+      </button>
     </div>
 
   </div>
