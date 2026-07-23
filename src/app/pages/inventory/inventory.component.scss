@@ -1,0 +1,120 @@
+:host {
+  display: block;
+}
+
+/* ── PrimeNG table: inherit the design-system surfaces ───────── */
+::ng-deep {
+  .p-datatable {
+    .p-datatable-thead > tr > th {
+      background-color: transparent;
+      border: none;
+      color: var(--muted-foreground, #64748b);
+    }
+
+    .p-datatable-tbody > tr {
+      background-color: transparent;
+      color: inherit;
+
+      > td {
+        border: none;
+      }
+    }
+
+    /* Paginator uses card/border tokens instead of PrimeNG defaults */
+    .p-paginator {
+      background-color: transparent;
+      border-top: 1px solid var(--border, #e2e8f0);
+      padding: 0.75rem 1rem;
+
+      .p-paginator-page.p-highlight {
+        background-color: #007671;
+        color: #ffffff;
+        border-radius: 0.5rem;
+      }
+    }
+  }
+
+  /* ── Dialog: rounded card surface, RTL-friendly ─────────────── */
+  .p-dialog {
+    border-radius: 0.75rem;
+    overflow: hidden;
+    border: 1px solid var(--border, #e2e8f0);
+
+    .p-dialog-header,
+    .p-dialog-content,
+    .p-dialog-footer {
+      background-color: var(--card, #ffffff);
+      color: inherit;
+    }
+
+    .p-dialog-header {
+      border-bottom: 1px solid var(--border, #e2e8f0);
+    }
+  }
+
+  /* ── Select: match the 44px inputs used across the form ─────── */
+  .p-select {
+    border-radius: 0.5rem;
+    border: 1px solid var(--border, #e2e8f0);
+    background-color: var(--background, #ffffff);
+
+    &:not(.p-disabled).p-focus {
+      border-color: #007671;
+      box-shadow: none;
+    }
+  }
+
+  /* ── Autocomplete: match the form inputs + card overlay ─────── */
+  .inv-autocomplete {
+    &.p-autocomplete {
+      width: 100%;
+    }
+
+    .p-autocomplete-input,
+    .p-inputtext {
+      width: 100%;
+      height: 2.75rem; /* h-11 */
+      border-radius: 0.5rem;
+      border: 1px solid var(--border, #e2e8f0);
+      background-color: var(--background, #ffffff);
+      font-size: 0.8125rem;
+
+      &:enabled:focus {
+        border-color: #007671;
+        box-shadow: none;
+      }
+    }
+  }
+
+  /* Overlay panel: bg-card / border-border / shadow-lg / rounded-lg */
+  .p-autocomplete-overlay,
+  .p-autocomplete-panel {
+    background-color: var(--card, #ffffff);
+    border: 1px solid var(--border, #e2e8f0);
+    border-radius: 0.5rem;
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+
+    .p-autocomplete-option,
+    .p-autocomplete-item {
+      font-size: 0.8125rem;
+
+      &:not(.p-disabled):hover {
+        background-color: var(--muted, #f1f5f9);
+      }
+
+      &.p-focus,
+      &.p-highlight {
+        background-color: color-mix(in srgb, #007671 12%, transparent);
+        color: inherit;
+      }
+    }
+
+    .p-autocomplete-empty-message {
+      font-size: 0.8125rem;
+      color: var(--muted-foreground, #64748b);
+      padding: 0.75rem 1rem;
+    }
+  }
+}
+
+
