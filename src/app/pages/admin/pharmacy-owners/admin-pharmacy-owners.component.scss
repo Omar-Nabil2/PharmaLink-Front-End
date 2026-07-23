@@ -1,4 +1,4 @@
-// ─── Design tokens (aligned with admin-dashboard) ───────────────────────────
+// ─── Design tokens (aligned with admin-dashboard & admin-pharmacies) ───────
 $accent:        #0f9d76;
 $accent-hover:  #0d8b67;
 $accent-light:  rgba(15, 157, 118, 0.10);
@@ -18,7 +18,7 @@ $shadow-hover:  0 4px 20px rgba(0, 0, 0, 0.10);
 $shadow-dialog: 0 20px 60px rgba(0, 0, 0, 0.18);
 
 // ─── Page wrapper ────────────────────────────────────────────────────────────
-.pharmacies-page {
+.owners-page {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
@@ -62,7 +62,7 @@ $shadow-dialog: 0 20px 60px rgba(0, 0, 0, 0.18);
   position: relative;
   display: inline-flex;
   align-items: center;
-  min-width: 220px;
+  min-width: 240px;
 
   .search-icon {
     position: absolute;
@@ -168,11 +168,11 @@ $shadow-dialog: 0 20px 60px rgba(0, 0, 0, 0.18);
   animation: pulse 1.4s ease-in-out infinite;
 }
 
-.sk-logo   { width: 3.5rem; height: 3.5rem; border-radius: $radius-lg; background: $surface-muted; margin: 0 auto; }
-.sk-line   { height: 0.875rem; border-radius: $radius-pill; background: $surface-muted; }
-.sk-line-sm{ height: 0.75rem; border-radius: $radius-pill; background: $surface-muted; width: 70%; margin: 0 auto; }
-.sk-actions{ display: flex; gap: 0.5rem; }
-.sk-btn    { flex: 1; height: 2.25rem; border-radius: $radius-pill; background: $surface-muted; }
+.sk-avatar  { width: 3.25rem; height: 3.25rem; border-radius: 50%; background: $surface-muted; margin: 0 auto; }
+.sk-line    { height: 0.875rem; border-radius: $radius-pill; background: $surface-muted; }
+.sk-line-sm { height: 0.75rem; border-radius: $radius-pill; background: $surface-muted; width: 70%; margin: 0 auto; }
+.sk-actions { display: flex; gap: 0.5rem; }
+.sk-btn     { flex: 1; height: 2.25rem; border-radius: $radius-pill; background: $surface-muted; }
 
 @keyframes pulse {
   0%, 100% { opacity: 1; }
@@ -204,7 +204,7 @@ $shadow-dialog: 0 20px 60px rgba(0, 0, 0, 0.18);
   p  { font-size: 0.8rem; color: $text-mute; margin: 0; }
 }
 
-// ─── Pharmacy cards grid ──────────────────────────────────────────────────────
+// ─── Cards grid ───────────────────────────────────────────────────────────────
 .cards-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -215,7 +215,7 @@ $shadow-dialog: 0 20px 60px rgba(0, 0, 0, 0.18);
   }
 }
 
-.pharmacy-card {
+.owner-card {
   background: $surface;
   border: 1px solid $border-light;
   border-radius: $radius-xl;
@@ -240,28 +240,19 @@ $shadow-dialog: 0 20px 60px rgba(0, 0, 0, 0.18);
   margin-bottom: 1rem;
 }
 
-.card-logo {
+.card-avatar {
   flex-shrink: 0;
   width: 3.25rem;
   height: 3.25rem;
-  border-radius: $radius-lg;
-  border: 1px solid $border;
-  background: $surface-soft;
+  border-radius: 50%;
+  background: $accent-light;
+  color: $accent;
+  font-size: 1.25rem;
+  font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-  }
-
-  .logo-placeholder {
-    font-size: 1.3rem;
-    color: $text-mute;
-  }
+  border: 1px solid rgba(15, 157, 118, 0.2);
 }
 
 .card-title-group { flex: 1; min-width: 0; }
@@ -275,16 +266,9 @@ $shadow-dialog: 0 20px 60px rgba(0, 0, 0, 0.18);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  transition: color 0.15s;
-
-  &:hover {
-    color: $accent;
-    text-decoration: underline;
-    text-underline-offset: 2px;
-  }
 }
 
-.card-license {
+.card-sub {
   font-size: 0.72rem;
   color: $text-mute;
   margin: 0;
@@ -306,10 +290,9 @@ $shadow-dialog: 0 20px 60px rgba(0, 0, 0, 0.18);
   flex-shrink: 0;
 }
 
-.status-verified  { background: #ecfdf5; color: #059669; border-color: #a7f3d0; }
-.status-pending   { background: #fffbeb; color: #d97706; border-color: #fde68a; }
-.status-rejected  { background: #fff1f2; color: #e11d48; border-color: #fecdd3; }
-.status-deleted   { background: #f3f4f6; color: #6b7280; border-color: #e5e7eb; }
+.status-active    { background: #ecfdf5; color: #059669; border-color: #a7f3d0; }
+.status-inactive  { background: #f3f4f6; color: #6b7280; border-color: #e5e7eb; }
+.status-suspended { background: #fff1f2; color: #e11d48; border-color: #fecdd3; }
 .status-default   { background: $surface-muted; color: $text-mute; }
 
 // Card meta rows
@@ -336,7 +319,6 @@ $shadow-dialog: 0 20px 60px rgba(0, 0, 0, 0.18);
   .meta-label {
     color: $text-mute;
     flex-shrink: 0;
-    margin-left: 0.2rem; // for LTR inside RTL context
   }
 
   .meta-value {
@@ -344,38 +326,36 @@ $shadow-dialog: 0 20px 60px rgba(0, 0, 0, 0.18);
     font-weight: 500;
     flex: 1;
     min-width: 0;
-    word-break: break-word;
-  }
-}
+    word-break: break-all;
 
-// Stats row
-.card-stats {
-  display: flex;
-  gap: 0.5rem;
-  margin-bottom: 0.875rem;
-}
+    &.highlight-pharmacy {
+      font-weight: 600;
+      color: $accent;
+    }
 
-.stat-pill {
-  flex: 1;
-  background: $surface-soft;
-  border: 1px solid $border;
-  border-radius: $radius-md;
-  padding: 0.4rem 0.5rem;
-  text-align: center;
+    &.clickable-pharmacy-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      text-decoration: none;
+      transition: color 0.15s;
 
-  .stat-value {
-    display: block;
-    font-size: 1.05rem;
-    font-weight: 700;
-    color: $accent;
-    line-height: 1.2;
-  }
+      .link-icon {
+        font-size: 0.7rem;
+        opacity: 0.7;
+        transition: opacity 0.15s, transform 0.15s;
+      }
 
-  .stat-label {
-    display: block;
-    font-size: 0.65rem;
-    color: $text-mute;
-    margin-top: 0.1rem;
+      &:hover {
+        color: $accent-hover;
+        text-decoration: underline;
+
+        .link-icon {
+          opacity: 1;
+          transform: translateY(-1px);
+        }
+      }
+    }
   }
 }
 
@@ -612,101 +592,6 @@ $shadow-dialog: 0 20px 60px rgba(0, 0, 0, 0.18);
   gap: 0.25rem;
 }
 
-// Logo toggle mode buttons
-.logo-type-toggle {
-  display: flex;
-  gap: 0.5rem;
-  margin-bottom: 0.5rem;
-}
-
-.logo-toggle-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  padding: 0.35rem 0.75rem;
-  border: 1px solid $border;
-  border-radius: $radius-lg;
-  background: $surface-soft;
-  color: $text-mute;
-  font-family: inherit;
-  font-size: 0.78rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.15s ease;
-
-  &:hover {
-    background: $surface-muted;
-    color: $text-ink;
-  }
-
-  &.active {
-    background: $accent-light;
-    border-color: $accent;
-    color: $accent;
-    font-weight: 600;
-  }
-}
-
-// Logo upload area
-.logo-upload-area {
-  display: flex;
-  align-items: flex-start;
-  gap: 1rem;
-  margin-top: 0.25rem;
-}
-
-.logo-preview-box {
-  width: 4rem;
-  height: 4rem;
-  border-radius: $radius-lg;
-  border: 1px solid $border;
-  background: $surface-soft;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  flex-shrink: 0;
-
-  img { width: 100%; height: 100%; object-fit: contain; }
-  .logo-ph { font-size: 1.5rem; color: $text-mute; }
-}
-
-.logo-upload-controls {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-}
-
-.btn-upload-logo {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  padding: 0.45rem 0.75rem;
-  border: 1px solid $border;
-  border-radius: $radius-lg;
-  background: $surface;
-  color: $text-ink;
-  font-family: inherit;
-  font-size: 0.78rem;
-  cursor: pointer;
-  transition: background 0.15s;
-  &:hover { background: $surface-soft; }
-}
-
-.btn-clear-logo {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  padding: 0.3rem 0.5rem;
-  border: none;
-  background: none;
-  color: #dc2626;
-  font-family: inherit;
-  font-size: 0.72rem;
-  cursor: pointer;
-  &:hover { text-decoration: underline; }
-}
-
 // ─── Delete confirm ───────────────────────────────────────────────────────────
 .delete-body {
   padding: 1.5rem;
@@ -795,15 +680,14 @@ $shadow-dialog: 0 20px 60px rgba(0, 0, 0, 0.18);
   input[type='radio'] { display: none; }
 
   .status-option-badge { pointer-events: none; }
-  .status-option-desc { font-size: 0.72rem; color: $text-mute; }
 }
 
-// ─── Owner search ─────────────────────────────────────────────────────────────
-.owner-search-wrap {
+// ─── Pharmacy Search (Assign) ─────────────────────────────────────────────────
+.pharmacy-search-wrap {
   position: relative;
 }
 
-.owner-search-input {
+.pharmacy-search-input {
   width: 100%;
   padding: 0.65rem 2.25rem 0.65rem 0.875rem;
   border: 1px solid $border;
@@ -820,7 +704,7 @@ $shadow-dialog: 0 20px 60px rgba(0, 0, 0, 0.18);
   &:focus { border-color: $accent; box-shadow: 0 0 0 3px $accent-light; background: $surface; }
 }
 
-.owner-search-icon {
+.pharmacy-search-icon {
   position: absolute;
   left: 0.75rem;
   top: 50%;
@@ -830,7 +714,7 @@ $shadow-dialog: 0 20px 60px rgba(0, 0, 0, 0.18);
   pointer-events: none;
 }
 
-.owner-results {
+.pharmacy-results {
   margin-top: 0.5rem;
   border: 1px solid $border;
   border-radius: $radius-lg;
@@ -839,7 +723,7 @@ $shadow-dialog: 0 20px 60px rgba(0, 0, 0, 0.18);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
-.owner-result-item {
+.pharmacy-result-item {
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -850,29 +734,56 @@ $shadow-dialog: 0 20px 60px rgba(0, 0, 0, 0.18);
 
   &:last-child { border-bottom: none; }
   &:hover { background: $surface-soft; }
-  &.selected-owner { background: $accent-light; }
+  &.selected-pharmacy { background: $accent-light; }
 
-  .owner-avatar {
+  .pharmacy-icon {
     width: 2rem;
     height: 2rem;
-    border-radius: 50%;
+    border-radius: $radius-md;
     background: $accent-light;
     color: $accent;
     font-size: 0.85rem;
-    font-weight: 700;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    overflow: hidden;
+
+    .pharmacy-logo-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: inherit;
+    }
   }
 
-  .owner-info { flex: 1; min-width: 0; }
-  .owner-name { font-size: 0.85rem; font-weight: 600; color: $text-ink; }
-  .owner-email { font-size: 0.72rem; color: $text-mute; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .pharmacy-info { flex: 1; min-width: 0; }
+  .pharmacy-name { font-size: 0.85rem; font-weight: 600; color: $text-ink; }
+  .pharmacy-sub  {
+    font-size: 0.72rem;
+    color: $text-mute;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+
+    .owner-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      color: $accent;
+      background: $accent-light;
+      padding: 0.05rem 0.4rem;
+      border-radius: 4px;
+      font-weight: 600;
+
+      i { font-size: 0.65rem; }
+    }
+  }
 }
 
-.owner-loading,
-.owner-empty {
+.pharmacy-loading,
+.pharmacy-empty {
   padding: 1rem;
   text-align: center;
   font-size: 0.8rem;
@@ -883,7 +794,7 @@ $shadow-dialog: 0 20px 60px rgba(0, 0, 0, 0.18);
   gap: 0.4rem;
 }
 
-.selected-owner-card {
+.selected-pharmacy-card {
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -893,23 +804,30 @@ $shadow-dialog: 0 20px 60px rgba(0, 0, 0, 0.18);
   border-radius: $radius-lg;
   margin-top: 0.75rem;
 
-  .owner-avatar {
+  .pharmacy-icon {
     width: 2.25rem;
     height: 2.25rem;
-    border-radius: 50%;
+    border-radius: $radius-md;
     background: $accent;
     color: #fff;
     font-size: 0.875rem;
-    font-weight: 700;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    overflow: hidden;
+
+    .pharmacy-logo-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: inherit;
+    }
   }
 
-  .owner-info { flex: 1; }
-  .owner-name { font-size: 0.875rem; font-weight: 600; color: $text-ink; }
-  .owner-email { font-size: 0.72rem; color: $text-mute; }
+  .pharmacy-info { flex: 1; }
+  .pharmacy-name { font-size: 0.875rem; font-weight: 600; color: $text-ink; }
+  .pharmacy-sub  { font-size: 0.72rem; color: $text-mute; }
 
   .btn-deselect {
     border: none;

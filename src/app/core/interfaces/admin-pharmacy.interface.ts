@@ -94,6 +94,12 @@ export interface AdminUpdatePharmacyRequest {
   verificationStatus: VerificationStatus;
 }
 
+export enum UserStatus {
+  Active = 1,
+  Inactive = 2,
+  Suspended = 3,
+}
+
 // ─── Pharmacy Owner Interfaces ───────────────────────────────────────────────
 
 /** Nested pharmacy info inside owner response */
@@ -110,7 +116,7 @@ export interface PharmacyOwnerResponseDto {
   fullName: string;
   email: string;
   phoneNumber: string;
-  status: string;
+  status: UserStatus | string;
   createdAt: string;
   pharmacyId: string | null;
   isSuperAdmin: boolean | null;
@@ -120,6 +126,8 @@ export interface PharmacyOwnerResponseDto {
 /** Query params for GET /pharmacy-owners */
 export interface GetPharmacyOwnersQuery {
   search?: string;
+  status?: UserStatus | null;
+  pharmacyId?: string;
   pageNumber?: number;
   pageSize?: number;
 }
@@ -131,4 +139,14 @@ export interface CreatePharmacyOwnerRequest {
   phoneNumber: string;
   password: string;
   pharmacyId: string;
+}
+
+/** PUT /pharmacy-owners/:id — update owner */
+export interface UpdatePharmacyOwnerRequest {
+  fullName: string;
+  email: string;
+  phoneNumber: string;
+  pharmacyId?: string | null;
+  status: UserStatus;
+  password?: string | null;
 }

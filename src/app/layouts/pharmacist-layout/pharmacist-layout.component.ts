@@ -18,5 +18,6 @@ export class pharmacistLayoutComponent {
     { label: 'طابور الروشتات', icon: 'pi pi-box', routerLink: '/pharmacist/prescription-queue' },
     { label: 'الطلبات المعينة', icon: 'pi pi-check-square', routerLink: '/pharmacist/assigned-orders' },
     { label: 'قائمة التجهيز', icon: 'pi pi-cog', routerLink: '/pharmacist/preparation-list' },
+    { label: 'المخزون', icon: 'pi pi-box', routerLink: '/pharmacist/inventory' }
   ];
 }
