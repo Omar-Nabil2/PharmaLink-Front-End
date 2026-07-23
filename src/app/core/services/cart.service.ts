@@ -29,4 +29,10 @@ export class CartService {
   removeCartItem(itemId: string): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/items/${itemId}`);
   }
+  addItem(drugId: string, quantity: number): Observable<void> {
+  return this.http.post<void>(`${this.baseUrl}/items`, {
+    drugId,
+    quantity
+  });
+}
 }
