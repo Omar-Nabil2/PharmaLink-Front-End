@@ -137,7 +137,7 @@ export class AdminDashboardComponent {
   // ── Chart: order status doughnut ────────────────────────────────────────────
   readonly statusDoughnutData = computed(() => {
     const a = this.dashboard()?.orderAnalytics;
-    if (!a) return null;
+    if (!a) return undefined;
     return {
       labels: ['قيد الانتظار', 'قيد المعالجة', 'تم الشحن', 'مكتمل', 'ملغي'],
       datasets: [
