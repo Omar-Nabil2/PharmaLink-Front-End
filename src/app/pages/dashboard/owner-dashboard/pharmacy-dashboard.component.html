@@ -3,24 +3,41 @@
     <!-- Header row: title + branch selector -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
       <div class="flex items-center gap-3">
-        <h1 class="text-2xl font-bold">لوحة تحكم الصيدلية</h1>
-        <span class="text-sm text-muted-foreground hidden sm:block">/ نظرة عامة</span>
+        <h1 class="text-base md:text-xl lg:text-2xl font-bold">لوحة تحكم الصيدلية</h1>
+        <span class="text-[10px] lg:text-xs font-medium text-muted-foreground hidden sm:block">/ نظرة عامة</span>
       </div>
 
-      <!-- Branch selector: ALL → owner dashboard, UUID → branch dashboard -->
+      <!-- Branch search: ALL → owner dashboard, selected branch → branch dashboard.
+           Mirrors the owner/inventory branch selector (same SearchService stream,
+           styleClass, rem sizing, and card overlay). -->
       <div class="flex items-center gap-2">
-        <label for="branch-select" class="text-base text-muted-foreground font-medium">الفرع</label>
-        <p-select
-          inputId="branch-select"
-          [options]="branchOptions()"
-          optionLabel="name"
-          optionValue="id"
-          [ngModel]="selectedBranchId()"
-          (onChange)="onBranchChange($event.value)"
-          [disabled]="isLoading()"
-          styleClass="min-w-56 text-base"
-          appendTo="body"
-        />
+        <label class="text-xs lg:text-[0.9375rem] text-muted-foreground font-medium">الفرع</label>
+        <div class="relative min-w-[12rem]">
+          <p-autoComplete
+            [ngModel]="selectedBranchFilter()"
+            (completeMethod)="onBranchFilterSearch($event.query)"
+            (onSelect)="onBranchFilterSelected($event.value)"
+            (onClear)="onBranchFilterCleared()"
+            [suggestions]="branchFilterSuggestions()"
+            optionLabel="branchName"
+            [showClear]="true"
+            [minLength]="0"
+            [delay]="0"
+            placeholder="جميع الفروع"
+            styleClass="w-full inv-autocomplete"
+            appendTo="body"
+            emptyMessage="لا توجد نتائج"
+          >
+            <ng-template let-branch #item>
+              <div dir="rtl" class="flex flex-col py-1">
+                <span class="text-xs lg:text-base font-medium text-foreground">{{ branch.branchName }}</span>
+                @if (branch.addressLine) {
+                  <span class="text-xs lg:text-base text-muted-foreground">{{ branch.addressLine }}</span>
+                }
+              </div>
+            </ng-template>
+          </p-autoComplete>
+        </div>
       </div>
     </div>
 
@@ -46,11 +63,11 @@
         role="alert"
       >
         <i class="pi pi-exclamation-triangle text-4xl text-destructive"></i>
-        <p class="text-lg font-medium text-destructive">{{ message }}</p>
+        <p class="text-sm md:text-base lg:text-lg font-semibold text-destructive">{{ message }}</p>
         <button
           type="button"
           (click)="reload()"
-          class="inline-flex items-center gap-2 rounded-lg bg-primary text-primary-foreground px-4 py-2 text-base font-medium hover:opacity-90 transition"
+          class="inline-flex items-center gap-2 rounded-lg bg-primary text-primary-foreground px-4 py-2 text-xs lg:text-base font-medium hover:opacity-90 transition"
         >
           <i class="pi pi-refresh"></i>
           <span>إعادة المحاولة</span>
@@ -65,10 +82,10 @@
         <div class="bg-card rounded-xl shadow-sm p-6 border border-border">
           <div class="flex items-start justify-between">
             <div>
-              <p class="text-base text-muted-foreground font-medium">إجمالي الأدوية</p>
-              <p class="mt-2 text-4xl font-bold">{{ data.kpis.totalMedicines | number }}</p>
+              <p class="text-xs lg:text-base text-muted-foreground font-medium leading-normal">إجمالي الأدوية</p>
+              <p class="mt-2 text-2xl md:text-3xl lg:text-4xl font-bold">{{ data.kpis.totalMedicines | number }}</p>
             </div>
-            <div class="h-14 w-14 rounded-lg flex items-center justify-center bg-primary/10 text-primary">
+            <div class="h-12 w-12 rounded-lg flex items-center justify-center bg-primary/10 text-primary">
               <i class="pi pi-box text-2xl"></i>
             </div>
           </div>
@@ -78,10 +95,10 @@
         <div class="bg-card rounded-xl shadow-sm p-6 border border-border">
           <div class="flex items-start justify-between">
             <div>
-              <p class="text-base text-muted-foreground font-medium">أدوية منخفضة المخزون</p>
-              <p class="mt-2 text-4xl font-bold">{{ data.kpis.lowStockMedicinesCount | number }}</p>
+              <p class="text-xs lg:text-base text-muted-foreground font-medium leading-normal">أدوية منخفضة المخزون</p>
+              <p class="mt-2 text-2xl md:text-3xl lg:text-4xl font-bold">{{ data.kpis.lowStockMedicinesCount | number }}</p>
             </div>
-            <div class="h-14 w-14 rounded-lg flex items-center justify-center bg-warning/20 text-warning-foreground">
+            <div class="h-12 w-12 rounded-lg flex items-center justify-center bg-warning/20 text-warning-foreground">
               <i class="pi pi-exclamation-triangle text-2xl"></i>
             </div>
           </div>
@@ -91,11 +108,11 @@
         <div class="bg-card rounded-xl shadow-sm p-6 border border-border">
           <div class="flex items-start justify-between">
             <div>
-              <p class="text-base text-muted-foreground font-medium">طلبات اليوم</p>
-              <p class="mt-2 text-4xl font-bold">{{ data.kpis.todaysOrdersCount | number }}</p>
+              <p class="text-xs lg:text-base text-muted-foreground font-medium leading-normal">طلبات اليوم</p>
+              <p class="mt-2 text-2xl md:text-3xl lg:text-4xl font-bold">{{ data.kpis.todaysOrdersCount | number }}</p>
               @if (data.kpis.todaysOrdersChangePercent !== null) {
                 <div
-                  class="mt-2 flex items-center gap-1 text-sm font-medium"
+                  class="mt-2 flex items-center gap-1 text-[10px] lg:text-xs font-medium"
                   [class.text-accent]="data.kpis.todaysOrdersChangePercent >= 0"
                   [class.text-destructive]="data.kpis.todaysOrdersChangePercent < 0"
                 >
@@ -109,7 +126,7 @@
                 </div>
               }
             </div>
-            <div class="h-14 w-14 rounded-lg flex items-center justify-center bg-info/15 text-info">
+            <div class="h-12 w-12 rounded-lg flex items-center justify-center bg-info/15 text-info">
               <i class="pi pi-shopping-bag text-2xl"></i>
             </div>
           </div>
@@ -119,11 +136,11 @@
         <div class="bg-card rounded-xl shadow-sm p-6 border border-border">
           <div class="flex items-start justify-between">
             <div>
-              <p class="text-base text-muted-foreground font-medium">إيرادات الشهر</p>
-              <p class="mt-2 text-4xl font-bold">{{ data.kpis.monthlyRevenue | number: '1.0-2' }} ج</p>
+              <p class="text-xs lg:text-base text-muted-foreground font-medium leading-normal">إيرادات الشهر</p>
+              <p class="mt-2 text-2xl md:text-3xl lg:text-4xl font-bold">{{ data.kpis.monthlyRevenue | number: '1.0-2' }} ج</p>
               @if (data.kpis.monthlyRevenueChangePercent !== null) {
                 <div
-                  class="mt-2 flex items-center gap-1 text-sm font-medium"
+                  class="mt-2 flex items-center gap-1 text-[10px] lg:text-xs font-medium"
                   [class.text-accent]="data.kpis.monthlyRevenueChangePercent >= 0"
                   [class.text-destructive]="data.kpis.monthlyRevenueChangePercent < 0"
                 >
@@ -137,7 +154,7 @@
                 </div>
               }
             </div>
-            <div class="h-14 w-14 rounded-lg flex items-center justify-center bg-accent/15 text-accent">
+            <div class="h-12 w-12 rounded-lg flex items-center justify-center bg-accent/15 text-accent">
               <i class="pi pi-dollar text-2xl"></i>
             </div>
           </div>
@@ -148,7 +165,7 @@
       @if (hasLowStock()) {
         <div class="bg-warning/15 border border-warning/40 rounded-xl p-4 flex items-center gap-3">
           <i class="pi pi-exclamation-triangle text-warning-foreground text-xl"></i>
-          <p class="text-lg font-medium">
+          <p class="text-sm md:text-base lg:text-lg font-semibold">
             ⚠️ {{ data.lowStockAlert.lowStockCount }} أدوية تحتاج تجديد المخزون فوراً
           </p>
         </div>
@@ -156,7 +173,7 @@
 
       <!-- Sales trend chart -->
       <div class="bg-card rounded-xl border border-border p-6">
-        <h3 class="text-xl font-bold mb-4">المبيعات خلال آخر الأيام</h3>
+        <h3 class="text-sm md:text-base lg:text-lg font-semibold mb-4">المبيعات خلال آخر الأيام</h3>
         <div class="h-72" dir="ltr">
           @if (salesTrend().length) {
             <p-chart
@@ -167,7 +184,7 @@
               styleClass="w-full h-full"
             />
           } @else {
-            <div class="h-full flex items-center justify-center text-base text-muted-foreground">
+            <div class="h-full flex items-center justify-center text-xs lg:text-base text-muted-foreground leading-normal">
               لا توجد بيانات مبيعات لعرضها
             </div>
           }
@@ -177,30 +194,30 @@
       <!-- Recent orders table -->
       <div class="bg-card rounded-xl border border-border overflow-hidden">
         <div class="p-6 border-b border-border">
-          <h3 class="text-xl font-bold">آخر الطلبات</h3>
+          <h3 class="text-sm md:text-base lg:text-lg font-semibold">آخر الطلبات</h3>
         </div>
 
         <p-table
           [value]="recentOrders()"
-          styleClass="w-full text-base"
+          styleClass="w-full text-xs lg:text-base"
           [tableStyle]="{ 'min-width': '48rem' }"
         >
           <ng-template #header>
             <tr class="bg-muted/50">
-              <th class="text-right p-4 text-base font-semibold">رقم الطلب</th>
-              <th class="text-right p-4 text-base font-semibold">المريض</th>
-              <th class="text-right p-4 text-base font-semibold">الأدوية</th>
-              <th class="text-right p-4 text-base font-semibold">الإجمالي</th>
-              <th class="text-right p-4 text-base font-semibold">الحالة</th>
+              <th class="text-right p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground">رقم الطلب</th>
+              <th class="text-right p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground">المريض</th>
+              <th class="text-right p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground">الأدوية</th>
+              <th class="text-right p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground">الإجمالي</th>
+              <th class="text-right p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground">الحالة</th>
             </tr>
           </ng-template>
 
           <ng-template #body let-order>
             <tr class="border-t border-border">
-              <td class="p-4 text-base font-mono">{{ order.orderNumber }}</td>
-              <td class="p-4 text-base">{{ order.patientName }}</td>
-              <td class="p-4 text-base text-muted-foreground">{{ order.summary }}</td>
-              <td class="p-4 text-base font-semibold">{{ order.totalAmount | number: '1.2-2' }} ج</td>
+              <td class="p-4 text-xs lg:text-base font-normal leading-normal font-mono whitespace-nowrap">{{ order.orderNumber }}</td>
+              <td class="p-4 text-xs lg:text-base font-normal leading-normal">{{ order.patientName }}</td>
+              <td class="p-4 text-xs lg:text-base font-normal leading-normal text-muted-foreground">{{ order.summary }}</td>
+              <td class="p-4 text-xs lg:text-base font-normal leading-normal whitespace-nowrap">{{ order.totalAmount | number: '1.2-2' }} ج</td>
               <td class="p-4">
                 <span [class]="getStatusBadgeClasses(order)">
                   {{ order.legStatusLabel?.trim() || (order.legStatus | statusTranslate: 'LegStatus') }}
@@ -211,7 +228,7 @@
 
           <ng-template #emptymessage>
             <tr>
-              <td colspan="5" class="p-8 text-center text-base text-muted-foreground">
+              <td colspan="5" class="p-8 text-center text-xs lg:text-base text-muted-foreground leading-normal">
                 لا توجد طلبات حديثة
               </td>
             </tr>

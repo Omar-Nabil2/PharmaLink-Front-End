@@ -1,0 +1,149 @@
+<p-dialog
+  [visible]="visible"
+  (visibleChange)="visibleChange.emit($event)"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [style]="{ width: '36rem' }"
+  [dismissableMask]="true"
+  [maskStyleClass]="'bg-black/50'"
+>
+  <ng-template #header>
+    <div class="flex items-center justify-between w-full gap-3">
+      <span class="text-[0.9375rem] font-bold text-foreground">تفاصيل الدواء</span>
+      @if (item()) {
+        <button
+          type="button"
+          (click)="requestEdit()"
+          class="h-8 rounded-lg px-3 text-[0.8125rem] font-medium text-white flex items-center gap-1.5 transition-colors duration-200"
+          style="background-color: #007671"
+          onmouseover="this.style.backgroundColor='var(--color-green-hover)'"
+          onmouseout="this.style.backgroundColor='#007671'"
+        >
+          <i class="pi pi-pencil text-[0.8125rem]"></i>
+          <span>تعديل</span>
+        </button>
+      }
+    </div>
+  </ng-template>
+
+  <div dir="rtl" style="font-family: var(--font-cairo)">
+    @if (isLoading()) {
+      <!-- Skeleton -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+        @for (i of [0,1,2,3,4,5,6,7]; track i) {
+          <div class="space-y-1.5 animate-pulse">
+            <div class="h-3 w-20 bg-muted rounded"></div>
+            <div class="h-5 w-full bg-muted rounded"></div>
+          </div>
+        }
+      </div>
+    } @else if (errorMessage(); as msg) {
+      <div class="py-8 flex flex-col items-center gap-3 text-center" role="alert">
+        <i class="pi pi-exclamation-triangle text-3xl text-destructive"></i>
+        <p class="text-[0.8125rem] text-destructive">{{ msg }}</p>
+      </div>
+    } @else if (item(); as data) {
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 pt-2">
+
+        <!-- Medicine Information -->
+        <div class="sm:col-span-2 pb-1 border-b border-border">
+          <p class="text-[0.8125rem] font-semibold text-muted-foreground uppercase tracking-wide">معلومات الدواء</p>
+        </div>
+
+        <div class="space-y-0.5">
+          <p class="text-[0.8125rem] text-muted-foreground">الاسم بالعربية</p>
+          <p class="text-[0.8125rem] font-medium text-foreground">{{ data.arabicName?.trim() || '—' }}</p>
+        </div>
+
+        <div class="space-y-0.5">
+          <p class="text-[0.8125rem] text-muted-foreground">الاسم التجاري</p>
+          <p class="text-[0.8125rem] font-medium text-foreground">{{ data.drugName }}</p>
+        </div>
+
+        <div class="space-y-0.5">
+          <p class="text-[0.8125rem] text-muted-foreground">الاسم العلمي</p>
+          <p class="text-[0.8125rem] font-medium text-foreground">{{ data.genericName?.trim() || '—' }}</p>
+        </div>
+
+        <div class="space-y-0.5">
+          <p class="text-[0.8125rem] text-muted-foreground">الفرع</p>
+          <p class="text-[0.8125rem] font-medium text-foreground">{{ data.branchName?.trim() || '—' }}</p>
+        </div>
+
+        <!-- Quantities -->
+        <div class="sm:col-span-2 pb-1 border-b border-border mt-2">
+          <p class="text-[0.8125rem] font-semibold text-muted-foreground uppercase tracking-wide">الكميات والمخزون</p>
+        </div>
+
+        <div class="space-y-0.5">
+          <p class="text-[0.8125rem] text-muted-foreground">إجمالي المخزون</p>
+          <p class="text-[0.8125rem] font-mono font-semibold text-foreground">{{ data.stockQuantity | number }}</p>
+        </div>
+
+        <div class="space-y-0.5">
+          <p class="text-[0.8125rem] text-muted-foreground">الكمية المتاحة</p>
+          <p class="text-[0.8125rem] font-mono font-semibold text-foreground">{{ data.availableQuantity | number }}</p>
+        </div>
+
+        <div class="space-y-0.5">
+          <p class="text-[0.8125rem] text-muted-foreground">الكمية المحجوزة</p>
+          <p class="text-[0.8125rem] font-mono text-foreground">{{ data.reservedQuantity | number }}</p>
+        </div>
+
+        <div class="space-y-0.5">
+          <p class="text-[0.8125rem] text-muted-foreground">الحالة</p>
+          <span
+            class="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium"
+            [ngClass]="{
+              'bg-accent/15 text-accent': $any(data.stockStatus) === 1 || $any(data.stockStatus) === 'Available',
+              'bg-warning/20 text-warning-foreground': $any(data.stockStatus) === 2 || $any(data.stockStatus) === 'LowStock' || $any(data.stockStatus) === 'Low Stock',
+              'bg-destructive/15 text-destructive': $any(data.stockStatus) === 3 || $any(data.stockStatus) === 'OutOfStock' || $any(data.stockStatus) === 'Out of Stock'
+            }"
+          >
+            {{ data.stockStatus | inventoryStatusTranslate }}
+          </span>
+        </div>
+
+        <!-- Financials & Expiry -->
+        <div class="sm:col-span-2 pb-1 border-b border-border mt-2">
+          <p class="text-[0.8125rem] font-semibold text-muted-foreground uppercase tracking-wide">المالية والتواريخ</p>
+        </div>
+
+        <div class="space-y-0.5">
+          <p class="text-[0.8125rem] text-muted-foreground">سعر الوحدة</p>
+          <p class="text-[0.8125rem] font-semibold text-foreground">{{ data.unitPrice | number: '1.2-2' }} ج</p>
+        </div>
+
+        <div class="space-y-0.5">
+          <p class="text-[0.8125rem] text-muted-foreground">تاريخ الانتهاء</p>
+          <p class="text-[0.8125rem] font-medium" [class.text-destructive]="data.expiryDate" [class.text-foreground]="!data.expiryDate">
+            {{ data.expiryDate || '—' }}
+          </p>
+        </div>
+
+        <div class="space-y-0.5 sm:col-span-2">
+          <p class="text-[0.8125rem] text-muted-foreground">آخر مزامنة</p>
+          <p class="text-[0.8125rem] font-medium text-foreground">
+            {{ data.lastSyncedAt ? (data.lastSyncedAt | date: 'yyyy/MM/dd - hh:mm a') : '—' }}
+          </p>
+        </div>
+      </div>
+    }
+  </div>
+
+  <ng-template #footer>
+    <div class="flex justify-end pt-2">
+      <button
+        type="button"
+        (click)="close()"
+        class="h-10 rounded-lg px-5 text-[0.8125rem] font-medium text-white transition-colors duration-200"
+        style="background-color: #007671"
+        onmouseover="this.style.backgroundColor='var(--color-green-hover)'"
+        onmouseout="this.style.backgroundColor='#007671'"
+      >
+        إغلاق
+      </button>
+    </div>
+  </ng-template>
+</p-dialog>

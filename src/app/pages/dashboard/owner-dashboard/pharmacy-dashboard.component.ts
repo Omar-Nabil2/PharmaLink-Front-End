@@ -1,12 +1,17 @@
-import { Component, computed, inject, input, signal, effect, ChangeDetectionStrategy } from '@angular/core';
+import { Component, DestroyRef, computed, inject, input, signal, effect, ChangeDetectionStrategy } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { rxResource } from '@angular/core/rxjs-interop';
+import { rxResource, takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { CardModule } from 'primeng/card';
 import { TableModule } from 'primeng/table';
 import { ChartModule } from 'primeng/chart';
 import { SelectModule } from 'primeng/select';
+import { AutoCompleteModule } from 'primeng/autocomplete';
 import { PharmacyDashboardService } from '@core/services/pharmacy-dashboard.service';
+import { SearchService } from '@core/services/search.service';
+import { PharmacyBranchSearchDTO } from '@pages/inventory/search.model';
 import { StatusTranslatePipe } from '@shared/pipes/status-translate.pipe';
 import {
   ALL_BRANCHES,
@@ -28,6 +33,7 @@ import {
     TableModule,
     ChartModule,
     SelectModule,
+    AutoCompleteModule,
     StatusTranslatePipe,
   ],
   templateUrl: './pharmacy-dashboard.component.html',
@@ -35,10 +41,17 @@ import {
 })
 export class PharmacyDashboardComponent {
   private readonly dashboardService = inject(PharmacyDashboardService);
+  private readonly searchService = inject(SearchService);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly branchId = input<string | undefined>(undefined);
 
   readonly selectedBranchId = signal<string>(ALL_BRANCHES);
+
+  // ── Branch search (autocomplete) state ──────────────────────
+  readonly branchFilterSuggestions = signal<PharmacyBranchSearchDTO[]>([]);
+  readonly selectedBranchFilter = signal<PharmacyBranchSearchDTO | null>(null);
+  private readonly branchFilterQuery$ = new Subject<string>();
 
   constructor() {
     effect(() => {
@@ -47,6 +60,16 @@ export class PharmacyDashboardComponent {
         this.selectedBranchId.set(routeBranch);
       }
     });
+
+    // Debounced branch search stream (300ms) → SearchService.searchBranches.
+    this.branchFilterQuery$
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        switchMap((term) => this.searchService.searchBranches(term)),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((results) => this.branchFilterSuggestions.set(results ?? []));
   }
 
   private readonly dashboardResource = rxResource({
@@ -158,13 +181,28 @@ export class PharmacyDashboardComponent {
     this.selectedBranchId.set(branchId ?? ALL_BRANCHES);
   }
 
+  // ── Branch search (autocomplete) handlers ───────────────────
+  onBranchFilterSearch(query: string): void {
+    this.branchFilterQuery$.next(query ?? '');
+  }
+
+  onBranchFilterSelected(branch: PharmacyBranchSearchDTO): void {
+    this.selectedBranchFilter.set(branch);
+    this.selectedBranchId.set(branch.branchId);
+  }
+
+  onBranchFilterCleared(): void {
+    this.selectedBranchFilter.set(null);
+    this.selectedBranchId.set(ALL_BRANCHES);
+  }
+
   /**
    * Tailwind classes for a recent-order status badge. The visible label is
    * translated to Arabic in the template via the `statusTranslate` pipe, so this
    * only needs to resolve the color treatment from the leg status.
    */
   getStatusBadgeClasses(order: PharmacyRecentOrderDTO): string {
-    const base = 'inline-flex items-center rounded-full px-3 py-1 text-xs font-medium';
+    const base = 'inline-flex items-center rounded-full px-3 py-1 text-[10px] lg:text-xs font-medium';
 
     switch (this.normalizeStatus(order.legStatus)) {
       case 'completed':
