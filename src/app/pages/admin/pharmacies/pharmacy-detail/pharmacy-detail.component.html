@@ -232,10 +232,8 @@
                 @if (branch.latitude || branch.longitude) {
                   <div class="branch-row">
                     <i class="pi pi-compass"></i>
-                    <span class="branch-label">الإحداثيات:</span>
-                    <span class="branch-val branch-geo">
-                      {{ branch.latitude | number:'1.4-4' }} , {{ branch.longitude | number:'1.4-4' }}
-                    </span>
+                    <span class="branch-label">الاحداثيات:</span>
+                    <span class="branch-val branch-geo">{{ branch.latitude | number:'1.4-4' }} , {{ branch.longitude | number:'1.4-4' }}</span>
                   </div>
                 }
 
