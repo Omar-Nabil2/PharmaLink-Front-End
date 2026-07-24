@@ -6,7 +6,11 @@ import { InputTextModule } from 'primeng/inputtext';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { InventoryService } from '../../../core/services/inventory.service';
-import { InventoryItem, InventoryStatusFilter } from '../../../core/interfaces/inventory.interface';
+import {
+  GetPharmacyInventoryDTO,
+  InventoryStatusFilter,
+  GetPharmacyInventoryParamRequest,
+} from '@pages/inventory/inventory.model';
 
 @Component({
   selector: 'app-inventory',
@@ -16,7 +20,7 @@ import { InventoryItem, InventoryStatusFilter } from '../../../core/interfaces/i
   styleUrls: ['./inventory.component.scss'],
 })
 export class InventoryComponent {
-  inventoryItems: InventoryItem[] = [];
+  inventoryItems: GetPharmacyInventoryDTO[] = [];
   loading = true;
   totalRecords = 0;
 
@@ -58,31 +62,15 @@ export class InventoryComponent {
 
   loadData() {
     this.loading = true;
-
-    const params = {
+    const params: GetPharmacyInventoryParamRequest = {
       pageNumber: this.currentPage,
       pageSize: this.rows,
-      search: this.searchTermInput?.trim() || null,
+      search: this.searchTermInput,
       statusFilter: this.status,
     };
-
-    this.inventoryService.getInventory(params as any).subscribe({
-      next: (res: any) => {
-        // Map API DTO to local `InventoryItem` shape.
-        this.inventoryItems = (res.items || []).map((it: any) => ({
-          inventoryId: it.inventoryId,
-          branchId: it.branchId,
-          drugId: it.drugId,
-          drugName: it.drugName,
-          arabicName: it.arabicName,
-          stockQuantity: it.stockQuantity,
-          reservedQuantity: it.reservedQuantity,
-          unitPrice: it.unitPrice,
-          expiryDate: it.expiryDate ?? '',
-          stockStatus: this.mapNumericStatusToString(it.stockStatus),
-          stockStatusLabel: it.stockStatusLabel,
-        }));
-
+    this.inventoryService.getInventory(params).subscribe({
+      next: (res) => {
+        this.inventoryItems = res.items;
         this.totalRecords = res.totalCount;
         this.loading = false;
         this.cd.markForCheck();
@@ -93,24 +81,6 @@ export class InventoryComponent {
         this.cd.markForCheck();
       },
     });
-  }
-
-  private mapNumericStatusToString(status: number | string): string {
-    // API uses numeric enum for status; normalize to the string values
-    // expected by the rest of this component ('Available'|'LowStock'|'OutOfStock').
-    switch (String(status)) {
-      case '1':
-      case 'Available':
-        return 'Available';
-      case '2':
-      case 'LowStock':
-        return 'LowStock';
-      case '3':
-      case 'OutOfStock':
-        return 'OutOfStock';
-      default:
-        return String(status ?? '');
-    }
   }
 
   onSearchChange(value: string) {

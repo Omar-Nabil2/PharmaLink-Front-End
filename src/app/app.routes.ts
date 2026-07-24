@@ -175,6 +175,27 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./pages/cart/cart.component').then((m) => m.CartComponent),
       },
+      {
+        path: 'checkout',
+        canActivate: [authGuard],
+        data: { role: AppRoles.Patient },
+        loadComponent: () =>
+          import('./pages/checkout/checkout').then((m) => m.CheckoutComponent),
+      },
+      {
+        path: 'orders',
+        canActivate: [authGuard],
+        data: { role: AppRoles.Patient },
+        loadComponent: () =>
+          import('./pages/orders/patient-orders/patient-orders.component').then((m) => m.PatientOrdersComponent),
+      },
+      {
+        path: 'orders/:id',
+        canActivate: [authGuard],
+        data: { role: AppRoles.Patient },
+        loadComponent: () =>
+          import('./pages/orders/patient-order-detail/patient-order-detail.component').then((m) => m.PatientOrderDetailComponent),
+      },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
     ],
   },
@@ -252,6 +273,16 @@ export const routes: Routes = [
         path: 'inventory',
         loadComponent: () =>
           import('./pages/inventory/inventory.component').then((m) => m.InventoryComponent),
+      },
+      {
+        path: 'pharmacy-profile',
+        loadComponent: () =>
+          import('./pages/pharmacy-profile/pharmacy-profile.component').then((m) => m.PharmacyProfileComponent),
+      },
+      {
+        path: 'branches',
+        loadComponent: () =>
+          import('./pages/branches/pharmacy-branch.component').then((m) => m.PharmacyBranchComponent),
       },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
     ],
