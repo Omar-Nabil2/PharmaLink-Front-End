@@ -48,6 +48,7 @@ export class OwnerLayoutComponent {
   readonly navItems: OwnerNavItem[] = [
     { label: 'لوحة التحكم', icon: 'pi pi-th-large', routerLink: '/owner/dashboard' },
     { label: 'المخزون', icon: 'pi pi-box', routerLink: '/owner/inventory' },
+    { label: 'الفروع', icon: 'pi pi-sitemap', routerLink: '/owner/branches' },
     { label: 'بيانات الصيدلية', icon: 'pi pi-shop', routerLink: '/owner/pharmacy-profile' },
   ];
 
