@@ -260,6 +260,11 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./pages/inventory/inventory.component').then((m) => m.InventoryComponent),
       },
+      {
+        path: 'pharmacy-profile',
+        loadComponent: () =>
+          import('./pages/pharmacy-profile/pharmacy-profile.component').then((m) => m.PharmacyProfileComponent),
+      },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
     ],
   },
