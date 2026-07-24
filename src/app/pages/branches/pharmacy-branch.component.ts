@@ -1,5 +1,6 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
@@ -41,6 +42,53 @@ export class PharmacyBranchComponent implements OnInit {
   modalMode = signal<'add' | 'edit'>('add');
   selectedBranchId = signal<string | null>(null);
 
+  // Location picker
+  private readonly sanitizer = inject(DomSanitizer);
+  isDetectingLocation = signal(false);
+  mapPreviewUrl = signal<SafeResourceUrl | null>(null);
+
+  get mapCoords(): { lat: number; lng: number } | null {
+    const lat = this.branchForm?.get('latitude')?.value;
+    const lng = this.branchForm?.get('longitude')?.value;
+    if (lat != null && lng != null && !isNaN(lat) && !isNaN(lng)) return { lat, lng };
+    return null;
+  }
+
+  updateMapPreview(): void {
+    const coords = this.mapCoords;
+    if (!coords) { this.mapPreviewUrl.set(null); return; }
+    const url = `https://www.openstreetmap.org/export/embed.html?bbox=${coords.lng - 0.01},${coords.lat - 0.01},${coords.lng + 0.01},${coords.lat + 0.01}&layer=mapnik&marker=${coords.lat},${coords.lng}`;
+    this.mapPreviewUrl.set(this.sanitizer.bypassSecurityTrustResourceUrl(url));
+  }
+
+  detectMyLocation(): void {
+    if (!navigator.geolocation) {
+      this.messageService.add({ severity: 'warn', summary: 'تنبيه', detail: 'المتصفح لا يدعم تحديد الموقع' });
+      return;
+    }
+    this.isDetectingLocation.set(true);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const lat = parseFloat(pos.coords.latitude.toFixed(6));
+        const lng = parseFloat(pos.coords.longitude.toFixed(6));
+        this.branchForm.patchValue({ latitude: lat, longitude: lng });
+        this.branchForm.get('latitude')!.markAsTouched();
+        this.branchForm.get('longitude')!.markAsTouched();
+        this.updateMapPreview();
+        this.isDetectingLocation.set(false);
+      },
+      () => {
+        this.messageService.add({ severity: 'error', summary: 'خطأ', detail: 'تعذّر تحديد الموقع. تأكد من منح الإذن.' });
+        this.isDetectingLocation.set(false);
+      },
+      { timeout: 10000 }
+    );
+  }
+
+  onCoordInput(): void {
+    this.updateMapPreview();
+  }
+
   // Pagination & Search
   pageNumber = signal(1);
   pageSize = signal(10);
@@ -74,8 +122,8 @@ export class PharmacyBranchComponent implements OnInit {
       phoneNumber: ['', [Validators.required, Validators.pattern(/^(?:\+20|0020|0)?1[0125][0-9]{8}$/)]],
       workingHours: ['', [Validators.required, Validators.maxLength(150)]],
       serviceRadiusKm: [5, [Validators.required, Validators.min(0)]],
-      latitude: [null, [Validators.min(-90), Validators.max(90)]],
-      longitude: [null, [Validators.min(-180), Validators.max(180)]],
+      latitude: [null, [Validators.required, Validators.min(-90), Validators.max(90)]],
+      longitude: [null, [Validators.required, Validators.min(-180), Validators.max(180)]],
       supportsDelivery: [false],
       supportsPickup: [true]
     });
@@ -114,6 +162,7 @@ export class PharmacyBranchComponent implements OnInit {
       supportsPickup: true,
       serviceRadiusKm: 5
     });
+    this.mapPreviewUrl.set(null);
     this.isModalOpen.set(true);
   }
 
@@ -141,6 +190,7 @@ export class PharmacyBranchComponent implements OnInit {
           supportsDelivery: freshBranch.supportsDelivery,
           supportsPickup: freshBranch.supportsPickup
         });
+        this.updateMapPreview();
         this.editingBranchId.set(null);
         this.isModalOpen.set(true);
       },
