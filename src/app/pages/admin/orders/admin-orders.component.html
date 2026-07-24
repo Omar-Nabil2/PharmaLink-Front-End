@@ -11,7 +11,7 @@
     <!-- Export buttons with loading state -->
     <div class="export-group">
       <button class="btn-export btn-export--excel" (click)="exportOrders('xlsx')" [disabled]="isExporting" title="تصدير Excel">
-        @if (isExporting) {
+        @if (exportingFormat === 'xlsx') {
           <span class="spinner"></span>
         } @else {
           <i class="pi pi-file-excel"></i>
@@ -19,7 +19,7 @@
         <span>تصدير Excel</span>
       </button>
       <button class="btn-export btn-export--csv" (click)="exportOrders('csv')" [disabled]="isExporting" title="تصدير CSV">
-        @if (isExporting) {
+        @if (exportingFormat === 'csv') {
           <span class="spinner"></span>
         } @else {
           <i class="pi pi-file"></i>
@@ -70,6 +70,16 @@
       [value]="selectedMode ?? ''"
       (change)="selectedMode = $any($event.target).value === '' ? null : +$any($event.target).value; onFilterChange()">
       @for (opt of modeOptions; track opt.label) {
+        <option [value]="opt.value ?? ''">{{ opt.label }}</option>
+      }
+    </select>
+
+    <!-- Leg status (Delivery status) filter -->
+    <select
+      class="filter-select"
+      [value]="selectedLegStatus ?? ''"
+      (change)="selectedLegStatus = $any($event.target).value === '' ? null : +$any($event.target).value; onFilterChange()">
+      @for (opt of legStatusOptions; track opt.label) {
         <option [value]="opt.value ?? ''">{{ opt.label }}</option>
       }
     </select>
@@ -167,7 +177,11 @@
         <tbody>
           @for (order of orders; track trackById($index, order)) {
             <tr class="table-row">
-              <td class="cell-mono">{{ order.orderNumber }}</td>
+              <td class="cell-mono">
+                <a class="order-number-link" (click)="openDetail(order.orderId)" title="عرض تفاصيل الطلب">
+                  {{ order.orderNumber }}
+                </a>
+              </td>
               <td class="cell-strong">{{ order.patientName }}</td>
               <td class="cell-muted">{{ order.primaryPharmacyName || '—' }}</td>
               <td class="cell-muted">
@@ -178,11 +192,13 @@
               <td class="cell-amount">ج {{ order.totalAmount | number:'1.2-2' }}</td>
               <td>
                 <span [class]="getOrderStatusClass(order.orderStatus)">
+                  <span class="status-dot"></span>
                   {{ getOrderStatusLabel(order.orderStatus) }}
                 </span>
               </td>
               <td>
                 <span [class]="getLegStatusClass(order.legStatus)">
+                  <span class="status-dot"></span>
                   {{ getLegStatusLabel(order.legStatus) }}
                 </span>
               </td>
@@ -301,6 +317,7 @@
               <div class="detail-item">
                 <span class="detail-label">حالة الطلب</span>
                 <span [class]="getOrderStatusClass(selectedOrder.orderStatus)">
+                  <span class="status-dot"></span>
                   {{ getOrderStatusLabel(selectedOrder.orderStatus) }}
                 </span>
               </div>
@@ -365,6 +382,7 @@
                       <td class="amount">ج {{ item.lineTotal | number:'1.2-2' }}</td>
                       <td>
                         <span [class]="getItemStatusClass(item.itemStatus)">
+                          <span class="status-dot"></span>
                           {{ getItemStatusLabel(item.itemStatus) }}
                         </span>
                       </td>
@@ -391,7 +409,10 @@
                 <div class="leg-header">
                   <div class="leg-badges">
                     <span class="leg-type-badge">{{ getLegTypeLabel(leg.legType) }}</span>
-                    <span [class]="getLegStatusClass(leg.legStatus)">{{ getLegStatusLabel(leg.legStatus) }}</span>
+                    <span [class]="getLegStatusClass(leg.legStatus)">
+                      <span class="status-dot"></span>
+                      {{ getLegStatusLabel(leg.legStatus) }}
+                    </span>
                   </div>
                   <div class="leg-actions-row">
                     <button class="btn-sm btn-sm-info" (click)="openLegDetail(leg.legId)">
@@ -480,6 +501,7 @@
             <div class="detail-item">
               <span class="detail-label">حالة الجزء</span>
               <span [class]="getLegStatusClass(selectedLegDetail.legStatus)">
+                <span class="status-dot"></span>
                 {{ getLegStatusLabel(selectedLegDetail.legStatus) }}
               </span>
             </div>
@@ -500,6 +522,12 @@
       </div>
 
       <div class="modal-footer">
+        @if (selectedLegDetail) {
+          <button class="btn-sm btn-sm-accent" (click)="openUpdateLegStatus(selectedLegDetail.legId, selectedLegDetail.legStatus); closeLegDetail()">
+            <i class="pi pi-sync"></i>
+            تحديث الحالة
+          </button>
+        }
         <button class="btn-ghost" (click)="closeLegDetail()">إغلاق</button>
       </div>
     </div>

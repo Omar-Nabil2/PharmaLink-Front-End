@@ -23,6 +23,12 @@ export class AdminOrdersService {
     if (filter.status !== undefined && filter.status !== null) {
       params = params.set('status', filter.status.toString());
     }
+    if (filter.fulfillmentMode !== undefined && filter.fulfillmentMode !== null) {
+      params = params.set('fulfillmentMode', filter.fulfillmentMode.toString());
+    }
+    if (filter.legStatus !== undefined && filter.legStatus !== null) {
+      params = params.set('legStatus', filter.legStatus.toString());
+    }
     if (filter.fromDate) {
       params = params.set('fromDate', filter.fromDate);
     }
@@ -50,6 +56,12 @@ export class AdminOrdersService {
     }
     if (filter.status !== undefined && filter.status !== null) {
       params = params.set('status', filter.status.toString());
+    }
+    if (filter.fulfillmentMode !== undefined && filter.fulfillmentMode !== null) {
+      params = params.set('fulfillmentMode', filter.fulfillmentMode.toString());
+    }
+    if (filter.legStatus !== undefined && filter.legStatus !== null) {
+      params = params.set('legStatus', filter.legStatus.toString());
     }
     if (filter.fromDate) {
       params = params.set('fromDate', filter.fromDate);

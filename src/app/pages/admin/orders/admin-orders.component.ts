@@ -67,8 +67,10 @@ interface AdminOrderLeg {
   medicineNames: string[];
 }
 
+import { Router } from '@angular/router';
+
 @Component({
-  selector: 'app-admin-orders-v2',
+  selector: 'app-admin-orders',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, FormsModule, ToastModule],
@@ -76,9 +78,10 @@ interface AdminOrderLeg {
   templateUrl: './admin-orders.component.html',
   styleUrl: './admin-orders.component.scss',
 })
-export class AdminOrdersV2Component implements OnInit, OnDestroy {
+export class AdminOrdersComponent implements OnInit, OnDestroy {
   private readonly svc = inject(AdminOrdersService);
   private readonly msg = inject(MessageService);
+  private readonly router = inject(Router);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly destroy$ = new Subject<void>();
   private readonly searchInput$ = new Subject<string>();
@@ -115,6 +118,7 @@ export class AdminOrdersV2Component implements OnInit, OnDestroy {
   searchTerm = '';
   selectedStatus: number | null = null;
   selectedMode: number | null = null;
+  selectedLegStatus: number | null = null;
   fromDate = '';
   toDate = '';
   sortBy = 'date';
@@ -122,6 +126,7 @@ export class AdminOrdersV2Component implements OnInit, OnDestroy {
 
   // ── Export state ─────────────────────────────────────────────────────────
   isExporting = false;
+  exportingFormat: 'xlsx' | 'csv' | null = null;
 
   // ── Order detail modal ───────────────────────────────────────────────────
   showDetailModal = false;
@@ -142,7 +147,7 @@ export class AdminOrdersV2Component implements OnInit, OnDestroy {
 
   // ── Reference data ───────────────────────────────────────────────────────
   readonly statusOptions = [
-    { value: null, label: 'كل الحالات' },
+    { value: null, label: 'كل حالات الطلب' },
     { value: 1, label: 'قيد الانتظار' },
     { value: 2, label: 'قيد المعالجة' },
     { value: 3, label: 'تم الشحن' },
@@ -157,6 +162,7 @@ export class AdminOrdersV2Component implements OnInit, OnDestroy {
   ];
 
   readonly legStatusOptions = [
+    { value: null, label: 'كل حالات التوصيل' },
     { value: 1, label: 'تم القبول' },
     { value: 2, label: 'قيد التحضير' },
     { value: 3, label: 'جاهز للاستلام' },
@@ -193,8 +199,18 @@ export class AdminOrdersV2Component implements OnInit, OnDestroy {
     };
     if (this.searchTerm.trim()) f.search = this.searchTerm.trim();
     if (this.selectedStatus !== null) f.status = this.selectedStatus;
-    if (this.fromDate) f.fromDate = new Date(this.fromDate).toISOString();
-    if (this.toDate) f.toDate = new Date(this.toDate).toISOString();
+    if (this.selectedMode !== null) f.fulfillmentMode = this.selectedMode;
+    if (this.selectedLegStatus !== null) f.legStatus = this.selectedLegStatus;
+    if (this.fromDate) {
+      const dFrom = new Date(this.fromDate);
+      dFrom.setHours(0, 0, 0, 0);
+      f.fromDate = dFrom.toISOString();
+    }
+    if (this.toDate) {
+      const dTo = new Date(this.toDate);
+      dTo.setHours(23, 59, 59, 999);
+      f.toDate = dTo.toISOString();
+    }
     return f;
   }
 
@@ -236,6 +252,7 @@ export class AdminOrdersV2Component implements OnInit, OnDestroy {
     this.searchTerm = '';
     this.selectedStatus = null;
     this.selectedMode = null;
+    this.selectedLegStatus = null;
     this.fromDate = '';
     this.toDate = '';
     this.sortBy = 'date';
@@ -254,13 +271,24 @@ export class AdminOrdersV2Component implements OnInit, OnDestroy {
   exportOrders(format: 'xlsx' | 'csv'): void {
     if (this.isExporting) return;
     this.isExporting = true;
+    this.exportingFormat = format;
     this.cdr.markForCheck();
 
     const f: any = { sortBy: this.sortBy, sortDir: this.sortDir };
     if (this.searchTerm.trim()) f.search = this.searchTerm.trim();
     if (this.selectedStatus !== null) f.status = this.selectedStatus;
-    if (this.fromDate) f.fromDate = new Date(this.fromDate).toISOString();
-    if (this.toDate) f.toDate = new Date(this.toDate).toISOString();
+    if (this.selectedMode !== null) f.fulfillmentMode = this.selectedMode;
+    if (this.selectedLegStatus !== null) f.legStatus = this.selectedLegStatus;
+    if (this.fromDate) {
+      const dFrom = new Date(this.fromDate);
+      dFrom.setHours(0, 0, 0, 0);
+      f.fromDate = dFrom.toISOString();
+    }
+    if (this.toDate) {
+      const dTo = new Date(this.toDate);
+      dTo.setHours(23, 59, 59, 999);
+      f.toDate = dTo.toISOString();
+    }
 
     this.svc
       .exportOrders(f, format)
@@ -276,16 +304,24 @@ export class AdminOrdersV2Component implements OnInit, OnDestroy {
           document.body.removeChild(a);
           URL.revokeObjectURL(url);
           this.isExporting = false;
+          this.exportingFormat = null;
           this.msg.add({
             severity: 'success',
-            summary: 'نجاح',
-            detail: `تم تصدير ${format.toUpperCase()} بنجاح`,
+            summary: 'تم التصدير بنجاح',
+            detail: `تم تصدير ملف ${format.toUpperCase()} بنجاح.`,
+            life: 4000,
           });
           this.cdr.markForCheck();
         },
         error: () => {
           this.isExporting = false;
-          this.msg.add({ severity: 'error', summary: 'خطأ', detail: 'فشل تصدير الطلبات' });
+          this.exportingFormat = null;
+          this.msg.add({
+            severity: 'error',
+            summary: 'خطأ في التصدير',
+            detail: `فشل تصدير ملف ${format.toUpperCase()}. يرجى المحاولة لاحقاً.`,
+            life: 4000,
+          });
           this.cdr.markForCheck();
         },
       });
@@ -293,27 +329,8 @@ export class AdminOrdersV2Component implements OnInit, OnDestroy {
 
   // ── Order detail ──────────────────────────────────────────────────────────
   openDetail(orderId: string): void {
-    this.showDetailModal = true;
-    this.detailLoading = true;
-    this.selectedOrder = null;
-    this.cdr.markForCheck();
-
-    this.svc
-      .getOrderDetails(orderId)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res: any) => {
-          this.selectedOrder = res;
-          this.detailLoading = false;
-          this.cdr.markForCheck();
-        },
-        error: () => {
-          this.detailLoading = false;
-          this.showDetailModal = false;
-          this.msg.add({ severity: 'error', summary: 'خطأ', detail: 'فشل تحميل تفاصيل الطلب' });
-          this.cdr.markForCheck();
-        },
-      });
+    if (!orderId) return;
+    this.router.navigate(['/admin/orders', orderId]);
   }
 
   closeDetail(): void {
@@ -356,9 +373,9 @@ export class AdminOrdersV2Component implements OnInit, OnDestroy {
   }
 
   // ── Update leg status ─────────────────────────────────────────────────────
-  openUpdateLegStatus(legId: string, currentStatus: number): void {
+  openUpdateLegStatus(legId: string, currentStatus: any): void {
     this.updateLegId = legId;
-    this.updateLegNewStatus = Number(currentStatus);
+    this.updateLegNewStatus = typeof currentStatus === 'number' ? currentStatus : 1;
     this.updateLegAuditReason = '';
     this.showUpdateLegModal = true;
     this.cdr.markForCheck();
@@ -384,17 +401,16 @@ export class AdminOrdersV2Component implements OnInit, OnDestroy {
           this.showUpdateLegModal = false;
           this.msg.add({
             severity: 'success',
-            summary: 'نجاح',
-            detail: 'تم تحديث حالة جزء التوصيل',
+            summary: 'تم التحديث',
+            detail: 'تم تحديث حالة جزء التوصيل بنجاح',
+            life: 4000,
           });
-          // Refresh detail view and table
-          if (this.selectedOrder) this.openDetail(this.selectedOrder.orderId);
           this.doLoad();
           this.cdr.markForCheck();
         },
         error: () => {
           this.updatingLeg = false;
-          this.msg.add({ severity: 'error', summary: 'خطأ', detail: 'فشل تحديث الحالة' });
+          this.msg.add({ severity: 'error', summary: 'خطأ', detail: 'فشل تحديث حالة جزء التوصيل' });
           this.cdr.markForCheck();
         },
       });
@@ -402,89 +418,111 @@ export class AdminOrdersV2Component implements OnInit, OnDestroy {
 
   // ── Label/class helpers ───────────────────────────────────────────────────
   getOrderStatusLabel(s: any): string {
-    const map: Record<number, string> = {
-      1: 'قيد الانتظار',
-      2: 'قيد المعالجة',
-      3: 'تم الشحن',
-      4: 'مكتمل',
-      5: 'ملغي',
+    if (s === null || s === undefined) return '—';
+    const str = String(s).trim();
+    const map: Record<string, string> = {
+      '1': 'قيد الانتظار', Pending: 'قيد الانتظار',
+      '2': 'قيد المعالجة', Processing: 'قيد المعالجة',
+      '3': 'تم الشحن', Shipped: 'تم الشحن',
+      '4': 'مكتمل', Completed: 'مكتمل',
+      '5': 'ملغي', Cancelled: 'ملغي',
     };
-    return map[Number(s)] ?? '—';
+    return map[str] ?? str;
   }
 
   getOrderStatusClass(s: any): string {
-    const map: Record<number, string> = {
-      1: 'badge-pending',
-      2: 'badge-processing',
-      3: 'badge-shipped',
-      4: 'badge-completed',
-      5: 'badge-cancelled',
+    if (s === null || s === undefined) return 'status-badge badge-default';
+    const str = String(s).trim();
+    const map: Record<string, string> = {
+      '1': 'badge-pending', Pending: 'badge-pending',
+      '2': 'badge-processing', Processing: 'badge-processing',
+      '3': 'badge-shipped', Shipped: 'badge-shipped',
+      '4': 'badge-completed', Completed: 'badge-completed',
+      '5': 'badge-cancelled', Cancelled: 'badge-cancelled',
     };
-    return `status-badge ${map[Number(s)] ?? 'badge-default'}`;
+    return `status-badge ${map[str] ?? 'badge-default'}`;
   }
 
   getLegStatusLabel(s: any): string {
-    if (!s) return 'غير مسند';
-    const map: Record<number, string> = {
-      1: 'تم القبول',
-      2: 'قيد التحضير',
-      3: 'جاهز للاستلام',
-      4: 'خرج للتوصيل',
-      5: 'تم التسليم',
-      6: 'ملغي',
+    if (s === null || s === undefined || s === '') return 'غير مسند';
+    const str = String(s).trim();
+    const map: Record<string, string> = {
+      '1': 'تم القبول', Assigned: 'تم القبول',
+      '2': 'قيد التحضير', Preparing: 'قيد التحضير',
+      '3': 'جاهز للاستلام', ReadyForPickup: 'جاهز للاستلام',
+      '4': 'خرج للتوصيل', OutForDelivery: 'خرج للتوصيل', PickedUpByCourier: 'خرج للتوصيل', InDelivery: 'خرج للتوصيل',
+      '5': 'تم التسليم', Delivered: 'تم التسليم', Completed: 'تم التسليم',
+      '6': 'ملغي', Cancelled: 'ملغي',
     };
-    return map[Number(s)] ?? '—';
+    return map[str] ?? str;
   }
 
   getLegStatusClass(s: any): string {
-    if (!s) return 'status-badge badge-none';
-    const map: Record<number, string> = {
-      1: 'badge-leg-assigned',
-      2: 'badge-leg-preparing',
-      3: 'badge-leg-ready',
-      4: 'badge-leg-out',
-      5: 'badge-leg-delivered',
-      6: 'badge-cancelled',
+    if (s === null || s === undefined || s === '') return 'status-badge badge-none';
+    const str = String(s).trim();
+    const map: Record<string, string> = {
+      '1': 'badge-leg-assigned', Assigned: 'badge-leg-assigned',
+      '2': 'badge-leg-preparing', Preparing: 'badge-leg-preparing',
+      '3': 'badge-leg-ready', ReadyForPickup: 'badge-leg-ready',
+      '4': 'badge-leg-out', OutForDelivery: 'badge-leg-out', PickedUpByCourier: 'badge-leg-out', InDelivery: 'badge-leg-out',
+      '5': 'badge-leg-delivered', Delivered: 'badge-leg-delivered', Completed: 'badge-leg-delivered',
+      '6': 'badge-cancelled', Cancelled: 'badge-cancelled',
     };
-    return `status-badge ${map[Number(s)] ?? 'badge-default'}`;
+    return `status-badge ${map[str] ?? 'badge-default'}`;
   }
 
   getModeLabel(m: any): string {
-    return Number(m) === 1 ? 'توصيل' : 'استلام';
+    if (m === null || m === undefined) return '—';
+    const str = String(m).trim();
+    if (str === '1' || str.toLowerCase() === 'delivery') return 'توصيل';
+    if (str === '2' || str.toLowerCase() === 'pickup') return 'استلام';
+    return str;
   }
 
   getModeClass(m: any): string {
-    return Number(m) === 1 ? 'status-badge badge-delivery' : 'status-badge badge-pickup';
+    if (m === null || m === undefined) return 'status-badge badge-default';
+    const str = String(m).trim();
+    if (str === '1' || str.toLowerCase() === 'delivery') return 'status-badge badge-delivery';
+    if (str === '2' || str.toLowerCase() === 'pickup') return 'status-badge badge-pickup';
+    return 'status-badge badge-default';
   }
 
   getModeIcon(m: any): string {
-    return Number(m) === 1 ? 'pi pi-truck' : 'pi pi-building';
+    if (m === null || m === undefined) return 'pi pi-shopping-bag';
+    const str = String(m).trim();
+    if (str === '1' || str.toLowerCase() === 'delivery') return 'pi pi-truck';
+    return 'pi pi-building';
   }
 
   getLegTypeLabel(t: any): string {
-    return Number(t) === 1 ? 'تحضير' : 'توصيل';
+    const str = String(t).trim();
+    return str === '1' || str.toLowerCase() === 'preparation' ? 'تحضير' : 'توصيل';
   }
 
   getItemStatusLabel(s: any): string {
-    const map: Record<number, string> = {
-      1: 'قيد الانتظار',
-      2: 'تم التوفير',
-      3: 'ملغي',
-      4: 'تمت الإحالة',
-      5: 'غير متوفر',
+    if (s === null || s === undefined) return '—';
+    const str = String(s).trim();
+    const map: Record<string, string> = {
+      '1': 'قيد الانتظار', Pending: 'قيد الانتظار',
+      '2': 'تم التوفير', Fulfilled: 'تم التوفير', Completed: 'تم التوفير',
+      '3': 'ملغي', Cancelled: 'ملغي',
+      '4': 'تمت الإحالة', Awarded: 'تمت الإحالة',
+      '5': 'غير متوفر', Unavailable: 'غير متوفر',
     };
-    return map[Number(s)] ?? '—';
+    return map[str] ?? str;
   }
 
   getItemStatusClass(s: any): string {
-    const map: Record<number, string> = {
-      1: 'badge-pending',
-      2: 'badge-completed',
-      3: 'badge-cancelled',
-      4: 'badge-shipped',
-      5: 'badge-cancelled',
+    if (s === null || s === undefined) return 'status-badge badge-default';
+    const str = String(s).trim();
+    const map: Record<string, string> = {
+      '1': 'badge-pending', Pending: 'badge-pending',
+      '2': 'badge-completed', Fulfilled: 'badge-completed', Completed: 'badge-completed',
+      '3': 'badge-cancelled', Cancelled: 'badge-cancelled',
+      '4': 'badge-shipped', Awarded: 'badge-shipped',
+      '5': 'badge-item-unavailable', Unavailable: 'badge-item-unavailable',
     };
-    return `status-badge ${map[Number(s)] ?? 'badge-default'}`;
+    return `status-badge ${map[str] ?? 'badge-default'}`;
   }
 
   get hasActiveFilters(): boolean {
@@ -492,6 +530,7 @@ export class AdminOrdersV2Component implements OnInit, OnDestroy {
       this.searchTerm ||
       this.selectedStatus !== null ||
       this.selectedMode !== null ||
+      this.selectedLegStatus !== null ||
       this.fromDate ||
       this.toDate
     );

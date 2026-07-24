@@ -347,36 +347,103 @@ $shadow-dialog: 0 20px 60px rgba(0, 0, 0, 0.18);
 .status-badge {
   display: inline-flex;
   align-items: center;
-  gap: 0.3rem;
-  padding: 0.22rem 0.65rem;
+  gap: 0.35rem;
+  padding: 0.25rem 0.75rem;
   border-radius: $radius-pill;
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   font-weight: 600;
   border: 1px solid transparent;
   white-space: nowrap;
   letter-spacing: 0.01em;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+
+  .status-dot {
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+  }
 
   // ── OrderStatus ───────────────────────────────────────
-  &.badge-pending    { background: #fffbeb; color: #b45309; border-color: #fde68a; }
-  &.badge-processing { background: #f0f9ff; color: #0369a1; border-color: #bae6fd; }
-  &.badge-shipped    { background: #eef2ff; color: #4338ca; border-color: #c7d2fe; }
-  &.badge-completed  { background: #ecfdf5; color: #065f46; border-color: #6ee7b7; }
-  &.badge-cancelled  { background: #fff1f2; color: #be123c; border-color: #fecdd3; }
+  &.badge-pending {
+    background: #fffbeb;
+    color: #b45309;
+    border-color: #fde68a;
+    .status-dot { background: #f59e0b; box-shadow: 0 0 6px rgba(245, 158, 11, 0.6); }
+  }
+  &.badge-processing {
+    background: #eff6ff;
+    color: #1d4ed8;
+    border-color: #bfdbfe;
+    .status-dot { background: #3b82f6; box-shadow: 0 0 6px rgba(59, 130, 246, 0.6); }
+  }
+  &.badge-shipped {
+    background: #f5f3ff;
+    color: #6d28d9;
+    border-color: #ddd6fe;
+    .status-dot { background: #8b5cf6; box-shadow: 0 0 6px rgba(139, 92, 246, 0.6); }
+  }
+  &.badge-completed {
+    background: #ecfdf5;
+    color: #047857;
+    border-color: #a7f3d0;
+    .status-dot { background: #10b981; box-shadow: 0 0 6px rgba(16, 185, 129, 0.6); }
+  }
+  &.badge-cancelled {
+    background: #fff1f2;
+    color: #be123c;
+    border-color: #fecdd3;
+    .status-dot { background: #f43f5e; box-shadow: 0 0 6px rgba(244, 63, 94, 0.6); }
+  }
 
   // ── LegStatus ─────────────────────────────────────────
-  &.badge-leg-assigned  { background: #f0fdfa; color: #0f766e; border-color: #99f6e4; }
-  &.badge-leg-preparing { background: #eff6ff; color: #1d4ed8; border-color: #bfdbfe; }
-  &.badge-leg-ready     { background: #f7fee7; color: #4d7c0f; border-color: #bef264; }
-  &.badge-leg-out       { background: #fff7ed; color: #c2410c; border-color: #fdba74; }
-  &.badge-leg-delivered { background: #ecfdf5; color: #065f46; border-color: #6ee7b7; }
+  &.badge-leg-assigned {
+    background: #f0fdfa;
+    color: #0f766e;
+    border-color: #99f6e4;
+    .status-dot { background: #14b8a6; }
+  }
+  &.badge-leg-preparing {
+    background: #f0f9ff;
+    color: #0369a1;
+    border-color: #bae6fd;
+    .status-dot { background: #0284c7; }
+  }
+  &.badge-leg-ready {
+    background: #f7fee7;
+    color: #4d7c0f;
+    border-color: #bef264;
+    .status-dot { background: #84cc16; }
+  }
+  &.badge-leg-out {
+    background: #fff7ed;
+    color: #c2410c;
+    border-color: #fdba74;
+    .status-dot { background: #f97316; }
+  }
+  &.badge-leg-delivered {
+    background: #ecfdf5;
+    color: #047857;
+    border-color: #a7f3d0;
+    .status-dot { background: #10b981; }
+  }
+
+  // ── ItemStatus Special ────────────────────────────────
+  &.badge-item-unavailable {
+    background: #f1f5f9;
+    color: #475569;
+    border-color: #cbd5e1;
+    .status-dot { background: #64748b; }
+  }
 
   // ── FulfillmentMode ───────────────────────────────────
   &.badge-delivery { background: #f5f3ff; color: #6d28d9; border-color: #ddd6fe; }
   &.badge-pickup   { background: #ecfeff; color: #0e7490; border-color: #a5f3fc; }
 
   // ── Fallback ──────────────────────────────────────────
-  &.badge-none    { background: $surface-muted; color: $text-mute; border-color: $border; }
-  &.badge-default { background: $surface-muted; color: $text-mute; border-color: $border; }
+  &.badge-none    { background: $surface-muted; color: $text-mute; border-color: $border; .status-dot { background: #94a3b8; } }
+  &.badge-default { background: $surface-muted; color: $text-mute; border-color: $border; .status-dot { background: #94a3b8; } }
 }
 
 // ─── Pagination ───────────────────────────────────────────────────────────────
