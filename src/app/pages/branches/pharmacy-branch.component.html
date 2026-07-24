@@ -293,8 +293,85 @@
       </div>
     </div>
 
-        <div class="border-t border-border pt-4 mt-2">
-          <h3 class="text-sm md:text-base lg:text-lg font-semibold text-foreground mb-3">الخدمات المدعومة</h3>
+    <!-- Location Picker -->
+    <div class="border-t border-border pt-4 space-y-3">
+      <div class="flex items-center justify-between">
+        <h3 class="text-xs sm:text-sm font-semibold text-foreground">الموقع الجغرافي <span class="text-destructive">*</span></h3>
+        <button
+          type="button"
+          (click)="detectMyLocation()"
+          [disabled]="isDetectingLocation()"
+          class="h-9 rounded-lg px-3 text-xs sm:text-sm font-medium text-white flex items-center gap-2 transition-colors duration-200 disabled:opacity-60"
+          style="background-color: #007671"
+          onmouseover="this.style.backgroundColor='var(--color-green-hover)'"
+          onmouseout="this.style.backgroundColor='#007671'"
+        >
+          @if (isDetectingLocation()) {
+            <i class="pi pi-spin pi-spinner text-xs"></i>
+          } @else {
+            <i class="pi pi-map-marker text-xs"></i>
+          }
+          <span>{{ isDetectingLocation() ? 'جارٍ التحديد...' : 'حدد موقعي الحالي' }}</span>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <!-- Latitude -->
+        <div class="space-y-1.5 text-right">
+          <label class="block text-xs sm:text-sm font-medium text-foreground">خط العرض (Latitude) <span class="text-destructive">*</span></label>
+          <input
+            type="number"
+            step="any"
+            formControlName="latitude"
+            placeholder="مثال: 30.0444"
+            (input)="onCoordInput()"
+            class="w-full h-11 rounded-lg border bg-background px-4 text-xs sm:text-sm outline-none transition-colors duration-200"
+            [class.border-border]="!hasError('latitude')"
+            [class.focus:border-[#007671]]="!hasError('latitude')"
+            [class.border-destructive]="hasError('latitude')"
+            [class.focus:ring-destructive/20]="hasError('latitude')"
+          />
+          @if (hasError('latitude')) {
+            <p class="text-xs text-destructive mt-1 font-medium">{{ getErrorMessage('latitude') }}</p>
+          }
+        </div>
+
+        <!-- Longitude -->
+        <div class="space-y-1.5 text-right">
+          <label class="block text-xs sm:text-sm font-medium text-foreground">خط الطول (Longitude) <span class="text-destructive">*</span></label>
+          <input
+            type="number"
+            step="any"
+            formControlName="longitude"
+            placeholder="مثال: 31.2357"
+            (input)="onCoordInput()"
+            class="w-full h-11 rounded-lg border bg-background px-4 text-xs sm:text-sm outline-none transition-colors duration-200"
+            [class.border-border]="!hasError('longitude')"
+            [class.focus:border-[#007671]]="!hasError('longitude')"
+            [class.border-destructive]="hasError('longitude')"
+            [class.focus:ring-destructive/20]="hasError('longitude')"
+          />
+          @if (hasError('longitude')) {
+            <p class="text-xs text-destructive mt-1 font-medium">{{ getErrorMessage('longitude') }}</p>
+          }
+        </div>
+      </div>
+
+      <!-- Map Preview -->
+      @if (mapPreviewUrl()) {
+        <div class="rounded-lg overflow-hidden border border-border h-48">
+          <iframe
+            [src]="mapPreviewUrl()"
+            class="w-full h-full"
+            loading="lazy"
+            referrerpolicy="no-referrer"
+          ></iframe>
+        </div>
+      }
+    </div>
+
+    <div class="border-t border-border pt-4">
+      <h3 class="text-sm md:text-base lg:text-lg font-semibold text-foreground mb-3">الخدمات المدعومة</h3>
           <div class="flex flex-col sm:flex-row gap-4">
             <label class="flex items-center gap-2 cursor-pointer">
               <input type="checkbox" formControlName="supportsDelivery" class="w-4 h-4 rounded border-border text-primary focus:ring-primary accent-primary">
