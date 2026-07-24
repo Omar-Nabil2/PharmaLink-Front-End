@@ -101,7 +101,7 @@
       <button
         type="button"
         (click)="close()"
-        class="w-full sm:w-auto h-10 rounded-lg border border-border px-4 text-xs sm:text-sm font-medium text-foreground transition-colors duration-200 hover:bg-muted"
+        class="w-full sm:w-auto h-10 lg:h-12 rounded-lg border border-border px-4 text-xs lg:text-base font-medium text-foreground transition-colors duration-200 hover:bg-muted disabled:opacity-50"
       >
         إلغاء
       </button>
@@ -109,7 +109,7 @@
         type="button"
         (click)="save()"
         [disabled]="isSaving()"
-        class="w-full sm:w-auto h-10 rounded-lg px-5 text-xs sm:text-sm font-medium text-white flex items-center justify-center gap-2 transition-colors duration-200 disabled:opacity-60"
+        class="w-full sm:w-auto h-10 lg:h-12 rounded-lg px-6 text-xs lg:text-base font-medium text-white flex items-center justify-center gap-2 transition-colors duration-200 disabled:opacity-50"
         style="background-color: #007671"
         onmouseover="this.style.backgroundColor='var(--color-green-hover)'"
         onmouseout="this.style.backgroundColor='#007671'"
