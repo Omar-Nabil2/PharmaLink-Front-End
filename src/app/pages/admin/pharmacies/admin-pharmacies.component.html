@@ -293,9 +293,32 @@
             </select>
           </div>
 
-          <!-- Logo Upload -->
+          <!-- Logo Option -->
           <div class="field">
             <label class="field-label">الشعار (اختياري)</label>
+
+            <!-- Input type switcher toggle -->
+            <div class="logo-type-toggle">
+              <button
+                type="button"
+                class="logo-toggle-btn"
+                [class.active]="logoInputType === 'file'"
+                (click)="setLogoInputType('file')"
+              >
+                <i class="pi pi-upload"></i>
+                <span>رفع ملف صورة</span>
+              </button>
+              <button
+                type="button"
+                class="logo-toggle-btn"
+                [class.active]="logoInputType === 'url'"
+                (click)="setLogoInputType('url')"
+              >
+                <i class="pi pi-link"></i>
+                <span>رابط الصورة (URL)</span>
+              </button>
+            </div>
+
             <div class="logo-upload-area">
               <!-- Preview -->
               <div class="logo-preview-box">
@@ -305,20 +328,33 @@
                   <i class="pi pi-image logo-ph"></i>
                 }
               </div>
+
               <!-- Controls -->
-              <div class="logo-upload-controls">
-                <label class="btn-upload-logo">
-                  <i class="pi pi-upload"></i>
-                  <span>رفع صورة</span>
-                  <input type="file" accept="image/*" style="display:none" (change)="onLogoFileChange($event)" />
-                </label>
+              <div class="logo-upload-controls" style="flex: 1;">
+                @if (logoInputType === 'file') {
+                  <label class="btn-upload-logo">
+                    <i class="pi pi-upload"></i>
+                    <span>{{ selectedFile ? selectedFile.name : 'اختر ملف صورة' }}</span>
+                    <input type="file" accept="image/*" style="display:none" (change)="onLogoFileChange($event)" />
+                  </label>
+                  <span style="font-size:0.7rem; color: #6b7a76;">PNG / JPG / WEBP — 2MB كحد أقصى</span>
+                } @else {
+                  <input
+                    type="text"
+                    class="field-input"
+                    formControlName="logoUrl"
+                    placeholder="https://example.com/logo.png"
+                    (input)="onLogoUrlChange($any($event.target).value)"
+                  />
+                  <span style="font-size:0.7rem; color: #6b7a76;">أدخل رابط مباشر لصورة الشعار</span>
+                }
+
                 @if (logoPreview) {
                   <button type="button" class="btn-clear-logo" (click)="clearLogoFile()">
                     <i class="pi pi-times"></i>
-                    <span>إزالة</span>
+                    <span>إزالة الشعار</span>
                   </button>
                 }
-                <span style="font-size:0.7rem; color: #6b7a76;">PNG / JPG / WEBP — 2MB كحد أقصى</span>
               </div>
             </div>
           </div>

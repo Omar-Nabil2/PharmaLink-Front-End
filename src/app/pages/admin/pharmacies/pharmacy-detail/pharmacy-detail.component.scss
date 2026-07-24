@@ -465,7 +465,9 @@ $shadow-card:   0 1px 4px rgba(0, 0, 0, 0.06), 0 4px 16px rgba(0, 0, 0, 0.04);
   }
 
   .branch-geo {
-    font-size: 0.72rem;
+    font-size: 0.78rem;
+    flex: none;
     direction: ltr;
+    unicode-bidi: isolate;
   }
 }

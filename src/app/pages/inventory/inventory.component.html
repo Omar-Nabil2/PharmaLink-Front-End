@@ -26,7 +26,7 @@
 
       <!-- Branch filter autocomplete -->
       <div class="relative min-w-[12rem]">
-        <p-autoComplete
+    <p-autocomplete>
           [ngModel]="selectedBranchFilter()"
           (completeMethod)="onBranchFilterSearch($event.query)"
           (onSelect)="onBranchFilterSelected($event.value)"
@@ -49,7 +49,7 @@
               }
             </div>
           </ng-template>
-        </p-autoComplete>
+      </p-autocomplete>
       </div>
 
       <!-- Status filter -->
@@ -248,6 +248,135 @@
     [defaultBranchId]="branchId()"
     (saved)="onInventorySaved()"
   />
+    [modal]="true"
+    [draggable]="false"
+    [resizable]="false"
+    styleClass="w-[90vw] sm:w-[85vw] md:w-full max-w-lg mx-4"
+    contentStyleClass="max-h-[90vh] overflow-y-auto p-4 sm:p-6"
+    [dismissableMask]="true"
+    [maskStyleClass]="'bg-black/50'"
+  >
+    <ng-template #header>
+      <span class="text-base sm:text-lg font-bold text-foreground">
+        {{ isEditing() ? 'تعديل بيانات الدواء' : 'إضافة دواء جديد' }}
+      </span>
+    </ng-template>
+
+    <div dir="rtl" class="space-y-4 pt-2" style="font-family: var(--font-cairo)">
+      @if (!isEditing()) {
+        <!-- Branch autocomplete (binds branchId GUID in background) -->
+        <div class="space-y-1.5">
+          <label class="block text-xs lg:text-base font-medium text-foreground">الفرع</label>
+        <p-autocomplete>
+            [ngModel]="selectedBranch()"
+            (completeMethod)="onBranchSearch($event.query)"
+            (onSelect)="onBranchSelected($event.value)"
+            (onClear)="onBranchCleared()"
+            [suggestions]="branchSuggestions()"
+            optionLabel="branchName"
+            [forceSelection]="true"
+            [showClear]="true"
+            [minLength]="2"
+            [delay]="0"
+            placeholder="ابحث باسم الفرع..."
+            styleClass="w-full inv-autocomplete"
+            appendTo="body"
+            emptyMessage="لا توجد نتائج مطابقة"
+          >
+            <ng-template let-branch #item>
+              <div dir="rtl" class="flex flex-col py-1">
+                <span class="text-xs lg:text-base font-medium text-foreground">{{ branch.branchName }}</span>
+                <span class="text-xs lg:text-base text-muted-foreground">{{ branch.addressLine }}</span>
+              </div>
+            </ng-template>
+            @if (isBranchSearching()) {
+              <ng-template #loader>
+                <i class="pi pi-spin pi-spinner text-[0.8125rem] text-muted-foreground"></i>
+              </ng-template>
+            }
+          </p-autocomplete>
+        </div>
+
+        <!-- Medicine autocomplete (binds drugId GUID + pre-fills price) -->
+        <div class="space-y-1.5">
+          <label class="block text-xs lg:text-base font-medium text-foreground">الدواء</label>
+          <p-autocomplete
+            [ngModel]="selectedMedicine()"
+            (completeMethod)="onMedicineSearch($event.query)"
+            (onSelect)="onMedicineSelected($event.value)"
+            (onClear)="onMedicineCleared()"
+            [suggestions]="medicineSuggestions()"
+            optionLabel="arabicName"
+            [forceSelection]="true"
+            [showClear]="true"
+            /* [minLength]="2" */
+            [delay]="0"
+            placeholder="ابحث باسم الدواء..."
+            styleClass="w-full inv-autocomplete"
+            appendTo="body"
+            emptyMessage="لا توجد نتائج مطابقة"
+          >
+            <ng-template let-medicine #item>
+              <div dir="rtl" class="flex flex-col py-1">
+                <span class="text-xs lg:text-base font-medium text-foreground">
+                  {{ medicine.arabicName?.trim() || medicine.name }}
+                </span>
+                <span class="text-xs lg:text-base text-muted-foreground">
+                  {{ medicine.name }}
+                  @if (medicine.strength) { · {{ medicine.strength }} }
+                  @if (medicine.dosageForm) { · {{ medicine.dosageForm }} }
+                </span>
+              </div>
+            </ng-template>
+          </p-autocomplete>
+        </div>
+      } @else {
+
+        <div class="space-y-1.5">
+          <label class="block text-xs lg:text-base font-medium text-foreground">اسم الدواء</label>
+          <input
+            type="text"
+            [ngModel]="formDrugName()"
+            [readonly]="true"
+            class="w-full h-10 lg:h-12 rounded-lg border border-border bg-muted/40 px-4 text-xs lg:text-base text-muted-foreground outline-none"
+          />
+        </div>
+      }
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="space-y-1.5">
+          <label class="block text-xs lg:text-base font-medium text-foreground">الكمية بالمخزون</label>
+          <input
+            type="number"
+            min="0"
+            [ngModel]="formStockQuantity()"
+            (ngModelChange)="formStockQuantity.set(+$event)"
+            class="w-full h-10 lg:h-12 rounded-lg border border-border bg-background px-4 text-xs lg:text-base outline-none transition-colors duration-200 focus:border-[#007671]"
+          />
+        </div>
+        <div class="space-y-1.5">
+          <label class="block text-xs lg:text-base font-medium text-foreground">سعر الوحدة (ج)</label>
+          <input
+            type="number"
+            min="0"
+            step="0.01"
+            [ngModel]="formUnitPrice()"
+            (ngModelChange)="formUnitPrice.set(+$event)"
+            class="w-full h-10 lg:h-12 rounded-lg border border-border bg-background px-4 text-xs lg:text-base outline-none transition-colors duration-200 focus:border-[#007671]"
+          />
+        </div>
+      </div>
+
+      <div class="space-y-1.5">
+        <label class="block text-xs lg:text-base font-medium text-foreground">تاريخ الانتهاء</label>
+        <input
+          type="date"
+          [ngModel]="formExpiryDate()"
+          (ngModelChange)="formExpiryDate.set($event)"
+          class="w-full h-10 lg:h-12 rounded-lg border border-border bg-background px-4 text-xs lg:text-base outline-none transition-colors duration-200 focus:border-[#007671]"
+        />
+      </div>
+    </div>
 
 
   <!-- ── Details dialog ─────────────────────────────────────────── -->
