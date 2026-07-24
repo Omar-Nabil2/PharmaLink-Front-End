@@ -128,10 +128,6 @@
                 </span>
               </div>
               <div class="flex items-center gap-2">
-                <button class="btn-sm btn-sm-info" (click)="openLegDetail(leg.legId)">
-                  <i class="pi pi-eye"></i>
-                  التفاصيل
-                </button>
                 <button
                   class="btn-sm btn-sm-accent"
                   (click)="openUpdateLegStatus(leg.legId, leg.legStatus)"
@@ -234,91 +230,6 @@
   </div>
 </div>
 
-<!-- Loading state -->
-<div *ngIf="isLoading()" class="flex flex-col items-center justify-center min-h-[400px] gap-3">
-  <i class="pi pi-spin pi-spinner text-3xl text-[#0f9d76]"></i>
-  <span class="text-mute text-sm">جاري تحميل تفاصيل الطلب...</span>
-</div>
-
-<!-- ═══════════════════════════════════════════════════════════════════════════
-     MODAL: Leg Detail
-════════════════════════════════════════════════════════════════════════════ -->
-<div class="modal-overlay" *ngIf="showLegDetailModal" (click)="closeLegDetail()">
-  <div class="modal-card modal-card-sm" (click)="$event.stopPropagation()">
-    <div class="modal-header">
-      <h2 class="modal-title">
-        <i class="pi pi-send"></i>
-        تفاصيل جزء التوصيل
-      </h2>
-      <button class="modal-close" (click)="closeLegDetail()">
-        <i class="pi pi-times"></i>
-      </button>
-    </div>
-
-    <div class="modal-body">
-      <div class="detail-loading" *ngIf="legDetailLoading">
-        <span class="spinner spinner-lg"></span>
-        <span>جاري التحميل...</span>
-      </div>
-      <div class="detail-grid" *ngIf="!legDetailLoading && selectedLegDetail">
-        <div class="detail-item detail-item-full">
-          <span class="detail-label">معرف الجزء</span>
-          <span class="detail-value mono" style="font-size: 0.75rem; word-break: break-all">{{
-            selectedLegDetail.legId
-          }}</span>
-        </div>
-        <div class="detail-item">
-          <span class="detail-label">معرف الطلب</span>
-          <span class="detail-value mono" style="font-size: 0.75rem">{{
-            selectedLegDetail.orderId
-          }}</span>
-        </div>
-        <div class="detail-item">
-          <span class="detail-label">نوع الجزء</span>
-          <span class="detail-value">{{ getLegTypeLabel(selectedLegDetail.legType) }}</span>
-        </div>
-        <div class="detail-item">
-          <span class="detail-label">حالة الجزء</span>
-          <span [class]="getLegStatusClass(selectedLegDetail.legStatus)">
-            <span class="status-dot"></span>
-            {{ getLegStatusLabel(selectedLegDetail.legStatus) }}
-          </span>
-        </div>
-        <div class="detail-item" *ngIf="selectedLegDetail.readyByEstimate">
-          <span class="detail-label">موعد الاستعداد</span>
-          <span class="detail-value">{{
-            selectedLegDetail.readyByEstimate | date: 'yyyy-MM-dd HH:mm'
-          }}</span>
-        </div>
-        <div class="detail-item" *ngIf="selectedLegDetail.completedAt">
-          <span class="detail-label">تاريخ الإتمام</span>
-          <span class="detail-value">{{
-            selectedLegDetail.completedAt | date: 'yyyy-MM-dd HH:mm'
-          }}</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="modal-footer">
-      <button
-        class="btn-sm btn-sm-accent"
-        *ngIf="selectedLegDetail"
-        (click)="
-          openUpdateLegStatus(selectedLegDetail.legId, selectedLegDetail.legStatus);
-          closeLegDetail()
-        "
-      >
-        <i class="pi pi-sync"></i>
-        تحديث الحالة
-      </button>
-      <button class="btn-ghost" (click)="closeLegDetail()">إغلاق</button>
-    </div>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════════════════════════════════════════
-     MODAL: Update Leg Status
-════════════════════════════════════════════════════════════════════════════ -->
 <div class="modal-overlay" *ngIf="showUpdateLegModal" (click)="closeUpdateLegModal()">
   <div class="modal-card modal-card-sm" (click)="$event.stopPropagation()">
     <div class="modal-header">

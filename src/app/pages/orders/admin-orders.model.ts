@@ -44,6 +44,7 @@ export interface AdminOrderLegDTO {
   city: string;
   readyByEstimate: string;
   medicineNames: string[];
+  completedAt: string;
 }
 
 export interface AdminOrderDetailDTO {
