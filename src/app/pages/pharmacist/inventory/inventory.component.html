@@ -1,0 +1,104 @@
+<div class="max-w-7xl mx-auto p-6" dir="rtl">
+    <!-- هيدر الصفحة -->
+    <div class="mb-6 flex justify-between items-center">
+        <div>
+            <h1 class="text-2xl font-black text-slate-900">مخزون الصيدلية</h1>
+            <p class="text-slate-500 mt-1">عرض حالة الأدوية، والكميات المتاحة، وتواريخ الصلاحية.</p>
+        </div>
+    </div>
+
+    <div class="card bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+        <!-- الشريط العلوي: الفلاتر + البحث -->
+        <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
+
+            <!-- فلاتر الحالة -->
+            <div class="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0">
+                @for (option of filterOptions; track option.value) {
+                <button type="button" (click)="setFilter(option.value)" [class.bg-teal-700]="status === option.value"
+                    [class.text-white]="status === option.value" [class.bg-gray-100]="status !== option.value"
+                    [class.text-gray-600]="status !== option.value"
+                    class="px-4 py-2 rounded-lg text-xs md:text-sm font-semibold transition-all duration-200 whitespace-nowrap hover:bg-teal-600 hover:text-white shadow-xs">
+                    {{ option.label }}
+                </button>
+                }
+            </div>
+
+            <!-- مربع البحث -->
+            <div class="relative w-full md:w-80">
+                <input type="text" pInputText [(ngModel)]="searchTermInput" (ngModelChange)="onSearchChange($event)"
+                    placeholder="ابحث باسم الدواء..."
+                    class="w-full pl-9 pr-4 py-2 bg-gray-50 border border-gray-200 text-gray-800 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-600 focus:bg-white focus:border-transparent transition-all">
+                <span class="absolute inset-y-0 left-3 flex items-center pointer-events-none text-gray-400">
+                    <i class="pi pi-search text-sm"></i>
+                </span>
+            </div>
+        </div>
+
+        <!-- الجدول -->
+        <div class="overflow-hidden rounded-lg border border-gray-100">
+            <p-table [value]="inventoryItems" [lazy]="true" (onLazyLoad)="onLazyLoad($event)" [paginator]="true"
+                [rows]="rows" [first]="first" [totalRecords]="totalRecords" [loading]="loading"
+                [rowsPerPageOptions]="[10, 20, 50]" dataKey="inventoryId"
+                styleClass="p-datatable-striped p-datatable-sm" responsiveLayout="scroll">
+
+                <!-- الهيدر -->
+                <ng-template pTemplate="header">
+                    <tr class="bg-gray-50 border-b border-gray-200">
+                        <th class="py-4 px-4 text-right text-xs font-semibold text-gray-600">اسم الدواء</th>
+                        <th class="py-4 px-4 text-center text-xs font-semibold text-gray-600">الكمية المتاحة</th>
+                        <th class="py-4 px-4 text-center text-xs font-semibold text-gray-600">الكمية المحجوزة</th>
+                        <th class="py-4 px-4 text-center text-xs font-semibold text-gray-600">السعر</th>
+                        <th class="py-4 px-4 text-center text-xs font-semibold text-gray-600">تاريخ الصلاحية</th>
+                        <th class="py-4 px-4 text-center text-xs font-semibold text-gray-600">الحالة</th>
+                    </tr>
+                </ng-template>
+
+                <!-- البودي -->
+                <ng-template pTemplate="body" let-item>
+                    <tr>
+                        <!-- اسم الدواء (إنجليزي وعربي) -->
+                        <td>
+                            <div class="font-semibold">{{ item.drugName }}</div>
+                            <div class="text-sm text-gray-500">{{ item.arabicName }}</div>
+                        </td>
+
+                        <!-- الكمية المتاحة -->
+                        <td>{{ item.stockQuantity }}</td>
+
+                        <!-- الكمية المحجوزة -->
+                        <td>{{ item.reservedQuantity }}</td>
+
+                        <!-- السعر -->
+                        <td>{{ item.unitPrice }} جنيه</td>
+
+                        <!-- تاريخ الصلاحية (مع استخدام Date Pipe لتنسيق التاريخ) -->
+                        <td>{{ item.expiryDate | date:'yyyy-MM-dd' }}</td>
+
+                        <!-- الحالة -->
+                        <td>
+                            <span [class]="getStatusClasses(item.stockStatus)"
+                                class="px-2 py-1 rounded text-sm font-medium">
+                                {{ getStatusArabicLabel(item.stockStatus) }}
+                            </span>
+                        </td>
+                    </tr>
+                </ng-template>
+
+                <!-- في حالة لا توجد بيانات -->
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="6" class="text-center py-10 text-gray-500 text-sm font-medium">
+                            لا توجد أدوية متطابقة مع بحثك أو الفلتر المختار.
+                        </td>
+                    </tr>
+                </ng-template>
+
+                <!-- أيقونة التحميل -->
+                <ng-template pTemplate="loadingicon">
+                    <i class="pi pi-spin pi-spinner text-teal-700" style="font-size: 1.75rem"></i>
+                </ng-template>
+
+            </p-table>
+        </div>
+    </div>
+</div>

@@ -8,152 +8,154 @@
     </div>
     <div class="flex gap-3">
       <a pButton label="مراجعة الروشتات" icon="pi pi-file-prescription"
-        style="background-color: #00796b; border-color: #00796b;"
-        class="hover:opacity-90 transition-opacity"
+        style="background-color: #00796b; border-color: #00796b;" class="hover:opacity-90 transition-opacity"
         routerLink="/pharmacist/prescription-queue"></a>
-      <p-button label="تحديث البيانات" icon="pi pi-refresh" severity="secondary" [outlined]="true" (onClick)="loadDashboardData()"></p-button>
+      <p-button label="تحديث البيانات" icon="pi pi-refresh" severity="secondary" [outlined]="true"
+        (onClick)="loadDashboardData()"></p-button>
     </div>
   </div>
 
   @if (isLoading()) {
-    <div class="flex justify-center items-center h-64">
-      <i class="pi pi-spin pi-spinner text-4xl text-primary-500"></i>
-    </div>
+  <div class="flex justify-center items-center h-64">
+    <i class="pi pi-spin pi-spinner text-4xl text-primary-500"></i>
+  </div>
   } @else {
 
-    <!-- Top Metrics Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-      <p-card styleClass="shadow-sm border border-slate-100 rounded-xl">
-        <div class="flex justify-between items-start">
-          <div>
-            <span class="block text-slate-500 font-medium mb-1">الروشتات المعلقة</span>
-            <div class="text-3xl font-bold text-slate-800">{{ metrics()?.pendingPrescriptionReviews || 0 }}</div>
-          </div>
-          <div class="w-10 h-10 flex items-center justify-center bg-blue-100 rounded-lg">
-            <i class="pi pi-clock text-blue-600 text-xl"></i>
-          </div>
+  <!-- Top Metrics Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <p-card styleClass="shadow-sm border border-slate-100 rounded-xl">
+      <div class="flex justify-between items-start">
+        <div>
+          <span class="block text-slate-500 font-medium mb-1">الروشتات المعلقة</span>
+          <div class="text-3xl font-bold text-slate-800">{{ metrics()?.pendingPrescriptionReviews || 0 }}</div>
         </div>
-      </p-card>
+        <div class="w-10 h-10 flex items-center justify-center bg-blue-100 rounded-lg">
+          <i class="pi pi-clock text-blue-600 text-xl"></i>
+        </div>
+      </div>
+    </p-card>
 
-      <p-card styleClass="shadow-sm border border-slate-100 rounded-xl">
-        <div class="flex justify-between items-start">
-          <div>
-            <span class="block text-slate-500 font-medium mb-1">روشتات مكتملة (اليوم)</span>
-            <div class="text-3xl font-bold text-slate-800">{{ metrics()?.completedReviewsToday || 0 }}</div>
-          </div>
-          <div class="w-10 h-10 flex items-center justify-center bg-green-100 rounded-lg">
-            <i class="pi pi-check-circle text-green-600 text-xl"></i>
-          </div>
+    <p-card styleClass="shadow-sm border border-slate-100 rounded-xl">
+      <div class="flex justify-between items-start">
+        <div>
+          <span class="block text-slate-500 font-medium mb-1">روشتات مكتملة (اليوم)</span>
+          <div class="text-3xl font-bold text-slate-800">{{ metrics()?.completedReviewsToday || 0 }}</div>
         </div>
-      </p-card>
+        <div class="w-10 h-10 flex items-center justify-center bg-green-100 rounded-lg">
+          <i class="pi pi-check-circle text-green-600 text-xl"></i>
+        </div>
+      </div>
+    </p-card>
 
-      <p-card styleClass="shadow-sm border border-slate-100 rounded-xl">
-        <div class="flex justify-between items-start">
-          <div>
-            <span class="block text-slate-500 font-medium mb-1">طلبات بانتظار التجهيز</span>
-            <div class="text-3xl font-bold text-slate-800">{{ metrics()?.pendingFulfillmentOrders || 0 }}</div>
-          </div>
-          <div class="w-10 h-10 flex items-center justify-center bg-orange-100 rounded-lg">
-            <i class="pi pi-box text-orange-600 text-xl"></i>
-          </div>
+    <p-card styleClass="shadow-sm border border-slate-100 rounded-xl">
+      <div class="flex justify-between items-start">
+        <div>
+          <span class="block text-slate-500 font-medium mb-1">طلبات بانتظار التجهيز</span>
+          <div class="text-3xl font-bold text-slate-800">{{ metrics()?.pendingFulfillmentOrders || 0 }}</div>
         </div>
-      </p-card>
+        <div class="w-10 h-10 flex items-center justify-center bg-orange-100 rounded-lg">
+          <i class="pi pi-box text-orange-600 text-xl"></i>
+        </div>
+      </div>
+    </p-card>
 
-      <p-card styleClass="shadow-sm border border-slate-100 rounded-xl">
-        <div class="flex justify-between items-start">
-          <div>
-            <span class="block text-slate-500 font-medium mb-1">طلبات مكتملة (اليوم)</span>
-            <div class="text-3xl font-bold text-slate-800">{{ metrics()?.completedOrdersToday || 0 }}</div>
-          </div>
-          <div class="w-10 h-10 flex items-center justify-center bg-teal-100 rounded-lg">
-            <i class="pi pi-shopping-bag text-teal-600 text-xl"></i>
-          </div>
+    <p-card styleClass="shadow-sm border border-slate-100 rounded-xl">
+      <div class="flex justify-between items-start">
+        <div>
+          <span class="block text-slate-500 font-medium mb-1">طلبات مكتملة (اليوم)</span>
+          <div class="text-3xl font-bold text-slate-800">{{ metrics()?.completedOrdersToday || 0 }}</div>
         </div>
-      </p-card>
+        <div class="w-10 h-10 flex items-center justify-center bg-teal-100 rounded-lg">
+          <i class="pi pi-shopping-bag text-teal-600 text-xl"></i>
+        </div>
+      </div>
+    </p-card>
+  </div>
+
+  <!-- Charts & Tables Grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+    <!-- Chart Section -->
+    <div class="col-span-1 lg:col-span-1 bg-white p-5 rounded-xl shadow-sm border border-slate-100">
+      <h2 class="text-lg font-semibold text-slate-800 mb-4">ملخص نشاط اليوم</h2>
+      <p-chart type="bar" [data]="chartData" [options]="chartOptions" height="300px"></p-chart>
     </div>
 
-    <!-- Charts & Tables Grid -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-      <!-- Chart Section -->
-      <div class="col-span-1 lg:col-span-1 bg-white p-5 rounded-xl shadow-sm border border-slate-100">
-        <h2 class="text-lg font-semibold text-slate-800 mb-4">ملخص نشاط اليوم</h2>
-        <p-chart type="bar" [data]="chartData" [options]="chartOptions" height="300px"></p-chart>
-      </div>
-
-      <!-- Inventory Alerts Table -->
-      <div class="col-span-1 lg:col-span-2 bg-white p-5 rounded-xl shadow-sm border border-slate-100">
-        <div class="flex justify-between items-center mb-4">
-          <h2 class="text-lg font-semibold text-slate-800">تنبيهات المخزون والصلاحية</h2>
-        </div>
-
-        <p-table [value]="inventoryAlerts()" [rows]="5" [paginator]="true" responsiveLayout="scroll" styleClass="p-datatable-sm">
-          <ng-template pTemplate="header">
-            <tr>
-              <th>اسم الدواء</th>
-              <th>الكمية المتاحة</th>
-              <th>تاريخ الصلاحية</th>
-              <th>الحالة</th>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-alert>
-            <tr>
-              <td class="font-medium">{{ alert.brandName }}</td>
-              <td>{{ alert.stockQuantity }}</td>
-              <td>{{ alert.expiryDate | date:'MMM yyyy' }}</td>
-              <td>
-                <p-tag [value]="alert.alertType === 'Low Stock' ? 'نواقص' : 'صلاحية قريبة'"
-                       [severity]="getAlertSeverity(alert.alertType)"></p-tag>
-              </td>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="emptymessage">
-            <tr>
-              <td colspan="4" class="text-center p-4 text-slate-500">لا توجد تنبيهات حالية للمخزون.</td>
-            </tr>
-          </ng-template>
-        </p-table>
-      </div>
-
-    </div>
-
-    <!-- Pending Tasks Queue -->
-    <div class="mt-6 bg-white p-5 rounded-xl shadow-sm border border-slate-100">
+    <!-- Inventory Alerts Table -->
+    <div class="col-span-1 lg:col-span-2 bg-white p-5 rounded-xl shadow-sm border border-slate-100">
       <div class="flex justify-between items-center mb-4">
-        <h2 class="text-lg font-semibold text-slate-800">مهام التجهيز الحالية</h2>
-        <p-button routerLink="/pharmacist/preparation-list" label="عرض الكل" link="true"></p-button>
+        <h2 class="text-lg font-semibold text-slate-800">تنبيهات المخزون والصلاحية</h2>
       </div>
 
-      <p-table [value]="pendingTasks()" responsiveLayout="scroll" styleClass="p-datatable-sm">
+      <p-table [value]="inventoryAlerts()" [rows]="5" [paginator]="true" responsiveLayout="scroll"
+        styleClass="p-datatable-sm">
         <ng-template pTemplate="header">
           <tr>
-            <th>رقم الطلب</th>
-            <th>عدد الأصناف</th>
-            <th>الوقت المتوقع للتجهيز</th>
-            <th>الإجمالي</th>
-            <th>إجراء</th>
+            <th>اسم الدواء</th>
+            <th>الكمية المتاحة</th>
+            <th>تاريخ الصلاحية</th>
+            <th>الحالة</th>
           </tr>
         </ng-template>
-        <ng-template pTemplate="body" let-task>
+        <ng-template pTemplate="body" let-alert>
           <tr>
-            <td class="font-medium text-blue-600">#{{ task.orderId.substring(0, 8) | uppercase }}</td>
-            <td>{{ task.itemsCount }} أصناف</td>
+            <td class="font-medium">{{ alert.brandName }}</td>
+            <td>{{ alert.stockQuantity }}</td>
+            <td>{{ alert.expiryDate | date:'MMM yyyy' }}</td>
             <td>
-              <i class="pi pi-clock text-orange-500 mr-1"></i>
-              {{ task.readyByEstimate | date:'shortTime' }}
-            </td>
-            <td class="font-semibold">{{ task.totalAmount | currency:'EGP' }}</td>
-            <td>
-              <p-button icon="pi pi-box" label="ابدأ التجهيز" size="small" severity="success" [outlined]="true"></p-button>
+              <p-tag [value]="alert.alertType === 'Low Stock' ? 'نواقص' : 'صلاحية قريبة'"
+                [severity]="getAlertSeverity(alert.alertType)"></p-tag>
             </td>
           </tr>
         </ng-template>
         <ng-template pTemplate="emptymessage">
           <tr>
-            <td colspan="5" class="text-center p-6 text-slate-500">لا توجد طلبات معلقة للتجهيز في الوقت الحالي.</td>
+            <td colspan="4" class="text-center p-4 text-slate-500">لا توجد تنبيهات حالية للمخزون.</td>
           </tr>
         </ng-template>
       </p-table>
     </div>
+
+  </div>
+
+  <!-- Pending Tasks Queue -->
+  <div class="mt-6 bg-white p-5 rounded-xl shadow-sm border border-slate-100">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-lg font-semibold text-slate-800">مهام التجهيز الحالية</h2>
+      <p-button routerLink="/pharmacist/preparation-list" label="عرض الكل" link="true"></p-button>
+    </div>
+
+    <p-table [value]="pendingTasks()" responsiveLayout="scroll" styleClass="p-datatable-sm">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>رقم الطلب</th>
+          <th>عدد الأصناف</th>
+          <th>الوقت المتوقع للتجهيز</th>
+          <th>الإجمالي</th>
+          <th>إجراء</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-task>
+        <tr>
+          <td class="font-medium text-blue-600">#{{ task.orderId.substring(0, 8) | uppercase }}</td>
+          <td>{{ task.itemsCount }} أصناف</td>
+          <td>
+            <i class="pi pi-clock text-orange-500 mr-1"></i>
+            {{ task.readyByEstimate | date:'shortTime' }}
+          </td>
+          <td class="font-semibold">{{ task.totalAmount | currency:'EGP' }}</td>
+          <td>
+            <p-button icon="pi pi-box" label="ابدأ التجهيز" size="small" severity="success"
+              [outlined]="true"></p-button>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="5" class="text-center p-6 text-slate-500">لا توجد طلبات معلقة للتجهيز في الوقت الحالي.</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
   }
 </div>

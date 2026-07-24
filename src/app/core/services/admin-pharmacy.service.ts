@@ -13,6 +13,8 @@ import {
   PharmacyOwnerResponseDto,
   GetPharmacyOwnersQuery,
   CreatePharmacyOwnerRequest,
+  UpdatePharmacyOwnerRequest,
+  UserStatus,
 } from '@core/interfaces/admin-pharmacy.interface';
 
 @Injectable({ providedIn: 'root' })
@@ -119,22 +121,38 @@ export class AdminPharmacyService {
 
   /**
    * GET /api/v1/PharmacyOwners
-   * Retrieves paginated list of pharmacy owners (used for async search in assign-owner dialog).
+   * Retrieves paginated, filterable list of pharmacy owners.
    */
   getPharmacyOwners(
     query: GetPharmacyOwnersQuery,
   ): Observable<PaginatedList<PharmacyOwnerResponseDto>> {
     let params = new HttpParams()
       .set('PageNumber', (query.pageNumber ?? 1).toString())
-      .set('PageSize', (query.pageSize ?? 20).toString());
+      .set('PageSize', (query.pageSize ?? 10).toString());
 
     if (query.search?.trim()) {
       params = params.set('Search', query.search.trim());
+    }
+    if (query.status != null) {
+      params = params.set('Status', query.status.toString());
+    }
+    if (query.pharmacyId) {
+      params = params.set('PharmacyId', query.pharmacyId);
     }
 
     return this.http.get<PaginatedList<PharmacyOwnerResponseDto>>(
       `${this.baseUrl}/PharmacyOwners`,
       { params },
+    );
+  }
+
+  /**
+   * GET /api/v1/PharmacyOwners/:id
+   * Retrieves pharmacy owner profile by ID.
+   */
+  getPharmacyOwnerById(id: string): Observable<PharmacyOwnerResponseDto> {
+    return this.http.get<PharmacyOwnerResponseDto>(
+      `${this.baseUrl}/PharmacyOwners/${id}`,
     );
   }
 
@@ -151,6 +169,49 @@ export class AdminPharmacyService {
     );
   }
 
+  /**
+   * PUT /api/v1/PharmacyOwners/:id
+   * Updates an existing pharmacy owner user account.
+   */
+  updatePharmacyOwner(id: string, data: UpdatePharmacyOwnerRequest): Observable<void> {
+    return this.http.put<void>(
+      `${this.baseUrl}/PharmacyOwners/${id}`,
+      data,
+    );
+  }
+
+  /**
+   * DELETE /api/v1/PharmacyOwners/:id
+   * Soft-deletes a pharmacy owner account (marks status as Inactive).
+   */
+  deletePharmacyOwner(id: string): Observable<void> {
+    return this.http.delete<void>(
+      `${this.baseUrl}/PharmacyOwners/${id}`,
+    );
+  }
+
+  /**
+   * PATCH /api/v1/PharmacyOwners/:id/status
+   * Updates the status (Active, Inactive, Suspended) of a pharmacy owner account.
+   */
+  changePharmacyOwnerStatus(id: string, status: UserStatus): Observable<void> {
+    return this.http.patch<void>(
+      `${this.baseUrl}/PharmacyOwners/${id}/status`,
+      status,
+    );
+  }
+
+  /**
+   * POST /api/v1/PharmacyOwners/:id/assign-pharmacy/:pharmacyId
+   * Assigns a pharmacy owner as owner of a specific pharmacy.
+   */
+  assignPharmacyToOwner(id: string, pharmacyId: string): Observable<void> {
+    return this.http.post<void>(
+      `${this.baseUrl}/PharmacyOwners/${id}/assign-pharmacy/${pharmacyId}`,
+      {},
+    );
+  }
+
   // ─── Private helpers ────────────────────────────────────────────────────────
 
   private buildPharmacyFormData(
@@ -161,7 +222,8 @@ export class AdminPharmacyService {
     fd.append('LicenseNumber', data.licenseNumber);
     if (data.logoFile) {
       fd.append('LogoFile', data.logoFile, data.logoFile.name);
-    } else if (data.logoUrl) {
+    }
+    if (data.logoUrl) {
       fd.append('LogoUrl', data.logoUrl);
     }
     if (data.verificationStatus != null) {

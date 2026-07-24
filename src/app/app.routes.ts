@@ -175,6 +175,13 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./pages/cart/cart.component').then((m) => m.CartComponent),
       },
+      {
+        path: 'checkout',
+        canActivate: [authGuard],
+        data: { role: AppRoles.Patient },
+        loadComponent: () =>
+          import('./pages/checkout/checkout').then((m) => m.CheckoutComponent),
+      },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
     ],
   },
@@ -213,6 +220,10 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/pharmacist/preparation-list/preparation-list').then((m) => m.PreparationListComponent),
       },
       {
+        path: 'inventory',
+        loadComponent: () => import('./pages/pharmacist/inventory/inventory.component').then(m => m.InventoryComponent)
+      },
+      {
         path: 'prescription-queue',
         loadComponent: () =>
           import('./pages/pharmacist/prescription-queue/prescription-queue').then(
@@ -220,6 +231,7 @@ export const routes: Routes = [
           ),
       },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
+
     ],
   },
   {
@@ -284,6 +296,18 @@ export const routes: Routes = [
           import('./pages/admin/pharmacies/pharmacy-detail/pharmacy-detail.component').then(
             (m) => m.PharmacyDetailComponent,
           ),
+      },
+      {
+        path: 'pharmacy-owners',
+        loadComponent: () =>
+          import('./pages/admin/pharmacy-owners/admin-pharmacy-owners.component').then(
+            (m) => m.AdminPharmacyOwnersComponent,
+          ),
+      },
+      {
+        path: 'owners',
+        redirectTo: 'pharmacy-owners',
+        pathMatch: 'full',
       },
       {
         path: 'orders',
