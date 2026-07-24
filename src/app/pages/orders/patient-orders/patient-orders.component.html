@@ -1,0 +1,101 @@
+<div class="orders-container max-w-6xl mx-auto p-4 md:p-6 min-h-screen" dir="rtl">
+  
+  <div class="flex items-center justify-between mb-6">
+    <h1 class="text-2xl font-bold text-gray-800 flex items-center">
+      طلباتي <span class="text-gray-400 text-lg font-normal mx-2">/ المريض</span>
+    </h1>
+  </div>
+
+  <!-- Tabs -->
+  <div class="border-b border-gray-200 mb-6 flex gap-6 overflow-x-auto">
+    <button (click)="setTab('All')" [class.border-teal-600]="activeTab === 'All'" [class.text-teal-600]="activeTab === 'All'" class="pb-3 px-2 border-b-2 border-transparent text-gray-500 hover:text-gray-800 font-medium whitespace-nowrap transition-colors">
+      الكل
+    </button>
+    <button (click)="setTab('Active')" [class.border-teal-600]="activeTab === 'Active'" [class.text-teal-600]="activeTab === 'Active'" class="pb-3 px-2 border-b-2 border-transparent text-gray-500 hover:text-gray-800 font-medium whitespace-nowrap transition-colors">
+      نشط
+    </button>
+    <button (click)="setTab('Completed')" [class.border-teal-600]="activeTab === 'Completed'" [class.text-teal-600]="activeTab === 'Completed'" class="pb-3 px-2 border-b-2 border-transparent text-gray-500 hover:text-gray-800 font-medium whitespace-nowrap transition-colors">
+      مكتمل
+    </button>
+    <button (click)="setTab('Cancelled')" [class.border-teal-600]="activeTab === 'Cancelled'" [class.text-teal-600]="activeTab === 'Cancelled'" class="pb-3 px-2 border-b-2 border-transparent text-gray-500 hover:text-gray-800 font-medium whitespace-nowrap transition-colors">
+      ملغي
+    </button>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="flex flex-col gap-4">
+    <div *ngFor="let i of [1,2,3]" class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm animate-pulse flex flex-col md:flex-row gap-6">
+      <div class="flex flex-col gap-3 flex-1">
+        <div class="h-6 bg-gray-200 rounded w-1/4"></div>
+        <div class="h-4 bg-gray-200 rounded w-2/3"></div>
+        <div class="h-4 bg-gray-200 rounded w-1/3 mt-2"></div>
+      </div>
+      <div class="flex flex-col gap-3 w-full md:w-32 items-start md:items-end">
+        <div class="h-6 bg-gray-200 rounded w-20"></div>
+        <div class="h-10 bg-gray-200 rounded-full w-full"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error" class="bg-red-50 text-red-600 p-4 rounded-lg text-center font-medium shadow-sm">
+    {{ error }}
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!isLoading && !error && orders.length === 0" class="bg-white rounded-xl shadow-sm p-12 text-center border border-gray-100">
+    <div class="text-gray-400 mb-4">
+      <svg class="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+    </div>
+    <h2 class="text-xl font-semibold text-gray-700 mb-2">لا توجد طلبات</h2>
+    <p class="text-gray-500">لم تقم بإجراء أي طلبات حتى الآن.</p>
+  </div>
+
+  <!-- Orders List -->
+  <div *ngIf="!isLoading && !error && orders.length > 0" class="flex flex-col gap-4">
+    <div *ngFor="let order of orders" class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm flex flex-col-reverse md:flex-row items-start justify-between gap-6 hover:shadow-md transition-shadow">
+      
+      <!-- Right Side (Left in visual LTR, but Right in RTL) -->
+      <div class="flex flex-col gap-4 flex-1 w-full">
+        <!-- Status & Order No -->
+        <div class="flex items-center gap-3">
+          <span [class]="getStatusClass(order.orderStatus)" class="px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap">
+            {{ getStatusText(order.orderStatus) }}
+          </span>
+          <span class="text-gray-500 font-mono text-sm tracking-wider">{{ order.orderNumber }}</span>
+        </div>
+        
+        <!-- Summary & Pharmacy -->
+        <div>
+          <h3 class="text-gray-800 font-bold text-lg mb-1 leading-snug">{{ getMedicinesSummary(order) }}</h3>
+          <p class="text-gray-500 text-sm flex items-center gap-2">
+            <span>{{ order.createdAt | date:'dd-MM-yyyy' }}</span>
+            <span class="text-gray-300">-</span>
+            <span>{{ getPharmacyNames(order) }}</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- Left Side (Price & Action) -->
+      <div class="flex flex-row md:flex-col items-center md:items-end justify-between w-full md:w-auto gap-4 shrink-0">
+        <div class="font-bold text-teal-700 text-xl text-left" dir="ltr">{{ order.totalAmount | number:'1.2-2' }} ج</div>
+        <button [routerLink]="['/patient/orders', order.orderId]" class="border border-teal-600 text-teal-600 hover:bg-teal-50 font-medium py-2 px-6 rounded-full transition-colors whitespace-nowrap">
+          التفاصيل
+        </button>
+      </div>
+      
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div *ngIf="!isLoading && !error && totalPages > 1" class="mt-8 flex justify-center items-center gap-4">
+    <button (click)="prevPage()" [disabled]="!hasPreviousPage" class="p-2 rounded-lg bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-50 transition-colors">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+    </button>
+    <span class="text-gray-600 font-medium">صفحة {{ filter.pageNumber }} من {{ totalPages }}</span>
+    <button (click)="nextPage()" [disabled]="!hasNextPage" class="p-2 rounded-lg bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-50 transition-colors">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+    </button>
+  </div>
+
+</div>

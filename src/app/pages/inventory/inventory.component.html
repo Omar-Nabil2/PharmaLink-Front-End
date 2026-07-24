@@ -241,10 +241,13 @@
     (editRequested)="onViewEditRequested()"
   />
 
-  <!-- ── Add dialog ─────────────────────────────────────────────── -->
-  <p-dialog
+  <!-- ── Add dialog (child component with reactive-form validation) ── -->
+  <app-add-inventory-dialog
     [visible]="isFormDialogOpen()"
     (visibleChange)="isFormDialogOpen.set($event)"
+    [defaultBranchId]="branchId()"
+    (saved)="onInventorySaved()"
+  />
     [modal]="true"
     [draggable]="false"
     [resizable]="false"
@@ -375,32 +378,6 @@
       </div>
     </div>
 
-    <ng-template #footer>
-      <div class="flex flex-col-reverse sm:flex-row items-center justify-end gap-2 w-full pt-2">
-        <button
-          type="button"
-          (click)="isFormDialogOpen.set(false)"
-          class="w-full sm:w-auto h-10 lg:h-12 rounded-lg border border-border px-4 text-xs lg:text-base font-medium text-foreground transition-colors duration-200 hover:bg-muted"
-        >
-          إلغاء
-        </button>
-        <button
-          type="button"
-          (click)="save()"
-          [disabled]="isSaving()"
-          class="w-full sm:w-auto h-10 lg:h-12 rounded-lg px-5 text-xs lg:text-base font-medium text-white flex items-center justify-center gap-2 transition-colors duration-200 disabled:opacity-60"
-          style="background-color: #007671"
-          onmouseover="this.style.backgroundColor='var(--color-green-hover)'"
-          onmouseout="this.style.backgroundColor='#007671'"
-        >
-          @if (isSaving()) {
-            <i class="pi pi-spin pi-spinner text-[0.8125rem]"></i>
-          }
-          <span>{{ isEditing() ? 'حفظ التعديلات' : 'إضافة' }}</span>
-        </button>
-      </div>
-    </ng-template>
-  </p-dialog>
 
   <!-- ── Details dialog ─────────────────────────────────────────── -->
   <p-dialog

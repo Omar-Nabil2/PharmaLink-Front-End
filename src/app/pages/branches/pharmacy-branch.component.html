@@ -1,0 +1,569 @@
+<main dir="rtl" class="flex-1 p-4 sm:p-6 lg:p-8 overflow-auto bg-background text-foreground min-h-[calc(100vh-4rem)] space-y-4" style="font-family: var(--font-cairo)">
+  <p-toast position="top-center"></p-toast>
+
+  <!-- ── Page header ───────────────────────────────────────────── -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+    <div class="flex items-center gap-3">
+      <h1 class="text-base md:text-xl lg:text-2xl font-bold tracking-tight text-foreground">إدارة الفروع</h1>
+      <span class="text-[10px] lg:text-xs font-medium text-muted-foreground hidden sm:block">/ فروع الصيدلية</span>
+    </div>
+  </div>
+
+  <!-- ── Toolbar: search + add ─────────────────────────────────── -->
+  <div class="bg-card rounded-xl border border-border p-4 flex gap-3 flex-wrap items-center">
+    <!-- Live search (mirrors inventory drug search input) -->
+    <div class="relative flex-1 min-w-[15rem]">
+      <i class="pi pi-search absolute right-3 top-1/2 -translate-y-1/2 text-[0.8125rem] text-muted-foreground"></i>
+      <input
+        type="text"
+        placeholder="ابحث عن فرع..."
+        (input)="onSearch($event)"
+        class="w-full h-10 lg:h-12 rounded-lg border border-border bg-background pr-10 pl-4 text-xs lg:text-base text-foreground leading-normal outline-none transition-colors duration-200 focus:border-[#007671]"
+      />
+    </div>
+
+    <!-- Add branch (primary #007671) -->
+    <button
+      type="button"
+      (click)="openAddModal()"
+      class="h-10 lg:h-12 rounded-lg px-5 text-xs lg:text-base font-medium text-white flex items-center gap-2 transition-colors duration-200"
+      style="background-color: #007671"
+      onmouseover="this.style.backgroundColor='var(--color-green-hover)'"
+      onmouseout="this.style.backgroundColor='#007671'"
+    >
+      <i class="pi pi-plus text-[0.8125rem]"></i>
+      <span>إضافة فرع جديد</span>
+    </button>
+  </div>
+
+  <!-- ── Table container ──────────────────────────────────────── -->
+  <div class="bg-card rounded-xl border border-border shadow-sm overflow-hidden">
+    @if (isLoading()) {
+      <!-- Skeleton loading placeholders -->
+      <div class="p-4 space-y-3">
+        @for (row of [0, 1, 2, 3, 4, 5]; track row) {
+          <div class="flex items-center gap-4 animate-pulse">
+            <div class="h-4 flex-1 bg-muted rounded"></div>
+            <div class="h-4 w-24 bg-muted rounded"></div>
+            <div class="h-4 w-24 bg-muted rounded"></div>
+            <div class="h-4 w-20 bg-muted rounded"></div>
+            <div class="h-8 w-24 bg-muted rounded"></div>
+          </div>
+        }
+      </div>
+    } @else if (branches().length === 0) {
+      <!-- Empty state -->
+      <div class="p-12 flex flex-col items-center justify-center text-center gap-3">
+        <div class="h-16 w-16 rounded-full bg-muted flex items-center justify-center">
+          <i class="pi pi-sitemap text-2xl text-muted-foreground"></i>
+        </div>
+        <p class="text-sm md:text-base lg:text-lg font-semibold text-foreground">لا توجد فروع</p>
+        <p class="text-xs lg:text-base text-muted-foreground max-w-md">
+          لم تقم بإضافة أي فروع حتى الآن. اضغط على "إضافة فرع جديد" للبدء.
+        </p>
+      </div>
+    } @else {
+      <!-- Data table -->
+      <div class="overflow-x-auto">
+        <table class="w-full text-right" [style.min-width.rem]="48">
+          <thead>
+            <tr class="bg-muted/50">
+              <th class="text-right p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground whitespace-nowrap">اسم الفرع</th>
+              <th class="text-right p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground whitespace-nowrap">الموقع</th>
+              <th class="text-right p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground whitespace-nowrap">رقم الهاتف</th>
+              <th class="text-right p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground whitespace-nowrap">الخدمات</th>
+              <th class="text-center p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground whitespace-nowrap">الإجراءات</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (branch of branches(); track branch.branchId) {
+              <tr class="border-t border-border transition-colors duration-200 hover:bg-muted/30">
+                <td class="p-4 text-xs lg:text-base font-normal leading-normal font-medium text-foreground whitespace-nowrap">{{ branch.branchName }}</td>
+                <td class="p-4 text-xs lg:text-base font-normal leading-normal text-muted-foreground whitespace-nowrap">
+                  {{ branch.governorate }} - {{ branch.city }}
+                </td>
+                <td class="p-4 text-xs lg:text-base font-normal leading-normal text-muted-foreground whitespace-nowrap" dir="ltr">{{ branch.phoneNumber }}</td>
+                <td class="p-4">
+                  <div class="flex items-center gap-2 flex-wrap">
+                    @if (branch.supportsDelivery) {
+                      <span class="px-2 py-0.5 rounded-full bg-accent/15 text-accent text-[10px] lg:text-xs font-medium">توصيل</span>
+                    }
+                    @if (branch.supportsPickup) {
+                      <span class="px-2 py-0.5 rounded-full bg-info/15 text-info text-[10px] lg:text-xs font-medium">استلام</span>
+                    }
+                  </div>
+                </td>
+                <td class="p-4">
+                  <div class="flex items-center justify-center gap-1">
+                    <!-- View -->
+                    <button
+                      type="button"
+                      (click)="openViewModal(branch)"
+                      class="h-8 w-8 rounded flex items-center justify-center text-slate-500 transition-colors duration-200 hover:bg-slate-100"
+                      title="عرض"
+                    >
+                      <i class="pi pi-eye text-[0.8125rem]"></i>
+                    </button>
+                    <!-- Edit -->
+                    <button
+                      type="button"
+                      (click)="openEditModal(branch)"
+                      [disabled]="editingBranchId() === branch.branchId"
+                      class="h-8 w-8 rounded flex items-center justify-center text-blue-500 transition-colors duration-200 hover:bg-blue-50 disabled:opacity-50"
+                      title="تعديل"
+                    >
+                      @if (editingBranchId() === branch.branchId) {
+                        <i class="pi pi-spin pi-spinner text-[0.8125rem]"></i>
+                      } @else {
+                        <i class="pi pi-pencil text-[0.8125rem]"></i>
+                      }
+                    </button>
+                    <!-- Delete -->
+                    <button
+                      type="button"
+                      (click)="confirmDelete(branch)"
+                      class="h-8 w-8 rounded flex items-center justify-center text-red-500 transition-colors duration-200 hover:bg-red-50"
+                      title="حذف"
+                    >
+                      <i class="pi pi-trash text-[0.8125rem]"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <p-paginator
+        [rows]="pageSize()"
+        [totalRecords]="totalCount()"
+        [first]="first()"
+        [rowsPerPageOptions]="[10, 20, 50]"
+        (onPageChange)="onPageChange($event)"
+        styleClass="border-t border-border"
+      />
+    }
+  </div>
+</main>
+
+<!-- ================= ADD / EDIT MODAL ================= -->
+<p-dialog
+  [visible]="isModalOpen()"
+  (visibleChange)="isModalOpen.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  styleClass="w-[90vw] sm:w-[85vw] md:w-full max-w-xl mx-4"
+  contentStyleClass="max-h-[90vh] overflow-y-auto p-4 sm:p-6"
+  [dismissableMask]="true"
+  [maskStyleClass]="'bg-black/50'"
+>
+  <ng-template #header>
+    <span class="text-base sm:text-lg font-bold text-foreground">
+      {{ modalMode() === 'add' ? 'إضافة فرع جديد' : 'تعديل الفرع' }}
+    </span>
+  </ng-template>
+
+  <!-- Form Body -->
+  <form [formGroup]="branchForm" (ngSubmit)="onSubmit()" dir="rtl" class="flex flex-col gap-6 pt-2" style="font-family: var(--font-cairo)">
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <!-- Branch Name -->
+      <div class="space-y-1.5 text-right md:col-span-2">
+        <label class="block text-xs sm:text-sm font-medium text-foreground">اسم الفرع <span class="text-destructive">*</span></label>
+        <input
+          type="text"
+          formControlName="branchName"
+          class="w-full h-11 rounded-lg border bg-background px-4 text-xs sm:text-sm outline-none transition-colors duration-200"
+          [class.border-border]="!hasError('branchName')"
+          [class.focus:border-[#007671]]="!hasError('branchName')"
+          [class.border-destructive]="hasError('branchName')"
+          [class.focus:ring-destructive/20]="hasError('branchName')"
+        />
+        @if (hasError('branchName')) {
+          <p class="text-xs text-destructive mt-1 font-medium">{{ getErrorMessage('branchName') }}</p>
+        }
+      </div>
+
+      <!-- Governorate -->
+      <div class="space-y-1.5 text-right">
+        <label class="block text-xs sm:text-sm font-medium text-foreground">المحافظة <span class="text-destructive">*</span></label>
+        <input
+          type="text"
+          formControlName="governorate"
+          class="w-full h-11 rounded-lg border bg-background px-4 text-xs sm:text-sm outline-none transition-colors duration-200"
+          [class.border-border]="!hasError('governorate')"
+          [class.focus:border-[#007671]]="!hasError('governorate')"
+          [class.border-destructive]="hasError('governorate')"
+          [class.focus:ring-destructive/20]="hasError('governorate')"
+        />
+        @if (hasError('governorate')) {
+          <p class="text-xs text-destructive mt-1 font-medium">{{ getErrorMessage('governorate') }}</p>
+        }
+      </div>
+
+      <!-- City -->
+      <div class="space-y-1.5 text-right">
+        <label class="block text-xs sm:text-sm font-medium text-foreground">المدينة <span class="text-destructive">*</span></label>
+        <input
+          type="text"
+          formControlName="city"
+          class="w-full h-11 rounded-lg border bg-background px-4 text-xs sm:text-sm outline-none transition-colors duration-200"
+          [class.border-border]="!hasError('city')"
+          [class.focus:border-[#007671]]="!hasError('city')"
+          [class.border-destructive]="hasError('city')"
+          [class.focus:ring-destructive/20]="hasError('city')"
+        />
+        @if (hasError('city')) {
+          <p class="text-xs text-destructive mt-1 font-medium">{{ getErrorMessage('city') }}</p>
+        }
+      </div>
+
+      <!-- Address Line -->
+      <div class="space-y-1.5 text-right md:col-span-2">
+        <label class="block text-xs sm:text-sm font-medium text-foreground">العنوان التفصيلي <span class="text-destructive">*</span></label>
+        <input
+          type="text"
+          formControlName="addressLine"
+          class="w-full h-11 rounded-lg border bg-background px-4 text-xs sm:text-sm outline-none transition-colors duration-200"
+          [class.border-border]="!hasError('addressLine')"
+          [class.focus:border-[#007671]]="!hasError('addressLine')"
+          [class.border-destructive]="hasError('addressLine')"
+          [class.focus:ring-destructive/20]="hasError('addressLine')"
+        />
+        @if (hasError('addressLine')) {
+          <p class="text-xs text-destructive mt-1 font-medium">{{ getErrorMessage('addressLine') }}</p>
+        }
+      </div>
+
+      <!-- Phone Number -->
+      <div class="space-y-1.5 text-right">
+        <label class="block text-xs sm:text-sm font-medium text-foreground">رقم الهاتف <span class="text-destructive">*</span></label>
+        <input
+          type="text"
+          formControlName="phoneNumber"
+          dir="ltr"
+          style="text-align: right;"
+          class="w-full h-11 rounded-lg border bg-background px-4 text-xs sm:text-sm outline-none transition-colors duration-200"
+          [class.border-border]="!hasError('phoneNumber')"
+          [class.focus:border-[#007671]]="!hasError('phoneNumber')"
+          [class.border-destructive]="hasError('phoneNumber')"
+          [class.focus:ring-destructive/20]="hasError('phoneNumber')"
+        />
+        @if (hasError('phoneNumber')) {
+          <p class="text-xs text-destructive mt-1 font-medium">{{ getErrorMessage('phoneNumber') }}</p>
+        }
+      </div>
+
+      <!-- Working Hours -->
+      <div class="space-y-1.5 text-right">
+        <label class="block text-xs sm:text-sm font-medium text-foreground">ساعات العمل <span class="text-destructive">*</span></label>
+        <input
+          type="text"
+          formControlName="workingHours"
+          placeholder="مثال: 09:00 ص - 10:00 م"
+          class="w-full h-11 rounded-lg border bg-background px-4 text-xs sm:text-sm outline-none transition-colors duration-200"
+          [class.border-border]="!hasError('workingHours')"
+          [class.focus:border-[#007671]]="!hasError('workingHours')"
+          [class.border-destructive]="hasError('workingHours')"
+          [class.focus:ring-destructive/20]="hasError('workingHours')"
+        />
+        @if (hasError('workingHours')) {
+          <p class="text-xs text-destructive mt-1 font-medium">{{ getErrorMessage('workingHours') }}</p>
+        }
+      </div>
+
+      <!-- Service Radius -->
+      <div class="space-y-1.5 text-right">
+        <label class="block text-xs sm:text-sm font-medium text-foreground">نطاق التوصيل (كم) <span class="text-destructive">*</span></label>
+        <input
+          type="number"
+          formControlName="serviceRadiusKm"
+          min="0"
+          class="w-full h-11 rounded-lg border bg-background px-4 text-xs sm:text-sm outline-none transition-colors duration-200"
+          [class.border-border]="!hasError('serviceRadiusKm')"
+          [class.focus:border-[#007671]]="!hasError('serviceRadiusKm')"
+          [class.border-destructive]="hasError('serviceRadiusKm')"
+          [class.focus:ring-destructive/20]="hasError('serviceRadiusKm')"
+        />
+        @if (hasError('serviceRadiusKm')) {
+          <p class="text-xs text-destructive mt-1 font-medium">{{ getErrorMessage('serviceRadiusKm') }}</p>
+        }
+      </div>
+    </div>
+
+    <!-- Location Picker -->
+    <div class="border-t border-border pt-4 space-y-3">
+      <div class="flex items-center justify-between">
+        <h3 class="text-xs sm:text-sm font-semibold text-foreground">الموقع الجغرافي <span class="text-destructive">*</span></h3>
+        <button
+          type="button"
+          (click)="detectMyLocation()"
+          [disabled]="isDetectingLocation()"
+          class="h-9 rounded-lg px-3 text-xs sm:text-sm font-medium text-white flex items-center gap-2 transition-colors duration-200 disabled:opacity-60"
+          style="background-color: #007671"
+          onmouseover="this.style.backgroundColor='var(--color-green-hover)'"
+          onmouseout="this.style.backgroundColor='#007671'"
+        >
+          @if (isDetectingLocation()) {
+            <i class="pi pi-spin pi-spinner text-xs"></i>
+          } @else {
+            <i class="pi pi-map-marker text-xs"></i>
+          }
+          <span>{{ isDetectingLocation() ? 'جارٍ التحديد...' : 'حدد موقعي الحالي' }}</span>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <!-- Latitude -->
+        <div class="space-y-1.5 text-right">
+          <label class="block text-xs sm:text-sm font-medium text-foreground">خط العرض (Latitude) <span class="text-destructive">*</span></label>
+          <input
+            type="number"
+            step="any"
+            formControlName="latitude"
+            placeholder="مثال: 30.0444"
+            (input)="onCoordInput()"
+            class="w-full h-11 rounded-lg border bg-background px-4 text-xs sm:text-sm outline-none transition-colors duration-200"
+            [class.border-border]="!hasError('latitude')"
+            [class.focus:border-[#007671]]="!hasError('latitude')"
+            [class.border-destructive]="hasError('latitude')"
+            [class.focus:ring-destructive/20]="hasError('latitude')"
+          />
+          @if (hasError('latitude')) {
+            <p class="text-xs text-destructive mt-1 font-medium">{{ getErrorMessage('latitude') }}</p>
+          }
+        </div>
+
+        <!-- Longitude -->
+        <div class="space-y-1.5 text-right">
+          <label class="block text-xs sm:text-sm font-medium text-foreground">خط الطول (Longitude) <span class="text-destructive">*</span></label>
+          <input
+            type="number"
+            step="any"
+            formControlName="longitude"
+            placeholder="مثال: 31.2357"
+            (input)="onCoordInput()"
+            class="w-full h-11 rounded-lg border bg-background px-4 text-xs sm:text-sm outline-none transition-colors duration-200"
+            [class.border-border]="!hasError('longitude')"
+            [class.focus:border-[#007671]]="!hasError('longitude')"
+            [class.border-destructive]="hasError('longitude')"
+            [class.focus:ring-destructive/20]="hasError('longitude')"
+          />
+          @if (hasError('longitude')) {
+            <p class="text-xs text-destructive mt-1 font-medium">{{ getErrorMessage('longitude') }}</p>
+          }
+        </div>
+      </div>
+
+      <!-- Map Preview -->
+      @if (mapPreviewUrl()) {
+        <div class="rounded-lg overflow-hidden border border-border h-48">
+          <iframe
+            [src]="mapPreviewUrl()"
+            class="w-full h-full"
+            loading="lazy"
+            referrerpolicy="no-referrer"
+          ></iframe>
+        </div>
+      }
+    </div>
+
+    <div class="border-t border-border pt-4">
+      <h3 class="text-sm md:text-base lg:text-lg font-semibold text-foreground mb-3">الخدمات المدعومة</h3>
+          <div class="flex flex-col sm:flex-row gap-4">
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" formControlName="supportsDelivery" class="w-4 h-4 rounded border-border text-primary focus:ring-primary accent-primary">
+              <span class="text-xs lg:text-base font-normal text-foreground">يدعم التوصيل</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" formControlName="supportsPickup" class="w-4 h-4 rounded border-border text-primary focus:ring-primary accent-primary">
+              <span class="text-xs lg:text-base font-normal text-foreground">يدعم الاستلام من الفرع</span>
+            </label>
+          </div>
+        </div>
+  </form>
+
+  <ng-template #footer>
+    <div class="flex flex-col-reverse sm:flex-row items-center justify-end gap-2 w-full pt-2">
+      <button
+        type="button"
+        (click)="closeModal()"
+        [disabled]="isSaving()"
+        class="w-full sm:w-auto h-10 lg:h-12 rounded-lg border border-border px-4 text-xs lg:text-base font-medium text-foreground transition-colors duration-200 hover:bg-muted disabled:opacity-50"
+      >
+        إلغاء
+      </button>
+      <button
+        type="button"
+        (click)="onSubmit()"
+        [disabled]="branchForm.invalid || isSaving()"
+        class="w-full sm:w-auto h-10 lg:h-12 rounded-lg px-6 text-xs lg:text-base font-medium text-white flex items-center justify-center gap-2 transition-colors duration-200 disabled:opacity-50"
+        style="background-color: #007671"
+        onmouseover="this.style.backgroundColor='var(--color-green-hover)'"
+        onmouseout="this.style.backgroundColor='#007671'"
+      >
+        @if (isSaving()) {
+          <i class="pi pi-spin pi-spinner text-[0.8125rem]"></i>
+        }
+        <span>{{ modalMode() === 'add' ? 'إضافة' : 'حفظ التعديلات' }}</span>
+      </button>
+    </div>
+  </ng-template>
+</p-dialog>
+
+<!-- ================= DELETE MODAL ================= -->
+<p-dialog
+  [visible]="isDeleteModalOpen()"
+  (visibleChange)="isDeleteModalOpen.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  styleClass="w-[90vw] sm:w-[85vw] md:w-full max-w-md mx-4"
+  contentStyleClass="max-h-[90vh] overflow-y-auto p-4 sm:p-6"
+  [dismissableMask]="true"
+  [maskStyleClass]="'bg-black/50'"
+>
+  <ng-template #header>
+    <span class="text-base sm:text-lg font-bold text-destructive">تأكيد الحذف</span>
+  </ng-template>
+
+  <div dir="rtl" class="space-y-4 pt-2" style="font-family: var(--font-cairo)">
+    <p class="text-xs lg:text-base text-foreground">
+      هل أنت متأكد من حذف هذا الفرع؟ لا يمكن التراجع عن هذا الإجراء.
+    </p>
+  </div>
+
+  <ng-template #footer>
+    <div class="flex flex-col-reverse sm:flex-row items-center justify-end gap-2 w-full pt-2">
+      <button
+        type="button"
+        (click)="closeDeleteModal()"
+        [disabled]="isDeleting()"
+        class="w-full sm:w-auto h-10 lg:h-12 rounded-lg border border-border px-4 text-xs lg:text-base font-medium text-foreground transition-colors duration-200 hover:bg-muted disabled:opacity-50"
+      >
+        إلغاء
+      </button>
+      <button
+        type="button"
+        (click)="executeDelete()"
+        [disabled]="isDeleting()"
+        class="w-full sm:w-auto h-10 lg:h-12 rounded-lg bg-destructive px-5 text-xs lg:text-base font-medium text-destructive-foreground flex items-center justify-center gap-2 transition-colors duration-200 disabled:opacity-60"
+      >
+        @if (isDeleting()) {
+          <i class="pi pi-spin pi-spinner text-[0.8125rem]"></i>
+        }
+        <span>حذف</span>
+      </button>
+    </div>
+  </ng-template>
+</p-dialog>
+
+<!-- ================= VIEW DETAILS MODAL ================= -->
+<p-dialog
+  [visible]="isViewModalOpen()"
+  (visibleChange)="isViewModalOpen.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  styleClass="w-[90vw] sm:w-[85vw] md:w-full max-w-xl mx-4"
+  contentStyleClass="max-h-[90vh] overflow-y-auto p-4 sm:p-6"
+  [dismissableMask]="true"
+  [maskStyleClass]="'bg-black/50'"
+>
+  <ng-template #header>
+    <span class="text-base sm:text-lg font-bold text-foreground">تفاصيل الفرع</span>
+  </ng-template>
+
+  <div dir="rtl" style="font-family: var(--font-cairo)">
+    @if (isViewLoading()) {
+      <div class="space-y-4 pt-2">
+        @for (line of [0, 1, 2, 3, 4, 5]; track line) {
+          <div class="h-6 w-full bg-muted rounded animate-pulse"></div>
+        }
+      </div>
+    } @else if (selectedBranchDetails(); as details) {
+      <div class="space-y-6 pt-2">
+            <!-- Header Section -->
+            <div>
+              <h3 class="text-sm md:text-base lg:text-lg font-semibold text-foreground">{{ details.branchName }}</h3>
+              <div class="flex items-center gap-2 mt-2">
+                @if (details.supportsDelivery) {
+                  <span class="px-2 py-0.5 rounded-full bg-accent/15 text-accent text-[10px] lg:text-xs font-medium">توصيل</span>
+                }
+                @if (details.supportsPickup) {
+                  <span class="px-2 py-0.5 rounded-full bg-info/15 text-info text-[10px] lg:text-xs font-medium">استلام من الفرع</span>
+                }
+              </div>
+            </div>
+
+            <!-- Location Section -->
+            <div class="space-y-3 border-t border-border pt-4">
+              <h4 class="text-xs lg:text-sm font-semibold text-muted-foreground mb-2">الموقع</h4>
+              <div class="flex flex-col gap-2 text-xs lg:text-base">
+                <div class="flex justify-between items-center">
+                  <span class="text-muted-foreground">المحافظة والمدينة</span>
+                  <span class="font-medium text-foreground">{{ details.governorate }} - {{ details.city }}</span>
+                </div>
+                <div class="flex flex-col gap-1">
+                  <span class="text-muted-foreground">العنوان التفصيلي</span>
+                  <span class="font-medium text-foreground leading-relaxed">{{ details.addressLine }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Operational Section -->
+            <div class="space-y-3 border-t border-border pt-4">
+              <h4 class="text-xs lg:text-sm font-semibold text-muted-foreground mb-2">بيانات التشغيل</h4>
+              <div class="flex flex-col gap-2 text-xs lg:text-base">
+                <div class="flex justify-between items-center">
+                  <span class="text-muted-foreground">رقم الهاتف</span>
+                  <span class="font-medium text-foreground" dir="ltr">{{ details.phoneNumber }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                  <span class="text-muted-foreground">ساعات العمل</span>
+                  <span class="font-medium text-foreground">{{ details.workingHours }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                  <span class="text-muted-foreground">نطاق الخدمة</span>
+                  <span class="font-medium text-foreground">{{ details.serviceRadiusKm }} كم</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Coordinates Section (Optional) -->
+            @if (details.latitude && details.longitude) {
+              <div class="space-y-3 border-t border-border pt-4">
+                <h4 class="text-xs lg:text-sm font-semibold text-muted-foreground mb-2">الإحداثيات</h4>
+                <div class="flex flex-col gap-2 text-xs lg:text-base">
+                  <div class="flex justify-between items-center">
+                    <span class="text-muted-foreground">خط العرض / الطول</span>
+                    <span class="font-medium text-foreground" dir="ltr">{{ details.latitude }}, {{ details.longitude }}</span>
+                  </div>
+                </div>
+              </div>
+            }
+      </div>
+    } @else {
+      <div class="text-center text-xs lg:text-base text-muted-foreground py-6">
+        تعذّر تحميل تفاصيل الفرع.
+      </div>
+    }
+  </div>
+
+  <ng-template #footer>
+    <div class="flex flex-col-reverse sm:flex-row items-center justify-end gap-2 w-full pt-2">
+      <button
+        type="button"
+        (click)="closeViewModal()"
+        class="w-full sm:w-auto h-10 lg:h-12 px-6 rounded-lg text-white text-xs lg:text-base font-medium transition-colors duration-200"
+        style="background-color: #007671"
+        onmouseover="this.style.backgroundColor='var(--color-green-hover)'"
+        onmouseout="this.style.backgroundColor='#007671'"
+      >
+        إغلاق
+      </button>
+    </div>
+  </ng-template>
+</p-dialog>

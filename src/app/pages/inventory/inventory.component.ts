@@ -11,6 +11,7 @@ import { ToastModule } from 'primeng/toast';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { MessageService } from 'primeng/api';
 import { InventoryStatusTranslatePipe } from './inventory-status-translate.pipe';
+import { AddInventoryDialogComponent } from './add-inventory-dialog/add-inventory-dialog.component';
 import { UpdateInventoryDialogComponent } from './update-inventory-dialog/update-inventory-dialog.component';
 import { ViewInventoryDialogComponent } from './view-inventory-dialog/view-inventory-dialog.component';
 import { InventoryService } from '@core/services/inventory.service';
@@ -46,6 +47,7 @@ const ALL_BRANCHES = 'ALL';
     ToastModule,
     AutoCompleteModule,
     InventoryStatusTranslatePipe,
+    AddInventoryDialogComponent,
     UpdateInventoryDialogComponent,
     ViewInventoryDialogComponent,
   ],
@@ -301,24 +303,15 @@ export class InventoryComponent implements OnInit {
     return expiry <= soon;
   }
 
-  // ── Dialog: Add ─────────────────────────────────────────────
+  // ── Dialog: Add (delegated to AddInventoryDialogComponent) ──
   openAddDialog(): void {
-    this.isEditing.set(false);
-    this.selectedItem.set(null);
-    this.formInventoryId.set(null);
-    this.formBranchId.set(this.branchId() ?? '');
-    this.formDrugId.set('');
-    this.formDrugName.set('');
-    this.formStockQuantity.set(0);
-    this.formUnitPrice.set(0);
-    this.formExpiryDate.set('');
-    this.formRowVersion.set(null);
-    // Reset autocomplete state.
-    this.selectedMedicine.set(null);
-    this.selectedBranch.set(null);
-    this.medicineSuggestions.set([]);
-    this.branchSuggestions.set([]);
     this.isFormDialogOpen.set(true);
+  }
+
+  /** Refreshes the list after the Add dialog reports a successful save. */
+  onInventorySaved(): void {
+    this.resetToFirstPage();
+    this.loadInventory();
   }
 
   // ── Autocomplete: Medicine (DrugId) ─────────────────────────
