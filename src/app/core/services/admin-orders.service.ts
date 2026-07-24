@@ -67,4 +67,17 @@ export class AdminOrdersService {
       responseType: 'blob'
     });
   }
+
+  /** GET /api/v1/OrderFulfillmentLegs/{legId} — full leg detail */
+  getLegDetail(legId: string): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/OrderFulfillmentLegs/${legId}`);
+  }
+
+  /** PATCH /api/v1/FulfillmentLeg/{legId}/status — admin override with audit reason */
+  updateLegStatus(legId: string, status: number, auditReason: string): Observable<any> {
+    return this.http.patch<any>(
+      `${this.baseUrl}/FulfillmentLeg/${legId}/status`,
+      { status, auditReason }
+    );
+  }
 }

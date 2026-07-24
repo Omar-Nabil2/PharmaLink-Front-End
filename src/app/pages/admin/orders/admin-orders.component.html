@@ -1,0 +1,571 @@
+<div class="orders-page" dir="rtl">
+  <p-toast />
+
+  <!-- ─── Page Header ─────────────────────────────────────────────────────── -->
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">إدارة الطلبات</h1>
+      <p class="page-subtitle">لوحة التحكم ← الطلبات</p>
+    </div>
+
+    <!-- Export buttons with loading state -->
+    <div class="export-group">
+      <button class="btn-export btn-export--excel" (click)="exportOrders('xlsx')" [disabled]="isExporting" title="تصدير Excel">
+        @if (isExporting) {
+          <span class="spinner"></span>
+        } @else {
+          <i class="pi pi-file-excel"></i>
+        }
+        <span>تصدير Excel</span>
+      </button>
+      <button class="btn-export btn-export--csv" (click)="exportOrders('csv')" [disabled]="isExporting" title="تصدير CSV">
+        @if (isExporting) {
+          <span class="spinner"></span>
+        } @else {
+          <i class="pi pi-file"></i>
+        }
+        <span>CSV</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ─── Toolbar ──────────────────────────────────────────────────────────── -->
+  <div class="toolbar">
+
+    <!-- Async search -->
+    <div class="search-wrapper">
+      @if (isLoading && searchTerm) {
+        <i class="pi pi-spin pi-spinner search-icon"></i>
+      } @else {
+        <i class="pi pi-search search-icon"></i>
+      }
+      <input
+        type="text"
+        id="orders-search"
+        class="search-input"
+        placeholder="بحث برقم الطلب أو اسم المريض..."
+        [value]="searchTerm"
+        (input)="onSearchChange($any($event.target).value)"
+      />
+      @if (searchTerm) {
+        <button class="search-clear" (click)="onSearchChange('')" title="مسح البحث">
+          <i class="pi pi-times"></i>
+        </button>
+      }
+    </div>
+
+    <!-- Status filter -->
+    <select
+      class="filter-select"
+      [value]="selectedStatus ?? ''"
+      (change)="selectedStatus = $any($event.target).value === '' ? null : +$any($event.target).value; onFilterChange()">
+      @for (opt of statusOptions; track opt.label) {
+        <option [value]="opt.value ?? ''">{{ opt.label }}</option>
+      }
+    </select>
+
+    <!-- Fulfillment mode filter -->
+    <select
+      class="filter-select"
+      [value]="selectedMode ?? ''"
+      (change)="selectedMode = $any($event.target).value === '' ? null : +$any($event.target).value; onFilterChange()">
+      @for (opt of modeOptions; track opt.label) {
+        <option [value]="opt.value ?? ''">{{ opt.label }}</option>
+      }
+    </select>
+
+    <!-- Date from -->
+    <div class="date-field">
+      <label class="date-label">من</label>
+      <input type="date" class="filter-select" [(ngModel)]="fromDate" (change)="onFilterChange()" />
+    </div>
+
+    <!-- Date to -->
+    <div class="date-field">
+      <label class="date-label">إلى</label>
+      <input type="date" class="filter-select" [(ngModel)]="toDate" (change)="onFilterChange()" />
+    </div>
+
+    <!-- Sort by -->
+    <select class="filter-select" [(ngModel)]="sortBy" (change)="onFilterChange()">
+      <option value="date">ترتيب: التاريخ</option>
+      <option value="amount">ترتيب: المبلغ</option>
+      <option value="status">ترتيب: الحالة</option>
+    </select>
+
+    <!-- Sort direction -->
+    <select class="filter-select" [(ngModel)]="sortDir" (change)="onFilterChange()">
+      <option value="desc">تنازلي</option>
+      <option value="asc">تصاعدي</option>
+    </select>
+
+    <!-- Reset button (shown only when filters are active) -->
+    @if (hasActiveFilters) {
+      <button class="btn-reset" (click)="resetFilters()">
+        <i class="pi pi-filter-slash"></i>
+        <span>إعادة تعيين</span>
+      </button>
+    }
+
+  </div>
+
+  <!-- ─── Loading Skeleton ──────────────────────────────────────────────────── -->
+  @if (isLoading) {
+    <div class="skeleton-wrap">
+      @for (n of [1, 2, 3, 4, 5, 6, 7]; track n) {
+        <div class="sk-row">
+          <div class="sk-cell sk-narrow"></div>
+          <div class="sk-cell sk-mid"></div>
+          <div class="sk-cell sk-mid"></div>
+          <div class="sk-cell sk-mid"></div>
+          <div class="sk-cell sk-narrow"></div>
+          <div class="sk-cell sk-badge"></div>
+          <div class="sk-cell sk-badge"></div>
+          <div class="sk-cell sk-badge"></div>
+          <div class="sk-cell sk-narrow"></div>
+          <div class="sk-cell sk-btn"></div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- ─── Empty State ───────────────────────────────────────────────────────── -->
+  @if (!isLoading && orders.length === 0) {
+    <div class="empty-state">
+      <div class="empty-icon">
+        <i class="pi pi-shopping-cart"></i>
+      </div>
+      <h3>لا توجد طلبات</h3>
+      <p>لم يتم العثور على أي طلبات تطابق معايير البحث الحالية.</p>
+      @if (hasActiveFilters) {
+        <button class="btn-reset" style="margin-top: 1rem;" (click)="resetFilters()">
+          <i class="pi pi-filter-slash"></i>
+          إعادة تعيين الفلاتر
+        </button>
+      }
+    </div>
+  }
+
+  <!-- ─── Orders Table ──────────────────────────────────────────────────────── -->
+  @if (!isLoading && orders.length > 0) {
+    <div class="table-wrapper">
+      <table class="orders-table">
+        <thead>
+          <tr>
+            <th>رقم الطلب</th>
+            <th>المريض</th>
+            <th>الصيدلية</th>
+            <th>الأدوية</th>
+            <th>الإجمالي</th>
+            <th>حالة الطلب</th>
+            <th>حالة التوصيل</th>
+            <th>طريقة الاستلام</th>
+            <th>التاريخ</th>
+            <th>الإجراء</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (order of orders; track trackById($index, order)) {
+            <tr class="table-row">
+              <td class="cell-mono">{{ order.orderNumber }}</td>
+              <td class="cell-strong">{{ order.patientName }}</td>
+              <td class="cell-muted">{{ order.primaryPharmacyName || '—' }}</td>
+              <td class="cell-muted">
+                <span [title]="order.medicineNames.join('، ')">
+                  {{ order.itemCount }} {{ order.itemCount === 1 ? 'دواء' : 'أدوية' }}
+                </span>
+              </td>
+              <td class="cell-amount">ج {{ order.totalAmount | number:'1.2-2' }}</td>
+              <td>
+                <span [class]="getOrderStatusClass(order.orderStatus)">
+                  {{ getOrderStatusLabel(order.orderStatus) }}
+                </span>
+              </td>
+              <td>
+                <span [class]="getLegStatusClass(order.legStatus)">
+                  {{ getLegStatusLabel(order.legStatus) }}
+                </span>
+              </td>
+              <td>
+                <span [class]="getModeClass(order.fulfillmentMode)">
+                  <i [class]="getModeIcon(order.fulfillmentMode)"></i>
+                  {{ getModeLabel(order.fulfillmentMode) }}
+                </span>
+              </td>
+              <td class="cell-date">{{ order.createdAt | date:'yyyy-MM-dd' }}</td>
+              <td>
+                <button class="btn-detail" (click)="openDetail(order.orderId)">
+                  <i class="pi pi-eye"></i>
+                  التفاصيل
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  <!-- ─── Pagination ────────────────────────────────────────────────────────── -->
+  @if (!isLoading && totalPages > 1) {
+    <div class="pagination">
+      <p class="pagination-info">
+        صفحة <strong>{{ pageNumber }}</strong> من <strong>{{ totalPages }}</strong>
+        — إجمالي <strong>{{ totalCount }}</strong> طلب
+      </p>
+      <div class="pagination-controls">
+        <button class="page-btn" (click)="onPageChange(1)" [disabled]="!hasPrev" title="الأولى">
+          <i class="pi pi-angle-double-right"></i>
+        </button>
+        <button class="page-btn" (click)="onPageChange(pageNumber - 1)" [disabled]="!hasPrev" title="السابق">
+          <i class="pi pi-angle-right"></i>
+        </button>
+        @for (page of pagesArray; track page) {
+          <button
+            class="page-btn"
+            [class.active]="page === pageNumber"
+            (click)="onPageChange(page)">
+            {{ page }}
+          </button>
+        }
+        <button class="page-btn" (click)="onPageChange(pageNumber + 1)" [disabled]="!hasNext" title="التالي">
+          <i class="pi pi-angle-left"></i>
+        </button>
+        <button class="page-btn" (click)="onPageChange(totalPages)" [disabled]="!hasNext" title="الأخيرة">
+          <i class="pi pi-angle-double-left"></i>
+        </button>
+      </div>
+    </div>
+  }
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     MODAL: Order Details
+════════════════════════════════════════════════════════════════════════════ -->
+@if (showDetailModal) {
+  <div class="modal-overlay" (click)="closeDetail()">
+    <div class="modal-card modal-card-xl" (click)="$event.stopPropagation()">
+
+      <!-- Header -->
+      <div class="modal-header">
+        <h2 class="modal-title">
+          <i class="pi pi-file-edit"></i>
+          @if (selectedOrder) {
+            تفاصيل الطلب — <span class="mono">{{ selectedOrder.orderNumber }}</span>
+          } @else {
+            تفاصيل الطلب
+          }
+        </h2>
+        <button class="modal-close" (click)="closeDetail()">
+          <i class="pi pi-times"></i>
+        </button>
+      </div>
+
+      <!-- Body -->
+      <div class="modal-body">
+
+        <!-- Loading -->
+        @if (detailLoading) {
+          <div class="detail-loading">
+            <span class="spinner spinner-lg"></span>
+            <span>جاري تحميل التفاصيل...</span>
+          </div>
+        }
+
+        @if (!detailLoading && selectedOrder) {
+
+          <!-- ── Order Info ──────────────────────────────────────────────── -->
+          <div class="detail-section">
+            <h3 class="section-title">
+              <i class="pi pi-info-circle"></i>
+              معلومات الطلب
+            </h3>
+            <div class="detail-grid">
+              <div class="detail-item">
+                <span class="detail-label">رقم الطلب</span>
+                <span class="detail-value mono">{{ selectedOrder.orderNumber }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">المريض</span>
+                <span class="detail-value">{{ selectedOrder.patientName }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">البريد الإلكتروني</span>
+                <span class="detail-value">{{ selectedOrder.patientEmail }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">إجمالي الطلب</span>
+                <span class="detail-value amount">ج {{ selectedOrder.totalAmount | number:'1.2-2' }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">حالة الطلب</span>
+                <span [class]="getOrderStatusClass(selectedOrder.orderStatus)">
+                  {{ getOrderStatusLabel(selectedOrder.orderStatus) }}
+                </span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">طريقة الاستلام</span>
+                <span [class]="getModeClass(selectedOrder.fulfillmentMode)">
+                  <i [class]="getModeIcon(selectedOrder.fulfillmentMode)"></i>
+                  {{ getModeLabel(selectedOrder.fulfillmentMode) }}
+                </span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">تاريخ الطلب</span>
+                <span class="detail-value">{{ selectedOrder.createdAt | date:'yyyy-MM-dd — HH:mm' }}</span>
+              </div>
+              @if (selectedOrder.deliveredAt) {
+                <div class="detail-item">
+                  <span class="detail-label">تاريخ التسليم</span>
+                  <span class="detail-value">{{ selectedOrder.deliveredAt | date:'yyyy-MM-dd — HH:mm' }}</span>
+                </div>
+              }
+              @if (selectedOrder.deliveryAddress) {
+                <div class="detail-item detail-item-full">
+                  <span class="detail-label">عنوان التوصيل</span>
+                  <span class="detail-value">{{ selectedOrder.deliveryAddress }}</span>
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- ── Items ──────────────────────────────────────────────────── -->
+          <div class="detail-section">
+            <h3 class="section-title">
+              <i class="pi pi-list"></i>
+              الأدوية ({{ selectedOrder.items.length }})
+            </h3>
+            <div class="inner-table-wrap">
+              <table class="inner-table">
+                <thead>
+                  <tr>
+                    <th>الدواء</th>
+                    <th>التركيز</th>
+                    <th>الشكل</th>
+                    <th>الكمية</th>
+                    <th>سعر الوحدة</th>
+                    <th>الإجمالي</th>
+                    <th>الحالة</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (item of selectedOrder.items; track item.orderItemId) {
+                    <tr>
+                      <td>
+                        <div class="drug-name">{{ item.drugName }}</div>
+                        @if (item.genericName) {
+                          <div class="drug-generic">{{ item.genericName }}</div>
+                        }
+                      </td>
+                      <td>{{ item.strength }}</td>
+                      <td>{{ item.dosageForm }}</td>
+                      <td class="text-center">{{ item.quantityNeeded }}</td>
+                      <td>ج {{ item.unitPrice | number:'1.2-2' }}</td>
+                      <td class="amount">ج {{ item.lineTotal | number:'1.2-2' }}</td>
+                      <td>
+                        <span [class]="getItemStatusClass(item.itemStatus)">
+                          {{ getItemStatusLabel(item.itemStatus) }}
+                        </span>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- ── Fulfillment Legs ────────────────────────────────────────── -->
+          <div class="detail-section">
+            <h3 class="section-title">
+              <i class="pi pi-send"></i>
+              أجزاء التوصيل ({{ selectedOrder.fulfillmentLegs.length }})
+            </h3>
+
+            @if (selectedOrder.fulfillmentLegs.length === 0) {
+              <p class="no-legs">لم يتم تعيين أجزاء توصيل بعد.</p>
+            }
+
+            @for (leg of selectedOrder.fulfillmentLegs; track leg.legId) {
+              <div class="leg-card">
+                <div class="leg-header">
+                  <div class="leg-badges">
+                    <span class="leg-type-badge">{{ getLegTypeLabel(leg.legType) }}</span>
+                    <span [class]="getLegStatusClass(leg.legStatus)">{{ getLegStatusLabel(leg.legStatus) }}</span>
+                  </div>
+                  <div class="leg-actions-row">
+                    <button class="btn-sm btn-sm-info" (click)="openLegDetail(leg.legId)">
+                      <i class="pi pi-eye"></i>
+                      التفاصيل
+                    </button>
+                    <button class="btn-sm btn-sm-accent" (click)="openUpdateLegStatus(leg.legId, leg.legStatus)">
+                      <i class="pi pi-sync"></i>
+                      تحديث الحالة
+                    </button>
+                  </div>
+                </div>
+                <div class="leg-info">
+                  <div class="leg-info-row">
+                    <i class="pi pi-building"></i>
+                    <span>{{ leg.pharmacyName }} — {{ leg.branchName }}
+                      @if (leg.city) { <span class="leg-city">({{ leg.city }})</span> }
+                    </span>
+                  </div>
+                  @if (leg.readyByEstimate) {
+                    <div class="leg-info-row">
+                      <i class="pi pi-clock"></i>
+                      <span>موعد الاستعداد: {{ leg.readyByEstimate | date:'yyyy-MM-dd HH:mm' }}</span>
+                    </div>
+                  }
+                  @if (leg.medicineNames && leg.medicineNames.length > 0) {
+                    <div class="leg-info-row">
+                      <i class="pi pi-list"></i>
+                      <span>{{ leg.medicineNames.join('، ') }}</span>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+
+        } <!-- end !detailLoading && selectedOrder -->
+      </div>
+
+      <!-- Footer -->
+      <div class="modal-footer">
+        <button class="btn-ghost" (click)="closeDetail()">إغلاق</button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     MODAL: Leg Detail
+════════════════════════════════════════════════════════════════════════════ -->
+@if (showLegDetailModal) {
+  <div class="modal-overlay" (click)="closeLegDetail()">
+    <div class="modal-card modal-card-sm" (click)="$event.stopPropagation()">
+
+      <div class="modal-header">
+        <h2 class="modal-title">
+          <i class="pi pi-send"></i>
+          تفاصيل جزء التوصيل
+        </h2>
+        <button class="modal-close" (click)="closeLegDetail()">
+          <i class="pi pi-times"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        @if (legDetailLoading) {
+          <div class="detail-loading">
+            <span class="spinner spinner-lg"></span>
+            <span>جاري التحميل...</span>
+          </div>
+        }
+        @if (!legDetailLoading && selectedLegDetail) {
+          <div class="detail-grid">
+            <div class="detail-item detail-item-full">
+              <span class="detail-label">معرف الجزء</span>
+              <span class="detail-value mono" style="font-size:0.75rem; word-break:break-all;">{{ selectedLegDetail.legId }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">معرف الطلب</span>
+              <span class="detail-value mono" style="font-size:0.75rem;">{{ selectedLegDetail.orderId }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">نوع الجزء</span>
+              <span class="detail-value">{{ getLegTypeLabel(selectedLegDetail.legType) }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">حالة الجزء</span>
+              <span [class]="getLegStatusClass(selectedLegDetail.legStatus)">
+                {{ getLegStatusLabel(selectedLegDetail.legStatus) }}
+              </span>
+            </div>
+            @if (selectedLegDetail.readyByEstimate) {
+              <div class="detail-item">
+                <span class="detail-label">موعد الاستعداد</span>
+                <span class="detail-value">{{ selectedLegDetail.readyByEstimate | date:'yyyy-MM-dd HH:mm' }}</span>
+              </div>
+            }
+            @if (selectedLegDetail.completedAt) {
+              <div class="detail-item">
+                <span class="detail-label">تاريخ الإتمام</span>
+                <span class="detail-value">{{ selectedLegDetail.completedAt | date:'yyyy-MM-dd HH:mm' }}</span>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-ghost" (click)="closeLegDetail()">إغلاق</button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     MODAL: Update Leg Status
+════════════════════════════════════════════════════════════════════════════ -->
+@if (showUpdateLegModal) {
+  <div class="modal-overlay" (click)="closeUpdateLegModal()">
+    <div class="modal-card modal-card-sm" (click)="$event.stopPropagation()">
+
+      <div class="modal-header">
+        <h2 class="modal-title">
+          <i class="pi pi-sync"></i>
+          تحديث حالة جزء التوصيل
+        </h2>
+        <button class="modal-close" (click)="closeUpdateLegModal()" [disabled]="updatingLeg">
+          <i class="pi pi-times"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="field">
+          <label class="field-label" for="leg-new-status">الحالة الجديدة</label>
+          <select id="leg-new-status" class="field-select" [(ngModel)]="updateLegNewStatus">
+            @for (opt of legStatusOptions; track opt.value) {
+              <option [value]="opt.value">{{ opt.label }}</option>
+            }
+          </select>
+        </div>
+        <div class="field">
+          <label class="field-label" for="leg-audit-reason">
+            سبب التغيير <span class="required-star">*</span>
+          </label>
+          <textarea
+            id="leg-audit-reason"
+            class="field-textarea"
+            rows="3"
+            placeholder="أدخل سبب تغيير الحالة من قِبل المسؤول..."
+            [(ngModel)]="updateLegAuditReason">
+          </textarea>
+          @if (!updateLegAuditReason.trim()) {
+            <span class="field-error">
+              <i class="pi pi-exclamation-circle"></i>
+              سبب التغيير مطلوب
+            </span>
+          }
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-ghost" (click)="closeUpdateLegModal()" [disabled]="updatingLeg">إلغاء</button>
+        <button
+          class="btn-primary"
+          (click)="submitUpdateLegStatus()"
+          [disabled]="updatingLeg || !updateLegAuditReason.trim()">
+          @if (updatingLeg) {
+            <span class="spinner"></span>
+          } @else {
+            <i class="pi pi-check"></i>
+          }
+          تأكيد التحديث
+        </button>
+      </div>
+    </div>
+  </div>
+}
