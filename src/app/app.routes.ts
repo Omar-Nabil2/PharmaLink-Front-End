@@ -182,6 +182,20 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./pages/checkout/checkout').then((m) => m.CheckoutComponent),
       },
+      {
+        path: 'orders',
+        canActivate: [authGuard],
+        data: { role: AppRoles.Patient },
+        loadComponent: () =>
+          import('./pages/orders/patient-orders/patient-orders.component').then((m) => m.PatientOrdersComponent),
+      },
+      {
+        path: 'orders/:id',
+        canActivate: [authGuard],
+        data: { role: AppRoles.Patient },
+        loadComponent: () =>
+          import('./pages/orders/patient-order-detail/patient-order-detail.component').then((m) => m.PatientOrderDetailComponent),
+      },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
     ],
   },
