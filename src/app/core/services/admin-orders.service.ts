@@ -23,6 +23,12 @@ export class AdminOrdersService {
     if (filter.status !== undefined && filter.status !== null) {
       params = params.set('status', filter.status.toString());
     }
+    if (filter.fulfillmentMode !== undefined && filter.fulfillmentMode !== null) {
+      params = params.set('fulfillmentMode', filter.fulfillmentMode.toString());
+    }
+    if (filter.legStatus !== undefined && filter.legStatus !== null) {
+      params = params.set('legStatus', filter.legStatus.toString());
+    }
     if (filter.fromDate) {
       params = params.set('fromDate', filter.fromDate);
     }
@@ -51,6 +57,12 @@ export class AdminOrdersService {
     if (filter.status !== undefined && filter.status !== null) {
       params = params.set('status', filter.status.toString());
     }
+    if (filter.fulfillmentMode !== undefined && filter.fulfillmentMode !== null) {
+      params = params.set('fulfillmentMode', filter.fulfillmentMode.toString());
+    }
+    if (filter.legStatus !== undefined && filter.legStatus !== null) {
+      params = params.set('legStatus', filter.legStatus.toString());
+    }
     if (filter.fromDate) {
       params = params.set('fromDate', filter.fromDate);
     }
@@ -66,5 +78,18 @@ export class AdminOrdersService {
       params,
       responseType: 'blob'
     });
+  }
+
+  /** GET /api/v1/OrderFulfillmentLegs/{legId} — full leg detail */
+  getLegDetail(legId: string): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/OrderFulfillmentLegs/${legId}`);
+  }
+
+  /** PATCH /api/v1/FulfillmentLeg/{legId}/status — admin override with audit reason */
+  updateLegStatus(legId: string, status: number, auditReason: string): Observable<any> {
+    return this.http.patch<any>(
+      `${this.baseUrl}/FulfillmentLeg/${legId}/status`,
+      { status, auditReason }
+    );
   }
 }

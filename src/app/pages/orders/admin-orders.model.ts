@@ -44,6 +44,7 @@ export interface AdminOrderLegDTO {
   city: string;
   readyByEstimate: string;
   medicineNames: string[];
+  completedAt: string;
 }
 
 export interface AdminOrderDetailDTO {
@@ -64,6 +65,8 @@ export interface AdminOrderDetailDTO {
 export interface AdminOrdersFilter {
   search?: string;
   status?: OrderStatusValue | null;
+  fulfillmentMode?: number | null;
+  legStatus?: number | null;
   fromDate?: string;
   toDate?: string;
   pageNumber: number;
