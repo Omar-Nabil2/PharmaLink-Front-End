@@ -6,7 +6,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { InventoryService } from '../../../core/services/inventory.service';
-import { GetPharmacyInventoryDTO, InventoryStatusFilter, InventoryStockStatus } from '../../inventory/inventory.model';
+import { GetPharmacyInventoryDTO, InventoryStatusFilter, InventoryStockStatus, GetPharmacyInventoryParamRequest } from '@pages/inventory/inventory.model';
 
 @Component({
     selector: 'app-inventory',
@@ -59,6 +59,13 @@ export class InventoryComponent {
     loadData() {
         this.loading = true;
         this.inventoryService.getInventory({ pageNumber: this.currentPage, pageSize: this.rows, search: this.searchTermInput, statusFilter: this.status })
+        const params: GetPharmacyInventoryParamRequest = {
+            pageNumber: this.currentPage,
+            pageSize: this.rows,
+            search: this.searchTermInput,
+            statusFilter: this.status
+        };
+        this.inventoryService.getInventory(params)
             .subscribe({
                 next: (res) => {
                     this.inventoryItems = res.items;

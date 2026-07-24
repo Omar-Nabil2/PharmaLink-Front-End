@@ -175,6 +175,13 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./pages/cart/cart.component').then((m) => m.CartComponent),
       },
+      {
+        path: 'checkout',
+        canActivate: [authGuard],
+        data: { role: AppRoles.Patient },
+        loadComponent: () =>
+          import('./pages/checkout/checkout').then((m) => m.CheckoutComponent),
+      },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
     ],
   },
@@ -252,6 +259,11 @@ export const routes: Routes = [
         path: 'inventory',
         loadComponent: () =>
           import('./pages/inventory/inventory.component').then((m) => m.InventoryComponent),
+      },
+      {
+        path: 'pharmacy-profile',
+        loadComponent: () =>
+          import('./pages/pharmacy-profile/pharmacy-profile.component').then((m) => m.PharmacyProfileComponent),
       },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
     ],
