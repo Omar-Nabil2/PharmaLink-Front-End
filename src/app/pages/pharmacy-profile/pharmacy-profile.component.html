@@ -1,0 +1,128 @@
+<p-toast position="top-center"></p-toast>
+
+<div class="p-4 sm:p-6 lg:p-8" dir="rtl" style="font-family: var(--font-cairo)">
+  <div class="max-w-3xl mx-auto bg-card rounded-xl border border-border overflow-hidden shadow-sm">
+    
+    <!-- Header -->
+    <div class="border-b border-border px-6 py-5">
+      <h2 class="text-lg md:text-xl font-bold text-foreground">بيانات الصيدلية</h2>
+      <p class="text-xs lg:text-sm text-muted-foreground mt-1">
+        قم بتحديث معلومات صيدليتك والشعار الخاص بك لكي يظهر للمرضى بشكل احترافي.
+      </p>
+    </div>
+
+    <!-- Body -->
+    @if (isLoading()) {
+      <div class="p-6 sm:p-10 flex flex-col items-center justify-center gap-4">
+        <i class="pi pi-spin pi-spinner text-3xl" style="color: #007671"></i>
+        <p class="text-xs lg:text-sm text-muted-foreground">جارٍ تحميل البيانات...</p>
+      </div>
+    } @else {
+      <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="p-6 sm:p-8 space-y-8">
+        
+        <!-- Logo Section -->
+        <div class="flex flex-col sm:flex-row items-center gap-6">
+          <div class="relative group">
+            <div class="w-32 h-24 sm:w-40 sm:h-28 rounded-xl border-2 border-border overflow-hidden bg-muted flex items-center justify-center relative">
+              @if (fullLogoUrl()) {
+                <img 
+                  [src]="fullLogoUrl()" 
+                  (error)="onImageError($event)" 
+                  alt="Pharmacy Logo" 
+                />
+              } @else {
+                <!-- صورة افتراضية local أو أي Shape ثابت مش بيحتاج HTTP Request خارج للباك-أند -->
+                <img 
+                  src="assets/images/default-pharmacy-logo.png" 
+                  alt="Default Logo" 
+                />
+              }
+              
+              <!-- Hover Overlay for Upload -->
+              <label class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer">
+                <i class="pi pi-camera text-2xl text-white"></i>
+                <input type="file" class="hidden" accept="image/*" (change)="onFileSelected($event)" />
+              </label>
+            </div>
+          </div>
+          
+          <div class="text-center sm:text-right">
+            <h3 class="text-sm font-semibold text-foreground">شعار الصيدلية</h3>
+            <p class="text-[10px] lg:text-xs text-muted-foreground mt-1 max-w-sm">
+              يُفضل رفع صورة مربعة بصيغة PNG أو JPG. حجم الصورة يجب أن يكون أقل من 3 ميجابايت.
+            </p>
+            <label class="mt-3 inline-block px-4 py-2 border border-border rounded-lg text-xs lg:text-sm font-medium hover:bg-muted transition-colors cursor-pointer text-foreground">
+              تغيير الشعار
+              <input type="file" class="hidden" accept="image/*" (change)="onFileSelected($event)" />
+            </label>
+          </div>
+        </div>
+
+        <hr class="border-border" />
+
+        <!-- Form Fields -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          
+          <!-- Pharmacy Name -->
+          <div class="space-y-1.5 md:col-span-2">
+            <label class="block text-xs lg:text-sm font-semibold text-foreground">اسم الصيدلية</label>
+            <input 
+              type="text" 
+              formControlName="pharmacyName" 
+              class="w-full h-11 rounded-lg border border-input bg-card px-4 text-xs lg:text-base text-foreground focus:ring-2 focus:outline-none transition-shadow duration-200"
+              style="--tw-ring-color: rgba(0, 118, 113, 0.2)"
+              [class.border-[#007671]]="profileForm.get('pharmacyName')?.touched && profileForm.get('pharmacyName')?.valid"
+              [class.border-destructive]="profileForm.get('pharmacyName')?.touched && profileForm.get('pharmacyName')?.invalid"
+            />
+            @if (profileForm.get('pharmacyName')?.touched && profileForm.get('pharmacyName')?.invalid) {
+              <p class="text-[10px] lg:text-xs text-destructive mt-1">الرجاء إدخال اسم الصيدلية</p>
+            }
+          </div>
+
+          <!-- License Number (Read-Only) -->
+          <div class="space-y-1.5 md:col-span-2">
+            <label class="block text-xs lg:text-sm font-semibold text-foreground">رقم الترخيص</label>
+            <div 
+              class="w-full h-11 rounded-lg border border-border bg-muted/50 px-4 flex items-center gap-2 text-xs lg:text-base text-muted-foreground cursor-not-allowed select-none"
+              aria-readonly="true"
+            >
+              <i class="pi pi-lock text-[10px] lg:text-xs shrink-0"></i>
+              <span class="font-medium text-foreground truncate">{{ licenseNumber() }}</span>
+            </div>
+            <p class="text-[10px] lg:text-xs text-muted-foreground flex items-center gap-1 mt-1">
+              <span>🔒</span>
+              <span>رقم الترخيص غير قابل للتعديل. يرجى التواصل مع الدعم الفني إذا كانت هناك مشكلة.</span>
+            </p>
+          </div>
+
+        </div>
+
+        <!-- Footer Actions -->
+        <div class="pt-4 flex flex-col-reverse sm:flex-row items-center justify-end gap-3 w-full">
+          <button 
+            type="button" 
+            (click)="onDiscardChanges()"
+            class="w-full sm:w-auto h-11 rounded-lg border border-border px-6 text-xs lg:text-sm font-medium text-foreground transition-colors duration-200 hover:bg-muted"
+          >
+            تجاهل التغييرات
+          </button>
+          
+          <button 
+            type="submit" 
+            [disabled]="profileForm.invalid || isSaving()"
+            class="w-full sm:w-auto h-11 rounded-lg px-8 text-xs lg:text-sm font-medium text-white flex items-center justify-center gap-2 transition-colors duration-200 disabled:opacity-60"
+            style="background-color: #007671"
+            onmouseover="this.style.backgroundColor='var(--color-green-hover)'"
+            onmouseout="this.style.backgroundColor='#007671'"
+          >
+            @if (isSaving()) {
+              <i class="pi pi-spin pi-spinner text-xs lg:text-sm"></i>
+            }
+            <span>حفظ التغييرات</span>
+          </button>
+        </div>
+
+      </form>
+    }
+  </div>
+</div>
