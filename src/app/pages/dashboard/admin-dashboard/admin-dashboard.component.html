@@ -167,6 +167,7 @@
                 <span class="patient-name">{{ order.patientName }}</span>
                 <span class="order-amount">ج {{ order.totalAmount | number: '1.2-2' }}</span>
                 <span [class]="getOrderStatusClass(order.status)">
+                  <span class="status-dot"></span>
                   {{ order.status | statusTranslate: 'OrderStatus' }}
                 </span>
               </div>

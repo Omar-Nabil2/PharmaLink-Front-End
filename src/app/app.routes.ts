@@ -331,7 +331,7 @@ export const routes: Routes = [
       {
         path: 'orders',
         loadComponent: () =>
-          import('./pages/orders/admin-orders/admin-orders.component').then(
+          import('./pages/admin/orders/admin-orders.component').then(
             (m) => m.AdminOrdersComponent,
           ),
       },

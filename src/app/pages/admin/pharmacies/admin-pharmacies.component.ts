@@ -7,7 +7,13 @@ import {
   inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  FormBuilder,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subject, debounceTime, distinctUntilChanged, takeUntil, switchMap, of } from 'rxjs';
 import { AdminPharmacyService } from '@core/services/admin-pharmacy.service';
@@ -66,6 +72,7 @@ export class AdminPharmaciesComponent implements OnInit, OnDestroy {
     { label: 'قيد الانتظار', value: VerificationStatus.Pending },
     { label: 'موثقة', value: VerificationStatus.Verified },
     { label: 'مرفوضة', value: VerificationStatus.Rejected },
+    { label: 'محذوفة', value: VerificationStatus.Deleted },
   ];
 
   readonly VerificationStatus = VerificationStatus;
@@ -378,7 +385,7 @@ export class AdminPharmaciesComponent implements OnInit, OnDestroy {
         licenseNumber,
         verificationStatus,
         logoFile: this.selectedFile ?? null,
-        logoUrl: !this.selectedFile ? (trimmedUrl || (this.logoPreview ?? undefined)) : undefined,
+        logoUrl: !this.selectedFile ? trimmedUrl || (this.logoPreview ?? undefined) : undefined,
       };
       this.service
         .updatePharmacy(this.editingPharmacyId!, payload)
@@ -554,30 +561,40 @@ export class AdminPharmaciesComponent implements OnInit, OnDestroy {
     if (!isNaN(n) && n >= 1 && n <= 4) return n as VerificationStatus;
     // String form fallback
     const s = String(status).toLowerCase();
-    if (s === 'pending')  return VerificationStatus.Pending;
+    if (s === 'pending') return VerificationStatus.Pending;
     if (s === 'verified') return VerificationStatus.Verified;
     if (s === 'rejected') return VerificationStatus.Rejected;
-    if (s === 'deleted')  return VerificationStatus.Deleted;
+    if (s === 'deleted') return VerificationStatus.Deleted;
     return null;
   }
 
   getStatusLabel(status: any): string {
     switch (this.normalizeStatus(status)) {
-      case VerificationStatus.Pending:   return 'قيد الانتظار';
-      case VerificationStatus.Verified:  return 'موثقة';
-      case VerificationStatus.Rejected:  return 'مرفوضة';
-      case VerificationStatus.Deleted:   return 'محذوفة';
-      default:                           return 'غير محدد';
+      case VerificationStatus.Pending:
+        return 'قيد الانتظار';
+      case VerificationStatus.Verified:
+        return 'موثقة';
+      case VerificationStatus.Rejected:
+        return 'مرفوضة';
+      case VerificationStatus.Deleted:
+        return 'محذوفة';
+      default:
+        return 'غير محدد';
     }
   }
 
   getStatusClass(status: any): string {
     switch (this.normalizeStatus(status)) {
-      case VerificationStatus.Verified:  return 'status-verified';
-      case VerificationStatus.Pending:   return 'status-pending';
-      case VerificationStatus.Rejected:  return 'status-rejected';
-      case VerificationStatus.Deleted:   return 'status-deleted';
-      default:                           return 'status-default';
+      case VerificationStatus.Verified:
+        return 'status-verified';
+      case VerificationStatus.Pending:
+        return 'status-pending';
+      case VerificationStatus.Rejected:
+        return 'status-rejected';
+      case VerificationStatus.Deleted:
+        return 'status-deleted';
+      default:
+        return 'status-default';
     }
   }
 
