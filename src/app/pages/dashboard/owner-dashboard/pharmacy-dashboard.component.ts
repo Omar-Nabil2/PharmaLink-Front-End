@@ -18,8 +18,10 @@ import {
   BranchOption,
   DailySalesDTO,
   LegStatus,
+  LegStatusConfig,
   PharmacyDashboardDTO,
   PharmacyRecentOrderDTO,
+  getLegStatusConfig,
 } from './pharmacy-dashboard.model';
 
 @Component({
@@ -196,44 +198,8 @@ export class PharmacyDashboardComponent {
     this.selectedBranchId.set(ALL_BRANCHES);
   }
 
-  /**
-   * Tailwind classes for a recent-order status badge. The visible label is
-   * translated to Arabic in the template via the `statusTranslate` pipe, so this
-   * only needs to resolve the color treatment from the leg status.
-   */
-  getStatusBadgeClasses(order: PharmacyRecentOrderDTO): string {
-    const base = 'inline-flex items-center rounded-full px-3 py-1 text-[10px] lg:text-xs font-medium';
-
-    switch (this.normalizeStatus(order.legStatus)) {
-      case 'completed':
-        return `${base} bg-accent/15 text-accent`;
-      case 'readyforpickup':
-      case 'pickedupbycourier':
-        return `${base} bg-info/15 text-info`;
-      case 'assigned':
-      case 'preparing':
-        return `${base} bg-warning/15 text-warning-foreground`;
-      case 'cancelled':
-        return `${base} bg-destructive/15 text-destructive`;
-      default:
-        return `${base} bg-muted text-muted-foreground`;
-    }
-  }
-
-  private normalizeStatus(status: LegStatus): string {
-    if (typeof status === 'number') {
-      // Mirrors backend Domain.Enums.LegStatus (byte enum, 1-based).
-      const byOrdinal: Record<number, string> = {
-        1: 'assigned',
-        2: 'preparing',
-        3: 'readyforpickup',
-        4: 'pickedupbycourier',
-        5: 'completed',
-        6: 'cancelled',
-      };
-      return byOrdinal[status] ?? String(status);
-    }
-    return String(status).toLowerCase();
+  getLegStatus(status: LegStatus): LegStatusConfig {
+    return getLegStatusConfig(status);
   }
 
   reload(): void {

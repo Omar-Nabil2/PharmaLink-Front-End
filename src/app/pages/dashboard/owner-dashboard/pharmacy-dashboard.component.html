@@ -122,7 +122,7 @@
                     [class.pi-arrow-up-right]="data.kpis.todaysOrdersChangePercent >= 0"
                     [class.pi-arrow-down-right]="data.kpis.todaysOrdersChangePercent < 0"
                   ></i>
-                  <span>{{ data.kpis.todaysOrdersChangePercent | number: '1.0-1' }}% عن الشهر السابق</span>
+                  <span>{{ data.kpis.todaysOrdersChangePercent | number: '1.0-1' }}% عن اليوم السابق</span>
                 </div>
               }
             </div>
@@ -219,8 +219,8 @@
               <td class="p-4 text-xs lg:text-base font-normal leading-normal text-muted-foreground">{{ order.summary }}</td>
               <td class="p-4 text-xs lg:text-base font-normal leading-normal whitespace-nowrap">{{ order.totalAmount | number: '1.2-2' }} ج</td>
               <td class="p-4">
-                <span [class]="getStatusBadgeClasses(order)">
-                  {{ order.legStatusLabel?.trim() || (order.legStatus | statusTranslate: 'LegStatus') }}
+                <span class="inline-flex items-center justify-center rounded-full border-none px-3.5 py-1 text-xs lg:text-sm font-semibold" [class]="getLegStatus(order.legStatus).badgeClass">
+                  {{ getLegStatus(order.legStatus).label }}
                 </span>
               </td>
             </tr>
