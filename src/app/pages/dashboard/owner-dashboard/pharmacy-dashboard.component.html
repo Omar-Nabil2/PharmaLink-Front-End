@@ -177,9 +177,10 @@
         <div class="h-72" dir="ltr">
           @if (salesTrend().length) {
             <p-chart
-              type="line"
+              type="bar"
               [data]="salesChartData()"
               [options]="salesChartOptions"
+              [plugins]="chartPlugins"
               height="100%"
               styleClass="w-full h-full"
             />
