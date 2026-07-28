@@ -63,16 +63,7 @@
         appendTo="body"
       />
 
-      <!-- Sort selector -->
-      <p-select
-        [options]="sortOptions"
-        optionLabel="label"
-        optionValue="value"
-        [ngModel]="sortBy()"
-        (onChange)="onSortChange($event.value)"
-        styleClass="h-10 lg:h-12 min-w-[10rem] text-xs lg:text-base"
-        appendTo="body"
-      />
+
 
       <!-- Date range -->
       <div class="flex items-center gap-2">
@@ -158,10 +149,28 @@
             <tr class="bg-muted/50">
               <th class="text-right p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground">رقم الطلب</th>
               <th class="text-right p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground">المريض</th>
-              <th class="text-right p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground">تاريخ الطلب</th>
+              <th class="text-right p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground cursor-pointer hover:bg-muted/70 transition-colors select-none" (click)="onHeaderSort('date')">
+                <div class="flex items-center gap-1.5">
+                  <span>تاريخ الطلب</span>
+                  <i class="pi text-[0.75rem]" [ngClass]="{
+                    'pi-sort-amount-down text-foreground': sortBy() === PharmacyOrderSort.NewestFirst,
+                    'pi-sort-amount-up-alt text-foreground': sortBy() === PharmacyOrderSort.OldestFirst,
+                    'pi-sort text-muted-foreground': sortBy() !== PharmacyOrderSort.NewestFirst && sortBy() !== PharmacyOrderSort.OldestFirst
+                  }"></i>
+                </div>
+              </th>
               <th class="text-right p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground">التسليم</th>
               <th class="text-right p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground">الأصناف</th>
-              <th class="text-right p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground">الإجمالي</th>
+              <th class="text-right p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground cursor-pointer hover:bg-muted/70 transition-colors select-none" (click)="onHeaderSort('amount')">
+                <div class="flex items-center gap-1.5">
+                  <span>الإجمالي</span>
+                  <i class="pi text-[0.75rem]" [ngClass]="{
+                    'pi-sort-amount-down text-foreground': sortBy() === PharmacyOrderSort.HighestAmount,
+                    'pi-sort-amount-up-alt text-foreground': sortBy() === PharmacyOrderSort.LowestAmount,
+                    'pi-sort text-muted-foreground': sortBy() !== PharmacyOrderSort.HighestAmount && sortBy() !== PharmacyOrderSort.LowestAmount
+                  }"></i>
+                </div>
+              </th>
               <th class="text-right p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground">طريقة الاستلام</th>
               <th class="text-right p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground">الحالة</th>
               <th class="text-right p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground">إجراءات</th>
@@ -193,9 +202,9 @@
               <td class="p-4">
                 <span
                   class="inline-flex items-center rounded-full px-3 py-1 text-[10px] lg:text-xs font-medium"
-                  [ngClass]="getOrderStatusPresentation(order.orderStatus).badgeClasses"
+                  [ngClass]="getLegStatusClasses(order.legStatus ?? order.orderStatus!)"
                 >
-                  {{ getOrderStatusPresentation(order.orderStatus).label }}
+                  {{ getLegStatusLabel(order.legStatus ?? order.orderStatus!) }}
                 </span>
               </td>
               <td class="p-4">
@@ -251,18 +260,18 @@
             <span class="text-muted-foreground">الحالة</span>
             <span
               class="inline-flex items-center rounded-full px-3 py-1 text-[10px] lg:text-xs font-medium"
-              [ngClass]="getOrderStatusPresentation(detail.orderStatus).badgeClasses"
+              [ngClass]="getLegStatusClasses(detail.legStatus ?? detail.orderStatus!)"
             >
-              {{ getOrderStatusPresentation(detail.orderStatus).label }}
+              {{ getLegStatusLabel(detail.legStatus ?? detail.orderStatus!) }}
             </span>
           </div>
           <div class="flex justify-between border-b border-border pb-2">
             <span class="text-muted-foreground">تاريخ الطلب</span>
-            <span class="font-medium">{{ detail.orderDate | date: 'yyyy/MM/dd HH:mm' }}</span>
+            <span class="font-medium">{{ detail.orderDate | date: 'yyyy/MM/dd - hh:mm a' }}</span>
           </div>
           <div class="flex justify-between border-b border-border pb-2">
             <span class="text-muted-foreground">التسليم</span>
-            <span class="font-medium">{{ detail.deliveryDate ? (detail.deliveryDate | date: 'yyyy/MM/dd') : '—' }}</span>
+            <span class="font-medium">{{ detail.deliveryDate ? (detail.deliveryDate | date: 'yyyy/MM/dd - hh:mm a') : '—' }}</span>
           </div>
           <div class="flex justify-between border-b border-border pb-2">
             <span class="text-muted-foreground">طريقة الاستلام</span>
@@ -315,11 +324,15 @@
               </thead>
               <tbody>
                 @for (item of detail.items; track item.orderItemId) {
-                  <tr class="border-t border-border">
-                    <td class="p-3">
-                      <div class="flex flex-col">
-                        <span class="font-medium">{{ item.drugName }}</span>
-                        <span class="text-muted-foreground">{{ item.strength }} — {{ item.form }}</span>
+                  <tr class="border-t border-border transition-colors duration-200 hover:bg-muted/30">
+                    <td class="p-4">
+                      <div class="flex flex-col gap-1">
+                        <span class="text-xs lg:text-base font-medium leading-normal">{{ item.arabicName?.trim() || item.brandName?.trim() || item.drugName }}</span>
+                        <span class="text-[10px] lg:text-xs font-medium leading-normal text-muted-foreground uppercase">
+                          @if (item.arabicName?.trim() && (item.brandName?.trim() || item.drugName)) {
+                            {{ item.brandName?.trim() || item.drugName }}
+                          }
+                        </span>
                       </div>
                     </td>
                     <td class="p-3 font-mono">{{ item.quantity | number }}</td>
@@ -341,7 +354,6 @@
                 <div class="flex items-center justify-between rounded-lg border border-border p-3">
                   <div class="flex flex-col">
                     <span class="font-medium">{{ leg.branchName }}</span>
-                    <span class="text-muted-foreground">{{ getLegTypeLabel(leg.legType) }}</span>
                   </div>
                   <span
                     class="inline-flex items-center rounded-full px-3 py-1 text-[10px] lg:text-xs font-medium"

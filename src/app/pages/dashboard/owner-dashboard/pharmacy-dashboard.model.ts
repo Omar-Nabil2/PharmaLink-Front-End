@@ -18,11 +18,11 @@ export interface LegStatusConfig {
 }
 
 export const LEG_STATUS_CONFIG: Record<number, LegStatusConfig> = {
-  1: { label: 'تم التوجيه',    badgeClass: 'bg-warning/20 text-warning-foreground', dotClass: 'bg-warning' },
+  1: { label: 'تم القبول',    badgeClass: 'bg-warning/20 text-warning-foreground', dotClass: 'bg-warning' },
   2: { label: 'قيد التجهيز',   badgeClass: 'bg-info/15 text-info',   dotClass: 'bg-info' },
   3: { label: 'جاهز للاستلام', badgeClass: 'bg-info/15 text-info', dotClass: 'bg-info' },
   4: { label: 'جاري التوصيل',   badgeClass: 'bg-info/15 text-info',           dotClass: 'bg-info' },
-  5: { label: 'تم التوصيل',    badgeClass: 'bg-accent/15 text-accent', dotClass: 'bg-accent' },
+  5: { label: 'تم التسليم',    badgeClass: 'bg-accent/15 text-accent', dotClass: 'bg-accent' },
   6: { label: 'ملغى',          badgeClass: 'bg-destructive/15 text-destructive',       dotClass: 'bg-destructive' },
 };
 

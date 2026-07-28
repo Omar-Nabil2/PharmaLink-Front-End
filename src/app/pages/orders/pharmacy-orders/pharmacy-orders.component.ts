@@ -18,6 +18,7 @@ import {
   ORDER_SORT_OPTIONS,
   ORDER_STATUS_FILTER_OPTIONS,
   OrderStatus,
+  LegStatus,
   PharmacyOrderDetailDTO,
   PharmacyOrderQueryParams,
   PharmacyOrderSort,
@@ -66,7 +67,7 @@ export class PharmacyOrdersComponent implements OnInit {
 
   // ── Filter state ────────────────────────────────────────────
   readonly searchQuery = signal('');
-  readonly selectedStatus = signal<OrderStatus | null>(null);
+  readonly selectedStatus = signal<LegStatus | null>(null);
   readonly orderDateFrom = signal<string>('');
   readonly orderDateTo = signal<string>('');
   readonly sortBy = signal<PharmacyOrderSort>(PharmacyOrderSort.NewestFirst);
@@ -106,6 +107,8 @@ export class PharmacyOrdersComponent implements OnInit {
 
   // Expose helpers / enums to the template.
   protected readonly OrderStatus = OrderStatus;
+  protected readonly LegStatus = LegStatus;
+  protected readonly PharmacyOrderSort = PharmacyOrderSort;
   protected readonly FulfillmentMode = FulfillmentMode;
   protected readonly getOrderStatusPresentation = getOrderStatusPresentation;
   protected readonly getFulfillmentModeLabel = getFulfillmentModeLabel;
@@ -184,7 +187,7 @@ export class PharmacyOrdersComponent implements OnInit {
     this.searchInput$.next(value);
   }
 
-  onStatusChange(value: OrderStatus | null): void {
+  onStatusChange(value: LegStatus | null): void {
     this.selectedStatus.set(value ?? null);
     this.resetToFirstPage();
     this.loadOrders();
@@ -194,6 +197,19 @@ export class PharmacyOrdersComponent implements OnInit {
     this.sortBy.set(value ?? PharmacyOrderSort.NewestFirst);
     this.resetToFirstPage();
     this.loadOrders();
+  }
+
+  onHeaderSort(column: 'date' | 'amount'): void {
+    const current = this.sortBy();
+    if (column === 'date') {
+      this.onSortChange(
+        current === PharmacyOrderSort.NewestFirst ? PharmacyOrderSort.OldestFirst : PharmacyOrderSort.NewestFirst
+      );
+    } else if (column === 'amount') {
+      this.onSortChange(
+        current === PharmacyOrderSort.HighestAmount ? PharmacyOrderSort.LowestAmount : PharmacyOrderSort.HighestAmount
+      );
+    }
   }
 
   onOrderDateFromChange(value: string): void {

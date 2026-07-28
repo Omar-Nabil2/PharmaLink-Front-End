@@ -73,7 +73,8 @@ export interface PharmacyOrderSummaryDTO {
   orderDate: string;
   deliveryDate: string | null;
   totalAmount: number;
-  orderStatus: OrderStatus;
+  legStatus?: LegStatus;
+  orderStatus?: LegStatus;
   fulfillmentMode: FulfillmentMode;
   itemsCount: number;
 }
@@ -98,6 +99,8 @@ export interface PharmacyOrderItemDTO {
   orderItemId: string;
   drugId: string;
   drugName: string;
+  brandName?: string;
+  arabicName?: string;
   genericName: string;
   strength: string;
   form: string;
@@ -121,7 +124,8 @@ export interface PharmacyOrderLegDTO {
 export interface PharmacyOrderDetailDTO {
   orderId: string;
   orderNumber: string;
-  orderStatus: OrderStatus;
+  legStatus?: LegStatus;
+  orderStatus?: LegStatus;
   fulfillmentMode: FulfillmentMode;
   orderDate: string;
   deliveryDate: string | null;
@@ -135,7 +139,7 @@ export interface PharmacyOrderDetailDTO {
 /** Query params for the orders list request (`OrderQueryParametersDto`). */
 export interface PharmacyOrderQueryParams {
   search?: string | null;
-  status?: OrderStatus | null;
+  status?: LegStatus | null;
   orderDateFrom?: string | null;
   orderDateTo?: string | null;
   deliveryDateFrom?: string | null;
@@ -226,7 +230,7 @@ export function getFulfillmentModeClasses(mode: FulfillmentMode | string | numbe
 
 /** Arabic labels for fulfillment leg statuses. */
 export const LEG_STATUS_LABELS: Record<number, string> = {
-  [LegStatus.Assigned]: 'تم التوجيه',
+  [LegStatus.Assigned]: 'تم القبول',
   [LegStatus.Preparing]: 'قيد التجهيز',
   [LegStatus.ReadyForPickup]: 'جاهز للاستلام',
   [LegStatus.PickedUpByCourier]: 'جاري التوصيل',
@@ -236,10 +240,15 @@ export const LEG_STATUS_LABELS: Record<number, string> = {
 
 const STRING_TO_LEG_STATUS: Record<string, number> = {
   assigned: LegStatus.Assigned,
+  pending: LegStatus.Assigned,
   preparing: LegStatus.Preparing,
+  processing: LegStatus.Preparing,
   readyforpickup: LegStatus.ReadyForPickup,
   pickedupbycourier: LegStatus.PickedUpByCourier,
+  outfordelivery: LegStatus.PickedUpByCourier,
+  shipped: LegStatus.PickedUpByCourier,
   completed: LegStatus.Completed,
+  delivered: LegStatus.Completed,
   cancelled: LegStatus.Cancelled,
 };
 
@@ -279,13 +288,14 @@ export function getLegTypeLabel(type: LegType | string | number): string {
 }
 
 /** Dropdown options for the status filter. */
-export const ORDER_STATUS_FILTER_OPTIONS: { label: string; value: OrderStatus | null }[] = [
+export const ORDER_STATUS_FILTER_OPTIONS: { label: string; value: LegStatus | null }[] = [
   { label: 'كل الحالات', value: null },
-  { label: 'قيد الانتظار', value: OrderStatus.Pending },
-  { label: 'جاري التجهيز', value: OrderStatus.Processing },
-  { label: 'جاري التوصيل', value: OrderStatus.Shipped },
-  { label: 'مكتمل', value: OrderStatus.Completed },
-  { label: 'ملغى', value: OrderStatus.Cancelled },
+  { label: 'تم القبول', value: LegStatus.Assigned },
+  { label: 'قيد التجهيز', value: LegStatus.Preparing },
+  { label: 'جاهز للاستلام', value: LegStatus.ReadyForPickup },
+  { label: 'جارى التوصيل', value: LegStatus.PickedUpByCourier },
+  { label: 'تم التوصيل', value: LegStatus.Completed },
+  { label: 'ملغى', value: LegStatus.Cancelled },
 ];
 
 /** Dropdown options for the sort selector. */
