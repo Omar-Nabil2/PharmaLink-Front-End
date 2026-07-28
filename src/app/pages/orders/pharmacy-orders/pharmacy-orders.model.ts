@@ -234,7 +234,7 @@ export const LEG_STATUS_LABELS: Record<number, string> = {
   [LegStatus.Preparing]: 'قيد التجهيز',
   [LegStatus.ReadyForPickup]: 'جاهز للاستلام',
   [LegStatus.PickedUpByCourier]: 'جاري التوصيل',
-  [LegStatus.Completed]: 'تم التوصيل',
+  [LegStatus.Completed]: 'تم التسليم',
   [LegStatus.Cancelled]: 'ملغى',
 };
 
@@ -293,8 +293,8 @@ export const ORDER_STATUS_FILTER_OPTIONS: { label: string; value: LegStatus | nu
   { label: 'تم القبول', value: LegStatus.Assigned },
   { label: 'قيد التجهيز', value: LegStatus.Preparing },
   { label: 'جاهز للاستلام', value: LegStatus.ReadyForPickup },
-  { label: 'جارى التوصيل', value: LegStatus.PickedUpByCourier },
-  { label: 'تم التوصيل', value: LegStatus.Completed },
+  { label: 'جاري التوصيل', value: LegStatus.PickedUpByCourier },
+  { label: 'تم التسليم', value: LegStatus.Completed },
   { label: 'ملغى', value: LegStatus.Cancelled },
 ];
 
