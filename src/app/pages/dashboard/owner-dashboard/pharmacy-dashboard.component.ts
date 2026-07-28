@@ -36,7 +36,6 @@ import {
     ChartModule,
     SelectModule,
     AutoCompleteModule,
-    StatusTranslatePipe,
   ],
   templateUrl: './pharmacy-dashboard.component.html',
   styleUrl: './pharmacy-dashboard.component.scss',
