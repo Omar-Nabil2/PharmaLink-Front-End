@@ -77,7 +77,7 @@
           <tr class="border-b border-surface-pressed hover:bg-canvas-softer transition-colors">
             <td class="py-3 px-4 text-ink type-body-sm">{{ order.orderNumber }}</td>           
               <td class="py-3 px-4">
-                <p-tag [value]="order.status" [severity]="getSeverity(order.status)" [rounded]="true">
+                <p-tag [value]="order.status | statusTranslate" [severity]="getSeverity(order.status)" [rounded]="true">
               </p-tag>
             </td>
               <td class="py-3 px-4 text-ink type-body-sm-strong">

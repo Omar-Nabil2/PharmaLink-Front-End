@@ -10,11 +10,12 @@ import { ButtonModule } from 'primeng/button';
 import { PatientDashboardService } from '../../../core/services/patient-dashboard.service';
 import { CartService } from '../../../core/services/cart.service';
 import { PatientDashboardData, DashboardStatistics, RecentOrder, CurrentOrder } from '../../../core/interfaces/patient-dashboard.interface';
+import { StatusTranslatePipe } from '../../../shared/pipes/status-translate.pipe';
 
 @Component({
   selector: 'app-patient-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink, CardModule, TableModule, BadgeModule, TagModule, ButtonModule],
+  imports: [CommonModule, RouterLink, CardModule, TableModule, BadgeModule, TagModule, ButtonModule, StatusTranslatePipe],
   templateUrl: './patient-dashboard.component.html',
   styleUrl: './patient-dashboard.component.scss',
 })
