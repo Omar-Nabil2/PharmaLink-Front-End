@@ -67,7 +67,8 @@ export interface PharmacyRecentOrderDTO {
   orderNumber: string;
   patientName: string;
   orderedMedicinesCount: number;
-  summary: string;
+  arabicSummary: string;
+  brandSummary: string;
   totalAmount: number;
   orderDate: string;
   legStatus: LegStatus;
