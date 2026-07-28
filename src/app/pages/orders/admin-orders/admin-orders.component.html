@@ -51,7 +51,7 @@
           [class.active]="selectedStatusTab() === 'cancelled'" 
           (click)="onStatusTabChange('cancelled')">
           <i class="pi pi-times-circle text-xs"></i>
-          <span>ملغي</span>
+          <span>ملغى</span>
         </button>
       </div>
 
@@ -145,7 +145,7 @@
   </div>
 
   <!-- Orders Data Table -->
-  <div class="bg-canvas border border-surface-pressed rounded-xl overflow-hidden shadow-none">
+  <div class="bg-card border border-border rounded-xl overflow-hidden shadow-sm">
     <p-table 
       [value]="orders()" 
       [lazy]="true" 
@@ -160,19 +160,19 @@
       
       <ng-template pTemplate="header">
         <tr>
-          <th class="bg-canvas-soft text-ink type-body-sm-strong border-b border-surface-pressed py-4 px-6 text-right">الرقم</th>
-          <th class="bg-canvas-soft text-ink type-body-sm-strong border-b border-surface-pressed py-4 px-6 text-right">المريض</th>
-          <th class="bg-canvas-soft text-ink type-body-sm-strong border-b border-surface-pressed py-4 px-6 text-right">الصيدلية</th>
-          <th class="bg-canvas-soft text-ink type-body-sm-strong border-b border-surface-pressed py-4 px-6 text-right">الأدوية</th>
-          <th class="bg-canvas-soft text-ink type-body-sm-strong border-b border-surface-pressed py-4 px-6 text-right">الإجمالي</th>
-          <th class="bg-canvas-soft text-ink type-body-sm-strong border-b border-surface-pressed py-4 px-6 text-right">الحالة</th>
-          <th class="bg-canvas-soft text-ink type-body-sm-strong border-b border-surface-pressed py-4 px-6 text-right">التاريخ</th>
-          <th class="bg-canvas-soft text-ink type-body-sm-strong border-b border-surface-pressed py-4 px-6 text-center">الإجراء</th>
+          <th class="bg-muted/50 text-muted-foreground type-body-sm-strong font-semibold border-b border-border py-4 px-6 text-right">الرقم</th>
+          <th class="bg-muted/50 text-muted-foreground type-body-sm-strong font-semibold border-b border-border py-4 px-6 text-right">المريض</th>
+          <th class="bg-muted/50 text-muted-foreground type-body-sm-strong font-semibold border-b border-border py-4 px-6 text-right">الصيدلية</th>
+          <th class="bg-muted/50 text-muted-foreground type-body-sm-strong font-semibold border-b border-border py-4 px-6 text-right">الأدوية</th>
+          <th class="bg-muted/50 text-muted-foreground type-body-sm-strong font-semibold border-b border-border py-4 px-6 text-right">الإجمالي</th>
+          <th class="bg-muted/50 text-muted-foreground type-body-sm-strong font-semibold border-b border-border py-4 px-6 text-right">الحالة</th>
+          <th class="bg-muted/50 text-muted-foreground type-body-sm-strong font-semibold border-b border-border py-4 px-6 text-right">التاريخ</th>
+          <th class="bg-muted/50 text-muted-foreground type-body-sm-strong font-semibold border-b border-border py-4 px-6 text-center">الإجراء</th>
         </tr>
       </ng-template>
 
       <ng-template pTemplate="body" let-order>
-        <tr class="border-b border-surface-pressed hover:bg-canvas-softer transition-colors">
+        <tr class="border-b border-border transition-colors duration-200 hover:bg-muted/30">
           <td class="py-4 px-6 text-mute font-mono text-sm font-bold">{{ order.orderNumber }}</td>
           <td class="py-4 px-6 text-ink type-body-sm-strong">{{ order.patientName }}</td>
           <td class="py-4 px-6 text-ink type-body-sm">{{ order.primaryPharmacyName }}</td>

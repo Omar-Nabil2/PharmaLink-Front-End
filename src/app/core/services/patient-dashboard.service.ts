@@ -9,7 +9,8 @@ import { PatientDashboardData } from '../interfaces/patient-dashboard.interface'
 })
 export class PatientDashboardService {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = `https://localhost:5001/api/v1/Dashboard?recentOrdersCount=5`; 
+  private readonly baseUrl = environment.baseUrl;
+  private readonly apiUrl = `${this.baseUrl}/Dashboard`;
 
   getDashboardData(recentOrdersCount: number = 5): Observable<PatientDashboardData> {
     const params = new HttpParams().set('recentOrdersCount', recentOrdersCount.toString());

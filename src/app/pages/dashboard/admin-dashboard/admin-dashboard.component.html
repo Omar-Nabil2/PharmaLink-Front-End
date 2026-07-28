@@ -106,9 +106,10 @@
           <div class="chart-skeleton"></div>
         } @else {
           <p-chart
-            type="line"
+            type="bar"
             [data]="ordersLineChartData()"
             [options]="ordersLineChartOptions"
+            [plugins]="chartPlugins"
             height="260px"
           />
         }
