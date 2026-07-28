@@ -4,6 +4,7 @@ import { HomeComponent } from './pages/home/home.component';
 import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
 import { authGuard } from './core/guards/auth.guard';
 import { AppRoles } from './core/enums/app-roles.constant';
+import { PatientPrescriptionDetailComponent } from '@pages/prescription-detail.component/prescription-detail.component';
 
 export const routes: Routes = [
   {
@@ -26,10 +27,7 @@ export const routes: Routes = [
             (m) => m.UpdateProfileComponent,
           ),
       },
-      {
-        path: 'prescriptions/review/:id',
-        loadComponent: () => import('./pages/prescriptions/review-prescription/review-prescription.component').then(m => m.ReviewPrescriptionComponent)
-      },
+
       {
         path: 'privacy',
         loadComponent: () => import('./pages/static/privacy-policy/privacy-policy.component').then(m => m.PrivacyPolicyComponent)
@@ -165,11 +163,10 @@ export const routes: Routes = [
           ),
       },
       {
-        path: 'prescriptions/:id', // 🎯 هنا يتم توجيه الـ id الممرر من الزرار
-        loadComponent: () =>
-          import('./pages/prescription-detail.component/prescription-detail.component').then(
-            (m) => m.PatientPrescriptionReviewComponent
-          )
+        path: 'prescriptions/review/:id', // ✅ صحيح: بدون كلمة patient في البداية
+        loadComponent: () => 
+          import('./pages/prescription-detail.component/prescription-detail.component')
+            .then((m) => m.PatientPrescriptionDetailComponent)
       },
       {
         path: 'addresses',

@@ -1,30 +1,32 @@
-import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, inject ,ChangeDetectorRef} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { RouterModule, ActivatedRoute } from '@angular/router';
 import { PrescriptionReviewService } from '@core/services/prescription-review.service';
-import { PrescriptionReviewDto } from '@core/interfaces/prescription-review.interface';
 
 @Component({
-  selector: 'app-prescription-detail',
+  selector: 'app-patient-prescription-detail',
   standalone: true,
   imports: [CommonModule, RouterModule],
-  templateUrl: './prescription-detail.component.html'
+  templateUrl: './prescription-detail.component.html' // أو ضع الـ HTML هنا إذا كان Inline
 })
-export class PatientPrescriptionReviewComponent implements OnInit {
-  private readonly route = inject(ActivatedRoute);
-  private readonly reviewService = inject(PrescriptionReviewService);
+export class PatientPrescriptionDetailComponent implements OnInit {
+  private route = inject(ActivatedRoute);
+  private reviewService = inject(PrescriptionReviewService);
   private readonly cdr = inject(ChangeDetectorRef);
 
-  reviewDetail: PrescriptionReviewDto | null = null;
-  isLoading = true;
-  hasError = false;
   reviewId: string | null = null;
+  reviewDetail: any = null;
+  isLoading: boolean = false;
+  hasError: boolean = false;
 
   ngOnInit(): void {
+    // التقاط الـ id من الـ URL
     this.route.paramMap.subscribe(params => {
       this.reviewId = params.get('id');
       if (this.reviewId) {
         this.loadReviewDetail(this.reviewId);
+                this.cdr.markForCheck();
+
       }
     });
   }
@@ -37,30 +39,41 @@ export class PatientPrescriptionReviewComponent implements OnInit {
       next: (data) => {
         this.reviewDetail = data;
         this.isLoading = false;
-        this.cdr.markForCheck();
+        console.log('تفاصيل الروشتة:', data);
+                this.cdr.markForCheck();
+
       },
       error: (err) => {
-        console.error('خطأ في تحميل تفاصيل الروشتة:', err);
-        this.isLoading = false;
         this.hasError = true;
-        this.cdr.markForCheck();
+        this.isLoading = false;
+        console.error('خطأ في جلب التفاصيل:', err);
       }
     });
   }
 
-  getStatusClass(status?: string): string {
+  // 🎨 دوال لتنسيق وعرض حالة الروشتة بشكل جمالي
+  getStatusClass(status: string): string {
     switch (status?.toLowerCase()) {
-      case 'approved': return 'bg-emerald-100 text-emerald-800 border-emerald-300';
-      case 'rejected': return 'bg-rose-100 text-rose-800 border-rose-300';
-      default: return 'bg-amber-100 text-amber-800 border-amber-300';
+      case 'approved':
+      case 'مقبول':
+        return 'bg-emerald-50 text-emerald-700 border-emerald-200';
+      case 'rejected':
+      case 'مرفوض':
+        return 'bg-rose-50 text-rose-700 border-rose-200';
+      default:
+        return 'bg-amber-50 text-amber-700 border-amber-200'; // قيد المراجعة
     }
   }
 
-  getStatusLabel(status?: string): string {
+  getStatusLabel(status: string): string {
     switch (status?.toLowerCase()) {
-      case 'approved': return 'تمت الموافقة';
-      case 'rejected': return 'تم الرفض';
-      default: return 'قيد المراجعة';
+      case 'approved':
+        return 'مقبول';
+      case 'rejected':
+        return 'مرفوض';
+      case 'pending':
+      default:
+        return 'قيد المراجعة';
     }
   }
 }

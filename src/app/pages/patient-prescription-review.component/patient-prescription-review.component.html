@@ -76,10 +76,9 @@
 
         <!-- زر التفاصيل -->
        <!-- تغيير الرابط إلى prescriptions/review/ -->
-        <a [routerLink]="['/patient/prescriptions/review', item.reviewId]"
-        class="w-full text-center bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 px-4 rounded-xl font-bold text-sm transition-colors flex items-center justify-center gap-2">
-        <i class="pi pi-eye"></i> عرض التفاصيل والحالة
-        </a>
+          <a [routerLink]="['/patient/prescriptions/review', item.reviewId]">
+  عرض التفاصيل
+</a>
       </div>
     </div>
 
