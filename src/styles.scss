@@ -269,11 +269,11 @@
     background-color: var(--color-primary);
     color: var(--color-on-primary);
     font-family: var(--font-text);
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 500;
     line-height: 24px;
-    border-radius: var(--radius-xl);
-    padding: 16px 20px;
+    border-radius: var(--radius-lg);
+    padding: 12px 20px;
     border: none;
     cursor: pointer;
     transition: background-color 0.2s ease-in-out, opacity 0.15s ease;
@@ -293,11 +293,11 @@
     background-color: var(--color-canvas-soft);
     color: var(--color-ink);
     font-family: var(--font-text);
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 400;
     line-height: 24px;
     border-radius: var(--radius-md);
-    padding: 16px;
+    padding: 12px 16px;
     border: none;
     outline: none;
     transition: background-color 0.15s ease, box-shadow 0.15s ease;
@@ -333,9 +333,8 @@
   }
 
   .auth-card {
-    background-color: var(--color-canvas-soft);
-    border-radius: var(--radius-xl);
-    padding: 24px;
+    background-color: transparent;
+    padding: 0;
   }
 
   .card-surface {
