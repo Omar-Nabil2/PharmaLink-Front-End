@@ -290,6 +290,13 @@ export const routes: Routes = [
           import('./pages/inventory/inventory.component').then((m) => m.InventoryComponent),
       },
       {
+        path: 'orders',
+        loadComponent: () =>
+          import('./pages/orders/pharmacy-orders/pharmacy-orders.component').then(
+            (m) => m.PharmacyOrdersComponent,
+          ),
+      },
+      {
         path: 'pharmacy-profile',
         loadComponent: () =>
           import('./pages/pharmacy-profile/pharmacy-profile.component').then((m) => m.PharmacyProfileComponent),
