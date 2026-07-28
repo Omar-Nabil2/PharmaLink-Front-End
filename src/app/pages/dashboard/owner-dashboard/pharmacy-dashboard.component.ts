@@ -36,7 +36,6 @@ import {
     ChartModule,
     SelectModule,
     AutoCompleteModule,
-    StatusTranslatePipe,
   ],
   templateUrl: './pharmacy-dashboard.component.html',
   styleUrl: './pharmacy-dashboard.component.scss',
@@ -138,15 +137,8 @@ export class PharmacyDashboardComponent {
         {
           label: 'المبيعات (ج.م)',
           data: series.map((point) => point.salesAmount),
-          fill: true,
-          tension: 0.4,
-          borderColor: '#0f9d76',
-          backgroundColor: 'rgba(15, 157, 118, 0.12)',
-          pointBackgroundColor: '#0f9d76',
-          pointBorderColor: '#ffffff',
-          pointRadius: 4,
-          pointHoverRadius: 6,
-          borderWidth: 2,
+          backgroundColor: '#007671',
+          borderRadius: 10,
         },
       ],
     };
@@ -155,15 +147,24 @@ export class PharmacyDashboardComponent {
   readonly salesChartOptions = {
     responsive: true,
     maintainAspectRatio: false,
+    interaction: {
+      mode: 'index',
+      intersect: false,
+    },
     plugins: {
       legend: { display: false },
       tooltip: {
         rtl: true,
-        backgroundColor: '#1a2b28',
-        titleFont: { family: 'Cairo, sans-serif' },
-        bodyFont: { family: 'Cairo, sans-serif' },
+        backgroundColor: '#ffffff',
+        titleColor: '#1e293b',
+        bodyColor: '#007671',
+        borderColor: '#e2e8e6',
+        borderWidth: 1,
+        titleFont: { family: 'Cairo, sans-serif', size: 14, weight: 'bold' },
+        bodyFont: { family: 'Cairo, sans-serif', size: 14, weight: 'medium' },
         padding: 12,
         cornerRadius: 8,
+        displayColors: false,
       },
     },
     scales: {
@@ -178,6 +179,28 @@ export class PharmacyDashboardComponent {
       },
     },
   };
+
+  readonly chartPlugins = [
+    {
+      id: 'barHoverBackground',
+      beforeDatasetsDraw: (chart: any) => {
+        const activeElements = chart.getActiveElements();
+        if (activeElements?.length) {
+          const ctx = chart.ctx;
+          const activeElement = activeElements[0];
+          const x = activeElement.element.x;
+          const width = activeElement.element.width + 16;
+          const top = chart.chartArea.top;
+          const bottom = chart.chartArea.bottom;
+
+          ctx.save();
+          ctx.fillStyle = '#cccccc';
+          ctx.fillRect(x - width / 2, top, width, bottom - top);
+          ctx.restore();
+        }
+      }
+    }
+  ];
 
   onBranchChange(branchId: string): void {
     this.selectedBranchId.set(branchId ?? ALL_BRANCHES);
