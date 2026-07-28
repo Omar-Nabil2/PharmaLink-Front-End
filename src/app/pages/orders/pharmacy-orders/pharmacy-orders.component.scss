@@ -1,0 +1,55 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+// Align the PrimeNG autocomplete with the toolbar controls (RTL-friendly).
+:host ::ng-deep .inv-autocomplete {
+  .p-autocomplete-input,
+  input.p-inputtext {
+    height: 2.5rem;
+    width: 100%;
+    border-radius: 0.5rem;
+    text-align: right;
+  }
+
+  @media (min-width: 1024px) {
+    .p-autocomplete-input,
+    input.p-inputtext {
+      height: 3rem;
+    }
+  }
+}
+
+/* ── PrimeNG table: inherit the design-system surfaces ───────── */
+::ng-deep {
+  .p-datatable {
+    .p-datatable-thead > tr > th {
+      background-color: transparent;
+      border: none;
+      color: var(--muted-foreground, #64748b);
+    }
+
+    .p-datatable-tbody > tr {
+      background-color: transparent;
+      color: inherit;
+
+      > td {
+        border: none;
+      }
+    }
+
+    /* Paginator uses card/border tokens instead of PrimeNG defaults */
+    .p-paginator {
+      background-color: transparent;
+      border-top: 1px solid var(--border, #e2e8f0);
+      padding: 0.75rem 1rem;
+
+      .p-paginator-page.p-highlight {
+        background-color: #007671;
+        color: #ffffff;
+        border-radius: 0.5rem;
+      }
+    }
+  }
+}
