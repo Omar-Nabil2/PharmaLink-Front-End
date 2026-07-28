@@ -134,7 +134,7 @@ export const routes: Routes = [
 
     ],
   },
-  {
+{
     path: 'patient',
     canActivate: [authGuard],
     data: { role: AppRoles.Patient },
@@ -156,6 +156,20 @@ export const routes: Routes = [
           import('./pages/prescriptions/upload-prescription/upload-prescription.component').then(
             (m) => m.UploadPrescriptionComponent,
           ),
+      },
+      {
+        path: 'prescriptions',
+        loadComponent: () =>
+          import('./pages/patient-prescription-review.component/patient-prescription-review.component').then(
+            (m) => m.PatientPrescriptionsListComponent
+          ),
+      },
+      {
+        path: 'prescriptions/:id', // 🎯 هنا يتم توجيه الـ id الممرر من الزرار
+        loadComponent: () =>
+          import('./pages/prescription-detail.component/prescription-detail.component').then(
+            (m) => m.PatientPrescriptionReviewComponent
+          )
       },
       {
         path: 'addresses',
