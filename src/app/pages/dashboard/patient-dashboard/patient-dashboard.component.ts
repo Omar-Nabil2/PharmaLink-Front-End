@@ -1,11 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { forkJoin } from 'rxjs';
 import { CardModule } from 'primeng/card';
 import { TableModule } from 'primeng/table';
 import { BadgeModule } from 'primeng/badge';
 import { TagModule } from 'primeng/tag';
 import { ButtonModule } from 'primeng/button';
+import { PatientDashboardService } from '../../../core/services/patient-dashboard.service';
+import { CartService } from '../../../core/services/cart.service';
+import { PatientDashboardData, DashboardStatistics, RecentOrder, CurrentOrder } from '../../../core/interfaces/patient-dashboard.interface';
 
 @Component({
   selector: 'app-patient-dashboard',
@@ -14,35 +18,65 @@ import { ButtonModule } from 'primeng/button';
   templateUrl: './patient-dashboard.component.html',
   styleUrl: './patient-dashboard.component.scss',
 })
-export class PatientDashboardComponent {
-  itemsInCart = 3;
-  activeOrders = 1;
+export class PatientDashboardComponent implements OnInit {
+  private readonly dashboardService = inject(PatientDashboardService);
+  private readonly cartService = inject(CartService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
-  recentOrders = [
-    { id: 'ORD-10023', status: 'In Transit', deliveryAddress: '123 Health Ave, NY', totalAmount: 45.99, date: '2026-07-16' },
-    { id: 'ORD-10022', status: 'Delivered', deliveryAddress: '123 Health Ave, NY', totalAmount: 12.50, date: '2026-07-10' },
-    { id: 'ORD-10021', status: 'Cancelled', deliveryAddress: '123 Health Ave, NY', totalAmount: 89.00, date: '2026-07-01' },
-  ];
+  isLoading = true;
+  errorMessage = '';
 
-  prescriptionReviews = [
-    { id: 'PR-901', medication: 'Amoxicillin 500mg', reviewStatus: 'Approved', doctor: 'Dr. Sarah Smith', date: '2026-07-15' },
-    { id: 'PR-902', medication: 'Lisinopril 10mg', reviewStatus: 'Pending', doctor: 'Dr. John Doe', date: '2026-07-16' },
-    { id: 'PR-903', medication: 'Metformin 1000mg', reviewStatus: 'Rejected', doctor: 'Dr. Sarah Smith', date: '2026-07-12' },
-  ];
+  statistics?: DashboardStatistics;
+  currentOrder?: CurrentOrder | null;
+  recentOrders: RecentOrder[] = [];
+  hasMoreOrders = false;
+
+  cartItemCount = 0;
+
+  ngOnInit(): void {
+    this.loadDashboardData();
+  }
+
+  loadDashboardData(): void {
+    this.isLoading = true;
+
+    forkJoin({
+      dashboard: this.dashboardService.getDashboardData(),
+      cart: this.cartService.getCart(),
+    }).subscribe({
+      next: ({ dashboard, cart }) => {
+        this.statistics = dashboard.statistics;
+        this.currentOrder = dashboard.currentOrder;
+        this.recentOrders = dashboard.recentOrders || [];
+        this.hasMoreOrders = dashboard.hasMoreOrders || false;
+        this.cartItemCount = cart?.items?.length ?? 0;
+        this.isLoading = false;
+        this.cdr.detectChanges();   // ← الإضافة المهمة
+      },
+      error: (error) => {
+        this.errorMessage = 'فشل في تحميل بيانات لوحة التحكم.';
+        this.isLoading = false;
+        console.error(error);
+        this.cdr.detectChanges();   // ← ولو حصل خطأ كمان
+      },
+    });
+  }
 
   getSeverity(status: string): 'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contrast' {
-    switch (status) {
-      case 'Delivered':
-      case 'Approved':
+    switch (status?.toLowerCase()) {
+      case 'delivered':
+      case 'approved':
+      case 'completed':
         return 'success';
-      case 'In Transit':
-      case 'Pending':
+      case 'in transit':
+      case 'pending':
+      case 'assigned':
         return 'info';
-      case 'Cancelled':
-      case 'Rejected':
+      case 'cancelled':
+      case 'rejected':
         return 'danger';
       default:
-        return 'info';
+        return 'secondary';
     }
   }
 }

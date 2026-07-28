@@ -7,42 +7,56 @@
     </button>
   </div>
 
-  <!-- Quick Stats -->
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-    <p-card styleClass="shadow-none border border-surface-pressed rounded-xl bg-canvas">
-      <div class="flex items-center justify-between">
-        <div>
-          <span class="block text-mute type-body-md-strong mb-1">الطلبات النشطة</span>
-          <div class="text-ink type-display-xl font-bold">{{ activeOrders }}</div>
-        </div>
-        <div class="w-12 h-12 rounded-full bg-canvas-soft flex items-center justify-center">
-          <i class="pi pi-shopping-bag text-xl text-ink"></i>
-        </div>
+<!-- Quick Stats -->
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+  <p-card styleClass="shadow-none border border-surface-pressed rounded-xl bg-canvas">
+    <div class="flex items-center justify-between">
+      <div>
+        <span class="block text-mute type-body-md-strong mb-1">إجمالي الطلبات</span>
+        <div class="text-ink type-display-xl font-bold">{{ statistics?.totalOrders || 0 }}</div>
       </div>
-    </p-card>
-    <p-card styleClass="shadow-none border border-surface-pressed rounded-xl bg-canvas">
-      <div class="flex items-center justify-between">
-        <div>
-          <span class="block text-mute type-body-md-strong mb-1">عناصر في العربة</span>
-          <div class="text-ink type-display-xl font-bold">{{ itemsInCart }}</div>
-        </div>
-        <div class="w-12 h-12 rounded-full bg-canvas-soft flex items-center justify-center">
-          <i class="pi pi-shopping-cart text-xl text-ink"></i>
-        </div>
+      <div class="w-12 h-12 rounded-full bg-canvas-soft flex items-center justify-center">
+        <i class="pi pi-shopping-bag text-xl text-ink"></i>
       </div>
-    </p-card>
-    <p-card styleClass="shadow-none border border-surface-pressed rounded-xl bg-canvas">
-      <div class="flex items-center justify-between">
-        <div>
-          <span class="block text-mute type-body-md-strong mb-1">مراجعات قيد الانتظار</span>
-          <div class="text-ink type-display-xl font-bold">1</div>
-        </div>
-        <div class="w-12 h-12 rounded-full bg-canvas-soft flex items-center justify-center">
-          <i class="pi pi-file-edit text-xl text-ink"></i>
-        </div>
+    </div>
+  </p-card>
+
+  <p-card styleClass="shadow-none border border-surface-pressed rounded-xl bg-canvas">
+    <div class="flex items-center justify-between">
+      <div>
+        <span class="block text-mute type-body-md-strong mb-1">عناصر في العربة</span>
+        <div class="text-ink type-display-xl font-bold">{{ cartItemCount }}</div>
       </div>
-    </p-card>
-  </div>
+      <div class="w-12 h-12 rounded-full bg-canvas-soft flex items-center justify-center">
+        <i class="pi pi-shopping-cart text-xl text-ink"></i>
+      </div>
+    </div>
+  </p-card>
+
+  <p-card styleClass="shadow-none border border-surface-pressed rounded-xl bg-canvas">
+    <div class="flex items-center justify-between">
+      <div>
+        <span class="block text-mute type-body-md-strong mb-1">مراجعات قيد الانتظار</span>
+        <div class="text-ink type-display-xl font-bold">{{ statistics?.pendingPrescriptionReviews || 0 }}</div>
+      </div>
+      <div class="w-12 h-12 rounded-full bg-canvas-soft flex items-center justify-center">
+        <i class="pi pi-file-edit text-xl text-ink"></i>
+      </div>
+    </div>
+  </p-card>
+
+  <p-card styleClass="shadow-none border border-surface-pressed rounded-xl bg-canvas">
+    <div class="flex items-center justify-between">
+      <div>
+        <span class="block text-mute type-body-md-strong mb-1">العناوين المحفوظة</span>
+        <div class="text-ink type-display-xl font-bold">{{ statistics?.savedAddresses || 0 }}</div>
+      </div>
+      <div class="w-12 h-12 rounded-full bg-canvas-soft flex items-center justify-center">
+        <i class="pi pi-map-marker text-xl text-ink"></i>
+      </div>
+    </div>
+  </p-card>
+</div>
 
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
     <!-- Recent Orders Table -->
@@ -61,12 +75,15 @@
         </ng-template>
         <ng-template pTemplate="body" let-order>
           <tr class="border-b border-surface-pressed hover:bg-canvas-softer transition-colors">
-            <td class="py-3 px-4 text-ink type-body-sm">{{ order.id }}</td>
-            <td class="py-3 px-4">
-              <p-tag [value]="order.status" [severity]="getSeverity(order.status)" [rounded]="true"></p-tag>
+            <td class="py-3 px-4 text-ink type-body-sm">{{ order.orderNumber }}</td>           
+              <td class="py-3 px-4">
+                <p-tag [value]="order.status" [severity]="getSeverity(order.status)" [rounded]="true">
+              </p-tag>
             </td>
-            <td class="py-3 px-4 text-ink type-body-sm-strong">${{ order.totalAmount }}</td>
-          </tr>
+              <td class="py-3 px-4 text-ink type-body-sm-strong">
+                {{ order.totalAmount | currency:'EGP' }}
+              </td>
+            </tr>
         </ng-template>
         <ng-template pTemplate="emptymessage">
           <tr>
@@ -83,7 +100,7 @@
         <a routerLink="/patient/prescriptions" class="text-link type-body-sm-strong hover:underline">عرض الكل</a>
       </div>
       <div class="space-y-4">
-        <div *ngFor="let review of prescriptionReviews" class="flex items-start justify-between p-4 rounded-xl border border-surface-pressed bg-canvas-softer hover:bg-canvas-soft transition-colors cursor-pointer">
+        <!-- <div *ngFor="let review of prescriptionReviews" class="flex items-start justify-between p-4 rounded-xl border border-surface-pressed bg-canvas-softer hover:bg-canvas-soft transition-colors cursor-pointer">
           <div class="flex flex-col gap-1">
             <span class="type-body-md-strong text-ink">{{ review.medication }}</span>
             <span class="type-caption text-mute">روجعت بواسطة: {{ review.doctor }}</span>
@@ -92,7 +109,7 @@
           <div>
             <p-tag [value]="review.reviewStatus" [severity]="getSeverity(review.reviewStatus)" [rounded]="true"></p-tag>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
