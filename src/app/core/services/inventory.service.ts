@@ -12,11 +12,13 @@ import {
   ProblemDetails,
   UpdatePharmacyInventoryDto,
 } from '@pages/inventory/inventory.model';
+import { AdjustStockDTO } from '@core/interfaces/inventory.interface';
 
 @Injectable({ providedIn: 'root' })
 export class InventoryService {
   private readonly http = inject(HttpClient);
   private readonly baseUrl = environment.localUrl;
+  private readonly omarUrl = environment.localUrl;
   private readonly resource = 'Inventory';
 
   // ── Signal store ────────────────────────────────────────────
@@ -138,5 +140,9 @@ export class InventoryService {
       instance: body?.instance,
       errors: body?.errors,
     };
+  }
+
+  adjustStock(inventoryId: string, payload: AdjustStockDTO) {
+    return this.http.patch<any>(`${environment.omarUrl}/Inventory/${inventoryId}/adjust-stock`, payload);
   }
 }

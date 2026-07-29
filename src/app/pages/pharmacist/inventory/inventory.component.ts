@@ -7,11 +7,18 @@ import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { InventoryService } from '../../../core/services/inventory.service';
 import { GetPharmacyInventoryDTO, InventoryStatusFilter, InventoryStockStatus, GetPharmacyInventoryParamRequest } from '@pages/inventory/inventory.model';
+import { DialogModule } from 'primeng/dialog';
+import { RadioButtonModule } from 'primeng/radiobutton';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { ButtonModule } from 'primeng/button'; // 👈 تم الإضافة هنا
+import { AdjustmentType, AdjustStockDTO } from '@core/interfaces/inventory.interface';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-inventory',
   standalone: true,
-  imports: [CommonModule, FormsModule, TableModule, InputTextModule],
+  // 👈 تم إضافة ButtonModule في السطر اللي تحت
+  imports: [CommonModule, FormsModule, TableModule, InputTextModule, DialogModule, RadioButtonModule, InputNumberModule, ButtonModule],
   templateUrl: './inventory.component.html',
   styleUrls: ['./inventory.component.scss'],
 })
@@ -36,14 +43,23 @@ export class InventoryComponent {
     { label: 'نواقص (قارب على النفاذ)', value: InventoryStatusFilter.LowStock },
     { label: 'غير متوفر (نفد)', value: InventoryStatusFilter.OutOfStock },
   ];
+  displayManageModal = false;
+  savingStock = false;
+  selectedItem: any = null;
+  AdjustmentType = AdjustmentType;
+
+  adjustStockData: AdjustStockDTO = {
+    type: AdjustmentType.Increase,
+    quantity: 1,
+  };
 
   constructor(
     private inventoryService: InventoryService,
     private cd: ChangeDetectorRef,
+    private messageService: MessageService
   ) {
-    // Debounce search to avoid calling API on every keystroke
     this.searchSubject.pipe(debounceTime(500), distinctUntilChanged()).subscribe((term) => {
-      this.first = 0; // Reset to first page on search
+      this.first = 0;
       this.currentPage = 1;
       this.loadData();
     });
@@ -71,7 +87,7 @@ export class InventoryComponent {
         this.loading = false;
         this.cd.markForCheck();
       },
-      error: (err) => {
+      error: (err: any) => { // 👈 تم إضافة النوع any هنا
         console.error('Error loading inventory:', err);
         this.loading = false;
         this.cd.markForCheck();
@@ -114,5 +130,54 @@ export class InventoryComponent {
       default:
         return status;
     }
+  }
+
+  openManageModal(item: any) {
+    this.selectedItem = item;
+    this.adjustStockData = {
+      type: AdjustmentType.Increase,
+      quantity: 1,
+    };
+    this.displayManageModal = true;
+  }
+
+  closeManageModal() {
+    this.displayManageModal = false;
+    this.selectedItem = null;
+  }
+
+  submitStockAdjustment() {
+    if (!this.selectedItem || this.adjustStockData.quantity <= 0) {
+      this.messageService.add({ severity: 'error', summary: 'خطأ', detail: 'الكمية يجب أن تكون أكبر من صفر' });
+      return;
+    }
+
+    if (this.adjustStockData.type === AdjustmentType.Decrease) {
+      const availableForDeduction = this.selectedItem.stockQuantity - this.selectedItem.reservedQuantity;
+      if (this.adjustStockData.quantity > availableForDeduction) {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'لا يمكن السحب',
+          detail: `أقصى كمية متاحة للسحب هي ${availableForDeduction} وحدة فقط بسبب وجود كميات محجوزة.`
+        });
+        return;
+      }
+    }
+
+    this.savingStock = true;
+    this.inventoryService.adjustStock(this.selectedItem.inventoryId, this.adjustStockData)
+      .subscribe({
+        next: () => {
+          this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تم تحديث كمية المخزون بنجاح' });
+          this.closeManageModal();
+          this.loadData();
+          this.savingStock = false;
+        },
+        error: (err: any) => { // 👈 تم إضافة النوع any هنا
+          console.error(err);
+          this.messageService.add({ severity: 'error', summary: 'خطأ', detail: 'حدث خطأ أثناء تحديث المخزون' });
+          this.savingStock = false;
+        }
+      });
   }
 }

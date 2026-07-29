@@ -8,6 +8,16 @@ export interface PaginatedResponse<T> {
     hasNextPage: boolean;
 }
 
+export enum AdjustmentType {
+    Increase = 0,
+    Decrease = 1
+}
+
+export interface AdjustStockDTO {
+    type: AdjustmentType;
+    quantity: number;
+}
+
 export interface InventoryItem {
     inventoryId: string;
     branchId: string;
