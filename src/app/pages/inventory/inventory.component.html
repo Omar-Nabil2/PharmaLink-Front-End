@@ -151,7 +151,7 @@
               <!-- Medicine name: arabicName primary, drugName as sub -->
               <td class="p-4">
                 <div class="flex flex-col gap-1">
-                  <span class="text-xs lg:text-base font-normal leading-normal font-medium">{{ item.arabicName?.trim() || item.drugName }}</span>
+                  <span class="text-xs lg:text-base leading-normal font-medium">{{ item.arabicName?.trim() || item.drugName }}</span>
                   @if (item.arabicName?.trim() && item.drugName) {
                     <span class="text-xs lg:text-base font-normal leading-normal text-muted-foreground">{{ item.drugName }}</span>
                   }
@@ -163,11 +163,11 @@
                   }
                 </div>
               </td>
-              <td class="p-4 text-xs lg:text-base font-normal leading-normal font-mono whitespace-nowrap">{{ item.stockQuantity | number }}</td>
-              <td class="p-4 text-xs lg:text-base font-normal leading-normal font-mono text-muted-foreground whitespace-nowrap">{{ item.reservedQuantity | number }}</td>
+              <td class="p-4 text-xs lg:text-base font-normal leading-normal whitespace-nowrap">{{ item.stockQuantity | number }}</td>
+              <td class="p-4 text-xs lg:text-base font-normal leading-normal whitespace-nowrap">{{ item.reservedQuantity | number }}</td>
               <td class="p-4 text-xs lg:text-base font-normal leading-normal whitespace-nowrap">
                 @if (item.expiryDate) {
-                  <span [class.text-destructive]="isExpiringSoon(item.expiryDate)" [class.text-muted-foreground]="!isExpiringSoon(item.expiryDate)">
+                  <span [class.text-destructive]="isExpiringSoon(item.expiryDate)">
                     {{ item.expiryDate }}
                   </span>
                 } @else {

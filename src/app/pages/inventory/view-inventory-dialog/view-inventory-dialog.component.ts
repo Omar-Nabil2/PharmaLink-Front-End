@@ -58,4 +58,11 @@ export class ViewInventoryDialogComponent implements OnChanges {
     this.editRequested.emit();
     this.close();
   }
+
+  isExpiringSoon(expiryDate: string | null): boolean {
+    if (!expiryDate) return false;
+    const expiry = new Date(expiryDate).getTime();
+    const soon = Date.now() + 30 * 24 * 60 * 60 * 1000; // 30 days
+    return expiry <= soon;
+  }
 }
