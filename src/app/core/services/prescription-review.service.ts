@@ -35,7 +35,7 @@ export class PrescriptionReviewService {
   }
 
   searchMedicines(term: string): Observable<any[]> {
-    return this.http.get<any[]>(`${this.localUrl}/PrescriptionReviews/search`, {
+    return this.http.get<any[]>(`${this.localUrl}/drugs/search`, {
       params: { term: term }
     });
   }
