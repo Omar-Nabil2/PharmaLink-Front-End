@@ -18,12 +18,12 @@ export interface LegStatusConfig {
 }
 
 export const LEG_STATUS_CONFIG: Record<number, LegStatusConfig> = {
-  1: { label: 'تم التوجيه',    badgeClass: 'bg-indigo-100/80 text-indigo-600 dark:bg-indigo-950/60 dark:text-indigo-400', dotClass: 'bg-indigo-500' },
-  2: { label: 'قيد التجهيز',   badgeClass: 'bg-amber-100/80 text-amber-600 dark:bg-amber-950/60 dark:text-amber-400',   dotClass: 'bg-amber-500' },
-  3: { label: 'جاهز للاستلام', badgeClass: 'bg-purple-100/80 text-purple-600 dark:bg-purple-950/60 dark:text-purple-400', dotClass: 'bg-purple-500' },
-  4: { label: 'قيد التوصيل',   badgeClass: 'bg-sky-100/90 text-sky-600 dark:bg-sky-950/60 dark:text-sky-400',           dotClass: 'bg-sky-500' },
-  5: { label: 'تم التسليم',    badgeClass: 'bg-emerald-100/90 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400', dotClass: 'bg-emerald-500' },
-  6: { label: 'ملغى',          badgeClass: 'bg-rose-100/90 text-rose-600 dark:bg-rose-950/60 dark:text-rose-400',       dotClass: 'bg-rose-500' },
+  1: { label: 'تم القبول',    badgeClass: 'bg-warning/20 text-warning-foreground', dotClass: 'bg-warning' },
+  2: { label: 'قيد التجهيز',   badgeClass: 'bg-info/15 text-info',   dotClass: 'bg-info' },
+  3: { label: 'جاهز للاستلام', badgeClass: 'bg-info/15 text-info', dotClass: 'bg-info' },
+  4: { label: 'جاري التوصيل',   badgeClass: 'bg-info/15 text-info',           dotClass: 'bg-info' },
+  5: { label: 'تم التسليم',    badgeClass: 'bg-accent/15 text-accent', dotClass: 'bg-accent' },
+  6: { label: 'ملغى',          badgeClass: 'bg-destructive/15 text-destructive',       dotClass: 'bg-destructive' },
 };
 
 const STRING_TO_ORDINAL: Record<string, number> = {
@@ -67,7 +67,8 @@ export interface PharmacyRecentOrderDTO {
   orderNumber: string;
   patientName: string;
   orderedMedicinesCount: number;
-  summary: string;
+  arabicSummary: string;
+  brandSummary: string;
   totalAmount: number;
   orderDate: string;
   legStatus: LegStatus;

@@ -105,7 +105,7 @@
 
         <div class="space-y-0.5">
           <p class="text-xs sm:text-sm text-muted-foreground">تاريخ الانتهاء</p>
-          <p class="text-xs sm:text-sm font-medium" [class.text-destructive]="data.expiryDate" [class.text-foreground]="!data.expiryDate">
+          <p class="text-xs sm:text-sm font-medium" [class.text-destructive]="isExpiringSoon(data.expiryDate)">
             {{ data.expiryDate || '—' }}
           </p>
         </div>

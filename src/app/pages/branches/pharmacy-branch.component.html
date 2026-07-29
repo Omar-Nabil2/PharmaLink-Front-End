@@ -38,7 +38,7 @@
     </div>
 
     <!-- ── Table container ──────────────────────────────────────── -->
-    <div class="bg-card rounded-xl border border-border shadow-sm overflow-hidden">
+    <div class="bg-card rounded-xl border border-border overflow-hidden">
       @if (isLoading()) {
         <!-- Skeleton loading placeholders -->
         <div class="p-4 space-y-3">
@@ -80,17 +80,17 @@
               @for (branch of branches(); track branch.branchId) {
                 <tr class="border-t border-border transition-colors duration-200 hover:bg-muted/30">
                   <td class="p-4 text-xs lg:text-base font-normal leading-normal font-medium text-foreground whitespace-nowrap">{{ branch.branchName }}</td>
-                  <td class="p-4 text-xs lg:text-base font-normal leading-normal text-muted-foreground whitespace-nowrap">
+                  <td class="p-4 text-xs lg:text-base font-normal leading-normal whitespace-nowrap">
                     {{ branch.governorate }} - {{ branch.city }}
                   </td>
-                  <td class="p-4 text-xs lg:text-base font-normal leading-normal text-muted-foreground whitespace-nowrap" dir="ltr">{{ branch.phoneNumber }}</td>
+                  <td class="p-4 text-xs lg:text-base font-normal leading-normal whitespace-nowrap" dir="ltr">{{ branch.phoneNumber }}</td>
                   <td class="p-4">
                     <div class="flex items-center gap-2 flex-wrap">
                       @if (branch.supportsDelivery) {
-                        <span class="px-2 py-0.5 rounded-full bg-accent/15 text-accent text-[10px] lg:text-xs font-medium">توصيل</span>
+                        <span class="px-3 py-1 rounded-full bg-accent/15 text-accent text-[10px] lg:text-xs font-medium">توصيل</span>
                       }
                       @if (branch.supportsPickup) {
-                        <span class="px-2 py-0.5 rounded-full bg-info/15 text-info text-[10px] lg:text-xs font-medium">استلام</span>
+                        <span class="px-3 py-1 rounded-full bg-info/15 text-info text-[10px] lg:text-xs font-medium">استلام</span>
                       }
                     </div>
                   </td>

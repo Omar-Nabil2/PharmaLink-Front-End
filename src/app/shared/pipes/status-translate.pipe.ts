@@ -2,8 +2,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 
 const STATUS_ARABIC_MAP: Record<string, string> = {
   // ── LegStatus ──────────────────────────────────────────────
-  Assigned: 'قيد الانتظار',
-  Preparing: 'جاري التجهيز',
+  Assigned: 'تم القبول',
+  Preparing: 'قيد التجهيز',
   ReadyForPickup: 'جاهز للاستلام',
   PickedUpByCourier: 'جاري التوصيل',
   Completed: 'مكتمل',
@@ -14,7 +14,7 @@ const STATUS_ARABIC_MAP: Record<string, string> = {
   // ── Common delivery aliases ────────────────────────────────
   InDelivery: 'جاري التوصيل',
   OutForDelivery: 'جاري التوصيل',
-  Delivered: 'مكتمل',
+  Delivered: 'تم التسليم',
   // ── Shared terminal state ──────────────────────────────────
   Cancelled: 'ملغى',
   // ── ItemStatus ─────────────────────────────────────────────
