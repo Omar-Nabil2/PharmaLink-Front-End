@@ -1,6 +1,9 @@
 import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Subject } from 'rxjs';
+import { environment } from '@environments/environment';
+
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MessageService } from 'primeng/api';
 import { TagModule } from 'primeng/tag';
@@ -58,6 +61,8 @@ export class DrugsComponent implements OnInit {
   private readonly cartService = inject(CartService);
   private readonly errorHandlerService = inject(ErrorHandlerService);
   private readonly messageService = inject(MessageService);
+  private readonly http = inject(HttpClient);
+  private readonly baseUrl = environment.localUrl;
 
   async ngOnInit(): Promise<void> {
     this.searchInput$.pipe(debounceTime(400), distinctUntilChanged()).subscribe((term) => {
@@ -113,7 +118,6 @@ export class DrugsComponent implements OnInit {
       })
       .subscribe({
         next: (result: any) => {
-          // التعامل مع احتمالية أن يكون الرد محاطاً بـ Wrapper مثل result.items أو result مباشرة
           this.drugs = result.items || result;
           this.totalPages = result.totalPages ?? 1;
           this.hasNextPage = result.hasNextPage ?? false;

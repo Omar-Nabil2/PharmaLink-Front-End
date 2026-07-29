@@ -118,7 +118,7 @@
 
 
 
-
+import { environment } from '@environments/environment';
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpEvent, HttpParams, HttpRequest } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -149,14 +149,17 @@ export interface PrescriptionReviewUploadResponse {
 export class PrescriptionReviewService {
   private http = inject(HttpClient);
 
-  // 🎯 الرابط المحلي المباشر للسيرفر الشغال
-  private readonly localUrl = 'https://localhost:5001/api/v1';
+  private readonly baseUrl = environment.localUrl;
+  private readonly url = `${this.baseUrl}`;
 
+  
   uploadPrescription(file: File): Observable<HttpEvent<PrescriptionReviewUploadResponse>> {
+
+
     const formData = new FormData();
     formData.append('Image', file);
 
-    const req = new HttpRequest('POST', `${this.localUrl}/PrescriptionReviews`, formData, {
+    const req = new HttpRequest('POST', `${this.url}/PrescriptionReviews`, formData, {
       reportProgress: true,
       responseType: 'json'
     });
@@ -165,25 +168,25 @@ export class PrescriptionReviewService {
   }
 
   getReview(id: string): Observable<PrescriptionReviewDto> {
-    return this.http.get<PrescriptionReviewDto>(`${this.localUrl}/PrescriptionReviews/${id}`);
+    return this.http.get<PrescriptionReviewDto>(`${this.url}/PrescriptionReviews/${id}`);
   }
 
   searchMedicines(term: string): Observable<any[]> {
-    return this.http.get<any[]>(`${this.localUrl}/PrescriptionReviews/search`, {
+    return this.http.get<any[]>(`${this.url}/PrescriptionReviews/search`, {
       params: { term: term }
     });
   }
 
   updateReview(id: string, data: any): Observable<any> {
-    return this.http.put(`${this.localUrl}/PrescriptionReviews/${id}`, data);
+    return this.http.put(`${this.url}/PrescriptionReviews/${id}`, data);
   }
 
   approve(id: string, notes: string): Observable<any> {
-    return this.http.put(`${this.localUrl}/PrescriptionReviews/${id}/approve`, { notes });
+    return this.http.put(`${this.url}/PrescriptionReviews/${id}/approve`, { notes });
   }
 
   reject(id: string, notes: string): Observable<any> {
-    return this.http.put(`${this.localUrl}/PrescriptionReviews/${id}/reject`, { notes });
+    return this.http.put(`${this.url}/PrescriptionReviews/${id}/reject`, { notes });
   }
 
   getAllPrescriptionReview(query: PrescriptionReviewQueryDto): Observable<PaginatedResponse<GetAllPrescriptionReviewDto>> {
@@ -206,7 +209,7 @@ export class PrescriptionReviewService {
     }
 
     return this.http.get<PaginatedResponse<GetAllPrescriptionReviewDto>>(
-      `${this.localUrl}/PrescriptionReviews/GetAllPrescriptionsforpatient?PageNumber=1&PageSize=10
+      `${this.url}/PrescriptionReviews/GetAllPrescriptionsforpatient?PageNumber=1&PageSize=10
 `,
       { params }
     );
@@ -222,24 +225,24 @@ export class PrescriptionReviewService {
     }
 
     return this.http.get<Result<BranchOrderRowDto>>(
-      `${this.localUrl}/OrderFulfillmentLegs/assigned`,
+      `${this.url}/OrderFulfillmentLegs/assigned`,
       { params }
     );
   }
 
   getMetrics(): Observable<ApiResponse<PharmacistDailyMetrics>> {
-    return this.http.get<ApiResponse<PharmacistDailyMetrics>>(`${this.localUrl}/pharmacist/PharmacistDashboard/metrics`);
+    return this.http.get<ApiResponse<PharmacistDailyMetrics>>(`${this.url}/pharmacist/PharmacistDashboard/metrics`);
   }
 
   getInventoryAlerts(): Observable<ApiResponse<InventoryAlert[]>> {
-    return this.http.get<ApiResponse<InventoryAlert[]>>(`${this.localUrl}/pharmacist/PharmacistDashboard/inventory-alerts?stockThreshold=10&expiryThreshold=90`);
+    return this.http.get<ApiResponse<InventoryAlert[]>>(`${this.url}/pharmacist/PharmacistDashboard/inventory-alerts?stockThreshold=10&expiryThreshold=90`);
   }
 
   getPendingTasks(): Observable<ApiResponse<FulfillmentTask[]>> {
-    return this.http.get<ApiResponse<FulfillmentTask[]>>(`${this.localUrl}/pharmacist/PharmacistDashboard/pending-tasks?limit=5`);
+    return this.http.get<ApiResponse<FulfillmentTask[]>>(`${this.url}/pharmacist/PharmacistDashboard/pending-tasks?limit=5`);
   }
 
   getPharmacistOrderDetails(id: string): Observable<PharmacistOrderDetailsDto> {
-    return this.http.get<PharmacistOrderDetailsDto>(`${this.localUrl}/PharmacistOrders/${id}`);
+    return this.http.get<PharmacistOrderDetailsDto>(`${this.url}/PharmacistOrders/${id}`);
   }
 }
