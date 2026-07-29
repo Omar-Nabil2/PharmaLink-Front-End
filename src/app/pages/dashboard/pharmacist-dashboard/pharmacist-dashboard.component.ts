@@ -95,8 +95,25 @@ export class pharmacistDashboardComponent implements OnInit {
     const surfaceBorder = documentStyle.getPropertyValue('--surface-border');
 
     this.chartOptions = {
+      interaction: {
+        mode: 'index',
+        intersect: false,
+      },
       plugins: {
-        legend: { labels: { color: textColor } }
+        legend: { display: false },
+        tooltip: {
+          rtl: true,
+          backgroundColor: '#ffffff',
+          titleColor: '#1e293b',
+          bodyColor: '#007671',
+          borderColor: '#e2e8e6',
+          borderWidth: 1,
+          titleFont: { family: 'Cairo, sans-serif', size: 14, weight: 'bold' },
+          bodyFont: { family: 'Cairo, sans-serif', size: 14, weight: 'medium' },
+          padding: 12,
+          cornerRadius: 8,
+          displayColors: false,
+        }
       },
       scales: {
         y: {
@@ -115,4 +132,26 @@ export class pharmacistDashboardComponent implements OnInit {
   getAlertSeverity(type: string): 'success' | 'secondary' | 'info' | 'warn' | 'danger' | 'contrast' {
     return type === 'Low Stock' ? 'warn' : 'danger';
   }
+
+  chartPlugins = [
+    {
+      id: 'barHoverBackground',
+      beforeDatasetsDraw: (chart: any) => {
+        const activeElements = chart.getActiveElements();
+        if (activeElements?.length) {
+          const ctx = chart.ctx;
+          const activeElement = activeElements[0];
+          const x = activeElement.element.x;
+          const width = activeElement.element.width + 16;
+          const top = chart.chartArea.top;
+          const bottom = chart.chartArea.bottom;
+
+          ctx.save();
+          ctx.fillStyle = '#cccccc';
+          ctx.fillRect(x - width / 2, top, width, bottom - top);
+          ctx.restore();
+        }
+      }
+    }
+  ];
 }

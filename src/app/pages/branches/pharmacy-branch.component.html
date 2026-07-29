@@ -1,149 +1,151 @@
-<main dir="rtl" class="flex-1 p-4 sm:p-6 lg:p-8 overflow-auto bg-background text-foreground min-h-[calc(100vh-4rem)] space-y-4" style="font-family: var(--font-cairo)">
-  <p-toast position="top-center"></p-toast>
+<main dir="rtl" class="flex-1 p-6 overflow-auto bg-background text-foreground" style="font-family: var(--font-cairo)">
+  <p-toast position="top-center" />
 
-  <!-- ── Page header ───────────────────────────────────────────── -->
-  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-    <div class="flex items-center gap-3">
-      <h1 class="text-base md:text-xl lg:text-2xl font-bold tracking-tight text-foreground">إدارة الفروع</h1>
-      <span class="text-[10px] lg:text-xs font-medium text-muted-foreground hidden sm:block">/ فروع الصيدلية</span>
-    </div>
-  </div>
-
-  <!-- ── Toolbar: search + add ─────────────────────────────────── -->
-  <div class="bg-card rounded-xl border border-border p-4 flex gap-3 flex-wrap items-center">
-    <!-- Live search (mirrors inventory drug search input) -->
-    <div class="relative flex-1 min-w-[15rem]">
-      <i class="pi pi-search absolute right-3 top-1/2 -translate-y-1/2 text-[0.8125rem] text-muted-foreground"></i>
-      <input
-        type="text"
-        placeholder="ابحث عن فرع..."
-        (input)="onSearch($event)"
-        class="w-full h-10 lg:h-12 rounded-lg border border-border bg-background pr-10 pl-4 text-xs lg:text-base text-foreground leading-normal outline-none transition-colors duration-200 focus:border-[#007671]"
-      />
-    </div>
-
-    <!-- Add branch (primary #007671) -->
-    <button
-      type="button"
-      (click)="openAddModal()"
-      class="h-10 lg:h-12 rounded-lg px-5 text-xs lg:text-base font-medium text-white flex items-center gap-2 transition-colors duration-200"
-      style="background-color: #007671"
-      onmouseover="this.style.backgroundColor='var(--color-green-hover)'"
-      onmouseout="this.style.backgroundColor='#007671'"
-    >
-      <i class="pi pi-plus text-[0.8125rem]"></i>
-      <span>إضافة فرع جديد</span>
-    </button>
-  </div>
-
-  <!-- ── Table container ──────────────────────────────────────── -->
-  <div class="bg-card rounded-xl border border-border shadow-sm overflow-hidden">
-    @if (isLoading()) {
-      <!-- Skeleton loading placeholders -->
-      <div class="p-4 space-y-3">
-        @for (row of [0, 1, 2, 3, 4, 5]; track row) {
-          <div class="flex items-center gap-4 animate-pulse">
-            <div class="h-4 flex-1 bg-muted rounded"></div>
-            <div class="h-4 w-24 bg-muted rounded"></div>
-            <div class="h-4 w-24 bg-muted rounded"></div>
-            <div class="h-4 w-20 bg-muted rounded"></div>
-            <div class="h-8 w-24 bg-muted rounded"></div>
-          </div>
-        }
+  <div class="space-y-4">
+    <!-- ── Page header ───────────────────────────────────────────── -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <h1 class="text-base md:text-xl lg:text-2xl font-bold tracking-tight text-foreground">إدارة الفروع</h1>
+        <span class="text-[10px] lg:text-xs font-medium text-muted-foreground hidden sm:block">/ فروع الصيدلية</span>
       </div>
-    } @else if (branches().length === 0) {
-      <!-- Empty state -->
-      <div class="p-12 flex flex-col items-center justify-center text-center gap-3">
-        <div class="h-16 w-16 rounded-full bg-muted flex items-center justify-center">
-          <i class="pi pi-sitemap text-2xl text-muted-foreground"></i>
+    </div>
+
+    <!-- ── Toolbar: search + add ─────────────────────────────────── -->
+    <div class="bg-card rounded-xl border border-border p-4 flex gap-3 flex-wrap items-center">
+      <!-- Live search (mirrors inventory drug search input) -->
+      <div class="relative flex-1 min-w-[15rem]">
+        <i class="pi pi-search absolute right-3 top-1/2 -translate-y-1/2 text-[0.8125rem] text-muted-foreground"></i>
+        <input
+          type="text"
+          placeholder="ابحث عن فرع..."
+          (input)="onSearch($event)"
+          class="w-full h-10 lg:h-12 rounded-lg border border-border bg-background pr-10 pl-4 text-xs lg:text-base text-foreground leading-normal outline-none transition-colors duration-200 focus:border-[#007671]"
+        />
+      </div>
+
+      <!-- Add branch (primary #007671) -->
+      <button
+        type="button"
+        (click)="openAddModal()"
+        class="h-10 lg:h-12 rounded-lg px-5 text-xs lg:text-base font-medium text-white flex items-center gap-2 transition-colors duration-200"
+        style="background-color: #007671"
+        onmouseover="this.style.backgroundColor='var(--color-green-hover)'"
+        onmouseout="this.style.backgroundColor='#007671'"
+      >
+        <i class="pi pi-plus text-[0.8125rem]"></i>
+        <span>إضافة فرع جديد</span>
+      </button>
+    </div>
+
+    <!-- ── Table container ──────────────────────────────────────── -->
+    <div class="bg-card rounded-xl border border-border overflow-hidden">
+      @if (isLoading()) {
+        <!-- Skeleton loading placeholders -->
+        <div class="p-4 space-y-3">
+          @for (row of [0, 1, 2, 3, 4, 5]; track row) {
+            <div class="flex items-center gap-4 animate-pulse">
+              <div class="h-4 flex-1 bg-muted rounded"></div>
+              <div class="h-4 w-24 bg-muted rounded"></div>
+              <div class="h-4 w-24 bg-muted rounded"></div>
+              <div class="h-4 w-20 bg-muted rounded"></div>
+              <div class="h-8 w-24 bg-muted rounded"></div>
+            </div>
+          }
         </div>
-        <p class="text-sm md:text-base lg:text-lg font-semibold text-foreground">لا توجد فروع</p>
-        <p class="text-xs lg:text-base text-muted-foreground max-w-md">
-          لم تقم بإضافة أي فروع حتى الآن. اضغط على "إضافة فرع جديد" للبدء.
-        </p>
-      </div>
-    } @else {
-      <!-- Data table -->
-      <div class="overflow-x-auto">
-        <table class="w-full text-right" [style.min-width.rem]="48">
-          <thead>
-            <tr class="bg-muted/50">
-              <th class="text-right p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground whitespace-nowrap">اسم الفرع</th>
-              <th class="text-right p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground whitespace-nowrap">الموقع</th>
-              <th class="text-right p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground whitespace-nowrap">رقم الهاتف</th>
-              <th class="text-right p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground whitespace-nowrap">الخدمات</th>
-              <th class="text-center p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground whitespace-nowrap">الإجراءات</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (branch of branches(); track branch.branchId) {
-              <tr class="border-t border-border transition-colors duration-200 hover:bg-muted/30">
-                <td class="p-4 text-xs lg:text-base font-normal leading-normal font-medium text-foreground whitespace-nowrap">{{ branch.branchName }}</td>
-                <td class="p-4 text-xs lg:text-base font-normal leading-normal text-muted-foreground whitespace-nowrap">
-                  {{ branch.governorate }} - {{ branch.city }}
-                </td>
-                <td class="p-4 text-xs lg:text-base font-normal leading-normal text-muted-foreground whitespace-nowrap" dir="ltr">{{ branch.phoneNumber }}</td>
-                <td class="p-4">
-                  <div class="flex items-center gap-2 flex-wrap">
-                    @if (branch.supportsDelivery) {
-                      <span class="px-2 py-0.5 rounded-full bg-accent/15 text-accent text-[10px] lg:text-xs font-medium">توصيل</span>
-                    }
-                    @if (branch.supportsPickup) {
-                      <span class="px-2 py-0.5 rounded-full bg-info/15 text-info text-[10px] lg:text-xs font-medium">استلام</span>
-                    }
-                  </div>
-                </td>
-                <td class="p-4">
-                  <div class="flex items-center justify-center gap-1">
-                    <!-- View -->
-                    <button
-                      type="button"
-                      (click)="openViewModal(branch)"
-                      class="h-8 w-8 rounded flex items-center justify-center text-slate-500 transition-colors duration-200 hover:bg-slate-100"
-                      title="عرض"
-                    >
-                      <i class="pi pi-eye text-[0.8125rem]"></i>
-                    </button>
-                    <!-- Edit -->
-                    <button
-                      type="button"
-                      (click)="openEditModal(branch)"
-                      [disabled]="editingBranchId() === branch.branchId"
-                      class="h-8 w-8 rounded flex items-center justify-center text-blue-500 transition-colors duration-200 hover:bg-blue-50 disabled:opacity-50"
-                      title="تعديل"
-                    >
-                      @if (editingBranchId() === branch.branchId) {
-                        <i class="pi pi-spin pi-spinner text-[0.8125rem]"></i>
-                      } @else {
-                        <i class="pi pi-pencil text-[0.8125rem]"></i>
-                      }
-                    </button>
-                    <!-- Delete -->
-                    <button
-                      type="button"
-                      (click)="confirmDelete(branch)"
-                      class="h-8 w-8 rounded flex items-center justify-center text-red-500 transition-colors duration-200 hover:bg-red-50"
-                      title="حذف"
-                    >
-                      <i class="pi pi-trash text-[0.8125rem]"></i>
-                    </button>
-                  </div>
-                </td>
+      } @else if (branches().length === 0) {
+        <!-- Empty state -->
+        <div class="p-12 flex flex-col items-center justify-center text-center gap-3">
+          <div class="h-16 w-16 rounded-full bg-muted flex items-center justify-center">
+            <i class="pi pi-sitemap text-2xl text-muted-foreground"></i>
+          </div>
+          <p class="text-sm md:text-base lg:text-lg font-semibold text-foreground">لا توجد فروع</p>
+          <p class="text-xs lg:text-base text-muted-foreground max-w-md">
+            لم تقم بإضافة أي فروع حتى الآن. اضغط على "إضافة فرع جديد" للبدء.
+          </p>
+        </div>
+      } @else {
+        <!-- Data table -->
+        <div class="overflow-x-auto">
+          <table class="w-full text-right" [style.min-width.rem]="48">
+            <thead>
+              <tr class="bg-muted/50">
+                <th class="text-right p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground whitespace-nowrap">اسم الفرع</th>
+                <th class="text-right p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground whitespace-nowrap">الموقع</th>
+                <th class="text-right p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground whitespace-nowrap">رقم الهاتف</th>
+                <th class="text-right p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground whitespace-nowrap">الخدمات</th>
+                <th class="text-center p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground whitespace-nowrap">الإجراءات</th>
               </tr>
-            }
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              @for (branch of branches(); track branch.branchId) {
+                <tr class="border-t border-border transition-colors duration-200 hover:bg-muted/30">
+                  <td class="p-4 text-xs lg:text-base font-normal leading-normal font-medium text-foreground whitespace-nowrap">{{ branch.branchName }}</td>
+                  <td class="p-4 text-xs lg:text-base font-normal leading-normal whitespace-nowrap">
+                    {{ branch.governorate }} - {{ branch.city }}
+                  </td>
+                  <td class="p-4 text-xs lg:text-base font-normal leading-normal whitespace-nowrap" dir="ltr">{{ branch.phoneNumber }}</td>
+                  <td class="p-4">
+                    <div class="flex items-center gap-2 flex-wrap">
+                      @if (branch.supportsDelivery) {
+                        <span class="px-3 py-1 rounded-full bg-accent/15 text-accent text-[10px] lg:text-xs font-medium">توصيل</span>
+                      }
+                      @if (branch.supportsPickup) {
+                        <span class="px-3 py-1 rounded-full bg-info/15 text-info text-[10px] lg:text-xs font-medium">استلام</span>
+                      }
+                    </div>
+                  </td>
+                  <td class="p-4">
+                    <div class="flex items-center justify-center gap-1">
+                      <!-- View -->
+                      <button
+                        type="button"
+                        (click)="openViewModal(branch)"
+                        class="h-8 w-8 rounded flex items-center justify-center text-slate-500 transition-colors duration-200 hover:bg-slate-100"
+                        title="عرض"
+                      >
+                        <i class="pi pi-eye text-[0.8125rem]"></i>
+                      </button>
+                      <!-- Edit -->
+                      <button
+                        type="button"
+                        (click)="openEditModal(branch)"
+                        [disabled]="editingBranchId() === branch.branchId"
+                        class="h-8 w-8 rounded flex items-center justify-center text-blue-500 transition-colors duration-200 hover:bg-blue-50 disabled:opacity-50"
+                        title="تعديل"
+                      >
+                        @if (editingBranchId() === branch.branchId) {
+                          <i class="pi pi-spin pi-spinner text-[0.8125rem]"></i>
+                        } @else {
+                          <i class="pi pi-pencil text-[0.8125rem]"></i>
+                        }
+                      </button>
+                      <!-- Delete -->
+                      <button
+                        type="button"
+                        (click)="confirmDelete(branch)"
+                        class="h-8 w-8 rounded flex items-center justify-center text-red-500 transition-colors duration-200 hover:bg-red-50"
+                        title="حذف"
+                      >
+                        <i class="pi pi-trash text-[0.8125rem]"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
 
-      <p-paginator
-        [rows]="pageSize()"
-        [totalRecords]="totalCount()"
-        [first]="first()"
-        [rowsPerPageOptions]="[10, 20, 50]"
-        (onPageChange)="onPageChange($event)"
-        styleClass="border-t border-border"
-      />
-    }
+        <p-paginator
+          [rows]="pageSize()"
+          [totalRecords]="totalCount()"
+          [first]="first()"
+          [rowsPerPageOptions]="[10, 20, 50]"
+          (onPageChange)="onPageChange($event)"
+          styleClass="border-t border-border"
+        />
+      }
+    </div>
   </div>
 </main>
 

@@ -15,9 +15,10 @@ import { FooterComponent } from '../../shared/components/footer/footer.component
 export class PatientLayoutComponent {
   patientNavItems: SidebarItem[] = [
     { label: 'الرئيسية', icon: 'pi pi-home', routerLink: '/patient/dashboard' },
-    { label: 'كتالوج الأدوية', icon: 'pi pi-objects', routerLink: '/products' },
+    { label: 'كتالوج الأدوية', icon: 'pi pi-box', routerLink: '/drugs' },
     { label: 'سلة المشتريات', icon: 'pi pi-shopping-cart', routerLink: '/patient/cart' },
     { label: 'رفع روشتة', icon: 'pi pi-upload', routerLink: '/patient/prescriptions/upload' },
+    { label: 'روشتاتي', icon: 'pi pi-file-check', routerLink: '/patient/prescriptions' },
     { label: 'رفع صورة دواء', icon: 'pi pi-image', routerLink: '/patient/image-search' },
     { label: 'طلباتي', icon: 'pi pi-list', routerLink: '/patient/orders' },
     { label: 'عناويني', icon: 'pi pi-map-marker', routerLink: '/patient/addresses' },

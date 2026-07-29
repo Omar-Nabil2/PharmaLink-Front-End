@@ -85,6 +85,7 @@ export class UploadPrescriptionComponent {
         console.error('Upload failed', err);
         this.status = 'error';
         this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to upload prescription. Please try again.' });
+        console.log('تفاصيل أخطاء الـ Validation:', err.error?.errors); // 👈 اطبع هذا السطر
       }
     });
   }

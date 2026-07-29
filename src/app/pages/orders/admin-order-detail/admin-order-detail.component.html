@@ -51,19 +51,19 @@
         <div class="overflow-x-auto">
           <table class="w-full text-right border-collapse text-sm">
             <thead>
-              <tr class="bg-surface-soft border-b border-border">
-                <th class="py-3 px-4 text-ink font-bold">الدواء</th>
-                <th class="py-3 px-4 text-ink font-bold">التركيز / الشكل</th>
-                <th class="py-3 px-4 text-ink font-bold text-center">الكمية</th>
-                <th class="py-3 px-4 text-ink font-bold text-left">سعر الوحدة</th>
-                <th class="py-3 px-4 text-ink font-bold text-left">الإجمالي</th>
-                <th class="py-3 px-4 text-ink font-bold">الحالة</th>
+              <tr class="bg-muted/50 border-b border-border">
+                <th class="py-3 px-4 text-muted-foreground font-semibold">الدواء</th>
+                <th class="py-3 px-4 text-muted-foreground font-semibold">التركيز / الشكل</th>
+                <th class="py-3 px-4 text-muted-foreground font-semibold text-center">الكمية</th>
+                <th class="py-3 px-4 text-muted-foreground font-semibold text-left">سعر الوحدة</th>
+                <th class="py-3 px-4 text-muted-foreground font-semibold text-left">الإجمالي</th>
+                <th class="py-3 px-4 text-muted-foreground font-semibold">الحالة</th>
               </tr>
             </thead>
             <tbody>
               <tr
                 *ngFor="let item of ord.items"
-                class="border-b border-border hover:bg-surface-soft transition-colors"
+                class="border-b border-border hover:bg-muted/30 transition-colors duration-200"
               >
                 <td class="py-3 px-4">
                   <div class="font-bold text-ink">{{ item.drugName }}</div>

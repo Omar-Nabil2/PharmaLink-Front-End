@@ -1,0 +1,389 @@
+<main dir="rtl" class="flex-1 p-6 overflow-auto bg-background text-foreground" style="font-family: var(--font-cairo)">
+  <p-toast position="top-center" />
+
+  <div class="space-y-4">
+    <!-- ── Page header ───────────────────────────────────────────── -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <h1 class="text-base md:text-xl lg:text-2xl font-bold">إدارة الطلبات</h1>
+        <span class="text-[10px] lg:text-xs font-medium text-muted-foreground hidden sm:block">/ طلبات الصيدلية</span>
+      </div>
+    </div>
+
+    <!-- ── Toolbar: search + branch + status + sort + date range ─── -->
+    <div class="bg-card rounded-xl border border-border p-4 flex gap-3 flex-wrap items-center">
+      <!-- Live search -->
+      <div class="relative flex-1 min-w-[15rem]">
+        <i class="pi pi-search absolute right-3 top-1/2 -translate-y-1/2 text-[0.8125rem] text-muted-foreground"></i>
+        <input
+          type="text"
+          placeholder="ابحث برقم الطلب أو اسم المريض..."
+          [ngModel]="searchQuery()"
+          (ngModelChange)="onSearchInput($event)"
+          class="w-full h-10 lg:h-12 rounded-lg border border-border bg-background pr-10 pl-4 text-xs lg:text-base text-foreground leading-normal outline-none transition-colors duration-200 focus:border-[#007671]"
+        />
+      </div>
+
+      <!-- Branch filter autocomplete -->
+      <div class="relative min-w-[12rem]">
+        <p-autoComplete
+          [ngModel]="selectedBranchFilter()"
+          (completeMethod)="onBranchFilterSearch($event.query)"
+          (onSelect)="onBranchFilterSelected($event.value)"
+          (onClear)="onBranchFilterCleared()"
+          [suggestions]="branchFilterSuggestions()"
+          optionLabel="branchName"
+          [showClear]="true"
+          [minLength]="0"
+          [delay]="0"
+          placeholder="جميع الفروع"
+          styleClass="w-full inv-autocomplete"
+          appendTo="body"
+          emptyMessage="لا توجد نتائج"
+        >
+          <ng-template let-branch #item>
+            <div dir="rtl" class="flex flex-col py-1">
+              <span class="text-xs lg:text-base font-medium text-foreground">{{ branch.branchName }}</span>
+              @if (branch.addressLine) {
+                <span class="text-xs lg:text-base text-muted-foreground">{{ branch.addressLine }}</span>
+              }
+            </div>
+          </ng-template>
+        </p-autoComplete>
+      </div>
+
+      <!-- Status filter -->
+      <p-select
+        [options]="statusOptions"
+        optionLabel="label"
+        optionValue="value"
+        [ngModel]="selectedStatus()"
+        (onChange)="onStatusChange($event.value)"
+        styleClass="h-10 lg:h-12 min-w-[10rem] text-xs lg:text-base"
+        appendTo="body"
+      />
+
+
+
+      <!-- Date range -->
+      <div class="flex items-center gap-2">
+        <input
+          type="date"
+          [ngModel]="orderDateFrom()"
+          (ngModelChange)="onOrderDateFromChange($event)"
+          class="h-10 lg:h-12 rounded-lg border border-border bg-background px-3 text-xs lg:text-base text-foreground outline-none transition-colors duration-200 focus:border-[#007671]"
+        />
+        <span class="text-muted-foreground text-xs">إلى</span>
+        <input
+          type="date"
+          [ngModel]="orderDateTo()"
+          (ngModelChange)="onOrderDateToChange($event)"
+          class="h-10 lg:h-12 rounded-lg border border-border bg-background px-3 text-xs lg:text-base text-foreground outline-none transition-colors duration-200 focus:border-[#007671]"
+        />
+        @if (orderDateFrom() || orderDateTo()) {
+          <button
+            type="button"
+            title="مسح التواريخ"
+            (click)="clearDateRange()"
+            class="h-10 w-10 lg:h-12 lg:w-12 rounded-lg border border-border flex items-center justify-center text-muted-foreground transition-colors duration-200 hover:bg-muted"
+          >
+            <i class="pi pi-times text-[0.8125rem]"></i>
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- ── Table container ──────────────────────────────────────── -->
+    <div class="bg-card rounded-xl border border-border overflow-hidden">
+      @if (isLoading()) {
+        <div class="p-4 space-y-3">
+          @for (row of [0, 1, 2, 3, 4, 5]; track row) {
+            <div class="flex items-center gap-4 animate-pulse">
+              <div class="h-4 w-24 bg-muted rounded"></div>
+              <div class="h-4 flex-1 bg-muted rounded"></div>
+              <div class="h-4 w-24 bg-muted rounded"></div>
+              <div class="h-4 w-20 bg-muted rounded"></div>
+              <div class="h-6 w-20 bg-muted rounded-full"></div>
+              <div class="h-8 w-16 bg-muted rounded"></div>
+            </div>
+          }
+        </div>
+      } @else if (errorMessage(); as message) {
+        <div class="p-10 flex flex-col items-center justify-center text-center gap-4" role="alert">
+          <i class="pi pi-exclamation-triangle text-4xl text-destructive"></i>
+          <p class="text-sm md:text-base lg:text-lg font-semibold text-destructive">{{ message }}</p>
+          <button
+            type="button"
+            (click)="reload()"
+            class="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-xs lg:text-base font-medium text-white transition-colors duration-200"
+            style="background-color: #007671"
+            onmouseover="this.style.backgroundColor='var(--color-green-hover)'"
+            onmouseout="this.style.backgroundColor='#007671'"
+          >
+            <i class="pi pi-refresh"></i>
+            <span>إعادة المحاولة</span>
+          </button>
+        </div>
+      } @else if (isEmpty()) {
+        <div class="p-12 flex flex-col items-center justify-center text-center gap-3">
+          <div class="h-16 w-16 rounded-full bg-muted flex items-center justify-center">
+            <i class="pi pi-inbox text-2xl text-muted-foreground"></i>
+          </div>
+          <p class="text-sm md:text-base lg:text-lg font-semibold text-foreground">لا توجد طلبات مطابقة</p>
+          <p class="text-xs lg:text-base text-muted-foreground">جرّب تغيير كلمة البحث أو تصفية الحالة.</p>
+        </div>
+      } @else {
+        <p-table
+          [value]="orders()"
+          [lazy]="true"
+          [paginator]="true"
+          [rows]="pageSize()"
+          [first]="first()"
+          [totalRecords]="totalRecords()"
+          [rowsPerPageOptions]="[10, 25, 50]"
+          (onPage)="onPageChange($event)"
+          styleClass="w-full text-xs lg:text-base"
+          [tableStyle]="{ 'min-width': '56rem' }"
+        >
+          <ng-template #header>
+            <tr class="bg-muted/50">
+              <th class="text-right p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground">رقم الطلب</th>
+              <th class="text-right p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground">المريض</th>
+              <th class="text-right p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground cursor-pointer hover:bg-muted/70 transition-colors select-none" (click)="onHeaderSort('date')">
+                <div class="flex items-center gap-1.5">
+                  <span>تاريخ الطلب</span>
+                  <i class="pi text-[0.75rem]" [ngClass]="{
+                    'pi-sort-amount-down text-foreground': sortBy() === PharmacyOrderSort.NewestFirst,
+                    'pi-sort-amount-up-alt text-foreground': sortBy() === PharmacyOrderSort.OldestFirst,
+                    'pi-sort text-muted-foreground': sortBy() !== PharmacyOrderSort.NewestFirst && sortBy() !== PharmacyOrderSort.OldestFirst
+                  }"></i>
+                </div>
+              </th>
+              <th class="text-right p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground">التسليم</th>
+              <th class="text-right p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground">الأصناف</th>
+              <th class="text-right p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground cursor-pointer hover:bg-muted/70 transition-colors select-none" (click)="onHeaderSort('amount')">
+                <div class="flex items-center gap-1.5">
+                  <span>الإجمالي</span>
+                  <i class="pi text-[0.75rem]" [ngClass]="{
+                    'pi-sort-amount-down text-foreground': sortBy() === PharmacyOrderSort.HighestAmount,
+                    'pi-sort-amount-up-alt text-foreground': sortBy() === PharmacyOrderSort.LowestAmount,
+                    'pi-sort text-muted-foreground': sortBy() !== PharmacyOrderSort.HighestAmount && sortBy() !== PharmacyOrderSort.LowestAmount
+                  }"></i>
+                </div>
+              </th>
+              <th class="text-right p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground">طريقة الاستلام</th>
+              <th class="text-right p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground">الحالة</th>
+              <th class="text-right p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground">إجراءات</th>
+            </tr>
+          </ng-template>
+
+          <ng-template #body let-order>
+            <tr class="border-t border-border transition-colors duration-200 hover:bg-muted/30">
+              <td class="p-4 text-xs lg:text-base font-mono font-medium whitespace-nowrap">{{ order.orderNumber }}</td>
+              <td class="p-4 text-xs lg:text-base font-normal leading-normal">{{ order.patientName }}</td>
+              <td class="p-4 text-xs lg:text-base whitespace-nowrap">{{ order.orderDate | date: 'yyyy/MM/dd' }}</td>
+              <td class="p-4 text-xs lg:text-base whitespace-nowrap">
+                @if (order.deliveryDate) {
+                  {{ order.deliveryDate | date: 'yyyy/MM/dd' }}
+                } @else {
+                  <span class="text-muted-foreground">—</span>
+                }
+              </td>
+              <td class="p-4 text-xs lg:text-base whitespace-nowrap">{{ order.itemsCount | number }}</td>
+              <td class="p-4 text-xs lg:text-base whitespace-nowrap">{{ order.totalAmount | number: '1.2-2' }} ج</td>
+              <td class="p-4">
+                <span
+                  class="inline-flex items-center rounded-full px-3 py-1 text-[10px] lg:text-xs font-medium"
+                  [ngClass]="getFulfillmentModeClasses(order.fulfillmentMode)"
+                >
+                  {{ getFulfillmentModeLabel(order.fulfillmentMode) }}
+                </span>
+              </td>
+              <td class="p-4">
+                <span
+                  class="inline-flex items-center rounded-full px-3 py-1 text-[10px] lg:text-xs font-medium"
+                  [ngClass]="getLegStatusClasses(order.legStatus ?? order.orderStatus!)"
+                >
+                  {{ getLegStatusLabel(order.legStatus ?? order.orderStatus!) }}
+                </span>
+              </td>
+              <td class="p-4">
+                <button
+                  type="button"
+                  title="عرض"
+                  (click)="openDetail(order)"
+                  class="h-8 w-8 rounded flex items-center justify-center text-muted-foreground transition-colors duration-200 hover:bg-muted"
+                >
+                  <i class="pi pi-eye text-[0.8125rem]"></i>
+                </button>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+
+
+      }
+    </div>
+  </div>
+
+  <!-- ── Order detail dialog ────────────────────────────────────── -->
+  <p-dialog
+    [visible]="isDetailDialogOpen()"
+    (visibleChange)="isDetailDialogOpen.set($event)"
+    [modal]="true"
+    [draggable]="false"
+    [resizable]="false"
+    styleClass="w-[90vw] sm:w-[85vw] md:w-full max-w-2xl mx-4"
+    contentStyleClass="max-h-[90vh] overflow-y-auto p-4 sm:p-6"
+    [dismissableMask]="true"
+    [maskStyleClass]="'bg-black/50'"
+  >
+    <ng-template #header>
+      <span class="text-base sm:text-lg font-bold text-foreground">تفاصيل الطلب</span>
+    </ng-template>
+
+    @if (isDetailLoading()) {
+      <div class="space-y-3 pt-2">
+        @for (line of [0, 1, 2, 3, 4, 5]; track line) {
+          <div class="h-5 w-full bg-muted rounded animate-pulse"></div>
+        }
+      </div>
+    } @else if (orderDetail(); as detail) {
+      <div dir="rtl" class="space-y-5 pt-2 text-xs lg:text-base" style="font-family: var(--font-cairo)">
+        <!-- Summary -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="flex justify-between border-b border-border pb-2">
+            <span class="text-muted-foreground">رقم الطلب</span>
+            <span class="font-mono font-medium">{{ detail.orderNumber }}</span>
+          </div>
+          <div class="flex justify-between border-b border-border pb-2">
+            <span class="text-muted-foreground">الحالة</span>
+            <span
+              class="inline-flex items-center rounded-full px-3 py-1 text-[10px] lg:text-xs font-medium"
+              [ngClass]="getLegStatusClasses(detail.legStatus ?? detail.orderStatus!)"
+            >
+              {{ getLegStatusLabel(detail.legStatus ?? detail.orderStatus!) }}
+            </span>
+          </div>
+          <div class="flex justify-between border-b border-border pb-2">
+            <span class="text-muted-foreground">تاريخ الطلب</span>
+            <span class="font-medium">{{ detail.orderDate | date: 'yyyy/MM/dd - hh:mm a' }}</span>
+          </div>
+          <div class="flex justify-between border-b border-border pb-2">
+            <span class="text-muted-foreground">التسليم</span>
+            <span class="font-medium">{{ detail.deliveryDate ? (detail.deliveryDate | date: 'yyyy/MM/dd - hh:mm a') : '—' }}</span>
+          </div>
+          <div class="flex justify-between border-b border-border pb-2">
+            <span class="text-muted-foreground">طريقة الاستلام</span>
+            <span
+              class="inline-flex items-center rounded-full px-3 py-1 text-[10px] lg:text-xs font-medium"
+              [ngClass]="getFulfillmentModeClasses(detail.fulfillmentMode)"
+            >
+              {{ getFulfillmentModeLabel(detail.fulfillmentMode) }}
+            </span>
+          </div>
+          <div class="flex justify-between border-b border-border pb-2">
+            <span class="text-muted-foreground">الإجمالي</span>
+            <span class="font-semibold">{{ detail.totalAmount | number: '1.2-2' }} ج</span>
+          </div>
+        </div>
+
+        <!-- Patient -->
+        <div>
+          <h3 class="text-sm lg:text-base font-bold mb-2">بيانات المريض</h3>
+          <div class="space-y-2">
+            <div class="flex justify-between border-b border-border pb-2">
+              <span class="text-muted-foreground">الاسم</span>
+              <span class="font-medium">{{ detail.patient.fullName }}</span>
+            </div>
+            <div class="flex justify-between border-b border-border pb-2">
+              <span class="text-muted-foreground">الهاتف</span>
+              <span class="font-medium font-mono">{{ detail.patient.phoneNumber }}</span>
+            </div>
+            <div class="flex justify-between border-b border-border pb-2">
+              <span class="text-muted-foreground">العنوان</span>
+              <span class="font-medium">
+                {{ detail.deliveryAddress.addressLine }}، {{ detail.deliveryAddress.city }}، {{ detail.deliveryAddress.governorate }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Items -->
+        <div>
+          <h3 class="text-sm lg:text-base font-bold mb-2">أصناف صيدليتك</h3>
+          <div class="rounded-lg border border-border overflow-hidden">
+            <table class="w-full text-xs lg:text-base">
+              <thead class="bg-muted/50">
+                <tr>
+                  <th class="text-right p-3 font-semibold text-muted-foreground">الدواء</th>
+                  <th class="text-right p-3 font-semibold text-muted-foreground">الكمية</th>
+                  <th class="text-right p-3 font-semibold text-muted-foreground">سعر الوحدة</th>
+                  <th class="text-right p-3 font-semibold text-muted-foreground">الإجمالي</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (item of detail.items; track item.orderItemId) {
+                  <tr class="border-t border-border transition-colors duration-200 hover:bg-muted/30">
+                    <td class="p-4">
+                      <div class="flex flex-col gap-1">
+                        <span class="text-xs lg:text-base font-medium leading-normal">{{ item.arabicName?.trim() || item.brandName?.trim() || item.drugName }}</span>
+                        <span class="text-[10px] lg:text-xs font-medium leading-normal text-muted-foreground uppercase">
+                          @if (item.arabicName?.trim() && (item.brandName?.trim() || item.drugName)) {
+                            {{ item.brandName?.trim() || item.drugName }}
+                          }
+                        </span>
+                      </div>
+                    </td>
+                    <td class="p-3 font-mono">{{ item.quantity | number }}</td>
+                    <td class="p-3 whitespace-nowrap">{{ item.unitPrice | number: '1.2-2' }} ج</td>
+                    <td class="p-3 font-semibold whitespace-nowrap">{{ itemSubtotal(item.unitPrice, item.quantity) | number: '1.2-2' }} ج</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Fulfillment legs -->
+        @if (detail.fulfillmentLegs.length) {
+          <div>
+            <h3 class="text-sm lg:text-base font-bold mb-2">فرع التنفيذ</h3>
+            <div class="space-y-2">
+              @for (leg of detail.fulfillmentLegs; track leg.legId) {
+                <div class="flex items-center justify-between rounded-lg border border-border p-3">
+                  <div class="flex flex-col">
+                    <span class="font-medium">{{ leg.branchName }}</span>
+                  </div>
+                  <span
+                    class="inline-flex items-center rounded-full px-3 py-1 text-[10px] lg:text-xs font-medium"
+                    [ngClass]="getLegStatusClasses(leg.legStatus)"
+                  >
+                    {{ getLegStatusLabel(leg.legStatus) }}
+                  </span>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="p-6 text-center text-xs lg:text-base text-muted-foreground">تعذّر تحميل التفاصيل.</div>
+    }
+
+    <ng-template #footer>
+      <div class="flex items-center justify-end w-full pt-2">
+        <button
+          type="button"
+          (click)="closeDetail()"
+          class="w-full sm:w-auto h-10 lg:h-12 rounded-lg px-6 text-xs lg:text-base font-medium text-white flex items-center justify-center gap-2 transition-colors duration-200 disabled:opacity-50"
+          style="background-color: #007671"
+          onmouseover="this.style.backgroundColor='var(--color-green-hover)'"
+          onmouseout="this.style.backgroundColor='#007671'"
+        >
+          إغلاق
+        </button>
+      </div>
+    </ng-template>
+  </p-dialog>
+</main>

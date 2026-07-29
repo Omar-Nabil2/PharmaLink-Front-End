@@ -177,9 +177,10 @@
         <div class="h-72" dir="ltr">
           @if (salesTrend().length) {
             <p-chart
-              type="line"
+              type="bar"
               [data]="salesChartData()"
               [options]="salesChartOptions"
+              [plugins]="chartPlugins"
               height="100%"
               styleClass="w-full h-full"
             />
@@ -216,10 +217,28 @@
             <tr class="border-t border-border">
               <td class="p-4 text-xs lg:text-base font-normal leading-normal font-mono whitespace-nowrap">{{ order.orderNumber }}</td>
               <td class="p-4 text-xs lg:text-base font-normal leading-normal">{{ order.patientName }}</td>
-              <td class="p-4 text-xs lg:text-base font-normal leading-normal text-muted-foreground">{{ order.summary }}</td>
+              <!-- Medicine Summary Cell -->
+              <td class="p-4 text-right">
+                <div class="flex flex-col gap-0.5">
+                  <!-- Primary Arabic Summary -->
+                  <span class="font-bold text-foreground text-xs sm:text-sm truncate max-w-[220px]" [title]="order.arabicSummary">
+                    {{ order.arabicSummary || '—' }}
+                  </span>
+                  
+                  <!-- Secondary Brand Summary & Items Count -->
+                  <div class="flex items-center gap-2 text-[11px] text-muted-foreground">
+                    <span class="truncate max-w-[180px]" [title]="order.brandSummary">
+                      {{ order.brandSummary }}
+                    </span>
+                    <span class="bg-muted px-1.5 py-0.5 rounded text-[10px] font-medium shrink-0">
+                      {{ order.orderedMedicinesCount }} أصناف
+                    </span>
+                  </div>
+                </div>
+              </td>
               <td class="p-4 text-xs lg:text-base font-normal leading-normal whitespace-nowrap">{{ order.totalAmount | number: '1.2-2' }} ج</td>
               <td class="p-4">
-                <span class="inline-flex items-center justify-center rounded-full border-none px-3.5 py-1 text-xs lg:text-sm font-semibold" [class]="getLegStatus(order.legStatus).badgeClass">
+                <span class="inline-flex items-center rounded-full px-3 py-1 text-[10px] lg:text-xs font-medium" [class]="getLegStatus(order.legStatus).badgeClass">
                   {{ getLegStatus(order.legStatus).label }}
                 </span>
               </td>

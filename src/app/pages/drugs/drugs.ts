@@ -1,10 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Subject } from 'rxjs';
+import { environment } from '@environments/environment';
+
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MessageService } from 'primeng/api';
 import { TagModule } from 'primeng/tag';
-
 import { DrugService } from '../../core/services/drug.service';
 import { CartService } from '../../core/services/cart.service';
 import { ErrorHandlerService } from '../../core/services/error-handler.service';
@@ -52,13 +54,15 @@ export class DrugsComponent implements OnInit {
   private patientLongitude: number | null = null;
 
   private readonly searchInput$ = new Subject<string>();
-
-  constructor(
-    private readonly drugService: DrugService,
-    private readonly cartService: CartService,
-    private readonly errorHandlerService: ErrorHandlerService,
-    private readonly messageService: MessageService,
-  ) {}
+  
+  // استخدام inject بطريقة صحيحة مع تمرير الـ Dependency عبر الـ constructor
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly drugService = inject(DrugService);
+  private readonly cartService = inject(CartService);
+  private readonly errorHandlerService = inject(ErrorHandlerService);
+  private readonly messageService = inject(MessageService);
+  private readonly http = inject(HttpClient);
+  private readonly baseUrl = environment.localUrl;
 
   async ngOnInit(): Promise<void> {
     this.searchInput$.pipe(debounceTime(400), distinctUntilChanged()).subscribe((term) => {
@@ -113,17 +117,21 @@ export class DrugsComponent implements OnInit {
         longitude: this.patientLongitude ?? undefined,
       })
       .subscribe({
-        next: (result) => {
-          this.drugs = result.items;
-          this.totalPages = result.totalPages;
-          this.hasNextPage = result.hasNextPage;
-          this.hasPreviousPage = result.hasPreviousPage;
+        next: (result: any) => {
+          this.drugs = result.items || result;
+          this.totalPages = result.totalPages ?? 1;
+          this.hasNextPage = result.hasNextPage ?? false;
+          this.hasPreviousPage = result.hasPreviousPage ?? false;
           this.isLoading = false;
+          
+          // فرض تحديث الواجهة فور وصول البيانات
+          this.cdr.detectChanges();
         },
         error: (err) => {
           this.isLoading = false;
           this.loadFailed = true;
           this.errorHandlerService.handleError(err, 'Failed to Load Catalog');
+          this.cdr.detectChanges();
         },
       });
   }
@@ -173,10 +181,12 @@ export class DrugsComponent implements OnInit {
           summary: 'Added to Cart',
           detail: `${drug.brandName} was added to your cart.`,
         });
+        this.cdr.detectChanges();
       },
       error: (err) => {
         this.addingDrugId = null;
         this.errorHandlerService.handleError(err, 'Failed to Add to Cart');
+        this.cdr.detectChanges();
       },
     });
   }

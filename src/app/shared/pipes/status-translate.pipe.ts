@@ -3,20 +3,20 @@ import { Pipe, PipeTransform } from '@angular/core';
 const STATUS_ARABIC_MAP: Record<string, string> = {
   // ── LegStatus ──────────────────────────────────────────────
   Assigned: 'تم القبول',
-  Preparing: 'قيد التحضير',
+  Preparing: 'قيد التجهيز',
   ReadyForPickup: 'جاهز للاستلام',
-  PickedUpByCourier: 'خرج للتوصيل',
+  PickedUpByCourier: 'جاري التوصيل',
   Completed: 'مكتمل',
   // ── OrderStatus ────────────────────────────────────────────
   Pending: 'قيد الانتظار',
-  Processing: 'قيد المعالجة',
-  Shipped: 'تم الشحن',
+  Processing: 'جاري التجهيز',
+  Shipped: 'جاري التوصيل',
   // ── Common delivery aliases ────────────────────────────────
-  InDelivery: 'قيد التوصيل',
-  OutForDelivery: 'خرج للتوصيل',
+  InDelivery: 'جاري التوصيل',
+  OutForDelivery: 'جاري التوصيل',
   Delivered: 'تم التسليم',
   // ── Shared terminal state ──────────────────────────────────
-  Cancelled: 'ملغي',
+  Cancelled: 'ملغى',
   // ── ItemStatus ─────────────────────────────────────────────
   Fulfilled: 'تم التوفير',
   Awarded: 'تمت الإحالة',
@@ -32,7 +32,7 @@ const STATUS_ARABIC_MAP: Record<string, string> = {
   Delivery: 'توصيل',
   Pickup: 'استلام',
   // ── PrescriptionReviewStatus ───────────────────────────────
-  PendingReview: 'بانتظار المراجعة',
+  PendingReview: 'قيد المراجعة',
   Approved: 'مقبول',
   OrderCreated: 'تم إنشاء الطلب',
 };

@@ -1,0 +1,81 @@
+<div class="max-w-5xl mx-auto p-4 md:p-6" dir="rtl">
+
+  <!-- زر العودة -->
+  <div class="mb-6">
+    <a routerLink="/patient/prescriptions" class="inline-flex items-center gap-2 text-slate-600 hover:text-emerald-600 font-bold text-sm transition-colors">
+      <i class="pi pi-arrow-right"></i> العودة لقائمة الروشتات
+    </a>
+  </div>
+
+  <!-- حالة التحميل -->
+  <div *ngIf="isLoading" class="flex flex-col items-center justify-center py-20 gap-3">
+    <i class="pi pi-spinner animate-spin text-4xl text-emerald-600"></i>
+    <p class="text-slate-500 font-medium">جاري تحميل تفاصيل الروشتة...</p>
+  </div>
+
+  <!-- حالة الخطأ -->
+  <div *ngIf="!isLoading && hasError" class="bg-rose-50 border border-rose-200 text-rose-700 p-6 rounded-2xl text-center my-8">
+    <i class="pi pi-exclamation-triangle text-3xl mb-2"></i>
+    <h3 class="font-bold text-lg">تعذر تحميل بيانات الروشتة</h3>
+    <button *ngIf="reviewId" (click)="loadReviewDetail(reviewId)" class="mt-4 px-4 py-2 bg-rose-600 text-white rounded-xl text-sm font-bold hover:bg-rose-700 transition-colors">
+      إعادة المحاولة
+    </button>
+  </div>
+
+  <!-- عرض البيانات -->
+  <div *ngIf="!isLoading && !hasError && reviewDetail" class="space-y-6">
+
+    <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div>
+        <span class="text-xs text-slate-400 block mb-1">رقم المراجعة: {{ reviewDetail.reviewId || reviewId }}</span>
+        <h1 class="text-xl font-black text-slate-800">تفاصيل الروشتة الطبية</h1>
+      </div>
+
+      <span class="px-4 py-1.5 rounded-full text-xs font-bold border flex items-center gap-2" [ngClass]="getStatusClass(reviewDetail.status)">
+        <span class="w-2 h-2 rounded-full bg-current"></span>
+        {{ getStatusLabel(reviewDetail.status) }}
+      </span>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <!-- صورة الروشتة -->
+      <div class="lg:col-span-5 bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
+        <h3 class="font-bold text-slate-700 mb-3 text-sm flex items-center gap-2">
+          <i class="pi pi-image text-emerald-600"></i> صورة الروشتة
+        </h3>
+        <div class="rounded-xl overflow-hidden bg-slate-100 border border-slate-200 flex items-center justify-center min-h-[300px]">
+          <img [src]="reviewDetail.imageUrl" alt="Prescription Image" class="w-full h-auto object-contain max-h-[400px]" />
+        </div>
+      </div>
+
+      <!-- قائمة الأدوية -->
+      <div class="lg:col-span-7 bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+        <h3 class="font-bold text-slate-800 mb-4 text-base flex items-center gap-2">
+          <i class="pi pi-list text-emerald-600"></i> الأدوية المستخرجة
+        </h3>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-right border-collapse">
+            <thead>
+              <tr class="border-b border-slate-200 text-slate-400 text-xs">
+                <th class="pb-3 font-semibold">اسم الدواء</th>
+                <th class="pb-3 font-semibold text-center">الكمية</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 text-sm">
+              <tr *ngFor="let med of reviewDetail.medicines" class="hover:bg-slate-50">
+                <td class="py-3 font-bold text-slate-800">{{ med.medicineName || med.name }}</td>
+                <td class="py-3 text-center text-slate-600 font-mono">{{ med.quantity || 1 }}</td>
+              </tr>
+              <tr *ngIf="!reviewDetail.medicines || reviewDetail.medicines.length === 0">
+                <td colspan="2" class="py-8 text-center text-slate-400 text-xs">لا توجد أدوية محددة حتى الآن.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>

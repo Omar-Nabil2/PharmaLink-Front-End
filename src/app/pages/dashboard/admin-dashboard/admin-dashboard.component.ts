@@ -89,16 +89,8 @@ export class AdminDashboardComponent {
         {
           label: 'الطلبات',
           data: series.map((p) => p.count),
-          fill: true,
-          tension: 0.4,
-          borderColor: '#0f9d76',
-          backgroundColor: 'rgba(15, 157, 118, 0.1)',
-          pointBackgroundColor: '#0f9d76',
-          pointBorderColor: '#ffffff',
-          pointBorderWidth: 2,
-          pointRadius: 4,
-          pointHoverRadius: 6,
-          borderWidth: 2,
+          backgroundColor: '#007671',
+          borderRadius: 10,
         },
       ],
     };
@@ -107,15 +99,24 @@ export class AdminDashboardComponent {
   readonly ordersLineChartOptions = {
     responsive: true,
     maintainAspectRatio: false,
+    interaction: {
+      mode: 'index',
+      intersect: false,
+    },
     plugins: {
       legend: { display: false },
       tooltip: {
         rtl: true,
-        backgroundColor: '#1a2b28',
-        titleFont: { family: 'Cairo, sans-serif', size: 13 },
-        bodyFont: { family: 'Cairo, sans-serif', size: 12 },
+        backgroundColor: '#ffffff',
+        titleColor: '#1e293b',
+        bodyColor: '#007671',
+        borderColor: '#e2e8e6',
+        borderWidth: 1,
+        titleFont: { family: 'Cairo, sans-serif', size: 14, weight: 'bold' },
+        bodyFont: { family: 'Cairo, sans-serif', size: 14, weight: 'medium' },
         padding: 12,
         cornerRadius: 8,
+        displayColors: false,
         callbacks: {
           title: (items: { label: string }[]) => `اليوم ${items[0]?.label}`,
           label: (item: { parsed: { y: number } }) => ` ${item.parsed.y} طلب`,
@@ -135,12 +136,34 @@ export class AdminDashboardComponent {
     },
   };
 
+  readonly chartPlugins = [
+    {
+      id: 'barHoverBackground',
+      beforeDatasetsDraw: (chart: any) => {
+        const activeElements = chart.getActiveElements();
+        if (activeElements?.length) {
+          const ctx = chart.ctx;
+          const activeElement = activeElements[0];
+          const x = activeElement.element.x;
+          const width = activeElement.element.width + 16;
+          const top = chart.chartArea.top;
+          const bottom = chart.chartArea.bottom;
+
+          ctx.save();
+          ctx.fillStyle = '#cccccc';
+          ctx.fillRect(x - width / 2, top, width, bottom - top);
+          ctx.restore();
+        }
+      }
+    }
+  ];
+
   // ── Chart: order status doughnut ────────────────────────────────────────────
   readonly statusDoughnutData = computed<ChartData<'doughnut'> | undefined>(() => {
     const a = this.dashboard()?.orderAnalytics;
     if (!a) return undefined;
     return {
-      labels: ['قيد الانتظار', 'قيد المعالجة', 'تم الشحن', 'مكتمل', 'ملغي'],
+      labels: ['قيد الانتظار', 'جاري التجهيز', 'جاري التوصيل', 'مكتمل', 'ملغى'],
       datasets: [
         {
           data: [

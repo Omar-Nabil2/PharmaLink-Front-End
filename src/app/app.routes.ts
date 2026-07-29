@@ -4,6 +4,7 @@ import { HomeComponent } from './pages/home/home.component';
 import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
 import { authGuard } from './core/guards/auth.guard';
 import { AppRoles } from './core/enums/app-roles.constant';
+import { PatientPrescriptionDetailComponent } from '@pages/prescription-detail.component/prescription-detail.component';
 
 export const routes: Routes = [
   {
@@ -26,10 +27,7 @@ export const routes: Routes = [
             (m) => m.UpdateProfileComponent,
           ),
       },
-      {
-        path: 'prescriptions/review/:id',
-        loadComponent: () => import('./pages/prescriptions/review-prescription/review-prescription.component').then(m => m.ReviewPrescriptionComponent)
-      },
+
       {
         path: 'privacy',
         loadComponent: () => import('./pages/static/privacy-policy/privacy-policy.component').then(m => m.PrivacyPolicyComponent)
@@ -92,6 +90,10 @@ export const routes: Routes = [
           import('./pages/products/products.component').then((m) => m.ProductsComponent),
       },
       {
+        path: 'drugs',
+        loadComponent: () => import('./pages/drugs/drugs').then((m) => m.DrugsComponent),
+      },
+      {
         path: 'services',
         loadComponent: () =>
           import('./pages/services/services.component').then((m) => m.ServicesComponent),
@@ -130,7 +132,7 @@ export const routes: Routes = [
 
     ],
   },
-  {
+{
     path: 'patient',
     canActivate: [authGuard],
     data: { role: AppRoles.Patient },
@@ -152,6 +154,19 @@ export const routes: Routes = [
           import('./pages/prescriptions/upload-prescription/upload-prescription.component').then(
             (m) => m.UploadPrescriptionComponent,
           ),
+      },
+      {
+        path: 'prescriptions',
+        loadComponent: () =>
+          import('./pages/patient-prescription-review.component/patient-prescription-review.component').then(
+            (m) => m.PatientPrescriptionsListComponent
+          ),
+      },
+      {
+        path: 'prescriptions/review/:id', // ✅ صحيح: بدون كلمة patient في البداية
+        loadComponent: () => 
+          import('./pages/prescription-detail.component/prescription-detail.component')
+            .then((m) => m.PatientPrescriptionDetailComponent)
       },
       {
         path: 'addresses',
@@ -275,6 +290,13 @@ export const routes: Routes = [
           import('./pages/inventory/inventory.component').then((m) => m.InventoryComponent),
       },
       {
+        path: 'orders',
+        loadComponent: () =>
+          import('./pages/orders/pharmacy-orders/pharmacy-orders.component').then(
+            (m) => m.PharmacyOrdersComponent,
+          ),
+      },
+      {
         path: 'pharmacy-profile',
         loadComponent: () =>
           import('./pages/pharmacy-profile/pharmacy-profile.component').then((m) => m.PharmacyProfileComponent),
@@ -331,7 +353,7 @@ export const routes: Routes = [
       {
         path: 'orders',
         loadComponent: () =>
-          import('./pages/admin/orders/admin-orders.component').then(
+          import('./pages/orders/admin-orders/admin-orders.component').then(
             (m) => m.AdminOrdersComponent,
           ),
       },

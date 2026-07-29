@@ -3,16 +3,24 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '@environments/environment';
 import { DrugDto, DrugSearchParams, PaginatedList } from '../interfaces/drug.interface';
+import { inject } from '@angular/core';
+
 
 @Injectable({
   providedIn: 'root',
 })
 export class DrugService {
-  private readonly baseUrl =`https://localhost:5001/api/v1`;
+  // private readonly baseUrl =`https://localhost:5001/api/v1`;
+  private readonly http = inject(HttpClient);
+  private readonly baseUrl = environment.localUrl;
 
-  constructor(private readonly http: HttpClient) {}
+
+  constructor() {}
 
   searchDrugs(params: DrugSearchParams): Observable<PaginatedList<DrugDto>> {
+      const url = `${this.baseUrl}/admin/dashboard`;
+
+
     let httpParams = new HttpParams()
       .set('pageNumber', String(params.pageNumber ?? 1))
       .set('pageSize', String(params.pageSize ?? 10));

@@ -1,19 +1,34 @@
 export interface MedicineDto {
     id?: string;
-    name: string;
+    medicineName?: string;           // قادم من الـ API الجديد
+    name?: string;                  // للحفاظ على التوافق مع الكود القديم
+    originalMedicineName?: string;
+    genericName?: string;
+    strength?: string;
+    dosageForm?: string;
+    dose?: string;
+    frequency?: string;
+    duration?: string;
     quantity: number;
-    dosageInstructions: string;
+    route?: string;
+    dosageInstructions?: string;    // للحفاظ على التوافق مع الكود القديم
+    confidence?: number;
+    isEdited?: boolean;
 }
 
 export interface PrescriptionReviewDto {
-    reviewId: string; // كان اسمها id
-    imageUrl: string; // كان اسمها prescriptionImageUrl
-    status: string;
-    reviewNotes?: string; // كان اسمها notes
-    medicines: MedicineDto[];
+    reviewId: string;
+    patientUserId?: string;
     patientName?: string;
+    imageUrl: string;
+    status: string;
     aiModel?: string;
+    reviewNotes?: string;
+    createdAt?: string;
+    reviewedAt?: string | null;
+    createdOrderId?: string;         // لرابط الطلب
     ocrResult?: string;
+    medicines: MedicineDto[];
 }
 
 export interface GetAllPrescriptionReviewDto {
