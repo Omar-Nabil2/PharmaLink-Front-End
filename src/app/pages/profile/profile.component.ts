@@ -3,7 +3,7 @@ import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ProfileService } from '../../core/services/profile.service';
 import { ErrorHandlerService } from '../../core/services/error-handler.service';
-import { GetPharmacyProfileResponse, PatientProfile } from '../../core/interfaces/profile.interface';
+import { GetPharmacyAdminProfile, GetPharmacyProfileResponse, PatientProfile } from '../../core/interfaces/profile.interface';
 
 @Component({
   selector: 'app-profile',
@@ -13,8 +13,10 @@ import { GetPharmacyProfileResponse, PatientProfile } from '../../core/interface
 })
 export class ProfileComponent implements OnInit {
   isPatient = false;
+  isPharmacyAdmin = false;
   patientData: PatientProfile | null = null;
   profileData: GetPharmacyProfileResponse | null = null;
+  pharmacyAdminData: GetPharmacyAdminProfile | null = null;
   isLoading = true;
 
   constructor(
@@ -26,6 +28,7 @@ export class ProfileComponent implements OnInit {
   ngOnInit(): void {
     const role = typeof window !== 'undefined' ? localStorage.getItem('roleName') : null;
     this.isPatient = (role === 'Patient');
+    this.isPharmacyAdmin = (role === 'PharmacyAdmin');
     this.fetchProfile();
   }
 
@@ -42,6 +45,20 @@ export class ProfileComponent implements OnInit {
         error: (err) => {
           this.isLoading = false;
           this.errorHandler.handleError(err, 'فشل تحميل الملف الشخصي للمريض');
+          this.cdr.detectChanges();
+        },
+      });
+    }
+    else if (this.isPharmacyAdmin) {
+      this.profileService.getPharmacyAdminProfile().subscribe({
+        next: (response) => {
+          this.pharmacyAdminData = response;
+          this.isLoading = false;
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          this.isLoading = false;
+          this.errorHandler.handleError(err, 'فشل تحميل الملف الشخصي لمدير الصيدلية');
           this.cdr.detectChanges();
         },
       });

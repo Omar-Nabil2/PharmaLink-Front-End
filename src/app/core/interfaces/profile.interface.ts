@@ -75,3 +75,18 @@ export interface PatientProfileResponse {
         statusCode: number | null;
     };
 }
+
+
+export interface GetPharmacyAdminProfile {
+    fullName: string;
+    email: string;
+    phoneNumber: string;
+    legalName: string;
+    licenseNumber: string;
+    logoUrl: string;
+    verificationStatus: number | string;
+}
+export interface UpdatePharmacyAdminProfileDTO {
+    fullName: string;
+    phoneNumber: string;
+}
