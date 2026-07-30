@@ -71,6 +71,8 @@ export interface PatientProfileResponse {
 export interface SystemAdminProfile {
   adminId?: string;
   fullName?: string;
+  firstName?: string; 
+  lastName?: string;  
   email?: string;
   phoneNumber?: string;
   status?: string;

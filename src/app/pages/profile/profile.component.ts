@@ -30,7 +30,6 @@ export class ProfileComponent implements OnInit {
     const role = typeof window !== 'undefined' ? localStorage.getItem('roleName') : null;
     this.userRole = role ? role.trim() : '';
     
-    // 💡 طباعة الـ Role في الكونسول للتأكد من قيمته المضبوطة
     console.log('Detected Role in ProfileComponent:', this.userRole);
 
     this.fetchProfile();
@@ -49,6 +48,16 @@ export class ProfileComponent implements OnInit {
     return this.userRole.toLowerCase() === 'patient';
   }
 
+  // 🟢 Getter مطابق لما يستخدمه ملف الـ HTML
+  get isPatient(): boolean {
+    return this.isPatientRole;
+  }
+
+  // 🟢 Getter لتوفير بيانات الصيدلية باسم profileData المستعمل بالـ HTML
+  get profileData(): GetPharmacyProfileResponse | null {
+    return this.pharmacyData;
+  }
+
   fetchProfile(): void {
     this.isLoading = true;
 
@@ -62,17 +71,25 @@ export class ProfileComponent implements OnInit {
         error: (err) => this.handleErr(err, 'فشل تحميل الملف الشخصي للمريض')
       });
     } else if (this.isAdminRole) {
-      // 🟢 يستدعي الآن الـ API الصحيح للأدمن
       this.profileService.getSystemAdminProfile().subscribe({
         next: (res: any) => {
-          this.adminData = res.value || res;
+          const rawData = res.value || res;
+          const nameParts = (rawData.fullName || '').trim().split(' ');
+
+          // ضبط حقول الاسم
+          this.adminData = {
+            ...rawData,
+            firstName: rawData.firstName || nameParts[0] || '',
+            lastName: rawData.lastName || nameParts.slice(1).join(' ') || '',
+            fullName: rawData.fullName || `${rawData.firstName || ''} ${rawData.lastName || ''}`.trim()
+          };
+
           this.isLoading = false;
           this.cdr.detectChanges();
         },
         error: (err) => this.handleErr(err, 'فشل تحميل الملف الشخصي للأدمن')
       });
     } else {
-      // 🟢 للصيدلي فقط
       this.profileService.getProfile().subscribe({
         next: (data) => {
           this.pharmacyData = data;

@@ -1,17 +1,21 @@
 <div class="container-app py-8 md:py-12" dir="rtl">
+  <!-- Top Header -->
   <div class="mb-8 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
     <div>
       <h1 class="type-display-xl text-ink">ملفك الشخصي</h1>
       <p class="type-body-md text-body mt-2">
-        {{ isPatient ? 'إدارة تفاصيلك الشخصية وعناوينك المحفوظة.' : 'إدارة تفاصيلك الشخصية والصيدليات التي تديرها.' }}
+        <ng-container *ngIf="isAdminRole">إدارة بيانات حساب مدير النظام والصلاحيات الإدارية.</ng-container>
+        <ng-container *ngIf="!isAdminRole && isPatient">إدارة تفاصيلك الشخصية وعناوينك المحفوظة.</ng-container>
+        <ng-container *ngIf="!isAdminRole && !isPatient">إدارة تفاصيلك الشخصية والصيدليات التي تديرها.</ng-container>
       </p>
     </div>
     <div class="flex items-center gap-3 self-start flex-wrap">
-      <!-- Edit Profile button next to change password -->
+      <!-- Edit Profile button -->
       <a routerLink="/profile/edit" class="btn-subtle inline-flex gap-2">
         <i class="pi pi-user-edit"></i>
         <span>تعديل الملف الشخصي</span>
       </a>
+      <!-- Change Password button -->
       <a routerLink="/change-password" class="btn-secondary inline-flex gap-2">
         <i class="pi pi-key"></i>
         <span>تغيير كلمة المرور</span>
@@ -19,12 +23,69 @@
     </div>
   </div>
 
+  <!-- Loading Spinner -->
   <div *ngIf="isLoading" class="flex justify-center items-center py-20">
     <i class="pi pi-spinner animate-spin text-4xl text-ink"></i>
   </div>
 
-  <!-- Patient Profile Layout -->
-  <div *ngIf="!isLoading && isPatient && patientData" class="space-y-6">
+  <!-- 🛡️ 1. System Admin Profile Layout -->
+  <div *ngIf="!isLoading && isAdminRole && adminData" class="space-y-6">
+    <div class="card-surface border border-surface-pressed overflow-hidden !p-0">
+      <div class="bg-canvas-soft px-6 py-4 flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <div class="bg-canvas text-ink p-2 rounded-full w-10 h-10 flex items-center justify-center">
+            <i class="pi pi-shield text-lg"></i>
+          </div>
+          <div>
+            <h2 class="type-display-sm">معلومات مدير النظام</h2>
+            <p class="type-body-sm text-body">تفاصيل الحساب والصلاحيات الإدارية العليا</p>
+          </div>
+        </div>
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full type-body-sm bg-purple-50 text-purple-700 border border-purple-200 font-semibold">
+          <i class="pi pi-verified text-xs"></i>
+          مدير نظام
+        </span>
+      </div>
+
+      <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <span class="block type-body-sm-strong text-body mb-1">الاسم الكامل</span>
+          <p class="type-body-md text-ink font-semibold">
+            {{ adminData.fullName || (adminData.firstName + ' ' + adminData.lastName) }}
+          </p>
+        </div>
+
+        <div>
+          <span class="block type-body-sm-strong text-body mb-1">البريد الإلكتروني (حساب إداري)</span>
+          <p class="type-body-md text-ink">{{ adminData.email }}</p>
+        </div>
+
+        <div>
+          <span class="block type-body-sm-strong text-body mb-1">رقم الهاتف</span>
+          <p class="type-body-md text-ink">{{ adminData.phoneNumber || 'غير متوفر' }}</p>
+        </div>
+
+        <div>
+          <span class="block type-body-sm-strong text-body mb-1">حالة الحساب</span>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full type-body-sm bg-emerald-50 text-emerald-700 border border-emerald-200">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            {{ adminData.status || 'نشط' }}
+          </span>
+        </div>
+
+        <div>
+          <span class="block type-body-sm-strong text-body mb-1">تاريخ إنشاء الحساب</span>
+          <p class="type-body-md text-ink">
+            <i class="pi pi-calendar text-xs text-body me-1"></i>
+            {{ adminData.createdAt ? (adminData.createdAt | date: 'MMMM d, y') : 'غير محدد' }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🧑‍⚕️ 2. Patient Profile Layout -->
+  <div *ngIf="!isLoading && !isAdminRole && isPatient && patientData" class="space-y-6">
     <div class="card-surface border border-surface-pressed overflow-hidden !p-0">
       <div class="bg-canvas-soft px-6 py-4 flex items-center gap-3">
         <div class="bg-canvas text-ink p-2 rounded-full w-10 h-10 flex items-center justify-center">
@@ -118,8 +179,8 @@
     </div>
   </div>
 
-  <!-- Pharmacy Profile Layout -->
-  <div *ngIf="!isLoading && !isPatient && profileData" class="space-y-6">
+  <!-- 🏥 3. Pharmacy Profile Layout -->
+  <div *ngIf="!isLoading && !isAdminRole && !isPatient && profileData" class="space-y-6">
     <div class="card-surface border border-surface-pressed overflow-hidden !p-0">
       <div class="bg-canvas-soft px-6 py-4 flex items-center gap-3">
         <div class="bg-canvas text-ink p-2 rounded-full w-10 h-10 flex items-center justify-center">
@@ -159,7 +220,7 @@
           <p class="type-body-md">ليس لديك أي صيدليات مسجلة بعد.</p>
         </div>
 
-        <!-- حالة وجود الصيدلية (تم إزالة ngFor واستخدام as pharmacy) -->
+        <!-- حالة وجود الصيدلية -->
         <div *ngIf="profileData.administeredPharmacies as pharmacy"
           class="bg-canvas-soft rounded-xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
@@ -187,7 +248,6 @@
           </span>
         </div>
       </div>
-
     </div>
   </div>
 </div>

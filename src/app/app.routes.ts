@@ -259,7 +259,6 @@ export const routes: Routes = [
     ],
   },
 
-  // 5️⃣ لوحة مالك الصيدلية (Owner Portal)
   {
     path: 'owner',
     canActivate: [authGuard],
@@ -379,12 +378,10 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./pages/profile/profile.component').then((m) => m.ProfileComponent),
       },
-      {
-        path: 'profile/edit',
-        loadComponent: () =>
-          import('./pages/profile/update-profile/update-profile.component').then(
-            (m) => m.UpdateProfileComponent,
-          ),
+{
+        path: 'update',
+        loadComponent: () => import('./pages/profile/update-profile/update-profile.component')
+        .then(m => m.UpdateProfileComponent)
       },
 
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
