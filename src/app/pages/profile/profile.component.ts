@@ -3,7 +3,7 @@ import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ProfileService } from '../../core/services/profile.service';
 import { ErrorHandlerService } from '../../core/services/error-handler.service';
-import { GetPharmacyProfileResponse, PatientProfile } from '../../core/interfaces/profile.interface';
+import { GetPharmacyProfileResponse, PatientProfile, SystemAdminProfile } from '../../core/interfaces/profile.interface';
 
 @Component({
   selector: 'app-profile',
@@ -12,9 +12,12 @@ import { GetPharmacyProfileResponse, PatientProfile } from '../../core/interface
   templateUrl: './profile.component.html',
 })
 export class ProfileComponent implements OnInit {
-  isPatient = false;
+  userRole: string = '';
+  
   patientData: PatientProfile | null = null;
-  profileData: GetPharmacyProfileResponse | null = null;
+  pharmacyData: GetPharmacyProfileResponse | null = null;
+  adminData: SystemAdminProfile | null = null;
+  
   isLoading = true;
 
   constructor(
@@ -25,42 +28,66 @@ export class ProfileComponent implements OnInit {
 
   ngOnInit(): void {
     const role = typeof window !== 'undefined' ? localStorage.getItem('roleName') : null;
-    this.isPatient = (role === 'Patient');
+    this.userRole = role ? role.trim() : '';
+    
+    // 💡 طباعة الـ Role في الكونسول للتأكد من قيمته المضبوطة
+    console.log('Detected Role in ProfileComponent:', this.userRole);
+
     this.fetchProfile();
+  }
+
+  // 🟢 فحص مرن للأدمن (يتجاهل المسافات وحالة الحروف)
+  get isAdminRole(): boolean {
+    if (!this.userRole) return false;
+    const normalized = this.userRole.toLowerCase().replace(/\s+/g, '');
+    return normalized === 'admin' || normalized === 'systemadmin';
+  }
+
+  // 🟢 فحص مرن للمريض
+  get isPatientRole(): boolean {
+    if (!this.userRole) return false;
+    return this.userRole.toLowerCase() === 'patient';
   }
 
   fetchProfile(): void {
     this.isLoading = true;
-    if (this.isPatient) {
+
+    if (this.isPatientRole) {
       this.profileService.getPatientProfile().subscribe({
-        next: (response) => {
-          console.log('Patient profile response:', response);
-          this.patientData = response.value;
+        next: (res) => {
+          this.patientData = res.value || res;
           this.isLoading = false;
           this.cdr.detectChanges();
         },
-        error: (err) => {
+        error: (err) => this.handleErr(err, 'فشل تحميل الملف الشخصي للمريض')
+      });
+    } else if (this.isAdminRole) {
+      // 🟢 يستدعي الآن الـ API الصحيح للأدمن
+      this.profileService.getSystemAdminProfile().subscribe({
+        next: (res: any) => {
+          this.adminData = res.value || res;
           this.isLoading = false;
-          this.errorHandler.handleError(err, 'فشل تحميل الملف الشخصي للمريض');
           this.cdr.detectChanges();
         },
+        error: (err) => this.handleErr(err, 'فشل تحميل الملف الشخصي للأدمن')
       });
     } else {
+      // 🟢 للصيدلي فقط
       this.profileService.getProfile().subscribe({
         next: (data) => {
-          console.log('Pharmacy profile response:', data);
-
-          this.profileData = data;
+          this.pharmacyData = data;
           this.isLoading = false;
           this.cdr.detectChanges();
         },
-        error: (err) => {
-          this.isLoading = false;
-          this.errorHandler.handleError(err, 'فشل تحميل الملف الشخصي');
-          this.cdr.detectChanges();
-        },
+        error: (err) => this.handleErr(err, 'فشل تحميل الملف الشخصي للصيدلية')
       });
     }
+  }
+
+  private handleErr(err: any, msg: string): void {
+    this.isLoading = false;
+    this.errorHandler.handleError(err, msg);
+    this.cdr.detectChanges();
   }
 
   isDefaultAddress(index: number): boolean {

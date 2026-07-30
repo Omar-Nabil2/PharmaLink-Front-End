@@ -8,14 +8,17 @@ import {
   UpdatePharmacyProfileRequest,
   UpdatePharmacyProfileResponse,
   PatientProfileResponse,
+  SystemAdminProfile,
+  UpdateSystemAdminProfileRequest
 } from '../interfaces/profile.interface';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ProfileService {
-  private readonly localUrl = environment.localUrl;
-
+  // private readonly localUrl = environment.localUrl;
+ private readonly localUrl ='https://localhost:5001/api/v1';
+ 
   constructor(private readonly http: HttpClient) { }
 
   getProfile(): Observable<GetPharmacyProfileResponse> {
@@ -32,6 +35,13 @@ export class ProfileService {
 
   updateProfile(data: UpdatePharmacyProfileRequest): Observable<UpdatePharmacyProfileResponse> {
     return this.http.put<UpdatePharmacyProfileResponse>(`${this.localUrl}/PharmacistProfile`, data);
+  }
+
+  getSystemAdminProfile(): Observable<{ value: SystemAdminProfile } | SystemAdminProfile> {
+  return this.http.get<any>(`${this.localUrl}/admin/profile`);
+}
+updateSystemAdminProfile(data: UpdateSystemAdminProfileRequest): Observable<SystemAdminProfile> {
+    return this.http.put<SystemAdminProfile>(`${this.localUrl}/admin/profile`, data);
   }
 
 }

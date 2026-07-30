@@ -1,13 +1,5 @@
 export interface PharmacyDto {
     pharmacyId: string;
-    ownerUserId: string;
-    legalName: string;
-    licenseNumber: string;
-    verificationStatus: string;
-}
-
-export interface PharmacyDto {
-    pharmacyId: string;
     branchId: string;
     ownerUserId: string;
     legalName: string;
@@ -74,4 +66,18 @@ export interface PatientProfileResponse {
         description: string;
         statusCode: number | null;
     };
+}
+
+export interface SystemAdminProfile {
+  adminId?: string;
+  fullName?: string;
+  email?: string;
+  phoneNumber?: string;
+  status?: string;
+  createdAt?: string;
+}
+
+export interface UpdateSystemAdminProfileRequest {
+  fullName: string;
+  phoneNumber: string;
 }
