@@ -33,62 +33,75 @@ export class UpdateProfileComponent implements OnInit {
         });
     }
 
-    ngOnInit(): void {
-        const role = typeof window !== 'undefined' ? localStorage.getItem('roleName') : null;
-        this.isPatient = role === 'Patient';
+ngOnInit(): void {
+    const role = typeof window !== 'undefined' ? localStorage.getItem('roleName') : null;
 
-        const request$: Observable<any> = this.isPatient
-            ? this.profileService.getPatientProfile()
-            : this.profileService.getProfile();
+    let request$: Observable<any>;
 
-        request$.subscribe({
-            next: (data: any) => {
-                this.updateForm.patchValue({
-                    fullName: data.fullName ?? data.value?.fullName,
-                    phoneNumber: data.phoneNumber ?? data.value?.phoneNumber,
-                });
-                this.isFetching = false;
-                this.cdr.detectChanges();
-            },
-            error: (err: unknown) => {
-                this.isFetching = false;
-                this.errorHandler.handleError(err, 'فشل تحميل بيانات الملف الشخصي');
-                this.cdr.detectChanges();
-            }
-        });
+    if (role === 'Patient') {
+        request$ = this.profileService.getPatientProfile();
+    } else if (role === 'Pharmacist') {
+        request$ = this.profileService.getPharmacistProfile(); // تأكد من وجود هذه الدالة في الـ ProfileService
+    } else {
+        request$ = this.profileService.getProfile(); // للأدمن أو الحسابات الأخرى
     }
 
-    onSubmit(): void {
-        if (this.updateForm.invalid) {
-            this.updateForm.markAllAsTouched();
-            return;
+    request$.subscribe({
+        next: (data: any) => {
+            this.updateForm.patchValue({
+                fullName: data.fullName ?? data.value?.fullName,
+                phoneNumber: data.phoneNumber ?? data.value?.phoneNumber,
+            });
+            this.isFetching = false;
+            this.cdr.detectChanges();
+        },
+        error: (err: unknown) => {
+            this.isFetching = false;
+            this.errorHandler.handleError(err, 'فشل تحميل بيانات الملف الشخصي');
+            this.cdr.detectChanges();
         }
-
-        this.isLoading = true;
-
-        const payload = this.updateForm.getRawValue();
-        const request$: Observable<any> = this.isPatient
-            ? this.profileService.updatePatientProfile(payload)
-            : this.profileService.updateProfile(payload);
-
-        request$.subscribe({
-            next: () => {
-                this.isLoading = false;
-                this.messageService.add({
-                    severity: 'success',
-                    summary: 'تم تحديث الملف الشخصي',
-                    detail: 'تم تحديث ملفك الشخصي بنجاح.',
-                    life: 3000
-                });
-
-                this.router.navigate(['/profile']);
-            },
-            error: (err: unknown) => {
-                this.isLoading = false;
-                this.errorHandler.handleError(err, 'فشل تحديث الملف الشخصي');
-                this.cdr.detectChanges();
-            }
-        });
+    });
+}
+   onSubmit(): void {
+    if (this.updateForm.invalid) {
+        this.updateForm.markAllAsTouched();
+        return;
     }
+
+    this.isLoading = true;
+    const role = typeof window !== 'undefined' ? localStorage.getItem('roleName') : null;
+    const payload = this.updateForm.getRawValue();
+    
+    let request$: Observable<any>;
+
+    if (role === 'Patient') {
+        request$ = this.profileService.updatePatientProfile(payload);
+    } else if (role === 'Pharmacist') {
+        request$ = this.profileService.updatePharmacistProfile(payload); // تأكد من وجود هذه الدالة في الـ ProfileService
+    } else if (role === 'Admin') {
+        request$ = this.profileService.updateSystemAdminProfile(payload);
+    }
+    else{
+        request$ = this.profileService.updateProfile(payload);
+    }
+    request$.subscribe({
+        next: () => {
+            this.isLoading = false;
+            this.messageService.add({
+                severity: 'success',
+                summary: 'تم تحديث الملف الشخصي',
+                detail: 'تم تحديث ملفك الشخصي بنجاح.',
+                life: 3000
+            });
+
+            this.router.navigate(['/profile']);
+        },
+        error: (err: unknown) => {
+            this.isLoading = false;
+            this.errorHandler.handleError(err, 'فشل تحديث الملف الشخصي');
+            this.cdr.detectChanges();
+        }
+    });
+}
     
 }

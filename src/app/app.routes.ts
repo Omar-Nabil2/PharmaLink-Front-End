@@ -14,6 +14,14 @@ export const routes: Routes = [
       {
         path: '',
         component: HomeComponent,
+
+      },
+        {
+        path: 'profile/edit',
+        loadComponent: () =>
+          import('./pages/profile/update-profile/update-profile.component').then(
+            (m) => m.UpdateProfileComponent,
+          ),
       },
       {
         path: 'products',
@@ -378,10 +386,12 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./pages/profile/profile.component').then((m) => m.ProfileComponent),
       },
-{
-        path: 'update',
-        loadComponent: () => import('./pages/profile/update-profile/update-profile.component')
-        .then(m => m.UpdateProfileComponent)
+      {
+        path: 'profile/edit',
+        loadComponent: () =>
+          import('./pages/profile/update-profile/update-profile.component').then(
+            (m) => m.UpdateProfileComponent,
+          ),
       },
 
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },

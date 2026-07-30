@@ -43,5 +43,12 @@ export class ProfileService {
 updateSystemAdminProfile(data: UpdateSystemAdminProfileRequest): Observable<SystemAdminProfile> {
     return this.http.put<SystemAdminProfile>(`${this.localUrl}/admin/profile`, data);
   }
+getPharmacistProfile(): Observable<any> {
+    return this.http.get(`${this.localUrl}/PharmacistProfile`);
+}
 
+// تحديث بيانات ملف الصيدلي
+updatePharmacistProfile(data: any): Observable<any> {
+    return this.http.put(`${this.localUrl}/PharmacistProfile`, data); // أو patch حسب الـ Backend لديك
+}
 }
