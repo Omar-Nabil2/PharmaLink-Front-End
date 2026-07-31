@@ -1,3 +1,5 @@
+
+
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -38,12 +40,14 @@ ngOnInit(): void {
 
     let request$: Observable<any>;
 
-    if (role === 'Patient') {
+if (role === 'Patient') {
         request$ = this.profileService.getPatientProfile();
+    } else if (role === 'Admin') {
+        request$ = this.profileService.getSystemAdminProfile(); 
     } else if (role === 'Pharmacist') {
-        request$ = this.profileService.getPharmacistProfile(); // تأكد من وجود هذه الدالة في الـ ProfileService
+        request$ = this.profileService.getPharmacistProfile(); 
     } else {
-        request$ = this.profileService.getProfile(); // للأدمن أو الحسابات الأخرى
+        request$ = this.profileService.getProfile(); 
     }
 
     request$.subscribe({
@@ -74,14 +78,13 @@ ngOnInit(): void {
     
     let request$: Observable<any>;
 
-    if (role === 'Patient') {
+if (role === 'Patient') {
         request$ = this.profileService.updatePatientProfile(payload);
     } else if (role === 'Pharmacist') {
-        request$ = this.profileService.updatePharmacistProfile(payload); // تأكد من وجود هذه الدالة في الـ ProfileService
+        request$ = this.profileService.updatePharmacistProfile(payload);
     } else if (role === 'Admin') {
-        request$ = this.profileService.updateSystemAdminProfile(payload);
-    }
-    else{
+        request$ = this.profileService.updateSystemAdminProfile(payload); // ✅ التعديل هنا للأدمن
+    } else {
         request$ = this.profileService.updateProfile(payload);
     }
     request$.subscribe({
@@ -105,3 +108,5 @@ ngOnInit(): void {
 }
     
 }
+
+
