@@ -138,11 +138,11 @@ export class PharmacyBranchComponent implements OnInit {
 
   private initScheduleForm(): void {
     const daysArray = this.fb.array(
-      [0, 1, 2, 3, 4, 5, 6].map(day => this.fb.group({
+      [6, 0, 1, 2, 3, 4, 5].map(day => this.fb.group({
         day: [day],
         dayNameAr: [this.getDayName(day)],
-        openTime: [null],
-        closeTime: [null],
+        openTime: ['00:00'],
+        closeTime: ['23:59'],
         isClosed: [false]
       }))
     );
@@ -408,18 +408,18 @@ export class PharmacyBranchComponent implements OnInit {
     this.isScheduleModalOpen.set(true);
     this.isScheduleLoading.set(true);
 
-    // Reset to defaults first
+    // Reset to defaults first (24/7)
     this.scheduleArray.controls.forEach(control => {
-      control.patchValue({ openTime: null, closeTime: null, isClosed: false });
+      control.patchValue({ openTime: '00:00', closeTime: '23:59', isClosed: false });
     });
 
     this.branchService.getBranchSchedule(branch.branchId).subscribe({
       next: (res) => {
         if (res.days && res.days.length > 0) {
           res.days.forEach((dayDto: BranchScheduleDayDto) => {
-            const index = dayDto.day;
-            if (index >= 0 && index < 7) {
-              this.scheduleArray.at(index).patchValue({
+            const control = this.scheduleArray.controls.find(c => c.get('day')?.value === dayDto.day);
+            if (control) {
+              control.patchValue({
                 openTime: dayDto.openTime,
                 closeTime: dayDto.closeTime,
                 isClosed: dayDto.isClosed
