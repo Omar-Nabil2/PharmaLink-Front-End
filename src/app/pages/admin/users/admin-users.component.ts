@@ -41,7 +41,7 @@ export class AdminUsersComponent implements OnInit {
   
   // Options
   roleOptions = [
-    { label: 'الكل', value: null },
+    { label: 'الكل', value: undefined },
     { label: 'مريض', value: 'Patient' },
     { label: 'صيدلي', value: 'Pharmacist' },
     { label: 'مدير صيدلية', value: 'PharmacyAdmin' },
@@ -49,7 +49,7 @@ export class AdminUsersComponent implements OnInit {
   ];
 
   statusOptions = [
-    { label: 'الكل', value: null },
+    { label: 'الكل', value: undefined },
     { label: 'نشط', value: UserStatus.Active },
     { label: 'غير نشط', value: UserStatus.Inactive }
   ];
