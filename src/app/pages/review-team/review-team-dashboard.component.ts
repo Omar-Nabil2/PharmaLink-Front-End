@@ -28,10 +28,13 @@ export class ReviewTeamDashboardComponent implements OnInit {
         status: 'PendingReview',
       }),
       inquiries: this.medicalInquiryService.getForReviewTeam(),
+      inquiryMetrics: this.medicalInquiryService.getMetrics(),
     }).subscribe({
-      next: ({ reviews, inquiries }) => {
+      next: ({ reviews, inquiries, inquiryMetrics }) => {
         this.pendingReviews.set(reviews.totalPages ?? reviews.items?.length ?? 0);
-        this.pendingInquiries.set(inquiries.filter((i) => i.status === 'Pending').length);
+        this.pendingInquiries.set(
+          inquiryMetrics.pendingInquiries ?? inquiries.filter((i) => i.status === 'Pending').length,
+        );
         this.isLoading.set(false);
       },
       error: () => {

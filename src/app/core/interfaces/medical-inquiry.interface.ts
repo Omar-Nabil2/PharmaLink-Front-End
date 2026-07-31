@@ -17,3 +17,11 @@ export interface CreateMedicalInquiryRequest {
 export interface AnswerMedicalInquiryRequest {
   answer: string;
 }
+
+export interface MedicalInquiryMetrics {
+  totalInquiries: number;
+  pendingInquiries: number;
+  answeredInquiries: number;
+  closedInquiries: number;
+  answeredToday: number;
+}

@@ -5,6 +5,7 @@ import {
   AnswerMedicalInquiryRequest,
   CreateMedicalInquiryRequest,
   MedicalInquiry,
+  MedicalInquiryMetrics,
 } from '@core/interfaces/medical-inquiry.interface';
 import { Observable } from 'rxjs';
 
@@ -23,11 +24,20 @@ export class MedicalInquiryService {
     return this.http.get<MedicalInquiry[]>(`${this.url}/my`);
   }
 
-  getForReviewTeam(): Observable<MedicalInquiry[]> {
-    return this.http.get<MedicalInquiry[]>(`${this.url}/review-team`);
+  getForReviewTeam(status?: string): Observable<MedicalInquiry[]> {
+    const options = status ? { params: { status } } : {};
+    return this.http.get<MedicalInquiry[]>(`${this.url}/review-team`, options);
+  }
+
+  getMetrics(): Observable<MedicalInquiryMetrics> {
+    return this.http.get<MedicalInquiryMetrics>(`${this.url}/review-team/metrics`);
   }
 
   answer(id: string, request: AnswerMedicalInquiryRequest): Observable<MedicalInquiry> {
     return this.http.put<MedicalInquiry>(`${this.url}/${id}/answer`, request);
+  }
+
+  close(id: string): Observable<MedicalInquiry> {
+    return this.http.put<MedicalInquiry>(`${this.url}/${id}/close`, {});
   }
 }

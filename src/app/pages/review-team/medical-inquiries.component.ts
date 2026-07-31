@@ -17,7 +17,15 @@ export class MedicalInquiriesComponent implements OnInit {
   readonly inquiries = signal<MedicalInquiry[]>([]);
   readonly isLoading = signal(true);
   readonly savingId = signal<string | null>(null);
+  readonly selectedStatus = signal('');
   readonly answers: Record<string, string> = {};
+
+  readonly filterOptions = [
+    { label: 'الكل', value: '' },
+    { label: 'بانتظار الرد', value: 'Pending' },
+    { label: 'تم الرد', value: 'Answered' },
+    { label: 'مغلق', value: 'Closed' },
+  ];
 
   ngOnInit(): void {
     this.load();
@@ -25,7 +33,7 @@ export class MedicalInquiriesComponent implements OnInit {
 
   load(): void {
     this.isLoading.set(true);
-    this.service.getForReviewTeam().subscribe({
+    this.service.getForReviewTeam(this.selectedStatus()).subscribe({
       next: (items) => {
         this.inquiries.set(items);
         this.isLoading.set(false);
@@ -35,6 +43,11 @@ export class MedicalInquiriesComponent implements OnInit {
         this.isLoading.set(false);
       },
     });
+  }
+
+  setStatus(status: string): void {
+    this.selectedStatus.set(status);
+    this.load();
   }
 
   answer(inquiry: MedicalInquiry): void {
@@ -48,6 +61,19 @@ export class MedicalInquiriesComponent implements OnInit {
           items.map((item) => item.medicalInquiryId === updated.medicalInquiryId ? updated : item),
         );
         this.answers[inquiry.medicalInquiryId] = '';
+        this.savingId.set(null);
+      },
+      error: () => this.savingId.set(null),
+    });
+  }
+
+  close(inquiry: MedicalInquiry): void {
+    this.savingId.set(inquiry.medicalInquiryId);
+    this.service.close(inquiry.medicalInquiryId).subscribe({
+      next: (updated) => {
+        this.inquiries.update((items) =>
+          items.map((item) => item.medicalInquiryId === updated.medicalInquiryId ? updated : item),
+        );
         this.savingId.set(null);
       },
       error: () => this.savingId.set(null),

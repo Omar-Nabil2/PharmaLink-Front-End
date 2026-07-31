@@ -9,6 +9,19 @@
     </button>
   </div>
 
+  <div class="mb-5 flex flex-wrap gap-2">
+    @for (option of filterOptions; track option.value) {
+      <button
+        type="button"
+        (click)="setStatus(option.value)"
+        class="rounded-full border px-4 py-2 text-sm font-semibold transition"
+        [ngClass]="selectedStatus() === option.value ? 'border-teal-700 bg-teal-700 text-white' : 'border-slate-200 bg-white text-slate-700 hover:border-teal-600 hover:text-teal-700'"
+      >
+        {{ option.label }}
+      </button>
+    }
+  </div>
+
   @if (isLoading()) {
     <div class="py-12 text-center text-slate-500">جاري تحميل الاستفسارات...</div>
   } @else if (inquiries().length === 0) {
@@ -34,6 +47,16 @@
               <span class="mb-1 block text-xs font-bold text-teal-700">رد التيم</span>
               {{ inquiry.answer }}
             </div>
+            @if (inquiry.status === 'Answered') {
+              <button
+                type="button"
+                (click)="close(inquiry)"
+                [disabled]="savingId() === inquiry.medicalInquiryId"
+                class="mt-3 rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 hover:border-teal-600 hover:text-teal-700 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {{ savingId() === inquiry.medicalInquiryId ? 'جاري القفل...' : 'قفل الاستفسار' }}
+              </button>
+            }
           } @else {
             <textarea
               [(ngModel)]="answers[inquiry.medicalInquiryId]"

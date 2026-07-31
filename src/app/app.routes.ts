@@ -159,6 +159,13 @@ export const routes: Routes = [
           ).then((m) => m.PatientPrescriptionsListComponent),
       },
       {
+        path: 'medical-inquiries',
+        loadComponent: () =>
+          import('./pages/patient-medical-inquiries/patient-medical-inquiries.component').then(
+            (m) => m.PatientMedicalInquiriesComponent,
+          ),
+      },
+      {
         path: 'prescriptions/review/:id',
         loadComponent: () =>
           import(

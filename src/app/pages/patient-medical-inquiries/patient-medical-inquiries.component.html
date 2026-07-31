@@ -1,0 +1,66 @@
+<section class="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
+  <div class="rounded-2xl border border-surface-pressed bg-white p-6 shadow-sm">
+    <p class="mb-2 text-sm font-bold text-primary">استشارة صيدلي</p>
+    <h1 class="mb-3 text-3xl font-black text-ink">اسأل تيم المراجعة الطبية</h1>
+    <p class="mb-6 text-body">
+      اكتب استفسارك بوضوح، وتيم الصيادلة للمراجعة هيرد عليك من خلال نفس الصفحة.
+    </p>
+
+    <label class="mb-2 block text-sm font-bold text-ink">سؤالك</label>
+    <textarea
+      [(ngModel)]="question"
+      rows="7"
+      maxlength="2000"
+      placeholder="مثال: هل ينفع أخد الدواء ده بعد الأكل؟"
+      class="mb-3 w-full rounded-2xl border border-surface-pressed p-4 text-sm outline-none focus:border-primary"
+    ></textarea>
+
+    <button
+      type="button"
+      (click)="submit()"
+      [disabled]="isSubmitting() || !question.trim()"
+      class="btn-primary w-full justify-center disabled:cursor-not-allowed disabled:opacity-60"
+    >
+      {{ isSubmitting() ? 'جاري الإرسال...' : 'إرسال الاستفسار' }}
+    </button>
+  </div>
+
+  <div class="rounded-2xl border border-surface-pressed bg-white p-6 shadow-sm">
+    <div class="mb-5 flex items-center justify-between">
+      <h2 class="text-2xl font-black text-ink">استفساراتي</h2>
+      <button type="button" (click)="load()" class="btn-subtle">تحديث</button>
+    </div>
+
+    @if (isLoading()) {
+      <div class="py-12 text-center text-mute">جاري التحميل...</div>
+    } @else if (inquiries().length === 0) {
+      <div class="py-12 text-center text-mute">لسه مفيش استفسارات.</div>
+    } @else {
+      <div class="space-y-4">
+        @for (inquiry of inquiries(); track inquiry.medicalInquiryId) {
+          <article class="rounded-2xl border border-surface-pressed p-5">
+            <div class="mb-3 flex items-center justify-between gap-3">
+              <span class="rounded-full bg-canvas-soft px-3 py-1 text-xs font-bold text-body">
+                {{ statusLabel(inquiry.status) }}
+              </span>
+              <span class="text-xs text-mute">{{ inquiry.createdAt | date:'medium' }}</span>
+            </div>
+
+            <p class="mb-3 text-ink">{{ inquiry.question }}</p>
+
+            @if (inquiry.answer) {
+              <div class="rounded-2xl bg-primary/10 p-4 text-ink">
+                <span class="mb-1 block text-xs font-black text-primary">رد تيم المراجعة</span>
+                {{ inquiry.answer }}
+              </div>
+            } @else {
+              <p class="rounded-2xl bg-amber-50 p-4 text-sm font-semibold text-amber-700">
+                الاستفسار وصل، ومستني رد تيم المراجعة.
+              </p>
+            }
+          </article>
+        }
+      </div>
+    }
+  </div>
+</section>
