@@ -8,6 +8,7 @@ export interface SidebarItem {
   label: string;
   icon?: string;
   routerLink: string;
+  section?: string;
 }
 
 @Component({
@@ -30,5 +31,12 @@ export class SidebarComponent implements OnInit {
       this.fullName = localStorage.getItem('fullName') || 'User';
       this.roleName = localStorage.getItem('roleName') || 'Guest';
     }
+  }
+
+  shouldShowSection(index: number): boolean {
+    const currentSection = this.items[index]?.section;
+    const previousSection = index > 0 ? this.items[index - 1]?.section : undefined;
+
+    return !!currentSection && currentSection !== previousSection;
   }
 }

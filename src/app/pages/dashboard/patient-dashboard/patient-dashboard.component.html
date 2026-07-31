@@ -1,116 +1,126 @@
-<div class="space-y-6" dir="rtl">
-  <div class="flex items-center justify-between">
-    <h1 class="type-display-lg text-ink">مرحباً بعودتك، أيها المريض!</h1>
-    <button class="btn-primary gap-2 flex items-center">
-      <i class="pi pi-plus"></i>
-      <span>وصفة طبية جديدة</span>
-    </button>
-  </div>
+<div class="space-y-10" dir="rtl">
+  <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+    <div class="lg:col-span-7 bg-white border border-surface-pressed rounded-3xl p-7 md:p-10 flex flex-col justify-center">
+      <p class="text-sm font-black text-primary mb-3">فارما لينك للمريض</p>
+      <h1 class="text-3xl md:text-5xl font-black text-ink leading-tight">
+        اطلب علاجك من غير بحث طويل
+      </h1>
+      <p class="text-base md:text-lg text-mute leading-8 mt-5 max-w-2xl">
+        ارفع الروشتة أو صوّر الدواء، وسيب النظام يساعدك في التعرف على الأدوية ومتابعة مراجعة الصيدلي قبل ما تضيفها للسلة.
+      </p>
 
-<!-- Quick Stats -->
-<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-  <p-card styleClass="shadow-none border border-surface-pressed rounded-xl bg-canvas">
-    <div class="flex items-center justify-between">
+      <div class="flex flex-wrap gap-3 mt-8">
+        <a routerLink="/patient/prescriptions/upload" class="btn-primary gap-2">
+          <i class="pi pi-upload text-sm"></i>
+          <span>ابدأ برفع روشتة</span>
+        </a>
+        <a routerLink="/patient/image-search" class="btn-secondary gap-2">
+          <i class="pi pi-camera text-sm"></i>
+          <span>فحص صورة دواء</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="lg:col-span-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4">
+      <a routerLink="/patient/cart" class="bg-emerald-50 border border-emerald-100 rounded-3xl p-6 hover:border-emerald-300 transition">
+        <div class="w-12 h-12 rounded-2xl bg-white text-emerald-700 flex items-center justify-center mb-4">
+          <i class="pi pi-shopping-cart text-xl"></i>
+        </div>
+        <h2 class="text-xl font-black text-ink">السلة</h2>
+        <p class="text-sm text-mute mt-2">{{ cartItemCount }} عنصر في السلة</p>
+      </a>
+
+      <a routerLink="/patient/prescriptions" class="bg-sky-50 border border-sky-100 rounded-3xl p-6 hover:border-sky-300 transition">
+        <div class="w-12 h-12 rounded-2xl bg-white text-sky-700 flex items-center justify-center mb-4">
+          <i class="pi pi-file-check text-xl"></i>
+        </div>
+        <h2 class="text-xl font-black text-ink">روشتاتي</h2>
+        <p class="text-sm text-mute mt-2">{{ statistics?.pendingPrescriptionReviews || 0 }} مراجعة قيد المتابعة</p>
+      </a>
+    </div>
+  </section>
+
+  <section>
+    <div class="flex items-end justify-between gap-4 mb-5">
       <div>
-        <span class="block text-mute type-body-md-strong mb-1">إجمالي الطلبات</span>
-        <div class="text-ink type-display-xl font-bold">{{ statistics?.totalOrders || 0 }}</div>
+        <h2 class="text-2xl font-black text-ink">إيه اللي محتاج تعمله؟</h2>
+        <p class="text-sm text-mute mt-1">اختار الخدمة المناسبة وكمّل في خطوات بسيطة.</p>
       </div>
-      <div class="w-12 h-12 rounded-full bg-canvas-soft flex items-center justify-center">
-        <i class="pi pi-shopping-bag text-xl text-ink"></i>
-      </div>
-    </div>
-  </p-card>
-
-  <p-card styleClass="shadow-none border border-surface-pressed rounded-xl bg-canvas">
-    <div class="flex items-center justify-between">
-      <div>
-        <span class="block text-mute type-body-md-strong mb-1">عناصر في العربة</span>
-        <div class="text-ink type-display-xl font-bold">{{ cartItemCount }}</div>
-      </div>
-      <div class="w-12 h-12 rounded-full bg-canvas-soft flex items-center justify-center">
-        <i class="pi pi-shopping-cart text-xl text-ink"></i>
-      </div>
-    </div>
-  </p-card>
-
-  <p-card styleClass="shadow-none border border-surface-pressed rounded-xl bg-canvas">
-    <div class="flex items-center justify-between">
-      <div>
-        <span class="block text-mute type-body-md-strong mb-1">مراجعات قيد الانتظار</span>
-        <div class="text-ink type-display-xl font-bold">{{ statistics?.pendingPrescriptionReviews || 0 }}</div>
-      </div>
-      <div class="w-12 h-12 rounded-full bg-canvas-soft flex items-center justify-center">
-        <i class="pi pi-file-edit text-xl text-ink"></i>
-      </div>
-    </div>
-  </p-card>
-
-  <p-card styleClass="shadow-none border border-surface-pressed rounded-xl bg-canvas">
-    <div class="flex items-center justify-between">
-      <div>
-        <span class="block text-mute type-body-md-strong mb-1">العناوين المحفوظة</span>
-        <div class="text-ink type-display-xl font-bold">{{ statistics?.savedAddresses || 0 }}</div>
-      </div>
-      <div class="w-12 h-12 rounded-full bg-canvas-soft flex items-center justify-center">
-        <i class="pi pi-map-marker text-xl text-ink"></i>
-      </div>
-    </div>
-  </p-card>
-</div>
-
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-    <!-- Recent Orders Table -->
-    <div class="bg-canvas border border-surface-pressed rounded-xl overflow-hidden shadow-none p-6">
-      <div class="flex justify-between items-center mb-6">
-        <h2 class="type-display-sm text-ink">الطلبات الأخيرة</h2>
-        <a routerLink="/patient/orders" class="text-link type-body-sm-strong hover:underline">عرض الكل</a>
-      </div>
-      <p-table [value]="recentOrders" responsiveLayout="scroll" styleClass="p-datatable-sm">
-        <ng-template pTemplate="header">
-          <tr>
-            <th class="bg-canvas-soft text-ink type-body-sm-strong border-b border-surface-pressed py-3 px-4">رقم الطلب</th>
-            <th class="bg-canvas-soft text-ink type-body-sm-strong border-b border-surface-pressed py-3 px-4">الحالة</th>
-            <th class="bg-canvas-soft text-ink type-body-sm-strong border-b border-surface-pressed py-3 px-4">المبلغ</th>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-order>
-          <tr class="border-b border-surface-pressed hover:bg-canvas-softer transition-colors">
-            <td class="py-3 px-4 text-ink type-body-sm">{{ order.orderNumber }}</td>           
-              <td class="py-3 px-4">
-                <p-tag [value]="order.status | statusTranslate" [severity]="getSeverity(order.status)" [rounded]="true">
-              </p-tag>
-            </td>
-              <td class="py-3 px-4 text-ink type-body-sm-strong">
-                {{ order.totalAmount | currency:'EGP' }}
-              </td>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="emptymessage">
-          <tr>
-            <td colspan="3" class="text-center py-4 text-mute type-body-sm">لم يتم العثور على طلبات حديثة.</td>
-          </tr>
-        </ng-template>
-      </p-table>
     </div>
 
-    <!-- Prescription Reviews -->
-    <div class="bg-canvas border border-surface-pressed rounded-xl overflow-hidden shadow-none p-6">
-      <div class="flex justify-between items-center mb-6">
-        <h2 class="type-display-sm text-ink">مراجعات الوصفات الطبية</h2>
-        <a routerLink="/patient/prescriptions" class="text-link type-body-sm-strong hover:underline">عرض الكل</a>
-      </div>
-      <div class="space-y-4">
-        <!-- <div *ngFor="let review of prescriptionReviews" class="flex items-start justify-between p-4 rounded-xl border border-surface-pressed bg-canvas-softer hover:bg-canvas-soft transition-colors cursor-pointer">
-          <div class="flex flex-col gap-1">
-            <span class="type-body-md-strong text-ink">{{ review.medication }}</span>
-            <span class="type-caption text-mute">روجعت بواسطة: {{ review.doctor }}</span>
-            <span class="type-caption text-mute">{{ review.date }}</span>
-          </div>
-          <div>
-            <p-tag [value]="review.reviewStatus" [severity]="getSeverity(review.reviewStatus)" [rounded]="true"></p-tag>
-          </div>
-        </div> -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <a routerLink="/patient/prescriptions/upload" class="bg-white border border-surface-pressed rounded-2xl p-5 hover:shadow-sm hover:border-primary/40 transition">
+        <div class="w-11 h-11 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-4">
+          <i class="pi pi-upload text-xl"></i>
+        </div>
+        <h3 class="font-black text-ink">رفع روشتة</h3>
+        <p class="text-sm text-mute leading-6 mt-2">ارفع صورة أو PDF، والتحليل يكمل في الخلفية والصيدلي يراجع.</p>
+      </a>
+
+      <a routerLink="/patient/image-search" class="bg-white border border-surface-pressed rounded-2xl p-5 hover:shadow-sm hover:border-primary/40 transition">
+        <div class="w-11 h-11 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center mb-4">
+          <i class="pi pi-camera text-xl"></i>
+        </div>
+        <h3 class="font-black text-ink">فحص صورة دواء</h3>
+        <p class="text-sm text-mute leading-6 mt-2">صوّر علبة أو شريط دواء واعرف هل موجود في الكتالوج.</p>
+      </a>
+
+      <a routerLink="/patient/drugs" class="bg-white border border-surface-pressed rounded-2xl p-5 hover:shadow-sm hover:border-primary/40 transition">
+        <div class="w-11 h-11 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center mb-4">
+          <i class="pi pi-search text-xl"></i>
+        </div>
+        <h3 class="font-black text-ink">تصفح الأدوية</h3>
+        <p class="text-sm text-mute leading-6 mt-2">ابحث في الكتالوج وأضف الدواء للسلة يدويًا.</p>
+      </a>
+
+      <a routerLink="/patient/pharmacies/nearby" class="bg-white border border-surface-pressed rounded-2xl p-5 hover:shadow-sm hover:border-primary/40 transition">
+        <div class="w-11 h-11 rounded-xl bg-violet-100 text-violet-700 flex items-center justify-center mb-4">
+          <i class="pi pi-map-marker text-xl"></i>
+        </div>
+        <h3 class="font-black text-ink">صيدليات قريبة</h3>
+        <p class="text-sm text-mute leading-6 mt-2">اعرف أقرب الصيدليات المتاحة حواليك.</p>
+      </a>
+    </div>
+  </section>
+
+  <section class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+    <div class="lg:col-span-2 bg-white border border-surface-pressed rounded-2xl p-6">
+      <h2 class="text-xl font-black text-ink">طريقة استخدام الروشتة</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-5">
+        <div class="rounded-xl bg-canvas-softer p-4">
+          <span class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-black mb-3">1</span>
+          <h3 class="font-black text-ink">ارفع الروشتة</h3>
+          <p class="text-sm text-mute leading-6 mt-2">صورة واضحة أو PDF.</p>
+        </div>
+        <div class="rounded-xl bg-canvas-softer p-4">
+          <span class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-black mb-3">2</span>
+          <h3 class="font-black text-ink">الصيدلي يراجع</h3>
+          <p class="text-sm text-mute leading-6 mt-2">نتيجة الذكاء الاصطناعي تتراجع قبل الطلب.</p>
+        </div>
+        <div class="rounded-xl bg-canvas-softer p-4">
+          <span class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-black mb-3">3</span>
+          <h3 class="font-black text-ink">اختار وأضف للسلة</h3>
+          <p class="text-sm text-mute leading-6 mt-2">بعد الموافقة، اختار الأدوية المناسبة.</p>
+        </div>
       </div>
     </div>
-  </div>
+
+    <div class="bg-white border border-surface-pressed rounded-2xl p-6">
+      <h2 class="text-xl font-black text-ink">روابط سريعة</h2>
+      <div class="space-y-2 mt-5">
+        <a routerLink="/patient/orders" class="flex items-center justify-between rounded-xl bg-canvas-softer px-4 py-3 font-bold text-body hover:text-primary">
+          <span>طلباتي</span>
+          <i class="pi pi-angle-left"></i>
+        </a>
+        <a routerLink="/patient/addresses" class="flex items-center justify-between rounded-xl bg-canvas-softer px-4 py-3 font-bold text-body hover:text-primary">
+          <span>عناويني</span>
+          <i class="pi pi-angle-left"></i>
+        </a>
+        <a routerLink="/profile" class="flex items-center justify-between rounded-xl bg-canvas-softer px-4 py-3 font-bold text-body hover:text-primary">
+          <span>الملف الشخصي</span>
+          <i class="pi pi-angle-left"></i>
+        </a>
+      </div>
+    </div>
+  </section>
 </div>
