@@ -15,7 +15,7 @@ export const routes: Routes = [
         component: HomeComponent,
 
       },
-        {
+      {
         path: 'profile/edit',
         loadComponent: () =>
           import('./pages/profile/update-profile/update-profile.component').then(
@@ -235,6 +235,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'prescriptions/review/:id',
+        loadComponent: () =>
+          import('./pages/prescriptions/review-prescription/review-prescription.component').then(
+            (m) => m.ReviewPrescriptionComponent
+          ),
+      },
+      {
         path: 'assigned-orders',
         loadComponent: () =>
           import('./pages/pharmacist/assigned-orders/assigned-orders').then(
@@ -398,8 +405,8 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./pages/profile/profile.component').then((m) => m.ProfileComponent),
       },
-{
-        path: 'profile/edit', 
+      {
+        path: 'profile/edit',
         loadComponent: () =>
           import('./pages/profile/update-profile/update-profile.component').then(
             (m) => m.UpdateProfileComponent,
