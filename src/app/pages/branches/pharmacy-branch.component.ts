@@ -213,7 +213,6 @@ export class PharmacyBranchComponent implements OnInit {
           city: freshBranch.city,
           addressLine: freshBranch.addressLine,
           phoneNumber: freshBranch.phoneNumber,
-          workingHours: freshBranch.workingHours,
           serviceRadiusKm: freshBranch.serviceRadiusKm,
           latitude: freshBranch.latitude,
           longitude: freshBranch.longitude,
