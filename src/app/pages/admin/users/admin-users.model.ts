@@ -28,6 +28,10 @@ export interface UpdateUserStatusDto {
   status: UserStatus;
 }
 
+export interface UpdateUserRoleDto {
+  role: string;
+}
+
 export interface PaginatedList<T> {
   items: T[];
   pageNumber: number;

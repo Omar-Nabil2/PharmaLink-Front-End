@@ -1,6 +1,7 @@
 export const AppRoles = {
   Patient: 'Patient',
   Pharmacist: 'Pharmacist',
+  PrescriptionReviewTeam: 'PrescriptionReviewTeam',
   Admin: 'Admin',
   PharmacyAdmin: 'PharmacyAdmin',
 } as const;

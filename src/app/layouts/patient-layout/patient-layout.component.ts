@@ -14,6 +14,7 @@ export class PatientLayoutComponent {
     { label: 'الرئيسية', routerLink: '/patient/dashboard' },
     { label: 'الأدوية', routerLink: '/patient/drugs' },
     { label: 'روشتاتي', routerLink: '/patient/prescriptions' },
+    { label: 'استشارة صيدلي', routerLink: '/patient/medical-inquiries' },
     { label: 'طلباتي', routerLink: '/patient/orders' },
     { label: 'صيدليات قريبة', routerLink: '/patient/pharmacies/nearby' },
   ];

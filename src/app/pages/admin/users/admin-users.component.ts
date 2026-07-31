@@ -38,12 +38,15 @@ export class AdminUsersComponent implements OnInit {
   // UI State
   selectedUser = signal<AdminUserDto | null>(null);
   isDetailsModalOpen = signal<boolean>(false);
+  roleDraft = signal<string>('');
+  isUpdatingRole = signal<boolean>(false);
   
   // Options
   roleOptions = [
     { label: 'الكل', value: undefined },
     { label: 'مريض', value: 'Patient' },
     { label: 'صيدلي', value: 'Pharmacist' },
+    { label: 'صيدلي مراجعة', value: 'PrescriptionReviewTeam' },
     { label: 'مدير صيدلية', value: 'PharmacyAdmin' },
     { label: 'مدير نظام', value: 'Admin' }
   ];
@@ -127,6 +130,7 @@ export class AdminUsersComponent implements OnInit {
     switch (role) {
       case 'Patient': return 'مريض';
       case 'Pharmacist': return 'صيدلي';
+      case 'PrescriptionReviewTeam': return 'صيدلي مراجعة';
       case 'PharmacyAdmin': return 'مدير صيدلية';
       case 'Admin': return 'مدير نظام';
       default: return role;
@@ -135,12 +139,41 @@ export class AdminUsersComponent implements OnInit {
 
   viewDetails(user: AdminUserDto) {
     this.selectedUser.set(user);
+    this.roleDraft.set(user.role);
     this.isDetailsModalOpen.set(true);
   }
 
   closeDetailsModal() {
     this.isDetailsModalOpen.set(false);
     this.selectedUser.set(null);
+    this.roleDraft.set('');
+  }
+
+  updateRole() {
+    const user = this.selectedUser();
+    const role = this.roleDraft();
+    if (!user || !role || user.role === role) return;
+
+    this.isUpdatingRole.set(true);
+    this.usersService.updateUserRole(user.id, { role }).subscribe({
+      next: (updated) => {
+        this.selectedUser.set(updated);
+        this.roleDraft.set(updated.role);
+        this.users.update(items => items.map(item => item.id === updated.id ? updated : item));
+        this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تم تحديث دور المستخدم بنجاح' });
+        this.isUpdatingRole.set(false);
+      },
+      error: (err) => {
+        let msg = 'حدث خطأ أثناء تحديث دور المستخدم';
+        if (err.error?.code === 'AdminUser.CannotChangeOwnRole') {
+          msg = 'لا يمكنك تغيير دور حسابك الحالي';
+        } else if (err.error?.code === 'AdminUser.InvalidRole') {
+          msg = 'الدور المختار غير مدعوم';
+        }
+        this.messageService.add({ severity: 'error', summary: 'خطأ', detail: msg });
+        this.isUpdatingRole.set(false);
+      }
+    });
   }
 
   toggleStatus(user: AdminUserDto) {

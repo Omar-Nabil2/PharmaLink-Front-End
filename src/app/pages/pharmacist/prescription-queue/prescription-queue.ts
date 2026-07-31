@@ -9,7 +9,7 @@ import { debounceTime, distinctUntilChanged, finalize, switchMap } from 'rxjs/op
 
 import { GetAllPrescriptionReviewDto, PrescriptionReviewQueryDto } from '@core/interfaces/prescription-review.interface';
 import { PrescriptionReviewService } from '@core/services/prescription-review.service';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-prescription-queue',
@@ -21,6 +21,7 @@ import { RouterLink } from '@angular/router';
 export class PrescriptionQueue implements OnInit, OnDestroy {
   private readonly prescriptionService = inject(PrescriptionReviewService);
   private readonly cd = inject(ChangeDetectorRef);
+  private readonly router = inject(Router);
 
   reviews: GetAllPrescriptionReviewDto[] = [];
   loading = true;
@@ -134,6 +135,11 @@ export class PrescriptionQueue implements OnInit, OnDestroy {
       'Rejected': 'bg-rose-100 text-rose-700'
     };
     return classes[status] || 'bg-gray-100 text-gray-700';
+  }
+
+  getReviewLink(reviewId: string): string[] {
+    const basePath = this.router.url.startsWith('/review-team') ? '/review-team' : '/pharmacist';
+    return [basePath, 'prescriptions', 'review', reviewId];
   }
 
   getTimeAgo(dateString: string): string {
