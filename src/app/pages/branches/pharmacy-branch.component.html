@@ -624,8 +624,8 @@
               <div class="flex items-center gap-2 md:justify-center">
                 <label class="relative inline-flex items-center cursor-pointer">
                   <input type="checkbox" formControlName="isClosed" class="sr-only peer">
-                  <div class="w-9 h-5 bg-muted peer-focus:outline-none rounded-full peer peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:right-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-destructive"></div>
-                  <span class="mr-2 text-xs font-medium" [class.text-destructive]="day.get('isClosed')?.value" [class.text-muted-foreground]="!day.get('isClosed')?.value">
+                  <div class="w-9 h-5 bg-teal-600 peer-focus:outline-none rounded-full peer peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:right-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-destructive"></div>
+                  <span class="mr-2 text-xs font-medium" [class.text-destructive]="day.get('isClosed')?.value" [class.text-teal-600]="!day.get('isClosed')?.value">
                     {{ day.get('isClosed')?.value ? 'مغلق' : 'مفتوح' }}
                   </span>
                 </label>
