@@ -206,6 +206,13 @@ export const routes: Routes = [
             (m) => m.PatientOrderDetailComponent,
           ),
       },
+      {
+        path: 'pharmacies/nearby',
+        loadComponent: () =>
+          import('./pages/pharmacies/nearby-pharmacies/nearby-pharmacies.component').then(
+            (m) => m.NearbyPharmaciesComponent,
+          ),
+      },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
     ],
   },
