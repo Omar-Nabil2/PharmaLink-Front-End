@@ -105,6 +105,15 @@
                       >
                         <i class="pi pi-eye text-[0.8125rem]"></i>
                       </button>
+                      <!-- Schedule -->
+                      <button
+                        type="button"
+                        (click)="openScheduleModal(branch)"
+                        class="h-8 w-8 rounded flex items-center justify-center text-teal-600 transition-colors duration-200 hover:bg-teal-50"
+                        title="مواعيد العمل"
+                      >
+                        <i class="pi pi-calendar text-[0.8125rem]"></i>
+                      </button>
                       <!-- Edit -->
                       <button
                         type="button"
@@ -565,6 +574,113 @@
         onmouseout="this.style.backgroundColor='#007671'"
       >
         إغلاق
+      </button>
+    </div>
+  </ng-template>
+</p-dialog>
+
+<!-- ================= SCHEDULE MODAL ================= -->
+<p-dialog
+  [visible]="isScheduleModalOpen()"
+  (visibleChange)="isScheduleModalOpen.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  styleClass="w-[90vw] sm:w-[85vw] md:w-full max-w-2xl mx-4"
+  contentStyleClass="max-h-[90vh] overflow-y-auto p-4 sm:p-6"
+  [dismissableMask]="true"
+  [maskStyleClass]="'bg-black/50'"
+>
+  <ng-template #header>
+    <span class="text-base sm:text-lg font-bold text-foreground">جدول مواعيد العمل</span>
+  </ng-template>
+
+  <div dir="rtl" style="font-family: var(--font-cairo)">
+    @if (isScheduleLoading()) {
+      <div class="space-y-4 pt-2">
+        @for (line of [0, 1, 2, 3, 4, 5, 6]; track line) {
+          <div class="h-10 w-full bg-muted rounded animate-pulse"></div>
+        }
+      </div>
+    } @else {
+      <form [formGroup]="scheduleForm" (ngSubmit)="onScheduleSubmit()" class="space-y-4 pt-2">
+        <div formArrayName="schedule" class="space-y-3 border border-border rounded-xl p-4 bg-card">
+          <div class="hidden md:grid md:grid-cols-4 gap-4 mb-2 text-xs font-semibold text-muted-foreground pb-2 border-b border-border">
+            <div>اليوم</div>
+            <div class="text-center">الحالة</div>
+            <div>وقت الفتح</div>
+            <div>وقت الإغلاق</div>
+          </div>
+
+          @for (day of scheduleArray.controls; track $index) {
+            <div [formGroupName]="$index" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-center p-3 rounded-lg bg-background border border-border hover:border-[#007671]/30 transition-colors">
+              
+              <!-- Day Name -->
+              <div class="font-medium text-sm text-foreground">
+                {{ day.get('dayNameAr')?.value }}
+              </div>
+
+              <!-- IsClosed Toggle -->
+              <div class="flex items-center gap-2 md:justify-center">
+                <label class="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" formControlName="isClosed" class="sr-only peer">
+                  <div class="w-9 h-5 bg-muted peer-focus:outline-none rounded-full peer peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:right-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-destructive"></div>
+                  <span class="mr-2 text-xs font-medium" [class.text-destructive]="day.get('isClosed')?.value" [class.text-muted-foreground]="!day.get('isClosed')?.value">
+                    {{ day.get('isClosed')?.value ? 'مغلق' : 'مفتوح' }}
+                  </span>
+                </label>
+              </div>
+
+              <!-- Open Time -->
+              <div>
+                <input
+                  type="time"
+                  formControlName="openTime"
+                  class="w-full h-10 rounded-lg border border-border bg-background px-3 text-sm outline-none focus:border-[#007671] disabled:opacity-50 disabled:bg-muted"
+                  [class.opacity-50]="day.get('isClosed')?.value"
+                />
+              </div>
+
+              <!-- Close Time -->
+              <div>
+                <input
+                  type="time"
+                  formControlName="closeTime"
+                  class="w-full h-10 rounded-lg border border-border bg-background px-3 text-sm outline-none focus:border-[#007671] disabled:opacity-50 disabled:bg-muted"
+                  [class.opacity-50]="day.get('isClosed')?.value"
+                />
+              </div>
+
+            </div>
+          }
+        </div>
+      </form>
+    }
+  </div>
+
+  <ng-template #footer>
+    <div class="flex flex-col-reverse sm:flex-row items-center justify-end gap-2 w-full pt-2">
+      <button
+        type="button"
+        (click)="closeScheduleModal()"
+        [disabled]="isScheduleSaving()"
+        class="w-full sm:w-auto h-10 lg:h-12 rounded-lg border border-border px-4 text-xs lg:text-base font-medium text-foreground transition-colors duration-200 hover:bg-muted disabled:opacity-50"
+      >
+        إلغاء
+      </button>
+      <button
+        type="button"
+        (click)="onScheduleSubmit()"
+        [disabled]="isScheduleSaving() || scheduleForm.invalid"
+        class="w-full sm:w-auto h-10 lg:h-12 rounded-lg px-6 text-xs lg:text-base font-medium text-white flex items-center justify-center gap-2 transition-colors duration-200 disabled:opacity-50"
+        style="background-color: #007671"
+        onmouseover="this.style.backgroundColor='var(--color-green-hover)'"
+        onmouseout="this.style.backgroundColor='#007671'"
+      >
+        @if (isScheduleSaving()) {
+          <i class="pi pi-spin pi-spinner text-[0.8125rem]"></i>
+        }
+        <span>حفظ المواعيد</span>
       </button>
     </div>
   </ng-template>

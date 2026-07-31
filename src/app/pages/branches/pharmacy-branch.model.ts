@@ -75,3 +75,30 @@ export interface GetPharmacyBranchParamRequest {
   pageNumber: number;
   pageSize: number;
 }
+
+export interface BranchScheduleDayDto {
+  day: number;
+  dayNameAr: string;
+  openTime: string | null;
+  closeTime: string | null;
+  isClosed: boolean;
+  isToday: boolean;
+  isCurrentlyOpen: boolean;
+}
+
+export interface BranchScheduleResponseDto {
+  branchId: string;
+  days: BranchScheduleDayDto[];
+}
+
+export interface BranchScheduleDayRequest {
+  day: number;
+  openTime: string | null;
+  closeTime: string | null;
+  isClosed: boolean;
+}
+
+export interface UpdateBranchScheduleRequest {
+  schedule: BranchScheduleDayRequest[];
+}
+

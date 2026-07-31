@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormArray, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MessageService } from 'primeng/api';
@@ -9,7 +9,7 @@ import { ToastModule } from 'primeng/toast';
 import { PaginatorModule } from 'primeng/paginator';
 import { DialogModule } from 'primeng/dialog';
 import { PharmacyBranchService } from './pharmacy-branch.service';
-import { PharmacyBranchResponseDTO, GetPharmacyBranchResponseDTO } from './pharmacy-branch.model';
+import { PharmacyBranchResponseDTO, GetPharmacyBranchResponseDTO, BranchScheduleDayDto } from './pharmacy-branch.model';
 
 @Component({
   selector: 'app-pharmacy-branch',
@@ -41,6 +41,12 @@ export class PharmacyBranchComponent implements OnInit {
   isViewLoading = signal(false);
   modalMode = signal<'add' | 'edit'>('add');
   selectedBranchId = signal<string | null>(null);
+
+  // Schedule Modal States
+  isScheduleModalOpen = signal(false);
+  isScheduleLoading = signal(false);
+  isScheduleSaving = signal(false);
+  scheduleForm!: FormGroup;
 
   // Location picker
   private readonly sanitizer = inject(DomSanitizer);
@@ -100,6 +106,7 @@ export class PharmacyBranchComponent implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
+    this.initScheduleForm();
     this.loadBranches();
 
     // Setup Search Debouncing
@@ -127,6 +134,30 @@ export class PharmacyBranchComponent implements OnInit {
       supportsDelivery: [false],
       supportsPickup: [true]
     });
+  }
+
+  private initScheduleForm(): void {
+    const daysArray = this.fb.array(
+      [0, 1, 2, 3, 4, 5, 6].map(day => this.fb.group({
+        day: [day],
+        dayNameAr: [this.getDayName(day)],
+        openTime: [null],
+        closeTime: [null],
+        isClosed: [false]
+      }))
+    );
+    this.scheduleForm = this.fb.group({
+      schedule: daysArray
+    });
+  }
+
+  private getDayName(day: number): string {
+    const names = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+    return names[day];
+  }
+
+  get scheduleArray(): FormArray {
+    return this.scheduleForm.get('schedule') as FormArray;
   }
 
   loadBranches(): void {
@@ -368,5 +399,80 @@ export class PharmacyBranchComponent implements OnInit {
     this.pageNumber.set(event.page + 1);
     this.pageSize.set(event.rows);
     this.loadBranches();
+  }
+
+  // ── Schedule Modal Methods ──────────────────────────────────────────────
+
+  openScheduleModal(branch: GetPharmacyBranchResponseDTO): void {
+    this.selectedBranchId.set(branch.branchId);
+    this.isScheduleModalOpen.set(true);
+    this.isScheduleLoading.set(true);
+
+    // Reset to defaults first
+    this.scheduleArray.controls.forEach(control => {
+      control.patchValue({ openTime: null, closeTime: null, isClosed: false });
+    });
+
+    this.branchService.getBranchSchedule(branch.branchId).subscribe({
+      next: (res) => {
+        if (res.days && res.days.length > 0) {
+          res.days.forEach((dayDto: BranchScheduleDayDto) => {
+            const index = dayDto.day;
+            if (index >= 0 && index < 7) {
+              this.scheduleArray.at(index).patchValue({
+                openTime: dayDto.openTime,
+                closeTime: dayDto.closeTime,
+                isClosed: dayDto.isClosed
+              });
+            }
+          });
+        }
+        this.isScheduleLoading.set(false);
+      },
+      error: (err) => {
+        // If 404, it means no schedule yet, we just show empty form
+        if (err.status !== 404) {
+          console.error('Error fetching schedule', err);
+          this.messageService.add({ severity: 'error', summary: 'خطأ', detail: 'فشل جلب جدول المواعيد' });
+        }
+        this.isScheduleLoading.set(false);
+      }
+    });
+  }
+
+  closeScheduleModal(): void {
+    this.isScheduleModalOpen.set(false);
+    this.selectedBranchId.set(null);
+  }
+
+  onScheduleSubmit(): void {
+    const id = this.selectedBranchId();
+    if (!id) return;
+
+    this.isScheduleSaving.set(true);
+    const formValue = this.scheduleForm.value;
+    
+    // Transform to match API expected format
+    const request = {
+      schedule: formValue.schedule.map((day: any) => ({
+        day: day.day,
+        openTime: day.isClosed ? null : (day.openTime || null),
+        closeTime: day.isClosed ? null : (day.closeTime || null),
+        isClosed: day.isClosed
+      }))
+    };
+
+    this.branchService.upsertBranchSchedule(id, request).subscribe({
+      next: () => {
+        this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تم حفظ مواعيد العمل بنجاح' });
+        this.isScheduleSaving.set(false);
+        this.closeScheduleModal();
+      },
+      error: (err) => {
+        console.error('Error updating schedule', err);
+        this.messageService.add({ severity: 'error', summary: 'خطأ', detail: 'حدث خطأ أثناء حفظ המواعيد' });
+        this.isScheduleSaving.set(false);
+      }
+    });
   }
 }
