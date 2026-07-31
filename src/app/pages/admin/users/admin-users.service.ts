@@ -14,7 +14,7 @@ import {
 })
 export class AdminUsersService {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = `${environment.baseUrl}/api/adminusers`;
+  private readonly apiUrl = `${environment.baseUrl}/AdminUsers`;
 
   getUsers(filter: AdminUserFilterDto): Observable<PaginatedList<AdminUserDto>> {
     let params = new HttpParams()
