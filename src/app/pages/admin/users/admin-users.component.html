@@ -36,7 +36,7 @@
           class="w-full h-11 px-4 rounded-lg border border-border bg-background text-sm outline-none focus:border-[#007671] transition-colors"
         >
           @for(opt of roleOptions; track opt.value) {
-            <option [value]="opt.value">{{ opt.label }}</option>
+            <option [ngValue]="opt.value">{{ opt.label }}</option>
           }
         </select>
       </div>
@@ -49,7 +49,7 @@
           class="w-full h-11 px-4 rounded-lg border border-border bg-background text-sm outline-none focus:border-[#007671] transition-colors"
         >
           @for(opt of statusOptions; track opt.value) {
-            <option [value]="opt.value">{{ opt.label }}</option>
+            <option [ngValue]="opt.value">{{ opt.label }}</option>
           }
         </select>
       </div>
