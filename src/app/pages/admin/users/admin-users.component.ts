@@ -101,6 +101,28 @@ export class AdminUsersComponent implements OnInit {
     this.loadUsers();
   }
 
+  toggleSort(field: string) {
+    const current = this.filter();
+    if (current.sortBy === field) {
+      // Toggle direction
+      if (current.sortDirection === 'asc') {
+        this.updateFilter({ sortDirection: 'desc' });
+      } else {
+        // Remove sort
+        this.updateFilter({ sortBy: undefined, sortDirection: undefined });
+      }
+    } else {
+      // Set new sort
+      this.updateFilter({ sortBy: field, sortDirection: 'asc' });
+    }
+  }
+
+  getSortIcon(field: string): string {
+    const current = this.filter();
+    if (current.sortBy !== field) return 'pi-sort-alt text-muted-foreground/30';
+    return current.sortDirection === 'asc' ? 'pi-sort-amount-up-alt text-[#007671]' : 'pi-sort-amount-down text-[#007671]';
+  }
+
   getRoleArabic(role: string): string {
     switch (role) {
       case 'Patient': return 'مريض';

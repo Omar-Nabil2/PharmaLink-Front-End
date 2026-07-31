@@ -62,10 +62,25 @@
       <table class="w-full text-right text-sm">
         <thead class="bg-muted/50 border-b border-border">
           <tr>
-            <th class="px-6 py-4 font-semibold text-foreground">الاسم</th>
-            <th class="px-6 py-4 font-semibold text-foreground">البريد الإلكتروني</th>
+            <th class="px-6 py-4 font-semibold text-foreground cursor-pointer hover:bg-muted/70 transition-colors" (click)="toggleSort('name')">
+              <div class="flex items-center gap-2">
+                الاسم
+                <i class="pi text-[10px]" [ngClass]="getSortIcon('name')"></i>
+              </div>
+            </th>
+            <th class="px-6 py-4 font-semibold text-foreground cursor-pointer hover:bg-muted/70 transition-colors" (click)="toggleSort('email')">
+              <div class="flex items-center gap-2">
+                البريد الإلكتروني
+                <i class="pi text-[10px]" [ngClass]="getSortIcon('email')"></i>
+              </div>
+            </th>
             <th class="px-6 py-4 font-semibold text-foreground">الدور</th>
-            <th class="px-6 py-4 font-semibold text-foreground">تاريخ التسجيل</th>
+            <th class="px-6 py-4 font-semibold text-foreground cursor-pointer hover:bg-muted/70 transition-colors" (click)="toggleSort('date')">
+              <div class="flex items-center gap-2">
+                تاريخ التسجيل
+                <i class="pi text-[10px]" [ngClass]="getSortIcon('date')"></i>
+              </div>
+            </th>
             <th class="px-6 py-4 font-semibold text-foreground">الحالة</th>
             <th class="px-6 py-4 font-semibold text-foreground">الإجراءات</th>
           </tr>

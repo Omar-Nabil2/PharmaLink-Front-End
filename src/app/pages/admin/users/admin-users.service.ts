@@ -14,7 +14,7 @@ import {
 })
 export class AdminUsersService {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = `${environment.baseUrl}/api/adminusers`;
+  private readonly apiUrl = `${environment.baseUrl}/AdminUsers`;
 
   getUsers(filter: AdminUserFilterDto): Observable<PaginatedList<AdminUserDto>> {
     let params = new HttpParams()
@@ -22,13 +22,19 @@ export class AdminUsersService {
       .set('pageSize', filter.pageSize.toString());
 
     if (filter.search) {
-      params = params.set('search', filter.search);
+      params = params.set('Search', filter.search);
     }
     if (filter.role) {
-      params = params.set('role', filter.role);
+      params = params.set('Role', filter.role);
     }
     if (filter.status !== undefined && filter.status !== null) {
-      params = params.set('status', filter.status.toString());
+      params = params.set('Status', filter.status.toString());
+    }
+    if (filter.sortBy) {
+      params = params.set('SortBy', filter.sortBy);
+    }
+    if (filter.sortDirection) {
+      params = params.set('SortDirection', filter.sortDirection);
     }
 
     return this.http.get<PaginatedList<AdminUserDto>>(this.apiUrl, { params });
