@@ -1,126 +1,61 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { Router, RouterLink } from '@angular/router';
+import { Observable } from 'rxjs';
 import { ProfileService } from '../../core/services/profile.service';
 import { ErrorHandlerService } from '../../core/services/error-handler.service';
-import { GetPharmacyProfileResponse, PatientProfile, SystemAdminProfile } from '../../core/interfaces/profile.interface';
 
 @Component({
-  selector: 'app-profile',
-  standalone: true,
-  imports: [CommonModule, RouterLink],
-  templateUrl: './profile.component.html',
+    selector: 'app-profile',
+    standalone: true,
+    imports: [CommonModule, RouterLink],
+    templateUrl: './profile.component.html'
 })
 export class ProfileComponent implements OnInit {
-  userRole: string = '';
-  
-  patientData: PatientProfile | null = null;
-  pharmacyData: GetPharmacyProfileResponse | null = null;
-  adminData: SystemAdminProfile | null = null;
-  
-  isLoading = true;
+    profileData: any = null;
+    isFetching = true;
+    role: string | null = null;
 
-  constructor(
-    private readonly profileService: ProfileService,
-    private readonly errorHandler: ErrorHandlerService,
-    private readonly cdr: ChangeDetectorRef,
-  ) { }
+    constructor(
+        private readonly profileService: ProfileService,
+        private readonly errorHandler: ErrorHandlerService,
+        private readonly router: Router,
+        private readonly cdr: ChangeDetectorRef
+    ) {}
 
-  ngOnInit(): void {
-    const role = typeof window !== 'undefined' ? localStorage.getItem('roleName') : null;
-    this.userRole = role ? role.trim() : '';
-    
-    console.log('Detected Role in ProfileComponent:', this.userRole);
+    ngOnInit(): void {
+        this.role = typeof window !== 'undefined' ? localStorage.getItem('roleName') : null;
+        let request$: Observable<any>;
 
-    this.fetchProfile();
-  }
+        if (this.role === 'Patient') {
+            request$ = this.profileService.getPatientProfile();
+        } else if (this.role === 'Admin') {
+            request$ = this.profileService.getSystemAdminProfile();
+        } else if (this.role === 'Pharmacist') {
+            request$ = this.profileService.getPharmacistProfile();
+        } else {
+            request$ = this.profileService.getProfile();
+        }
 
-  // 🟢 فحص مرن للأدمن (يتجاهل المسافات وحالة الحروف)
-  get isAdminRole(): boolean {
-    if (!this.userRole) return false;
-    const normalized = this.userRole.toLowerCase().replace(/\s+/g, '');
-    return normalized === 'admin' || normalized === 'systemadmin';
-  }
-
-  get isPatientRole(): boolean {
-    if (!this.userRole) return false;
-    return this.userRole.toLowerCase() === 'patient';
-  }
-
-  get isPatient(): boolean {
-    return this.isPatientRole;
-  }
-
-  get profileData(): GetPharmacyProfileResponse | null {
-    return this.pharmacyData;
-  }
-
-  fetchProfile(): void {
-    this.isLoading = true;
-
-    if (this.isPatientRole) {
-      this.profileService.getPatientProfile().subscribe({
-        next: (res) => {
-          this.patientData = res.value || res;
-          this.isLoading = false;
-          this.cdr.detectChanges();
-        },
-        error: (err) => this.handleErr(err, 'فشل تحميل الملف الشخصي للمريض')
-      });
-    } else if (this.isAdminRole) {
-      this.profileService.getSystemAdminProfile().subscribe({
-        next: (res: any) => {
-          const rawData = res.value || res;
-          const nameParts = (rawData.fullName || '').trim().split(' ');
-
-          // ضبط حقول الاسم
-          this.adminData = {
-            ...rawData,
-            firstName: rawData.firstName || nameParts[0] || '',
-            lastName: rawData.lastName || nameParts.slice(1).join(' ') || '',
-            fullName: rawData.fullName || `${rawData.firstName || ''} ${rawData.lastName || ''}`.trim()
-          };
-
-          this.isLoading = false;
-          this.cdr.detectChanges();
-        },
-        error: (err) => this.handleErr(err, 'فشل تحميل الملف الشخصي للأدمن')
-      });
+        request$.subscribe({
+            next: (data: any) => {
+                this.profileData = data.value ?? data;
+                this.isFetching = false;
+                this.cdr.detectChanges();
+            },
+            error: (err: unknown) => {
+                this.isFetching = false;
+                this.errorHandler.handleError(err, 'فشل تحميل بيانات الملف الشخصي');
+                this.cdr.detectChanges();
+            }
+        });
     }
-    else if (this.isPharmacyAdmin) {
-      this.profileService.getPharmacyAdminProfile().subscribe({
-        next: (response) => {
-          this.pharmacyAdminData = response;
-          this.isLoading = false;
-          this.cdr.detectChanges();
-        },
-        error: (err) => {
-          this.isLoading = false;
-          this.errorHandler.handleError(err, 'فشل تحميل الملف الشخصي لمدير الصيدلية');
-          this.cdr.detectChanges();
-        },
-      });
-    } else {
-      this.profileService.getProfile().subscribe({
-        next: (data) => {
-          this.pharmacyData = data;
-          this.isLoading = false;
-          this.cdr.detectChanges();
-        },
-        error: (err) => this.handleErr(err, 'فشل تحميل الملف الشخصي للصيدلية')
-      });
+
+    goToEdit(): void {
+        if (this.role === 'Admin') {
+            this.router.navigate(['/admin/profile/edit']);
+        } else {
+            this.router.navigate(['/profile/edit']);
+        }
     }
-  }
-
-  private handleErr(err: any, msg: string): void {
-    this.isLoading = false;
-    this.errorHandler.handleError(err, msg);
-    this.cdr.detectChanges();
-  }
-
-  isDefaultAddress(index: number): boolean {
-    if (!this.patientData?.addresses) return false;
-    const firstDefaultIndex = this.patientData.addresses.findIndex(a => a.isDefault);
-    return index === firstDefaultIndex;
-  }
 }
