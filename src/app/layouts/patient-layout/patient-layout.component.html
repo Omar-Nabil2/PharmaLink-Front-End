@@ -32,6 +32,42 @@
             <i class="pi pi-shopping-cart text-sm"></i>
             <span>السلة</span>
           </a>
+
+          <div class="relative">
+            <button
+              type="button"
+              (click)="toggleUserMenu()"
+              class="flex h-11 items-center gap-2 rounded-full border border-surface-pressed bg-white px-2.5 pr-3 text-sm font-bold text-ink transition hover:border-primary hover:bg-primary/5"
+              aria-label="قائمة الحساب"
+            >
+              <span class="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
+                {{ avatarInitial() }}
+              </span>
+              <span class="hidden max-w-32 truncate lg:block">{{ fullNameSignal() }}</span>
+              <i class="pi pi-chevron-down text-xs text-mute"></i>
+            </button>
+
+            @if (userMenuOpen()) {
+              <div class="absolute left-0 mt-2 w-52 overflow-hidden rounded-2xl border border-surface-pressed bg-white py-2 shadow-lg">
+                <a
+                  routerLink="/profile/edit"
+                  (click)="userMenuOpen.set(false)"
+                  class="flex items-center gap-2 px-4 py-3 text-sm font-bold text-body hover:bg-canvas-soft hover:text-primary"
+                >
+                  <i class="pi pi-user text-sm"></i>
+                  <span>الملف الشخصي</span>
+                </a>
+                <button
+                  type="button"
+                  (click)="logout()"
+                  class="flex w-full items-center gap-2 px-4 py-3 text-sm font-bold text-red-600 hover:bg-red-50"
+                >
+                  <i class="pi pi-sign-out text-sm"></i>
+                  <span>تسجيل الخروج</span>
+                </button>
+              </div>
+            }
+          </div>
         </div>
 
         <button type="button"
@@ -57,6 +93,13 @@
           <a routerLink="/patient/prescriptions/upload" (click)="menuOpen = false" class="btn-primary w-full justify-center">رفع روشتة</a>
           <a routerLink="/patient/image-search" (click)="menuOpen = false" class="btn-secondary w-full justify-center">فحص صورة دواء</a>
           <a routerLink="/patient/cart" (click)="menuOpen = false" class="btn-subtle w-full justify-center">سلة المشتريات</a>
+          <a routerLink="/profile/edit" (click)="closeMenus()" class="btn-subtle w-full justify-center">
+            <i class="pi pi-user text-sm"></i>
+            <span>الملف الشخصي</span>
+          </a>
+          <button type="button" (click)="logout()" class="w-full rounded-full bg-red-50 px-5 py-3 text-sm font-bold text-red-600">
+            تسجيل الخروج
+          </button>
         </div>
       </div>
     </div>
