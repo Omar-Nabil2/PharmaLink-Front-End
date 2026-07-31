@@ -5,6 +5,8 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { PrescriptionReviewService } from '../../../core/services/prescription-review.service';
 import { PrescriptionReviewDto } from '../../../core/interfaces/prescription-review.interface';
 import { ChangeDetectorRef } from '@angular/core';
+import { AuthService } from '../../../core/services/auth.service';
+import { AppRoles } from '../../../core/enums/app-roles.constant';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 // 👇 1. استدعاء الموديول والسيرفيس الخاصة بالـ Toast
 import { ToastModule } from 'primeng/toast';
@@ -33,6 +35,7 @@ export class ReviewPrescriptionComponent implements OnInit {
         private readonly router: Router,
         private readonly reviewService: PrescriptionReviewService,
         private readonly cdr: ChangeDetectorRef,
+        private readonly authService: AuthService,
         // 👇 4. حقن السيرفيس في الكونسراكتور
         private readonly messageService: MessageService
     ) {
@@ -196,7 +199,7 @@ export class ReviewPrescriptionComponent implements OnInit {
                         // 👇 استبدال الـ alert مع تأخير النقل عشان المستخدم يقرأ الرسالة
                         this.messageService.add({ severity: 'success', summary: 'موافقة', detail: 'تم حفظ الأدوية والموافقة على الروشتة بنجاح!' });
                         setTimeout(() => {
-                            this.router.navigate(['/pharmacist/dashboard']);
+                            this.router.navigate([this.afterReviewPath]);
                         }, 1500);
                     },
                     error: (err) => {
@@ -217,7 +220,7 @@ export class ReviewPrescriptionComponent implements OnInit {
                 // 👇 استبدال الـ alert مع تأخير
                 this.messageService.add({ severity: 'success', summary: 'مرفوض', detail: 'تم رفض الروشتة بنجاح.' });
                 setTimeout(() => {
-                    this.router.navigate(['/pharmacist/dashboard']);
+                    this.router.navigate([this.afterReviewPath]);
                 }, 1500);
             },
             error: (err) => {
@@ -234,6 +237,12 @@ export class ReviewPrescriptionComponent implements OnInit {
 
     get isReadOnly(): boolean {
         return this.prescriptionData?.status !== 'PendingReview';
+    }
+
+    get afterReviewPath(): string {
+        return this.authService.getNormalizedRole() === AppRoles.PrescriptionReviewTeam
+            ? '/review-team/prescriptions'
+            : '/pharmacist/dashboard';
     }
 
     searchMedicines(event: any): void {

@@ -292,6 +292,47 @@ export const routes: Routes = [
   },
 
   {
+    path: 'review-team',
+    canActivate: [authGuard],
+    data: { role: AppRoles.PrescriptionReviewTeam },
+    loadComponent: () =>
+      import('./layouts/review-team-layout/review-team-layout.component').then(
+        (m) => m.ReviewTeamLayoutComponent,
+      ),
+    children: [
+      {
+        path: 'dashboard',
+        loadComponent: () =>
+          import('./pages/review-team/review-team-dashboard.component').then(
+            (m) => m.ReviewTeamDashboardComponent,
+          ),
+      },
+      {
+        path: 'prescriptions',
+        loadComponent: () =>
+          import('./pages/pharmacist/prescription-queue/prescription-queue').then(
+            (m) => m.PrescriptionQueue,
+          ),
+      },
+      {
+        path: 'prescriptions/review/:id',
+        loadComponent: () =>
+          import('./pages/prescriptions/review-prescription/review-prescription.component').then(
+            (m) => m.ReviewPrescriptionComponent,
+          ),
+      },
+      {
+        path: 'medical-inquiries',
+        loadComponent: () =>
+          import('./pages/review-team/medical-inquiries.component').then(
+            (m) => m.MedicalInquiriesComponent,
+          ),
+      },
+      { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
+    ],
+  },
+
+  {
     path: 'owner',
     canActivate: [authGuard],
     data: { role: AppRoles.PharmacyAdmin },
