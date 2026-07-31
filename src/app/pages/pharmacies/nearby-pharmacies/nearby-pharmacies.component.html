@@ -1,0 +1,309 @@
+<p-toast position="top-right" />
+
+<div class="nearby-page min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 pb-12">
+
+  <!-- ══ HERO HEADER ══════════════════════════════════════════════════════ -->
+  <div class="hero-header bg-gradient-to-r from-teal-600 via-teal-500 to-emerald-500 text-white py-10 px-4 shadow-xl">
+    <div class="max-w-6xl mx-auto text-center">
+      <div class="flex items-center justify-center gap-3 mb-3">
+        <i class="pi pi-map-marker text-3xl text-emerald-200"></i>
+        <h1 class="text-3xl font-bold tracking-tight">الصيدليات القريبة منك</h1>
+      </div>
+      <p class="text-teal-100 text-sm">ابحث عن أقرب صيدلية واحصل على دوائك بسرعة</p>
+
+      <!-- Location status badge -->
+      <div class="mt-4 inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium"
+           [ngClass]="{
+             'bg-emerald-700/50 text-emerald-100': hasLocation(),
+             'bg-yellow-500/30 text-yellow-100': isLocating(),
+             'bg-red-500/30 text-red-100': locationError()
+           }">
+        @if (isLocating()) {
+          <i class="pi pi-spin pi-spinner"></i>
+          <span>جارٍ تحديد موقعك...</span>
+        } @else if (hasLocation()) {
+          <i class="pi pi-check-circle"></i>
+          <span>تم تحديد موقعك بنجاح</span>
+        } @else if (locationError()) {
+          <i class="pi pi-exclamation-triangle"></i>
+          <span>{{ locationError() }}</span>
+        } @else {
+          <i class="pi pi-map"></i>
+          <span>في انتظار الموقع</span>
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="max-w-6xl mx-auto px-4 mt-8">
+
+    <!-- ══ LOCATION ERROR BANNER ══════════════════════════════════════════ -->
+    @if (locationError()) {
+      <div class="mb-6 flex flex-col sm:flex-row items-center gap-4 rounded-2xl bg-red-50 border border-red-200 p-5 shadow-sm">
+        <i class="pi pi-map-marker text-4xl text-red-400"></i>
+        <div class="flex-1 text-center sm:text-right">
+          <p class="font-semibold text-red-700">تعذّر تحديد موقعك</p>
+          <p class="text-sm text-red-500 mt-0.5">{{ locationError() }}</p>
+        </div>
+        <button pButton
+                label="حاول مجدداً"
+                icon="pi pi-refresh"
+                class="p-button-outlined p-button-danger"
+                (click)="requestLocation()">
+        </button>
+      </div>
+    }
+
+    <!-- ══ FILTERS BAR ════════════════════════════════════════════════════ -->
+    @if (hasLocation() || isLocating()) {
+      <div class="filters-bar bg-white rounded-2xl shadow-md border border-slate-100 p-4 mb-6 flex flex-wrap gap-4 items-center">
+
+        <!-- Search -->
+        <div class="flex-1 min-w-[200px] relative">
+          <i class="pi pi-search absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none z-10"></i>
+          <input pInputText
+                 type="text"
+                 placeholder="ابحث باسم الصيدلية أو الفرع..."
+                 class="w-full pr-10 rounded-xl border-slate-200"
+                 [ngModel]="searchTerm"
+                 (ngModelChange)="onSearch($event)" />
+        </div>
+
+        <!-- Radius -->
+        <div class="flex items-center gap-2">
+          <label class="text-sm font-medium text-slate-500 whitespace-nowrap">نطاق البحث:</label>
+          <select class="rounded-xl border border-slate-200 text-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-400"
+                  [(ngModel)]="selectedRadius"
+                  (ngModelChange)="onRadiusChange()">
+            @for (opt of radiusOptions; track opt.value) {
+              <option [value]="opt.value">{{ opt.label }}</option>
+            }
+          </select>
+        </div>
+
+        <!-- Open Filter -->
+        <div class="flex items-center gap-2">
+          <label class="text-sm font-medium text-slate-500">الحالة:</label>
+          <div class="flex rounded-xl overflow-hidden border border-slate-200">
+            @for (opt of openFilterOptions; track $index) {
+              <button class="px-3 py-1.5 text-sm transition-colors"
+                      [ngClass]="isOpenFilter === opt.value
+                        ? 'bg-teal-500 text-white font-medium'
+                        : 'bg-white text-slate-600 hover:bg-slate-50'"
+                      (click)="isOpenFilter = opt.value; onOpenFilterChange()">
+                {{ opt.label }}
+              </button>
+            }
+          </div>
+        </div>
+
+        <!-- Results count -->
+        @if (!isLoading() && hasLocation()) {
+          <div class="mr-auto text-sm text-slate-500">
+            <span class="font-semibold text-teal-600">{{ totalCount() }}</span> صيدلية
+          </div>
+        }
+      </div>
+    }
+
+    <!-- ══ SKELETON LOADERS ═══════════════════════════════════════════════ -->
+    @if (isLoading() || isLocating()) {
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+        @for (item of skeletonArray; track $index) {
+          <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 space-y-3 overflow-hidden">
+            <div class="flex items-center gap-3">
+              <p-skeleton shape="circle" size="3.5rem" />
+              <div class="flex-1 space-y-2">
+                <p-skeleton height="1rem" width="70%" />
+                <p-skeleton height="0.75rem" width="50%" />
+              </div>
+            </div>
+            <p-skeleton height="0.75rem" />
+            <p-skeleton height="0.75rem" width="60%" />
+            <div class="flex gap-2 pt-1">
+              <p-skeleton height="2rem" borderRadius="0.75rem" class="flex-1" />
+              <p-skeleton height="2rem" borderRadius="0.75rem" class="flex-1" />
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- ══ API ERROR ═══════════════════════════════════════════════════════ -->
+    @if (apiError() && !isLoading()) {
+      <div class="flex flex-col items-center justify-center py-16 text-center">
+        <div class="w-20 h-20 rounded-full bg-red-100 flex items-center justify-center mb-4">
+          <i class="pi pi-times-circle text-4xl text-red-400"></i>
+        </div>
+        <h3 class="text-lg font-semibold text-slate-700 mb-1">حدث خطأ</h3>
+        <p class="text-slate-500 text-sm mb-5 max-w-sm">{{ apiError() }}</p>
+        <button pButton label="إعادة المحاولة" icon="pi pi-refresh"
+                class="p-button-outlined" (click)="loadPharmacies()">
+        </button>
+      </div>
+    }
+
+    <!-- ══ EMPTY STATE ═════════════════════════════════════════════════════ -->
+    @if (isEmpty() && !apiError()) {
+      <div class="flex flex-col items-center justify-center py-20 text-center">
+        <div class="relative mb-6">
+          <div class="w-28 h-28 rounded-full bg-teal-50 flex items-center justify-center">
+            <i class="pi pi-map-marker text-5xl text-teal-300"></i>
+          </div>
+          <div class="absolute -bottom-1 -right-1 w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center border-2 border-white">
+            <i class="pi pi-search text-lg text-slate-400"></i>
+          </div>
+        </div>
+        <h3 class="text-xl font-bold text-slate-700 mb-2">لا توجد صيدليات قريبة</h3>
+        <p class="text-slate-500 text-sm max-w-xs mb-6">
+          لم نجد أي صيدليات ضمن نطاق <strong>{{ selectedRadius }} كم</strong> من موقعك.
+          جرّب توسيع نطاق البحث.
+        </p>
+        <button pButton label="توسيع نطاق البحث" icon="pi pi-search-plus"
+                class="p-button-outlined p-button-info"
+                (click)="selectedRadius = 50; onRadiusChange()">
+        </button>
+      </div>
+    }
+
+    <!-- ══ PHARMACY CARDS GRID ════════════════════════════════════════════ -->
+    @if (!isLoading() && !isLocating() && pharmacies().length > 0) {
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+        @for (branch of pharmacies(); track trackByBranchId($index, branch)) {
+          <div class="pharmacy-card bg-white rounded-2xl shadow-sm border border-slate-100
+                      hover:shadow-lg hover:-translate-y-1 transition-all duration-200 overflow-hidden flex flex-col">
+
+            <!-- Card Top: Logo + Name + Open Badge -->
+            <div class="p-4 pb-3 flex items-start gap-3">
+              <!-- Logo -->
+              <div class="logo-wrapper flex-shrink-0 w-14 h-14 rounded-xl overflow-hidden border border-slate-100 bg-slate-50 flex items-center justify-center">
+                @if (branch.logoUrl) {
+                  <img [src]="branch.logoUrl" [alt]="branch.pharmacyName"
+                       class="w-full h-full object-cover"
+                       (error)="$any($event.target).style.display='none'" />
+                } @else {
+                  <i class="pi pi-building text-2xl text-slate-300"></i>
+                }
+              </div>
+
+              <!-- Name + Address -->
+              <div class="flex-1 min-w-0">
+                <h2 class="font-bold text-slate-800 text-sm leading-tight truncate" [title]="branch.pharmacyName">
+                  {{ branch.pharmacyName }}
+                </h2>
+                <p class="text-xs text-teal-600 font-medium truncate mt-0.5" [title]="branch.branchName">
+                  {{ branch.branchName }}
+                </p>
+                <p class="text-xs text-slate-500 truncate mt-0.5">
+                  {{ branch.addressLine }}, {{ branch.city }}
+                </p>
+              </div>
+            </div>
+
+            <!-- Badges Row -->
+            <div class="px-4 pb-3 flex flex-wrap gap-1.5">
+
+              <!-- Distance badge -->
+              <span class="distance-badge inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold"
+                    [ngClass]="{
+                      'bg-emerald-100 text-emerald-700': branch.distanceKm <= 1,
+                      'bg-blue-100 text-blue-700': branch.distanceKm > 1 && branch.distanceKm <= 5,
+                      'bg-amber-100 text-amber-700': branch.distanceKm > 5 && branch.distanceKm <= 15,
+                      'bg-red-100 text-red-700': branch.distanceKm > 15
+                    }">
+                <i class="pi pi-map-marker text-[10px]"></i>
+                {{ branch.distanceKm | number:'1.1-1' }} كم
+              </span>
+
+              <!-- Open / Closed -->
+              <span class="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold"
+                    [ngClass]="branch.isOpen
+                      ? 'bg-green-100 text-green-700'
+                      : 'bg-red-100 text-red-600'">
+                <span class="w-1.5 h-1.5 rounded-full"
+                      [ngClass]="branch.isOpen ? 'bg-green-500' : 'bg-red-400'"></span>
+                {{ branch.isOpen ? 'مفتوح' : 'مغلق' }}
+              </span>
+
+              <!-- Delivery -->
+              @if (branch.supportsDelivery) {
+                <span class="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium bg-purple-100 text-purple-700">
+                  <i class="pi pi-truck text-[10px]"></i>
+                  توصيل
+                </span>
+              }
+
+              <!-- Pickup -->
+              @if (branch.supportsPickup) {
+                <span class="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium bg-indigo-100 text-indigo-700">
+                  <i class="pi pi-shopping-bag text-[10px]"></i>
+                  استلام
+                </span>
+              }
+            </div>
+
+            <!-- Working Hours -->
+            @if (branch.workingHours) {
+              <div class="px-4 pb-3 flex items-center gap-1.5 text-xs text-slate-500">
+                <i class="pi pi-clock text-slate-400"></i>
+                <span>{{ branch.workingHours }}</span>
+              </div>
+            }
+
+            <!-- Spacer -->
+            <div class="flex-1"></div>
+
+            <!-- Action Buttons -->
+            <div class="px-4 pb-4 pt-2 border-t border-slate-50 flex gap-2">
+
+              <!-- Call -->
+              @if (branch.phoneNumber) {
+                <a [href]="'tel:' + branch.phoneNumber"
+                   class="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl bg-slate-100
+                          hover:bg-slate-200 text-slate-700 text-xs font-medium py-2 transition-colors">
+                  <i class="pi pi-phone text-sm"></i>
+                  اتصال
+                </a>
+              }
+
+              <!-- Maps / Navigate -->
+              <a [href]="getGoogleMapsUrl(branch)"
+                 target="_blank"
+                 rel="noopener noreferrer"
+                 class="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl bg-teal-50
+                        hover:bg-teal-100 text-teal-700 text-xs font-medium py-2 transition-colors">
+                <i class="pi pi-map text-sm"></i>
+                خرائط
+              </a>
+
+              <!-- Navigate -->
+              <a [href]="getNavigationUrl(branch)"
+                 target="_blank"
+                 rel="noopener noreferrer"
+                 class="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl bg-emerald-500
+                        hover:bg-emerald-600 text-white text-xs font-medium py-2 transition-colors">
+                <i class="pi pi-directions text-sm"></i>
+                اتجاهات
+              </a>
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- ══ PAGINATOR ═══════════════════════════════════════════════════ -->
+      @if (totalCount() > pageSize) {
+        <div class="mt-8 flex justify-center">
+          <p-paginator
+            [rows]="pageSize"
+            [totalRecords]="totalCount()"
+            [first]="(currentPage - 1) * pageSize"
+            [rowsPerPageOptions]="[8, 12, 24]"
+            (onPageChange)="onPageChange($event)"
+            styleClass="!bg-transparent !border-0 !shadow-none">
+          </p-paginator>
+        </div>
+      }
+    }
+
+  </div>
+</div>

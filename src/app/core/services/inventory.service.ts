@@ -143,6 +143,6 @@ export class InventoryService {
   }
 
   adjustStock(inventoryId: string, payload: AdjustStockDTO) {
-    return this.http.patch<any>(`${environment.omarUrl}/Inventory/${inventoryId}/adjust-stock`, payload);
+    return this.http.patch<any>(`${environment.localUrl}/Inventory/${inventoryId}/adjust-stock`, payload);
   }
 }

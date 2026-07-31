@@ -21,6 +21,7 @@ export class PatientLayoutComponent {
     { label: 'روشتاتي', icon: 'pi pi-file-check', routerLink: '/patient/prescriptions' },
     { label: 'رفع صورة دواء', icon: 'pi pi-image', routerLink: '/patient/image-search' },
     { label: 'طلباتي', icon: 'pi pi-list', routerLink: '/patient/orders' },
+    { label: 'صيدليات قريبة', icon: 'pi pi-map-marker', routerLink: '/patient/pharmacies/nearby' },
     { label: 'عناويني', icon: 'pi pi-map-marker', routerLink: '/patient/addresses' },
     { label: 'الملف الشخصي', icon: 'pi pi-user', routerLink: '/profile' },
   ];
