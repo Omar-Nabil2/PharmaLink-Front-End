@@ -387,6 +387,13 @@ export const routes: Routes = [
       },
 
       {
+        path: 'users',
+        loadComponent: () =>
+          import('./pages/admin/users/admin-users.component').then(
+            (m) => m.AdminUsersComponent,
+          ),
+      },
+      {
         path: 'profile',
         loadComponent: () =>
           import('./pages/profile/profile.component').then((m) => m.ProfileComponent),
