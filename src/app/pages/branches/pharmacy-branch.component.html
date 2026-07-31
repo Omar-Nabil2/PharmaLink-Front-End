@@ -267,22 +267,14 @@
         }
       </div>
 
-      <!-- Working Hours -->
-      <div class="space-y-1.5 text-right">
-        <label class="block text-xs sm:text-sm font-medium text-foreground">ساعات العمل <span class="text-destructive">*</span></label>
-        <input
-          type="text"
-          formControlName="workingHours"
-          placeholder="مثال: 09:00 ص - 10:00 م"
-          class="w-full h-11 rounded-lg border bg-background px-4 text-xs sm:text-sm outline-none transition-colors duration-200"
-          [class.border-border]="!hasError('workingHours')"
-          [class.focus:border-[#007671]]="!hasError('workingHours')"
-          [class.border-destructive]="hasError('workingHours')"
-          [class.focus:ring-destructive/20]="hasError('workingHours')"
-        />
-        @if (hasError('workingHours')) {
-          <p class="text-xs text-destructive mt-1 font-medium">{{ getErrorMessage('workingHours') }}</p>
-        }
+      <!-- Working Hours Info -->
+      <div class="col-span-1 md:col-span-2 space-y-1.5 text-right bg-blue-50/50 p-3 rounded-lg border border-blue-100">
+        <div class="flex items-start gap-2 text-blue-700">
+          <i class="pi pi-info-circle mt-0.5"></i>
+          <p class="text-xs sm:text-sm">
+            <strong>ملاحظة عن المواعيد:</strong> بعد إضافة الفرع، يمكنك التحكم التفصيلي في أوقات العمل لكل يوم من خلال زر <strong>"مواعيد العمل"</strong> في جدول الفروع.
+          </p>
+        </div>
       </div>
 
       <!-- Service Radius -->

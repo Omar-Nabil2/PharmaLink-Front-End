@@ -27,7 +27,6 @@ export interface PharmacyBranchResponseDTO {
   governorate: string;
   addressLine: string;
   phoneNumber: string;
-  workingHours: string;
   latitude: number | null;
   longitude: number | null;
   serviceRadiusKm: number;
@@ -41,7 +40,6 @@ export interface CreatePharmacyBranchDTO {
   governorate: string;
   addressLine: string;
   phoneNumber: string;
-  workingHours: string;
   latitude: number | null;
   longitude: number | null;
   serviceRadiusKm: number;
@@ -55,7 +53,6 @@ export interface UpdatePharmacyBranchDTO {
   governorate: string;
   addressLine: string;
   phoneNumber: string;
-  workingHours: string;
   latitude: number | null;
   longitude: number | null;
   serviceRadiusKm: number;
