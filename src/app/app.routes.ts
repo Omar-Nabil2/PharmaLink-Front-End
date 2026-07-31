@@ -6,7 +6,6 @@ import { authGuard } from './core/guards/auth.guard';
 import { AppRoles } from './core/enums/app-roles.constant';
 
 export const routes: Routes = [
-  // 1️⃣ الرئيسية العامة للموقع (Public Routes)
   {
     path: '',
     component: MainLayoutComponent,
@@ -318,7 +317,6 @@ export const routes: Routes = [
     ],
   },
 
-  // 6️⃣ لوحة مدير النظام (Admin Portal) - 👈 تجميع بروفايل الأدمن هنا بالداخل
   {
     path: 'admin',
     canActivate: [authGuard],
@@ -386,8 +384,8 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./pages/profile/profile.component').then((m) => m.ProfileComponent),
       },
-      {
-        path: 'profile/edit',
+{
+        path: 'profile/edit', 
         loadComponent: () =>
           import('./pages/profile/update-profile/update-profile.component').then(
             (m) => m.UpdateProfileComponent,
@@ -398,7 +396,6 @@ export const routes: Routes = [
     ],
   },
 
-  // 7️⃣ إعادة التوجيه والمسارات غير المعروفة (Redirections & NotFound)
   {
     path: 'cart',
     redirectTo: '/patient/cart',

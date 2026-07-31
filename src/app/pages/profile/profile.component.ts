@@ -42,18 +42,15 @@ export class ProfileComponent implements OnInit {
     return normalized === 'admin' || normalized === 'systemadmin';
   }
 
-  // 🟢 فحص مرن للمريض
   get isPatientRole(): boolean {
     if (!this.userRole) return false;
     return this.userRole.toLowerCase() === 'patient';
   }
 
-  // 🟢 Getter مطابق لما يستخدمه ملف الـ HTML
   get isPatient(): boolean {
     return this.isPatientRole;
   }
 
-  // 🟢 Getter لتوفير بيانات الصيدلية باسم profileData المستعمل بالـ HTML
   get profileData(): GetPharmacyProfileResponse | null {
     return this.pharmacyData;
   }

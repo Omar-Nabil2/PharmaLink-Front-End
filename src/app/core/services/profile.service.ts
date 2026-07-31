@@ -16,8 +16,8 @@ import {
   providedIn: 'root',
 })
 export class ProfileService {
-  // private readonly localUrl = environment.localUrl;
- private readonly localUrl ='https://localhost:5001/api/v1';
+  private readonly localUrl = environment.localUrl;
+//  private readonly localUrl ='https://localhost:5001/api/v1';
  
   constructor(private readonly http: HttpClient) { }
 
@@ -47,7 +47,6 @@ getPharmacistProfile(): Observable<any> {
     return this.http.get(`${this.localUrl}/PharmacistProfile`);
 }
 
-// تحديث بيانات ملف الصيدلي
 updatePharmacistProfile(data: any): Observable<any> {
     return this.http.put(`${this.localUrl}/PharmacistProfile`, data); // أو patch حسب الـ Backend لديك
 }
