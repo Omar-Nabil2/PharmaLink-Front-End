@@ -9,7 +9,9 @@ import {
   UpdatePharmacyBranchDTO,
   PharmacyBranchSearchDTO,
   GetPharmacyBranchParamRequest,
-  PaginatedList
+  PaginatedList,
+  BranchScheduleResponseDto,
+  UpdateBranchScheduleRequest
 } from './pharmacy-branch.model';
 
 @Injectable({
@@ -51,4 +53,13 @@ export class PharmacyBranchService {
     const params = new HttpParams().set('term', term);
     return this.http.get<PharmacyBranchSearchDTO[]>(`${this.baseUrl}/search`, { params });
   }
+
+  getBranchSchedule(branchId: string): Observable<BranchScheduleResponseDto> {
+    return this.http.get<BranchScheduleResponseDto>(`${this.baseUrl}/${branchId}/schedule`);
+  }
+
+  upsertBranchSchedule(branchId: string, request: UpdateBranchScheduleRequest): Observable<BranchScheduleResponseDto> {
+    return this.http.put<BranchScheduleResponseDto>(`${this.baseUrl}/${branchId}/schedule`, request);
+  }
 }
+
