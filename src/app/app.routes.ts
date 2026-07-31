@@ -141,6 +141,10 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'drugs',
+        loadComponent: () => import('./pages/drugs/drugs').then((m) => m.DrugsComponent),
+      },
+      {
         path: 'prescriptions/upload',
         loadComponent: () =>
           import('./pages/prescriptions/upload-prescription/upload-prescription.component').then(
@@ -160,6 +164,13 @@ export const routes: Routes = [
           import(
             './pages/prescription-detail.component/prescription-detail.component'
           ).then((m) => m.PatientPrescriptionDetailComponent),
+      },
+      {
+        path: 'image-search',
+        loadComponent: () =>
+          import('./pages/medicine-image-scan/medicine-image-scan.component').then(
+            (m) => m.MedicineImageScanComponent,
+          ),
       },
       {
         path: 'addresses',

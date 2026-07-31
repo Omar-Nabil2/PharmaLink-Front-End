@@ -1,20 +1,71 @@
-<div class="flex flex-col h-screen overflow-hidden bg-canvas font-sans">
-  <app-navbar class="flex-shrink-0 z-50 shadow-sm" />
+<div class="min-h-screen bg-canvas-softer font-sans" dir="rtl">
+  <header class="sticky top-0 z-50 bg-canvas/95 backdrop-blur border-b border-surface-pressed">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="h-20 flex items-center justify-between gap-4">
+        <a routerLink="/patient/dashboard" class="flex items-center gap-3 shrink-0">
+          <img src="/logo.png" alt="Pharma Link" class="h-10 w-auto object-contain" />
+          <div class="leading-tight">
+            <span class="block text-lg font-black text-ink">فارما لينك</span>
+            <span class="block text-xs text-mute">بوابة المريض</span>
+          </div>
+        </a>
 
-  <div class="flex flex-1 overflow-hidden">
-    <app-sidebar [items]="patientNavItems" class="hidden md:block h-full flex-shrink-0" />
+        <nav class="hidden lg:flex items-center gap-1">
+          <a *ngFor="let item of patientNavItems"
+             [routerLink]="item.routerLink"
+             routerLinkActive="bg-primary/10 text-primary"
+             class="px-4 py-2 rounded-full text-sm font-bold text-body hover:bg-canvas-soft hover:text-ink transition">
+            {{ item.label }}
+          </a>
+        </nav>
 
-    <!-- 1. Made main a flex-col container and removed padding -->
-    <main class="flex-1 flex flex-col overflow-y-auto bg-canvas-softer">
+        <div class="hidden md:flex items-center gap-2">
+          <a routerLink="/patient/prescriptions/upload" class="btn-primary gap-2">
+            <i class="pi pi-upload text-sm"></i>
+            <span>رفع روشتة</span>
+          </a>
+          <a routerLink="/patient/image-search" class="btn-secondary gap-2">
+            <i class="pi pi-camera text-sm"></i>
+            <span>فحص دواء</span>
+          </a>
+          <a routerLink="/patient/cart" class="btn-subtle gap-2" aria-label="سلة المشتريات">
+            <i class="pi pi-shopping-cart text-sm"></i>
+            <span>السلة</span>
+          </a>
+        </div>
 
-      <!-- 2. Added a wrapper div for router-outlet to handle the padding and take up remaining space -->
-      <div class="flex-1 p-4 md:p-8">
-        <router-outlet></router-outlet>
+        <button type="button"
+                class="md:hidden w-10 h-10 rounded-full bg-canvas-soft text-ink flex items-center justify-center"
+                (click)="menuOpen = !menuOpen"
+                [attr.aria-expanded]="menuOpen"
+                aria-label="فتح القائمة">
+          <i class="pi text-xl" [ngClass]="menuOpen ? 'pi-times' : 'pi-bars'"></i>
+        </button>
       </div>
 
-      <!-- 3. Footer now sits outside the padded area, taking full width naturally -->
-      <app-footer class="flex-shrink-0" />
+      <div *ngIf="menuOpen" class="md:hidden border-t border-surface-pressed py-4 space-y-3">
+        <nav class="grid grid-cols-2 gap-2">
+          <a *ngFor="let item of patientNavItems"
+             [routerLink]="item.routerLink"
+             (click)="menuOpen = false"
+             class="px-3 py-3 rounded-xl bg-white border border-surface-pressed text-sm font-bold text-body">
+            {{ item.label }}
+          </a>
+        </nav>
 
-    </main>
-  </div>
+        <div class="grid grid-cols-1 gap-2 pt-2">
+          <a routerLink="/patient/prescriptions/upload" (click)="menuOpen = false" class="btn-primary w-full justify-center">رفع روشتة</a>
+          <a routerLink="/patient/image-search" (click)="menuOpen = false" class="btn-secondary w-full justify-center">فحص صورة دواء</a>
+          <a routerLink="/patient/cart" (click)="menuOpen = false" class="btn-subtle w-full justify-center">سلة المشتريات</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="min-h-[calc(100vh-80px)]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+
 </div>

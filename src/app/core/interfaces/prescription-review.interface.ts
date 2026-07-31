@@ -13,6 +13,14 @@ export interface MedicineDto {
     route?: string;
     dosageInstructions?: string;    // للحفاظ على التوافق مع الكود القديم
     confidence?: number;
+    matchedDrugId?: string | null;
+    suggestedAlternativeDrugId?: string | null;
+    matchStatus?: 'NotFound' | 'ExactMatch' | 'FuzzyMatch' | 'AlternativeSuggested' | 'Unavailable' | string;
+    matchReason?: string | null;
+    matchScore?: number | null;
+    aiNote?: string | null;
+    requiresPatientApproval?: boolean;
+    patientApprovedAt?: string | null;
     isEdited?: boolean;
 }
 
@@ -28,7 +36,19 @@ export interface PrescriptionReviewDto {
     reviewedAt?: string | null;
     createdOrderId?: string;         // لرابط الطلب
     ocrResult?: string;
+    processingStatus?: string;
     medicines: MedicineDto[];
+}
+
+export interface PrescriptionReviewUploadResponse {
+  reviewId: string;
+  prescriptionReviewId?: string;
+  cartId?: string | null;
+  status: string;
+  processingStatus?: string;
+  imageUrl: string;
+  medicines: MedicineDto[];
+  extractedItems?: MedicineDto[];
 }
 
 export interface GetAllPrescriptionReviewDto {
