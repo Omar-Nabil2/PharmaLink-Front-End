@@ -20,6 +20,8 @@ export interface AdminUserFilterDto {
   search?: string;
   role?: string;
   status?: UserStatus;
+  sortBy?: string;
+  sortDirection?: string;
 }
 
 export interface UpdateUserStatusDto {
