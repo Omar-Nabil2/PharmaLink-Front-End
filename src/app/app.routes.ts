@@ -4,7 +4,6 @@ import { HomeComponent } from './pages/home/home.component';
 import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
 import { authGuard } from './core/guards/auth.guard';
 import { AppRoles } from './core/enums/app-roles.constant';
-import { PatientPrescriptionDetailComponent } from '@pages/prescription-detail.component/prescription-detail.component';
 
 export const routes: Routes = [
   {
@@ -14,34 +13,81 @@ export const routes: Routes = [
       {
         path: '',
         component: HomeComponent,
+
       },
-      {
-        path: 'profile',
-        loadComponent: () =>
-          import('./pages/profile/profile.component').then((m) => m.ProfileComponent),
-      },
-      {
+        {
         path: 'profile/edit',
         loadComponent: () =>
           import('./pages/profile/update-profile/update-profile.component').then(
             (m) => m.UpdateProfileComponent,
           ),
       },
-
+      {
+        path: 'products',
+        loadComponent: () =>
+          import('./pages/products/products.component').then((m) => m.ProductsComponent),
+      },
+      {
+        path: 'drugs',
+        loadComponent: () => import('./pages/drugs/drugs').then((m) => m.DrugsComponent),
+      },
+      {
+        path: 'services',
+        loadComponent: () =>
+          import('./pages/services/services.component').then((m) => m.ServicesComponent),
+      },
+      {
+        path: 'contact',
+        loadComponent: () =>
+          import('./pages/contact/contact.component').then((m) => m.ContactComponent),
+      },
       {
         path: 'privacy',
-        loadComponent: () => import('./pages/static/privacy-policy/privacy-policy.component').then(m => m.PrivacyPolicyComponent)
+        loadComponent: () =>
+          import('./pages/static/privacy-policy/privacy-policy.component').then(
+            (m) => m.PrivacyPolicyComponent,
+          ),
       },
       {
         path: 'terms',
-        loadComponent: () => import('./pages/static/terms/terms.component').then(m => m.TermsComponent)
+        loadComponent: () =>
+          import('./pages/static/terms/terms.component').then((m) => m.TermsComponent),
       },
       {
         path: 'faq',
-        loadComponent: () => import('./pages/static/faq/faq.component').then(m => m.FaqComponent)
-      }
+        loadComponent: () =>
+          import('./pages/static/faq/faq.component').then((m) => m.FaqComponent),
+      },
+      {
+        path: 'profile',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./pages/profile/profile.component').then((m) => m.ProfileComponent),
+      },
+      {
+        path: 'change-password',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./pages/auth/change-password/change-password.component').then(
+            (m) => m.ChangePasswordComponent,
+          ),
+      },
+      {
+        path: 'access-denied',
+        loadComponent: () =>
+          import('./pages/errors/access-denied/access-denied.component').then(
+            (m) => m.AccessDeniedComponent,
+          ),
+      },
+      {
+        path: 'not-found',
+        loadComponent: () =>
+          import('./pages/errors/not-found/not-found.component').then((m) => m.NotFoundComponent),
+      },
     ],
   },
+
+  // 2️⃣ صفحات تسجيل الدخول والإنشاء (Auth Routes)
   {
     path: 'auth',
     component: AuthLayoutComponent,
@@ -76,63 +122,9 @@ export const routes: Routes = [
       { path: '', pathMatch: 'full', redirectTo: 'login' },
     ],
   },
-  {
-    path: '',
-    component: MainLayoutComponent,
-    children: [
-      {
-        path: '',
-        component: HomeComponent,
-      },
-      {
-        path: 'products',
-        loadComponent: () =>
-          import('./pages/products/products.component').then((m) => m.ProductsComponent),
-      },
-      {
-        path: 'drugs',
-        loadComponent: () => import('./pages/drugs/drugs').then((m) => m.DrugsComponent),
-      },
-      {
-        path: 'services',
-        loadComponent: () =>
-          import('./pages/services/services.component').then((m) => m.ServicesComponent),
-      },
-      {
-        path: 'contact',
-        loadComponent: () =>
-          import('./pages/contact/contact.component').then((m) => m.ContactComponent),
-      },
-      {
-        path: 'profile',
-        canActivate: [authGuard],
-        loadComponent: () =>
-          import('./pages/profile/profile.component').then((m) => m.ProfileComponent),
-      },
-      {
-        path: 'change-password',
-        canActivate: [authGuard],
-        loadComponent: () =>
-          import('./pages/auth/change-password/change-password.component').then(
-            (m) => m.ChangePasswordComponent,
-          ),
-      },
-      {
-        path: 'access-denied',
-        loadComponent: () =>
-          import('./pages/errors/access-denied/access-denied.component').then(
-            (m) => m.AccessDeniedComponent,
-          ),
-      },
-      {
-        path: 'not-found',
-        loadComponent: () =>
-          import('./pages/errors/not-found/not-found.component').then((m) => m.NotFoundComponent),
-      },
 
-    ],
-  },
-{
+  // 3️⃣ لوحة المريض (Patient Portal)
+  {
     path: 'patient',
     canActivate: [authGuard],
     data: { role: AppRoles.Patient },
@@ -158,62 +150,67 @@ export const routes: Routes = [
       {
         path: 'prescriptions',
         loadComponent: () =>
-          import('./pages/patient-prescription-review.component/patient-prescription-review.component').then(
-            (m) => m.PatientPrescriptionsListComponent
-          ),
+          import(
+            './pages/patient-prescription-review.component/patient-prescription-review.component'
+          ).then((m) => m.PatientPrescriptionsListComponent),
       },
       {
-        path: 'prescriptions/review/:id', // ✅ صحيح: بدون كلمة patient في البداية
-        loadComponent: () => 
-          import('./pages/prescription-detail.component/prescription-detail.component')
-            .then((m) => m.PatientPrescriptionDetailComponent)
+        path: 'prescriptions/review/:id',
+        loadComponent: () =>
+          import(
+            './pages/prescription-detail.component/prescription-detail.component'
+          ).then((m) => m.PatientPrescriptionDetailComponent),
       },
       {
         path: 'addresses',
         loadComponent: () =>
-          import('./pages/profile/addresses/address-list/address-list.component').then((m) => m.AddressListComponent),
+          import('./pages/profile/addresses/address-list/address-list.component').then(
+            (m) => m.AddressListComponent,
+          ),
       },
       {
         path: 'addresses/new',
         loadComponent: () =>
-          import('./pages/profile/addresses/address-form/address-form.component').then((m) => m.AddressFormComponent),
+          import('./pages/profile/addresses/address-form/address-form.component').then(
+            (m) => m.AddressFormComponent,
+          ),
       },
       {
         path: 'addresses/edit/:id',
         loadComponent: () =>
-          import('./pages/profile/addresses/address-form/address-form.component').then((m) => m.AddressFormComponent),
+          import('./pages/profile/addresses/address-form/address-form.component').then(
+            (m) => m.AddressFormComponent,
+          ),
       },
       {
         path: 'cart',
-        canActivate: [authGuard],
-        data: { role: AppRoles.Patient },
         loadComponent: () =>
           import('./pages/cart/cart.component').then((m) => m.CartComponent),
       },
       {
         path: 'checkout',
-        canActivate: [authGuard],
-        data: { role: AppRoles.Patient },
         loadComponent: () =>
           import('./pages/checkout/checkout').then((m) => m.CheckoutComponent),
       },
       {
         path: 'orders',
-        canActivate: [authGuard],
-        data: { role: AppRoles.Patient },
         loadComponent: () =>
-          import('./pages/orders/patient-orders/patient-orders.component').then((m) => m.PatientOrdersComponent),
+          import('./pages/orders/patient-orders/patient-orders.component').then(
+            (m) => m.PatientOrdersComponent,
+          ),
       },
       {
         path: 'orders/:id',
-        canActivate: [authGuard],
-        data: { role: AppRoles.Patient },
         loadComponent: () =>
-          import('./pages/orders/patient-order-detail/patient-order-detail.component').then((m) => m.PatientOrderDetailComponent),
+          import('./pages/orders/patient-order-detail/patient-order-detail.component').then(
+            (m) => m.PatientOrderDetailComponent,
+          ),
       },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
     ],
   },
+
+  // 4️⃣ لوحة الصيدلي (Pharmacist Portal)
   {
     path: 'pharmacist',
     canActivate: [authGuard],
@@ -246,11 +243,17 @@ export const routes: Routes = [
       },
       {
         path: 'preparation-list',
-        loadComponent: () => import('./pages/pharmacist/preparation-list/preparation-list').then((m) => m.PreparationListComponent),
+        loadComponent: () =>
+          import('./pages/pharmacist/preparation-list/preparation-list').then(
+            (m) => m.PreparationListComponent,
+          ),
       },
       {
         path: 'inventory',
-        loadComponent: () => import('./pages/pharmacist/inventory/inventory.component').then(m => m.InventoryComponent)
+        loadComponent: () =>
+          import('./pages/pharmacist/inventory/inventory.component').then(
+            (m) => m.InventoryComponent,
+          ),
       },
       {
         path: 'prescription-queue',
@@ -260,9 +263,9 @@ export const routes: Routes = [
           ),
       },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
-
     ],
   },
+
   {
     path: 'owner',
     canActivate: [authGuard],
@@ -299,21 +302,25 @@ export const routes: Routes = [
       {
         path: 'pharmacy-profile',
         loadComponent: () =>
-          import('./pages/pharmacy-profile/pharmacy-profile.component').then((m) => m.PharmacyProfileComponent),
+          import('./pages/pharmacy-profile/pharmacy-profile.component').then(
+            (m) => m.PharmacyProfileComponent,
+          ),
       },
       {
         path: 'branches',
         loadComponent: () =>
-          import('./pages/branches/pharmacy-branch.component').then((m) => m.PharmacyBranchComponent),
+          import('./pages/branches/pharmacy-branch.component').then(
+            (m) => m.PharmacyBranchComponent,
+          ),
       },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
     ],
   },
+
   {
     path: 'admin',
     canActivate: [authGuard],
     data: { role: AppRoles.Admin },
-
     loadComponent: () =>
       import('./layouts/admin-layout/admin-layout.component').then((m) => m.AdminLayoutComponent),
     children: [
@@ -371,14 +378,28 @@ export const routes: Routes = [
             (m) => m.AdminDrugsComponent,
           ),
       },
+
+      {
+        path: 'profile',
+        loadComponent: () =>
+          import('./pages/profile/profile.component').then((m) => m.ProfileComponent),
+      },
+{
+        path: 'profile/edit', 
+        loadComponent: () =>
+          import('./pages/profile/update-profile/update-profile.component').then(
+            (m) => m.UpdateProfileComponent,
+          ),
+      },
+
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
     ],
   },
-  // Unknown routes → Not Found (keeps main layout: navbar + footer)
+
   {
     path: 'cart',
     redirectTo: '/patient/cart',
-    pathMatch: 'full'
+    pathMatch: 'full',
   },
   {
     path: '**',

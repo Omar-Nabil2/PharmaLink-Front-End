@@ -18,10 +18,6 @@ export class UpdateProfileComponent implements OnInit {
     isLoading = false;
     isFetching = true;
     isPatient = false;
-    isPharmacyAdmin = false;
-
-    // ضفنا المتغير ده عشان نحفظ فيه البيانات الأصلية
-    originalData: { fullName: string; phoneNumber: string } = { fullName: '', phoneNumber: '' };
 
     constructor(
         private readonly fb: FormBuilder,
@@ -33,118 +29,79 @@ export class UpdateProfileComponent implements OnInit {
     ) {
         this.updateForm = this.fb.group({
             fullName: ['', [Validators.required, Validators.minLength(3)]],
-            phoneNumber: ['', [Validators.required, Validators.pattern(/^(?:\+20|0020|0)?1[0125][0-9]{8}$/)]],
-            email: [{ value: '', disabled: true }],
-            legalName: [{ value: '', disabled: true }]
+            phoneNumber: ['', [Validators.required, Validators.pattern(/^(?:\+20|0020|0)?1[0125][0-9]{8}$/)]]
         });
     }
 
-    ngOnInit(): void {
-        const role = typeof window !== 'undefined' ? localStorage.getItem('roleName') : null;
-        this.isPatient = role === 'Patient';
-        this.isPharmacyAdmin = role === 'PharmacyAdmin';
+ngOnInit(): void {
+    const role = typeof window !== 'undefined' ? localStorage.getItem('roleName') : null;
 
-        let request$: Observable<any>;
-        if (this.isPatient) {
-            request$ = this.profileService.getPatientProfile();
-        } else if (this.isPharmacyAdmin) {
-            request$ = this.profileService.getPharmacyAdminProfile();
-        } else {
-            request$ = this.profileService.getProfile();
-        }
+    let request$: Observable<any>;
 
-        request$.subscribe({
-            next: (data: any) => {
-                const fetchedFullName = data.fullName ?? data.value?.fullName ?? '';
-                const fetchedPhoneNumber = data.phoneNumber ?? data.value?.phoneNumber ?? '';
-
-                // 1. حفظ البيانات الأصلية أول ما تيجي
-                this.originalData = {
-                    fullName: fetchedFullName,
-                    phoneNumber: fetchedPhoneNumber
-                };
-
-                // 2. وضع البيانات في الفورم
-                this.updateForm.patchValue({
-                    fullName: fetchedFullName,
-                    phoneNumber: fetchedPhoneNumber,
-                    email: data.email ?? data.value?.email,
-                    legalName: data.legalName ?? data.value?.legalName,
-                });
-
-                this.isFetching = false;
-                this.cdr.detectChanges();
-            },
-            error: (err: unknown) => {
-                this.isFetching = false;
-                this.errorHandler.handleError(err, 'فشل تحميل بيانات الملف الشخصي');
-                this.cdr.detectChanges();
-            }
-        });
+    if (role === 'Patient') {
+        request$ = this.profileService.getPatientProfile();
+    } else if (role === 'Pharmacist') {
+        request$ = this.profileService.getPharmacistProfile(); // تأكد من وجود هذه الدالة في الـ ProfileService
+    } else {
+        request$ = this.profileService.getProfile(); // للأدمن أو الحسابات الأخرى
     }
 
-    onSubmit(): void {
-        if (this.updateForm.invalid) {
-            this.updateForm.markAllAsTouched();
-            return;
+    request$.subscribe({
+        next: (data: any) => {
+            this.updateForm.patchValue({
+                fullName: data.fullName ?? data.value?.fullName,
+                phoneNumber: data.phoneNumber ?? data.value?.phoneNumber,
+            });
+            this.isFetching = false;
+            this.cdr.detectChanges();
+        },
+        error: (err: unknown) => {
+            this.isFetching = false;
+            this.errorHandler.handleError(err, 'فشل تحميل بيانات الملف الشخصي');
+            this.cdr.detectChanges();
         }
+    });
+}
+   onSubmit(): void {
+    if (this.updateForm.invalid) {
+        this.updateForm.markAllAsTouched();
+        return;
+    }
 
-        // سحب القيم الحالية من الفورم
-        const currentFullName = this.updateForm.get('fullName')?.value;
-        const currentPhoneNumber = this.updateForm.get('phoneNumber')?.value;
+    this.isLoading = true;
+    const role = typeof window !== 'undefined' ? localStorage.getItem('roleName') : null;
+    const payload = this.updateForm.getRawValue();
+    
+    let request$: Observable<any>;
 
-        // 3. التحقق إذا كانت البيانات لم تتغير (المقارنة)
-        if (currentFullName === this.originalData.fullName && currentPhoneNumber === this.originalData.phoneNumber) {
-            // إظهار رسالة للمستخدم إنه معملش تعديلات
+    if (role === 'Patient') {
+        request$ = this.profileService.updatePatientProfile(payload);
+    } else if (role === 'Pharmacist') {
+        request$ = this.profileService.updatePharmacistProfile(payload); // تأكد من وجود هذه الدالة في الـ ProfileService
+    } else if (role === 'Admin') {
+        request$ = this.profileService.updateSystemAdminProfile(payload);
+    }
+    else{
+        request$ = this.profileService.updateProfile(payload);
+    }
+    request$.subscribe({
+        next: () => {
+            this.isLoading = false;
             this.messageService.add({
-                severity: 'info', // لون أزرق أو تنبيه خفيف بدل الأخضر بتاع النجاح
-                summary: 'لا توجد تعديلات',
-                detail: 'لم تقم بإجراء أي تعديلات جديدة للحفظ.',
+                severity: 'success',
+                summary: 'تم تحديث الملف الشخصي',
+                detail: 'تم تحديث ملفك الشخصي بنجاح.',
                 life: 3000
             });
 
-            // توجيهه لصفحة البروفايل من غير ما نكلم الباك إند
             this.router.navigate(['/profile']);
-            return;
+        },
+        error: (err: unknown) => {
+            this.isLoading = false;
+            this.errorHandler.handleError(err, 'فشل تحديث الملف الشخصي');
+            this.cdr.detectChanges();
         }
-
-        this.isLoading = true;
-
-        const payload = {
-            fullName: currentFullName,
-            phoneNumber: currentPhoneNumber
-        };
-
-        let request$: Observable<any>;
-        if (this.isPatient) {
-            request$ = this.profileService.updatePatientProfile(payload);
-        } else if (this.isPharmacyAdmin) {
-            request$ = this.profileService.updatePharmacyAdminProfile(payload);
-        } else {
-            request$ = this.profileService.updateProfile(payload);
-        }
-
-        request$.subscribe({
-            next: () => {
-                this.isLoading = false;
-                this.messageService.add({
-                    severity: 'success',
-                    summary: 'تم تحديث الملف الشخصي',
-                    detail: 'تم تحديث ملفك الشخصي بنجاح.',
-                    life: 3000
-                });
-
-                this.router.navigate(['/profile']);
-            },
-            error: (err: unknown) => {
-                this.isLoading = false;
-                if ((err as any)?.status === 409) {
-                    this.errorHandler.handleError(err, 'رقم الهاتف مستخدم بالفعل بحساب آخر.');
-                } else {
-                    this.errorHandler.handleError(err, 'فشل تحديث الملف الشخصي');
-                }
-                this.cdr.detectChanges();
-            }
-        });
-    }
+    });
+}
+    
 }
