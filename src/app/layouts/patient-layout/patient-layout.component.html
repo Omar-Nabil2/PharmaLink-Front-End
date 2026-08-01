@@ -24,7 +24,11 @@
             <i class="pi pi-upload text-sm"></i>
             <span>رفع روشتة</span>
           </a>
-          <a routerLink="/patient/image-search" class="btn-secondary gap-2">
+          <a routerLink="/patient/ai-assistant" class="btn-secondary gap-2">
+            <i class="pi pi-bolt text-sm"></i>
+            <span>المساعد الذكي</span>
+          </a>
+          <a routerLink="/patient/image-search" class="btn-subtle gap-2">
             <i class="pi pi-camera text-sm"></i>
             <span>فحص دواء</span>
           </a>
@@ -55,7 +59,8 @@
 
         <div class="grid grid-cols-1 gap-2 pt-2">
           <a routerLink="/patient/prescriptions/upload" (click)="menuOpen = false" class="btn-primary w-full justify-center">رفع روشتة</a>
-          <a routerLink="/patient/image-search" (click)="menuOpen = false" class="btn-secondary w-full justify-center">فحص صورة دواء</a>
+          <a routerLink="/patient/ai-assistant" (click)="menuOpen = false" class="btn-secondary w-full justify-center">المساعد الذكي</a>
+          <a routerLink="/patient/image-search" (click)="menuOpen = false" class="btn-subtle w-full justify-center">فحص صورة دواء</a>
           <a routerLink="/patient/cart" (click)="menuOpen = false" class="btn-subtle w-full justify-center">سلة المشتريات</a>
         </div>
       </div>

@@ -1,0 +1,401 @@
+<div class="ai-assistant-page" dir="ltr">
+
+  <!-- ══════════════ PAGE HEADER ══════════════ -->
+  <div class="page-header">
+    <div class="header-glow"></div>
+    <div class="header-content">
+      <div class="header-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23-.693L5 14.5m14.8.8l1.402 1.402c1 1 .03 2.798-1.442 2.798H4.24c-1.47 0-2.441-1.798-1.442-2.798L4.2 15.3" />
+        </svg>
+      </div>
+      <div>
+        <h1 class="header-title">AI Drug Assistant</h1>
+        <p class="header-subtitle">Powered by PharmaLink Intelligence</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ TAB BAR ══════════════ -->
+  <div class="tab-bar">
+    <button class="tab-btn" [class.active]="activeTab() === 'chat'" (click)="setTab('chat')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" />
+      </svg>
+      <span>AI Chat</span>
+      <span class="tab-pill" *ngIf="messages().length > 1">{{ messages().length - 1 }}</span>
+    </button>
+
+    <button class="tab-btn" [class.active]="activeTab() === 'drug-info'" (click)="setTab('drug-info')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23-.693L5 14.5m14.8.8l1.402 1.402c1 1 .03 2.798-1.442 2.798H4.24c-1.47 0-2.441-1.798-1.442-2.798L4.2 15.3" />
+      </svg>
+      <span>Drug Info</span>
+    </button>
+
+    <button class="tab-btn" [class.active]="activeTab() === 'interactions'" (click)="setTab('interactions')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+      </svg>
+      <span>Interaction Check</span>
+    </button>
+  </div>
+
+  <!-- ══════════════ TAB CONTENT ══════════════ -->
+
+  <!-- ─── CHAT TAB ─── -->
+  <div class="tab-content" *ngIf="activeTab() === 'chat'">
+    <div class="chat-container">
+
+      <!-- Messages Area -->
+      <div class="chat-messages" #chatScroll>
+        <div *ngFor="let msg of messages(); let i = index"
+             class="message-wrapper"
+             [class.user-wrapper]="msg.role === 'user'"
+             [class.ai-wrapper]="msg.role === 'assistant'">
+
+          <!-- AI Avatar -->
+          <div class="ai-avatar" *ngIf="msg.role === 'assistant'">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A2.5 2.5 0 0 0 5 15.5 2.5 2.5 0 0 0 7.5 18 2.5 2.5 0 0 0 10 15.5 2.5 2.5 0 0 0 7.5 13m9 0a2.5 2.5 0 0 0-2.5 2.5 2.5 2.5 0 0 0 2.5 2.5 2.5 2.5 0 0 0 2.5-2.5 2.5 2.5 0 0 0-2.5-2.5z"/>
+            </svg>
+          </div>
+
+          <!-- Bubble -->
+          <div class="bubble" [class.user-bubble]="msg.role === 'user'" [class.ai-bubble]="msg.role === 'assistant'">
+            <!-- Typing dots (streaming placeholder) -->
+            <div class="typing-dots" *ngIf="msg.isStreaming && !msg.content">
+              <span></span><span></span><span></span>
+            </div>
+            <p *ngIf="msg.content" [innerHTML]="formatMessageContent(msg.content)"></p>
+            <!-- Streaming cursor -->
+            <span class="stream-cursor" *ngIf="msg.isStreaming && msg.content"></span>
+          </div>
+
+          <!-- User Avatar -->
+          <div class="user-avatar" *ngIf="msg.role === 'user'">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Error Banner -->
+      <div class="error-banner" *ngIf="chatError()" [@shake]>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        {{ chatError() }}
+      </div>
+
+      <!-- Input Area -->
+      <div class="chat-input-area">
+        <button class="clear-btn" (click)="clearChat()" title="Clear chat">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+          </svg>
+        </button>
+        <textarea
+          class="chat-input"
+          [(ngModel)]="chatInput"
+          (keydown)="onKeydown($event)"
+          placeholder="Ask about any medication... (Enter to send, Shift+Enter for new line)"
+          rows="1"
+          [disabled]="isChatLoading()">
+        </textarea>
+        <button class="send-btn" (click)="sendMessage()" [disabled]="isChatLoading() || !chatInput.trim()">
+          <span *ngIf="!isChatLoading()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+            </svg>
+          </span>
+          <span class="spinner" *ngIf="isChatLoading()"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── DRUG INFO TAB ─── -->
+  <div class="tab-content" *ngIf="activeTab() === 'drug-info'">
+    <div class="drug-info-container">
+
+      <!-- Search Bar -->
+      <div class="search-wrapper">
+        <div class="search-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+        </div>
+        <input
+          class="search-input"
+          type="text"
+          [(ngModel)]="drugSearchQuery"
+          (keydown)="onDrugKeydown($event)"
+          placeholder="Enter drug name (e.g. Aspirin, Amoxicillin, Paracetamol)..."
+        />
+        <button class="search-btn" (click)="searchDrug()" [disabled]="isDrugLoading() || !drugSearchQuery.trim()">
+          <span *ngIf="!isDrugLoading()">Search</span>
+          <span class="spinner" *ngIf="isDrugLoading()"></span>
+        </button>
+      </div>
+
+      <!-- Loading skeleton -->
+      <div class="skeleton-card" *ngIf="isDrugLoading()">
+        <div class="skeleton-row wide"></div>
+        <div class="skeleton-row medium"></div>
+        <div class="skeleton-row short"></div>
+        <div class="skeleton-row medium"></div>
+      </div>
+
+      <!-- Error -->
+      <div class="error-banner shake" *ngIf="drugError()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        {{ drugError() }}
+      </div>
+
+      <!-- Empty state -->
+      <div class="empty-state" *ngIf="!drugInfo() && !isDrugLoading() && !drugError()">
+        <div class="empty-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23-.693L5 14.5m14.8.8l1.402 1.402c1 1 .03 2.798-1.442 2.798H4.24c-1.47 0-2.441-1.798-1.442-2.798L4.2 15.3" />
+          </svg>
+        </div>
+        <h3>Search for a Drug</h3>
+        <p>Enter the brand or generic name of any medication to get detailed information.</p>
+      </div>
+
+      <!-- Drug Result Card -->
+      <div class="drug-card fade-in" *ngIf="drugInfo() as drug">
+
+        <!-- Header -->
+        <div class="drug-card-header">
+          <div class="drug-name-block">
+            <h2 class="drug-name">{{ drug.drugName }}</h2>
+            <p class="drug-generic">Generic: <strong>{{ drug.genericName || 'N/A' }}</strong></p>
+          </div>
+          <div class="drug-badges">
+            <span class="badge badge-category">{{ drug.category }}</span>
+            <span class="badge badge-rx" *ngIf="drug.requiresPrescription">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px"><path stroke-linecap="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+              Prescription Required
+            </span>
+            <span class="badge badge-otc" *ngIf="!drug.requiresPrescription">OTC</span>
+            <span class="badge badge-available" *ngIf="drug.isAvailableInSystem">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px"><path stroke-linecap="round" d="M5 13l4 4L19 7"/></svg>
+              In System
+            </span>
+            <span class="badge badge-unavailable" *ngIf="!drug.isAvailableInSystem">Not in System</span>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <p class="drug-description">{{ drug.description }}</p>
+
+        <!-- Accordion Sections -->
+        <div class="accordion">
+
+          <div class="accordion-item" [class.open]="isSectionExpanded('indications')">
+            <button class="accordion-header" (click)="toggleSection('indications')">
+              <span class="accordion-icon green">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M5 13l4 4L19 7"/></svg>
+              </span>
+              <span>Indications</span>
+              <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M19 9l-7 7-7-7"/></svg>
+            </button>
+            <div class="accordion-body" *ngIf="isSectionExpanded('indications')">
+              <p>{{ drug.indications }}</p>
+            </div>
+          </div>
+
+          <div class="accordion-item" [class.open]="isSectionExpanded('contraindications')">
+            <button class="accordion-header" (click)="toggleSection('contraindications')">
+              <span class="accordion-icon red">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M6 18L18 6M6 6l12 12"/></svg>
+              </span>
+              <span>Contraindications</span>
+              <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M19 9l-7 7-7-7"/></svg>
+            </button>
+            <div class="accordion-body" *ngIf="isSectionExpanded('contraindications')">
+              <p>{{ drug.contraindications }}</p>
+            </div>
+          </div>
+
+          <div class="accordion-item" [class.open]="isSectionExpanded('sideEffects')">
+            <button class="accordion-header" (click)="toggleSection('sideEffects')">
+              <span class="accordion-icon amber">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/></svg>
+              </span>
+              <span>Side Effects</span>
+              <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M19 9l-7 7-7-7"/></svg>
+            </button>
+            <div class="accordion-body" *ngIf="isSectionExpanded('sideEffects')">
+              <p>{{ drug.sideEffects }}</p>
+            </div>
+          </div>
+
+          <div class="accordion-item" [class.open]="isSectionExpanded('dosage')">
+            <button class="accordion-header" (click)="toggleSection('dosage')">
+              <span class="accordion-icon blue">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25z"/></svg>
+              </span>
+              <span>Dosage & Administration</span>
+              <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M19 9l-7 7-7-7"/></svg>
+            </button>
+            <div class="accordion-body" *ngIf="isSectionExpanded('dosage')">
+              <p>{{ drug.dosage }}</p>
+            </div>
+          </div>
+
+          <div class="accordion-item" [class.open]="isSectionExpanded('storage')">
+            <button class="accordion-header" (click)="toggleSection('storage')">
+              <span class="accordion-icon purple">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5m8.25 3v6.75m0 0l-3-3m3 3l3-3M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z"/></svg>
+              </span>
+              <span>Storage Instructions</span>
+              <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M19 9l-7 7-7-7"/></svg>
+            </button>
+            <div class="accordion-body" *ngIf="isSectionExpanded('storage')">
+              <p>{{ drug.storageInstructions }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── INTERACTIONS TAB ─── -->
+  <div class="tab-content" *ngIf="activeTab() === 'interactions'">
+    <div class="interaction-container">
+
+      <!-- Chip Input -->
+      <div class="chip-section glass-card">
+        <h3 class="section-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:20px;height:20px">
+            <path stroke-linecap="round" d="M12 4.5v15m7.5-7.5h-15"/>
+          </svg>
+          Add Drug Names
+        </h3>
+        <p class="section-hint">Add at least 2 drug names, then click Check Interactions</p>
+
+        <div class="chip-input-wrapper">
+          <div class="chips-area">
+            <div class="chip" *ngFor="let drug of drugChips()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:12px;height:12px">
+                <path stroke-linecap="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23-.693L5 14.5m14.8.8l1.402 1.402c1 1 .03 2.798-1.442 2.798H4.24c-1.47 0-2.441-1.798-1.442-2.798L4.2 15.3"/>
+              </svg>
+              {{ drug }}
+              <button class="chip-remove" (click)="removeDrugChip(drug)" aria-label="Remove">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:10px;height:10px"><path stroke-linecap="round" d="M6 18L18 6M6 6l12 12"/></svg>
+              </button>
+            </div>
+            <input
+              class="chip-input"
+              type="text"
+              [(ngModel)]="drugChipInput"
+              (keydown)="onChipKeydown($event)"
+              placeholder="Type drug name and press Enter..."
+            />
+          </div>
+          <button class="add-chip-btn" (click)="addDrugChip()" [disabled]="!drugChipInput.trim()">Add</button>
+        </div>
+
+        <div class="check-row">
+          <span class="drug-count" *ngIf="drugChips().length > 0">
+            {{ drugChips().length }} drug{{ drugChips().length !== 1 ? 's' : '' }} added
+          </span>
+          <button class="check-btn" (click)="checkInteractions()" [disabled]="isInteractionLoading() || drugChips().length < 2">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" *ngIf="!isInteractionLoading()">
+              <path stroke-linecap="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <span class="spinner white" *ngIf="isInteractionLoading()"></span>
+            {{ isInteractionLoading() ? 'Checking...' : 'Check Interactions' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Error -->
+      <div class="error-banner shake" *ngIf="interactionError()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        {{ interactionError() }}
+      </div>
+
+      <!-- Results -->
+      <div class="interaction-results fade-in" *ngIf="interactionResult() as result">
+
+        <!-- Overall Banner -->
+        <div class="overall-banner" [ngClass]="getOverallSeverityClass(result)">
+          <div class="banner-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" *ngIf="!result.hasSevereInteractions">
+              <path stroke-linecap="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" *ngIf="result.hasSevereInteractions">
+              <path stroke-linecap="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
+            </svg>
+          </div>
+          <div>
+            <div class="banner-title">{{ result.hasSevereInteractions ? 'Severe Interactions Detected!' : 'Interaction Check Complete' }}</div>
+            <div class="banner-summary">{{ result.summary }}</div>
+          </div>
+        </div>
+
+        <!-- Checked Drugs -->
+        <div class="checked-drugs">
+          <span class="checked-label">Checked drugs:</span>
+          <span class="checked-chip" *ngFor="let d of result.checkedDrugs">{{ d }}</span>
+        </div>
+
+        <!-- No Interactions -->
+        <div class="no-interactions" *ngIf="result.interactions.length === 0">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <p>No interactions found between these drugs.</p>
+        </div>
+
+        <!-- Interaction Cards -->
+        <div class="interaction-card fade-in" *ngFor="let interaction of result.interactions" [ngClass]="getSeverityClass(interaction.severity)">
+          <div class="interaction-header">
+            <div class="drug-pair">
+              <span class="drug-tag">{{ interaction.drug1 }}</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;flex-shrink:0">
+                <path stroke-linecap="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5"/>
+              </svg>
+              <span class="drug-tag">{{ interaction.drug2 }}</span>
+            </div>
+            <span class="severity-badge">{{ getSeverityLabel(interaction.severity) }}</span>
+          </div>
+          <p class="interaction-description">{{ interaction.description }}</p>
+          <div class="interaction-recommendation">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;flex-shrink:0">
+              <path stroke-linecap="round" d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.478a12.06 12.06 0 01-4.5 0m3.75 2.383a14.406 14.406 0 01-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 10-7.517 0c.85.493 1.509 1.333 1.509 2.316V18"/>
+            </svg>
+            <p>{{ interaction.recommendation }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty state -->
+      <div class="empty-state" *ngIf="!interactionResult() && !isInteractionLoading() && !interactionError()">
+        <div class="empty-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+            <path stroke-linecap="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5"/>
+          </svg>
+        </div>
+        <h3>Check Drug Interactions</h3>
+        <p>Add the drugs you want to check and click the button to see potential interactions.</p>
+      </div>
+
+    </div>
+  </div>
+
+</div>

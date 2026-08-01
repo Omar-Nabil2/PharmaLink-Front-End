@@ -13,6 +13,7 @@ export class PatientLayoutComponent {
   patientNavItems = [
     { label: 'الرئيسية', routerLink: '/patient/dashboard' },
     { label: 'الأدوية', routerLink: '/patient/drugs' },
+    { label: 'المساعد الذكي', routerLink: '/patient/ai-assistant' },
     { label: 'روشتاتي', routerLink: '/patient/prescriptions' },
     { label: 'استشارة صيدلي', routerLink: '/patient/medical-inquiries' },
     { label: 'طلباتي', routerLink: '/patient/orders' },
