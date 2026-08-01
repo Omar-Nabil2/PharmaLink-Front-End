@@ -81,7 +81,8 @@ export class AiAssistantService {
    */
   getDrugInfo(drugName: string): Observable<DrugInfoResult> {
     return this.http.get<DrugInfoResult>(
-      `${this.baseUrl}/assistant/drug-info/${encodeURIComponent(drugName)}`,
+      `${this.baseUrl}/assistant/drug-info`,
+      { params: { drugName } }
     );
   }
 
