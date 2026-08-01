@@ -11,17 +11,19 @@ import {
   GetPharmacyBranchParamRequest,
   PaginatedList,
   BranchScheduleResponseDto,
-  UpdateBranchScheduleRequest
+  UpdateBranchScheduleRequest,
 } from './pharmacy-branch.model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class PharmacyBranchService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = `${environment.baseUrl}/pharmacies/branches`;
+  private readonly baseUrl = `${environment.localUrl}/pharmacies/branches`;
 
-  getBranches(params: GetPharmacyBranchParamRequest): Observable<PaginatedList<GetPharmacyBranchResponseDTO>> {
+  getBranches(
+    params: GetPharmacyBranchParamRequest,
+  ): Observable<PaginatedList<GetPharmacyBranchResponseDTO>> {
     let httpParams = new HttpParams()
       .set('pageNumber', params.pageNumber.toString())
       .set('pageSize', params.pageSize.toString());
@@ -30,7 +32,9 @@ export class PharmacyBranchService {
       httpParams = httpParams.set('search', params.search);
     }
 
-    return this.http.get<PaginatedList<GetPharmacyBranchResponseDTO>>(this.baseUrl, { params: httpParams });
+    return this.http.get<PaginatedList<GetPharmacyBranchResponseDTO>>(this.baseUrl, {
+      params: httpParams,
+    });
   }
 
   getBranchById(id: string): Observable<PharmacyBranchResponseDTO> {
@@ -58,8 +62,13 @@ export class PharmacyBranchService {
     return this.http.get<BranchScheduleResponseDto>(`${this.baseUrl}/${branchId}/schedule`);
   }
 
-  upsertBranchSchedule(branchId: string, request: UpdateBranchScheduleRequest): Observable<BranchScheduleResponseDto> {
-    return this.http.put<BranchScheduleResponseDto>(`${this.baseUrl}/${branchId}/schedule`, request);
+  upsertBranchSchedule(
+    branchId: string,
+    request: UpdateBranchScheduleRequest,
+  ): Observable<BranchScheduleResponseDto> {
+    return this.http.put<BranchScheduleResponseDto>(
+      `${this.baseUrl}/${branchId}/schedule`,
+      request,
+    );
   }
 }
-

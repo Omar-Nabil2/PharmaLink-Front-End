@@ -62,12 +62,11 @@ export class PharmacistsListComponent implements OnInit, OnDestroy {
   // ── Create form ────────────────────────────────────────────────────
   showCreateModal = false;
   isSaving = false;
-  createForm: CreatePharmacistRequest & { confirmPassword: string } = {
+  createForm: CreatePharmacistRequest = {
     fullName: '',
     email: '',
     phoneNumber: '',
     password: '',
-    confirmPassword: '',
     branchId: '',
   };
   createErrors: FieldErrors = {};
@@ -214,7 +213,6 @@ export class PharmacistsListComponent implements OnInit, OnDestroy {
       email: '',
       phoneNumber: '',
       password: '',
-      confirmPassword: '',
       branchId: this.branches[0]?.branchId ?? '',
     };
     this.createErrors = {};
@@ -234,7 +232,6 @@ export class PharmacistsListComponent implements OnInit, OnDestroy {
     const email = this.createForm.email.trim();
     const phone = this.createForm.phoneNumber.trim();
     const pass = this.createForm.password;
-    const confirm = this.createForm.confirmPassword;
     const branch = this.createForm.branchId;
 
     if (!name) {
@@ -271,12 +268,6 @@ export class PharmacistsListComponent implements OnInit, OnDestroy {
       e['password'] = 'يجب أن تحتوي كلمة المرور على رقم واحد على الأقل';
     } else if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(pass)) {
       e['password'] = 'يجب أن تحتوي كلمة المرور على رمز خاص واحد على الأقل';
-    }
-
-    if (!confirm) {
-      e['confirmPassword'] = 'تأكيد كلمة المرور مطلوب';
-    } else if (pass && confirm !== pass) {
-      e['confirmPassword'] = 'كلمة المرور وتأكيدها غير متطابقتين';
     }
 
     if (!branch) {
