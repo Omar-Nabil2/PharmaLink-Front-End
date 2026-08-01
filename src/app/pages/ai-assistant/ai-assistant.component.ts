@@ -12,8 +12,7 @@ import { FormsModule } from '@angular/forms';
 import { AiAssistantService } from '@core/services/ai-assistant.service';
 import { DrugService } from '@core/services/drug.service';
 import { DrugDto } from '@core/interfaces/drug.interface';
-import { Subject, Subscription } from 'rxjs';
-import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
+import { AutoCompleteModule } from 'primeng/autocomplete';
 import {
   ChatMessage,
   DrugInfoResult,
@@ -26,7 +25,7 @@ type ActiveTab = 'chat' | 'drug-info' | 'interactions';
 @Component({
   selector: 'app-ai-assistant',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, AutoCompleteModule],
   templateUrl: './ai-assistant.component.html',
   styleUrl: './ai-assistant.component.scss',
 })
@@ -174,101 +173,59 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
   }
 
   // ── Drug Info Tab ──────────────────────────────────────────────────────────
-  drugSearchQuery = '';
+  drugSearchQuery: any = '';
   drugInfo = signal<DrugInfoResult | null>(null);
   isDrugLoading = signal(false);
   drugError = signal('');
   expandedSections = signal<Record<string, boolean>>({});
 
-  drugSearchSubject = new Subject<string>();
   drugSuggestions = signal<DrugDto[]>([]);
-  showDrugSuggestions = signal(false);
 
   // ── Interactions Tab ───────────────────────────────────────────────────────
-  drugChipInput = '';
+  drugChipInput: any = '';
   drugChips = signal<string[]>([]);
   interactionResult = signal<InteractionCheckResult | null>(null);
   isInteractionLoading = signal(false);
   interactionError = signal('');
 
-  interactionSearchSubject = new Subject<string>();
   interactionSuggestions = signal<DrugDto[]>([]);
-  showInteractionSuggestions = signal(false);
 
-  private subs = new Subscription();
+  ngOnInit(): void {}
 
-  ngOnInit(): void {
-    this.subs.add(
-      this.drugSearchSubject.pipe(
-        debounceTime(300),
-        distinctUntilChanged(),
-        switchMap(term => {
-          if (!term.trim()) return [];
-          return this.drugService.searchDrugs({ searchValue: term, pageNumber: 1, pageSize: 10 });
-        })
-      ).subscribe({
-        next: (res: any) => {
-          this.drugSuggestions.set(res.items || []);
-          this.showDrugSuggestions.set(true);
-        },
-        error: () => this.drugSuggestions.set([])
-      })
-    );
-
-    this.subs.add(
-      this.interactionSearchSubject.pipe(
-        debounceTime(300),
-        distinctUntilChanged(),
-        switchMap(term => {
-          if (!term.trim()) return [];
-          return this.drugService.searchDrugs({ searchValue: term, pageNumber: 1, pageSize: 10 });
-        })
-      ).subscribe({
-        next: (res: any) => {
-          this.interactionSuggestions.set(res.items || []);
-          this.showInteractionSuggestions.set(true);
-        },
-        error: () => this.interactionSuggestions.set([])
-      })
-    );
-  }
-
-  onDrugSearchInput(event: Event): void {
-    const val = (event.target as HTMLInputElement).value;
-    this.drugSearchQuery = val;
-    if (val.trim().length >= 1) {
-      this.drugSearchSubject.next(val);
-    } else {
-      this.showDrugSuggestions.set(false);
+  filterDrugs(event: any): void {
+    const query = event.query;
+    if (!query || query.trim().length === 0) {
       this.drugSuggestions.set([]);
+      this.interactionSuggestions.set([]);
+      return;
     }
+    this.drugService.searchDrugs({ searchValue: query, pageNumber: 1, pageSize: 10 }).subscribe({
+      next: (res) => {
+        this.drugSuggestions.set(res.items || []);
+        this.interactionSuggestions.set(res.items || []);
+      },
+      error: () => {
+        this.drugSuggestions.set([]);
+        this.interactionSuggestions.set([]);
+      }
+    });
   }
 
-  selectDrugSuggestion(drug: DrugDto): void {
+  onDrugSelect(event: any): void {
+    // PrimeNG AutoComplete sends the selected object
+    const drug: DrugDto = event.value;
     this.drugSearchQuery = drug.brandName;
-    this.showDrugSuggestions.set(false);
     this.searchDrug();
   }
 
-  onInteractionSearchInput(event: Event): void {
-    const val = (event.target as HTMLInputElement).value;
-    this.drugChipInput = val;
-    if (val.trim().length >= 1) {
-      this.interactionSearchSubject.next(val);
-    } else {
-      this.showInteractionSuggestions.set(false);
-      this.interactionSuggestions.set([]);
-    }
-  }
-
-  selectInteractionSuggestion(drug: DrugDto): void {
+  onInteractionDrugSelect(event: any): void {
+    const drug: DrugDto = event.value;
     this.drugChipInput = drug.brandName;
-    this.showInteractionSuggestions.set(false);
     this.addDrugChip();
   }
 
   searchDrug(): void {
-    const name = this.drugSearchQuery.trim();
+    const name = typeof this.drugSearchQuery === 'string' ? this.drugSearchQuery.trim() : (this.drugSearchQuery?.brandName || '');
     if (!name) return;
 
     this.isDrugLoading.set(true);
@@ -310,7 +267,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
   interactionError = signal('');
 
   addDrugChip(): void {
-    const name = this.drugChipInput.trim();
+    const name = typeof this.drugChipInput === 'string' ? this.drugChipInput.trim() : (this.drugChipInput?.brandName || '');
     if (!name) return;
     if (this.drugChips().includes(name)) {
       this.drugChipInput = '';
@@ -407,7 +364,5 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
     return content.replace(/\n/g, '<br>');
   }
 
-  ngOnDestroy(): void {
-    this.subs.unsubscribe();
-  }
+  ngOnDestroy(): void {}
 }
