@@ -7,12 +7,14 @@ import {
   ViewChild,
   inject,
   signal,
+  effect,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AiAssistantService } from '@core/services/ai-assistant.service';
 import { SearchService } from '@core/services/search.service';
 import { MedicineSearchDTO } from '@pages/inventory/search.model';
 import { AutoCompleteModule } from 'primeng/autocomplete';
+import { marked } from 'marked';
 import {
   ChatMessage,
   DrugInfoResult,
@@ -35,32 +37,60 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
 
   // ── Tabs ──────────────────────────────────────────────────────────────────
   activeTab = signal<ActiveTab>('chat');
+  isSidebarOpen = signal<boolean>(true);
 
   setTab(tab: ActiveTab): void {
     this.activeTab.set(tab);
+    // Optionally close sidebar on mobile when a tab is selected
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      this.isSidebarOpen.set(false);
+    }
+  }
+
+  toggleSidebar(): void {
+    this.isSidebarOpen.update((val) => !val);
   }
 
   // ── Chat Tab ──────────────────────────────────────────────────────────────
   @ViewChild('chatScroll') chatScroll!: ElementRef<HTMLDivElement>;
 
-  messages = signal<ChatMessage[]>([
-    {
-      role: 'assistant',
-      content:
-        'مرحباً! أنا مساعد فارما لينك الذكي 🤖\nيمكنني مساعدتك في:\n• معلومات الأدوية\n• تفاعلات الأدوية\n• الجرعات والتحذيرات\n\nاسألني أي سؤال عن الأدوية!',
-    },
-  ]);
+  messages = signal<ChatMessage[]>(this.loadMessages());
   chatInput = '';
   isChatLoading = signal(false);
-  chatError = signal('');
   isStreaming = signal(false);
+
+  constructor() {
+    effect(() => {
+      // Auto-save to localStorage whenever messages change
+      if (typeof window !== 'undefined') {
+        const msgsToSave = this.messages().filter(m => !m.isError && !m.isStreaming);
+        localStorage.setItem('ai_chat_history', JSON.stringify(msgsToSave));
+      }
+    });
+  }
+
+  private loadMessages(): ChatMessage[] {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('ai_chat_history');
+      if (saved) {
+        try {
+          return JSON.parse(saved);
+        } catch {}
+      }
+    }
+    return [
+      {
+        role: 'assistant',
+        content: 'مرحباً! أنا دكتور زياد 👨‍⚕️ (الصيدلي الذكي الخاص بفارما لينك)\nيمكنني مساعدتك في:\n• معلومات الأدوية\n• تفاعلات الأدوية\n• الجرعات والتحذيرات\n\nاسألني أي سؤال عن الأدوية!',
+      },
+    ];
+  }
 
   async sendMessage(): Promise<void> {
     const text = this.chatInput.trim();
     if (!text || this.isChatLoading()) return;
 
     this.chatInput = '';
-    this.chatError.set('');
 
     // Push user message
     const updatedMsgs = [
@@ -69,9 +99,9 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
     ];
     this.messages.set(updatedMsgs);
 
-    // Build history (exclude first system greeting)
+    // Build history (exclude first system greeting and errors)
     const history = updatedMsgs
-      .filter((m) => m.content !== updatedMsgs[0]?.content || updatedMsgs.indexOf(m) !== 0)
+      .filter((m) => m.content !== updatedMsgs[0]?.content && !m.isError)
       .map((m) => ({ role: m.role, content: m.content }));
 
     // Add placeholder for AI reply
@@ -82,9 +112,10 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
     ]);
     this.isChatLoading.set(true);
     this.isStreaming.set(true);
+    this.scrollToBottom();
 
     try {
-      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+      const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
       let fullReply = '';
 
       for await (const chunk of this.service.chatStream(text, history, token)) {
@@ -114,7 +145,9 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
     } catch {
       // Fall back to non-streaming
       try {
-        const history2 = updatedMsgs.map((m) => ({ role: m.role, content: m.content }));
+        const history2 = updatedMsgs
+          .filter(m => !m.isError)
+          .map((m) => ({ role: m.role, content: m.content }));
         this.service.chat(text, history2).subscribe({
           next: (res) => {
             const current = this.messages();
@@ -126,19 +159,34 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
               timestamp: new Date(),
             };
             this.messages.set(updated);
+            this.scrollToBottom();
           },
           error: (err) => {
             const msg = err?.error?.message || 'تعذر الاتصال بالمساعد الذكي.';
-            this.chatError.set(msg);
             const current = this.messages();
-            const updated = current.slice(0, placeholderIdx);
+            const updated = [...current];
+            updated[placeholderIdx] = {
+              role: 'assistant',
+              content: msg,
+              isStreaming: false,
+              isError: true,
+              timestamp: new Date(),
+            };
             this.messages.set(updated);
+            this.scrollToBottom();
           },
         });
       } catch {
-        this.chatError.set('تعذر الاتصال بالمساعد الذكي.');
         const current = this.messages();
-        this.messages.set(current.slice(0, placeholderIdx));
+        const updated = [...current];
+        updated[placeholderIdx] = {
+          role: 'assistant',
+          content: 'تعذر الاتصال بالمساعد الذكي.',
+          isStreaming: false,
+          isError: true,
+          timestamp: new Date(),
+        };
+        this.messages.set(updated);
       }
     } finally {
       this.isChatLoading.set(false);
@@ -158,16 +206,18 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
     this.messages.set([
       {
         role: 'assistant',
-        content: 'مرحباً! أنا مساعد فارما لينك الذكي 🤖\nيمكنني مساعدتك في:\n• معلومات الأدوية\n• تفاعلات الأدوية\n• الجرعات والتحذيرات\n\nاسألني أي سؤال عن الأدوية!',
+        content: 'مرحباً! أنا دكتور زياد 👨‍⚕️ (الصيدلي الذكي الخاص بفارما لينك)\nيمكنني مساعدتك في:\n• معلومات الأدوية\n• تفاعلات الأدوية\n• الجرعات والتحذيرات\n\nاسألني أي سؤال عن الأدوية!',
       },
     ]);
-    this.chatError.set('');
   }
 
   private scrollToBottom(): void {
     setTimeout(() => {
       if (this.chatScroll?.nativeElement) {
-        this.chatScroll.nativeElement.scrollTop = this.chatScroll.nativeElement.scrollHeight;
+        this.chatScroll.nativeElement.scrollTo({
+          top: this.chatScroll.nativeElement.scrollHeight,
+          behavior: 'smooth'
+        });
       }
     }, 50);
   }
@@ -327,18 +377,18 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
     }
   }
 
-  getSeverityLabel(severity: DrugInteraction['severity']): string {
+  getSeverityLabel(severity: string): string {
     switch (severity) {
       case 'None':
-        return 'لا يوجد';
+        return 'لا توجد تفاعلات';
       case 'Minor':
-        return 'خفيف';
+        return 'تفاعل طفيف';
       case 'Moderate':
-        return 'متوسط';
+        return 'تفاعل متوسط';
       case 'Severe':
-        return 'شديد';
+        return 'تفاعل خطير';
       case 'Contraindicated':
-        return 'ممنوع';
+        return 'ممنوع الاستخدام معاً';
       default:
         return severity;
     }
@@ -354,8 +404,9 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
     return 'banner-safe';
   }
 
-  formatMessageContent(content: string): string {
-    return content.replace(/\n/g, '<br>');
+  parseMarkdown(content: string): string {
+    if (!content) return '';
+    return marked.parse(content, { async: false }) as string;
   }
 
   ngOnDestroy(): void {}

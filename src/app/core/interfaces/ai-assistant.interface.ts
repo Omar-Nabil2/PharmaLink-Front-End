@@ -3,6 +3,7 @@ export interface ChatMessage {
   content: string;
   timestamp?: Date;
   isStreaming?: boolean;
+  isError?: boolean;
 }
 
 export interface ChatRequest {
@@ -17,6 +18,7 @@ export interface ChatResponse {
 
 export interface DrugInfoResult {
   drugName: string;
+  arabicName?: string;
   genericName: string;
   category: string;
   description: string;

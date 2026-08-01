@@ -1,124 +1,187 @@
-<div class="space-y-10" dir="rtl">
-  <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-    <div class="lg:col-span-7 bg-white border border-surface-pressed rounded-3xl p-7 md:p-10 flex flex-col justify-center">
-      <p class="text-sm font-black text-primary mb-3">فارما لينك للمريض</p>
-      <h1 class="text-3xl md:text-5xl font-black text-ink leading-tight">
-        اطلب علاجك من غير بحث طويل
-      </h1>
-      <p class="text-base md:text-lg text-mute leading-8 mt-5 max-w-2xl">
-        ارفع الروشتة أو صوّر الدواء، وسيب النظام يساعدك في التعرف على الأدوية ومتابعة مراجعة الصيدلي قبل ما تضيفها للسلة.
-      </p>
+<div class="space-y-12" dir="rtl">
+  
+  <!-- Hero Section -->
+  <section class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+    <!-- Main Welcome Card -->
+    <div class="lg:col-span-7 bg-gradient-to-bl from-white to-slate-50 border border-gray-100 rounded-[2rem] p-8 md:p-12 flex flex-col justify-center relative overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+      <!-- Decorative background elements -->
+      <div class="absolute top-0 right-0 w-64 h-64 bg-teal-50 rounded-full blur-3xl opacity-60 -translate-y-1/2 translate-x-1/3"></div>
+      <div class="absolute bottom-0 left-0 w-48 h-48 bg-cyan-50 rounded-full blur-3xl opacity-60 translate-y-1/3 -translate-x-1/3"></div>
+      
+      <div class="relative z-10">
+        <p class="text-base font-black text-teal-600 mb-4 tracking-wide">بوابة المريض</p>
+        
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-black text-slate-800 leading-[1.2] tracking-tight">
+          اطلب علاجك <br/>
+          <span class="text-transparent bg-clip-text bg-gradient-to-l from-teal-600 to-cyan-500">من غير بحث طويل</span>
+        </h1>
+        <p class="text-lg text-slate-500 leading-relaxed mt-6 max-w-2xl font-medium">
+          ارفع الروشتة أو صوّر الدواء، ودع أنظمتنا الذكية تساعدك في التعرف على الأدوية ومتابعة مراجعة الصيدلي بكل سهولة وأمان.
+        </p>
 
-      <div class="flex flex-wrap gap-3 mt-8">
-        <a routerLink="/patient/prescriptions/upload" class="btn-primary gap-2">
-          <i class="pi pi-upload text-sm"></i>
-          <span>ابدأ برفع روشتة</span>
-        </a>
-        <a routerLink="/patient/image-search" class="btn-secondary gap-2">
-          <i class="pi pi-camera text-sm"></i>
-          <span>فحص صورة دواء</span>
-        </a>
+        <div class="flex flex-col sm:flex-row flex-wrap gap-4 mt-10">
+          <a routerLink="/patient/prescriptions/upload" class="px-8 py-4 bg-teal-600 hover:bg-teal-700 text-white rounded-xl font-bold flex items-center justify-center gap-3 shadow-lg shadow-teal-600/20 hover:shadow-teal-600/40 hover:-translate-y-1 transition-all w-full sm:w-auto">
+            <i class="pi pi-upload text-lg"></i>
+            <span>ابدأ برفع روشتة</span>
+          </a>
+          <a routerLink="/patient/image-search" class="px-8 py-4 bg-white hover:bg-slate-50 text-slate-700 border-2 border-slate-200 rounded-xl font-bold flex items-center justify-center gap-3 hover:-translate-y-1 hover:border-slate-300 transition-all shadow-sm w-full sm:w-auto">
+            <i class="pi pi-camera text-lg text-slate-400"></i>
+            <span>فحص صورة دواء</span>
+          </a>
+        </div>
       </div>
     </div>
 
-    <div class="lg:col-span-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4">
-      <a routerLink="/patient/cart" class="bg-emerald-50 border border-emerald-100 rounded-3xl p-6 hover:border-emerald-300 transition">
-        <div class="w-12 h-12 rounded-2xl bg-white text-emerald-700 flex items-center justify-center mb-4">
-          <i class="pi pi-shopping-cart text-xl"></i>
+    <!-- Summary Cards -->
+    <div class="lg:col-span-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-6">
+      <a routerLink="/patient/cart" class="group relative bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-[2rem] p-8 overflow-hidden hover:shadow-xl hover:shadow-emerald-500/20 transition-all block min-h-[160px] flex flex-col justify-center">
+        <div class="absolute top-0 left-0 w-32 h-32 bg-white opacity-5 rounded-full blur-2xl -translate-x-1/2 -translate-y-1/2"></div>
+        <div class="relative z-10 flex items-center gap-6">
+          <div class="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-md text-white flex items-center justify-center shrink-0 shadow-inner group-hover:scale-110 transition-transform duration-300">
+            <i class="pi pi-shopping-cart text-2xl"></i>
+          </div>
+          <div>
+            <h2 class="text-2xl font-black text-white mb-1">السلة</h2>
+            <p class="text-base text-emerald-50 font-medium m-0 opacity-90">{{ cartItemCount }} عنصر في السلة</p>
+          </div>
         </div>
-        <h2 class="text-xl font-black text-ink">السلة</h2>
-        <p class="text-sm text-mute mt-2">{{ cartItemCount }} عنصر في السلة</p>
       </a>
 
-      <a routerLink="/patient/prescriptions" class="bg-sky-50 border border-sky-100 rounded-3xl p-6 hover:border-sky-300 transition">
-        <div class="w-12 h-12 rounded-2xl bg-white text-sky-700 flex items-center justify-center mb-4">
-          <i class="pi pi-file-check text-xl"></i>
+      <a routerLink="/patient/prescriptions" class="group relative bg-gradient-to-br from-sky-500 to-sky-600 rounded-[2rem] p-8 overflow-hidden hover:shadow-xl hover:shadow-sky-500/20 transition-all block min-h-[160px] flex flex-col justify-center">
+        <div class="absolute top-0 left-0 w-32 h-32 bg-white opacity-5 rounded-full blur-2xl -translate-x-1/2 -translate-y-1/2"></div>
+        <div class="relative z-10 flex items-center gap-6">
+          <div class="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-md text-white flex items-center justify-center shrink-0 shadow-inner group-hover:scale-110 transition-transform duration-300">
+            <i class="pi pi-file-check text-2xl"></i>
+          </div>
+          <div>
+            <h2 class="text-2xl font-black text-white mb-1">روشتاتي</h2>
+            <p class="text-base text-sky-50 font-medium m-0 opacity-90">{{ statistics?.pendingPrescriptionReviews || 0 }} مراجعة قيد المتابعة</p>
+          </div>
         </div>
-        <h2 class="text-xl font-black text-ink">روشتاتي</h2>
-        <p class="text-sm text-mute mt-2">{{ statistics?.pendingPrescriptionReviews || 0 }} مراجعة قيد المتابعة</p>
       </a>
     </div>
   </section>
 
+  <!-- Quick Actions -->
   <section>
-    <div class="flex items-end justify-between gap-4 mb-5">
+    <div class="flex items-end justify-between gap-4 mb-8">
       <div>
-        <h2 class="text-2xl font-black text-ink">إيه اللي محتاج تعمله؟</h2>
-        <p class="text-sm text-mute mt-1">اختار الخدمة المناسبة وكمّل في خطوات بسيطة.</p>
+        <h2 class="text-2xl md:text-3xl font-black text-slate-800">الخدمات السريعة</h2>
+        <p class="text-base text-slate-500 mt-2 font-medium">اختار الخدمة المناسبة وكمّل في خطوات بسيطة.</p>
       </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-      <a routerLink="/patient/prescriptions/upload" class="bg-white border border-surface-pressed rounded-2xl p-5 hover:shadow-sm hover:border-primary/40 transition">
-        <div class="w-11 h-11 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-4">
-          <i class="pi pi-upload text-xl"></i>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      
+      <!-- Upload Card -->
+      <a routerLink="/patient/prescriptions/upload" class="group bg-white border border-gray-100 rounded-[2rem] p-6 hover:shadow-xl hover:shadow-teal-900/5 hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-full h-1 bg-gradient-to-l from-teal-400 to-teal-600 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        <div class="w-14 h-14 rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+          <i class="pi pi-upload text-2xl"></i>
         </div>
-        <h3 class="font-black text-ink">رفع روشتة</h3>
-        <p class="text-sm text-mute leading-6 mt-2">ارفع صورة أو PDF، والتحليل يكمل في الخلفية والصيدلي يراجع.</p>
+        <h3 class="text-lg font-black text-slate-800 mb-2">رفع روشتة</h3>
+        <p class="text-sm text-slate-500 leading-relaxed font-medium m-0">ارفع صورة أو PDF، والتحليل يكمل في الخلفية والصيدلي يراجع.</p>
       </a>
 
-      <a routerLink="/patient/image-search" class="bg-white border border-surface-pressed rounded-2xl p-5 hover:shadow-sm hover:border-primary/40 transition">
-        <div class="w-11 h-11 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center mb-4">
-          <i class="pi pi-camera text-xl"></i>
+      <!-- Scan Drug Card -->
+      <a routerLink="/patient/image-search" class="group bg-white border border-gray-100 rounded-[2rem] p-6 hover:shadow-xl hover:shadow-sky-900/5 hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-full h-1 bg-gradient-to-l from-sky-400 to-sky-600 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        <div class="w-14 h-14 rounded-2xl bg-sky-50 text-sky-600 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+          <i class="pi pi-camera text-2xl"></i>
         </div>
-        <h3 class="font-black text-ink">فحص صورة دواء</h3>
-        <p class="text-sm text-mute leading-6 mt-2">صوّر علبة أو شريط دواء واعرف هل موجود في الكتالوج.</p>
+        <h3 class="text-lg font-black text-slate-800 mb-2">فحص صورة دواء</h3>
+        <p class="text-sm text-slate-500 leading-relaxed font-medium m-0">صوّر علبة أو شريط دواء واعرف هل موجود في الكتالوج.</p>
       </a>
 
-      <a routerLink="/patient/drugs" class="bg-white border border-surface-pressed rounded-2xl p-5 hover:shadow-sm hover:border-primary/40 transition">
-        <div class="w-11 h-11 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center mb-4">
-          <i class="pi pi-search text-xl"></i>
+      <!-- Browse Drugs Card -->
+      <a routerLink="/patient/drugs" class="group bg-white border border-gray-100 rounded-[2rem] p-6 hover:shadow-xl hover:shadow-amber-900/5 hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-full h-1 bg-gradient-to-l from-amber-400 to-amber-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        <div class="w-14 h-14 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+          <i class="pi pi-search text-2xl"></i>
         </div>
-        <h3 class="font-black text-ink">تصفح الأدوية</h3>
-        <p class="text-sm text-mute leading-6 mt-2">ابحث في الكتالوج وأضف الدواء للسلة يدويًا.</p>
+        <h3 class="text-lg font-black text-slate-800 mb-2">تصفح الأدوية</h3>
+        <p class="text-sm text-slate-500 leading-relaxed font-medium m-0">ابحث في الكتالوج وتعرف على الأدوية المتاحة وأضف للسلة.</p>
       </a>
 
-      <a routerLink="/patient/pharmacies/nearby" class="bg-white border border-surface-pressed rounded-2xl p-5 hover:shadow-sm hover:border-primary/40 transition">
-        <div class="w-11 h-11 rounded-xl bg-violet-100 text-violet-700 flex items-center justify-center mb-4">
-          <i class="pi pi-map-marker text-xl"></i>
+      <!-- Nearby Pharmacies Card -->
+      <a routerLink="/patient/pharmacies/nearby" class="group bg-white border border-gray-100 rounded-[2rem] p-6 hover:shadow-xl hover:shadow-violet-900/5 hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-full h-1 bg-gradient-to-l from-violet-400 to-violet-600 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        <div class="w-14 h-14 rounded-2xl bg-violet-50 text-violet-600 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+          <i class="pi pi-map-marker text-2xl"></i>
         </div>
-        <h3 class="font-black text-ink">صيدليات قريبة</h3>
-        <p class="text-sm text-mute leading-6 mt-2">اعرف أقرب الصيدليات المتاحة حواليك.</p>
+        <h3 class="text-lg font-black text-slate-800 mb-2">صيدليات قريبة</h3>
+        <p class="text-sm text-slate-500 leading-relaxed font-medium m-0">اكتشف أقرب الصيدليات المتاحة حواليك على الخريطة.</p>
       </a>
+
     </div>
   </section>
 
-  <section class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-    <div class="lg:col-span-2 bg-white border border-surface-pressed rounded-2xl p-6">
-      <h2 class="text-xl font-black text-ink">طريقة استخدام الروشتة</h2>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-5">
-        <div class="rounded-xl bg-canvas-softer p-4">
-          <span class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-black mb-3">1</span>
-          <h3 class="font-black text-ink">ارفع الروشتة</h3>
-          <p class="text-sm text-mute leading-6 mt-2">صورة واضحة أو PDF.</p>
+  <!-- Bottom Sections -->
+  <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    
+    <!-- How it works -->
+    <div class="lg:col-span-2 bg-white border border-gray-100 rounded-[2rem] p-8 shadow-sm">
+      <h2 class="text-2xl font-black text-slate-800 mb-8">طريقة استخدام الروشتة</h2>
+      
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 relative">
+        <!-- Connecting Line (Desktop) -->
+        <div class="hidden sm:block absolute top-6 left-0 right-0 h-0.5 bg-gray-100 -z-0 mx-10"></div>
+        
+        <!-- Step 1 -->
+        <div class="relative z-10 flex flex-col items-center text-center">
+          <div class="w-12 h-12 rounded-full bg-teal-600 text-white flex items-center justify-center text-xl font-black mb-4 shadow-lg shadow-teal-600/30 ring-4 ring-white">1</div>
+          <h3 class="text-lg font-bold text-slate-800 mb-2">ارفع الروشتة</h3>
+          <p class="text-sm text-slate-500 leading-relaxed font-medium">التقط صورة واضحة أو ارفع ملف PDF للروشتة الخاصة بك.</p>
         </div>
-        <div class="rounded-xl bg-canvas-softer p-4">
-          <span class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-black mb-3">2</span>
-          <h3 class="font-black text-ink">الصيدلي يراجع</h3>
-          <p class="text-sm text-mute leading-6 mt-2">نتيجة الذكاء الاصطناعي تتراجع قبل الطلب.</p>
+        
+        <!-- Step 2 -->
+        <div class="relative z-10 flex flex-col items-center text-center">
+          <div class="w-12 h-12 rounded-full bg-cyan-600 text-white flex items-center justify-center text-xl font-black mb-4 shadow-lg shadow-cyan-600/30 ring-4 ring-white">2</div>
+          <h3 class="text-lg font-bold text-slate-800 mb-2">الصيدلي يراجع</h3>
+          <p class="text-sm text-slate-500 leading-relaxed font-medium">يقوم الذكاء الاصطناعي بتحليلها ويراجعها الصيدلي المختص.</p>
         </div>
-        <div class="rounded-xl bg-canvas-softer p-4">
-          <span class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-black mb-3">3</span>
-          <h3 class="font-black text-ink">اختار وأضف للسلة</h3>
-          <p class="text-sm text-mute leading-6 mt-2">بعد الموافقة، اختار الأدوية المناسبة.</p>
+        
+        <!-- Step 3 -->
+        <div class="relative z-10 flex flex-col items-center text-center">
+          <div class="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center text-xl font-black mb-4 shadow-lg shadow-blue-600/30 ring-4 ring-white">3</div>
+          <h3 class="text-lg font-bold text-slate-800 mb-2">أضف للسلة</h3>
+          <p class="text-sm text-slate-500 leading-relaxed font-medium">بعد الموافقة، اختر الأدوية المناسبة وأكمل طلبك فوراً.</p>
         </div>
       </div>
     </div>
 
-    <div class="bg-white border border-surface-pressed rounded-2xl p-6">
-      <h2 class="text-xl font-black text-ink">روابط سريعة</h2>
-      <div class="space-y-2 mt-5">
-        <a routerLink="/patient/orders" class="flex items-center justify-between rounded-xl bg-canvas-softer px-4 py-3 font-bold text-body hover:text-primary">
-          <span>طلباتي</span>
-          <i class="pi pi-angle-left"></i>
+    <!-- Quick Links -->
+    <div class="bg-white border border-gray-100 rounded-[2rem] p-8 shadow-sm">
+      <h2 class="text-2xl font-black text-slate-800 mb-6">روابط سريعة</h2>
+      <div class="flex flex-col gap-3">
+        <a routerLink="/patient/orders" class="group flex items-center justify-between rounded-2xl bg-slate-50 px-5 py-4 hover:bg-teal-50 transition-colors border border-transparent hover:border-teal-100">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-white text-slate-400 flex items-center justify-center group-hover:text-teal-600 transition-colors shadow-sm">
+              <i class="pi pi-box"></i>
+            </div>
+            <span class="font-bold text-slate-700 group-hover:text-teal-800 transition-colors">طلباتي السابقة</span>
+          </div>
+          <i class="pi pi-arrow-left text-slate-400 group-hover:text-teal-600 group-hover:-translate-x-1 transition-all"></i>
         </a>
-        <a routerLink="/patient/addresses" class="flex items-center justify-between rounded-xl bg-canvas-softer px-4 py-3 font-bold text-body hover:text-primary">
-          <span>عناويني</span>
-          <i class="pi pi-angle-left"></i>
+        
+        <a routerLink="/patient/addresses" class="group flex items-center justify-between rounded-2xl bg-slate-50 px-5 py-4 hover:bg-teal-50 transition-colors border border-transparent hover:border-teal-100">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-white text-slate-400 flex items-center justify-center group-hover:text-teal-600 transition-colors shadow-sm">
+              <i class="pi pi-map"></i>
+            </div>
+            <span class="font-bold text-slate-700 group-hover:text-teal-800 transition-colors">عناوين التوصيل</span>
+          </div>
+          <i class="pi pi-arrow-left text-slate-400 group-hover:text-teal-600 group-hover:-translate-x-1 transition-all"></i>
         </a>
-        <a routerLink="/profile" class="flex items-center justify-between rounded-xl bg-canvas-softer px-4 py-3 font-bold text-body hover:text-primary">
-          <span>الملف الشخصي</span>
-          <i class="pi pi-angle-left"></i>
+        
+        <a routerLink="/profile" class="group flex items-center justify-between rounded-2xl bg-slate-50 px-5 py-4 hover:bg-teal-50 transition-colors border border-transparent hover:border-teal-100">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-white text-slate-400 flex items-center justify-center group-hover:text-teal-600 transition-colors shadow-sm">
+              <i class="pi pi-user-edit"></i>
+            </div>
+            <span class="font-bold text-slate-700 group-hover:text-teal-800 transition-colors">إعدادات الحساب</span>
+          </div>
+          <i class="pi pi-arrow-left text-slate-400 group-hover:text-teal-600 group-hover:-translate-x-1 transition-all"></i>
         </a>
       </div>
     </div>

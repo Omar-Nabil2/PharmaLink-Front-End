@@ -1,6 +1,6 @@
 <div class="min-h-screen bg-canvas-softer font-sans" dir="rtl">
   <header class="sticky top-0 z-50 bg-canvas/95 backdrop-blur border-b border-surface-pressed">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="w-full px-4 sm:px-6 lg:px-8">
       <div class="h-20 flex items-center justify-between gap-4">
         <a routerLink="/patient/dashboard" class="flex items-center gap-3 shrink-0">
           <img src="/logo.png" alt="Pharma Link" class="h-10 w-auto object-contain" />
@@ -19,32 +19,66 @@
           </a>
         </nav>
 
-        <div class="hidden md:flex items-center gap-2">
-          <a routerLink="/patient/prescriptions/upload" class="btn-primary gap-2">
-            <i class="pi pi-upload text-sm"></i>
-            <span>رفع روشتة</span>
+        <!-- Actions Area -->
+        <div class="flex items-center gap-2">
+          
+          <!-- Always Visible Cart -->
+          <a routerLink="/patient/cart" class="w-10 h-10 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center hover:bg-slate-200 transition" aria-label="السلة">
+            <i class="pi pi-shopping-cart text-lg"></i>
           </a>
-          <a routerLink="/patient/ai-assistant" class="btn-secondary gap-2">
-            <i class="pi pi-bolt text-sm"></i>
-            <span>المساعد الذكي</span>
-          </a>
-          <a routerLink="/patient/image-search" class="btn-subtle gap-2">
-            <i class="pi pi-camera text-sm"></i>
-            <span>فحص دواء</span>
-          </a>
-          <a routerLink="/patient/cart" class="btn-subtle gap-2" aria-label="سلة المشتريات">
-            <i class="pi pi-shopping-cart text-sm"></i>
-            <span>السلة</span>
-          </a>
-        </div>
 
-        <button type="button"
-                class="md:hidden w-10 h-10 rounded-full bg-canvas-soft text-ink flex items-center justify-center"
-                (click)="menuOpen = !menuOpen"
-                [attr.aria-expanded]="menuOpen"
-                aria-label="فتح القائمة">
-          <i class="pi text-xl" [ngClass]="menuOpen ? 'pi-times' : 'pi-bars'"></i>
-        </button>
+          <!-- Desktop Actions -->
+          <div class="hidden md:flex items-center gap-2">
+            <a routerLink="/patient/image-search" class="w-10 h-10 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center hover:bg-slate-200 transition" aria-label="فحص دواء">
+              <i class="pi pi-camera text-lg"></i>
+            </a>
+            
+            <a routerLink="/patient/prescriptions/upload" class="flex items-center gap-2 px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-full font-bold transition shadow-sm">
+              <i class="pi pi-upload"></i>
+              <span class="hidden lg:inline text-sm">رفع روشتة</span>
+            </a>
+
+            <!-- Profile Dropdown -->
+            <div class="relative mr-1">
+              <button (click)="toggleProfileMenu()" class="flex items-center gap-2 px-2 py-1.5 rounded-full hover:bg-slate-100 transition border border-transparent hover:border-slate-200 cursor-pointer">
+                <div class="w-8 h-8 rounded-full bg-teal-100 text-teal-700 flex items-center justify-center font-bold">
+                  {{ fullName.charAt(0) }}
+                </div>
+                <span class="text-sm font-bold text-slate-800 max-w-[100px] truncate hidden xl:inline">{{ fullName }}</span>
+                <i class="pi pi-chevron-down text-xs text-slate-400"></i>
+              </button>
+
+              <!-- Click Outside Overlay -->
+              <div *ngIf="profileMenuOpen" class="fixed inset-0 z-40" (click)="profileMenuOpen = false"></div>
+
+              <!-- Dropdown Menu -->
+              <div *ngIf="profileMenuOpen" class="absolute left-0 top-full mt-2 w-48 bg-white border border-gray-100 rounded-xl shadow-xl py-2 z-50">
+                <div class="px-4 py-2 border-b border-gray-50 mb-1">
+                  <p class="text-xs text-gray-500 mb-0">تم تسجيل الدخول كـ</p>
+                  <p class="text-sm font-bold text-gray-800 truncate m-0">{{ fullName }}</p>
+                </div>
+                <a routerLink="/profile" class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition cursor-pointer" (click)="profileMenuOpen = false">
+                  <i class="pi pi-user text-slate-400"></i>
+                  الملف الشخصي
+                </a>
+                <div class="h-px bg-gray-50 my-1"></div>
+                <button (click)="logout()" class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition text-right cursor-pointer">
+                  <i class="pi pi-sign-out"></i>
+                  تسجيل الخروج
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mobile Menu Button -->
+          <button type="button"
+                  class="md:hidden w-10 h-10 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center hover:bg-slate-200 transition"
+                  (click)="menuOpen = !menuOpen"
+                  [attr.aria-expanded]="menuOpen"
+                  aria-label="فتح القائمة">
+            <i class="pi text-lg" [ngClass]="menuOpen ? 'pi-times' : 'pi-bars'"></i>
+          </button>
+        </div>
       </div>
 
       <div *ngIf="menuOpen" class="md:hidden border-t border-surface-pressed py-4 space-y-3">
@@ -59,18 +93,39 @@
 
         <div class="grid grid-cols-1 gap-2 pt-2">
           <a routerLink="/patient/prescriptions/upload" (click)="menuOpen = false" class="btn-primary w-full justify-center">رفع روشتة</a>
-          <a routerLink="/patient/ai-assistant" (click)="menuOpen = false" class="btn-secondary w-full justify-center">المساعد الذكي</a>
+
           <a routerLink="/patient/image-search" (click)="menuOpen = false" class="btn-subtle w-full justify-center">فحص صورة دواء</a>
           <a routerLink="/patient/cart" (click)="menuOpen = false" class="btn-subtle w-full justify-center">سلة المشتريات</a>
+          
+          <div class="h-px bg-surface-pressed my-2 mx-1"></div>
+          
+          <div class="px-2 pb-1">
+            <p class="text-xs text-gray-500 mb-1 px-2">الحساب الشخصي ({{ fullName }})</p>
+          </div>
+          
+          <a routerLink="/profile" (click)="menuOpen = false" class="px-4 py-3 flex items-center gap-3 text-body hover:bg-canvas-soft border border-transparent rounded-xl transition cursor-pointer">
+            <i class="pi pi-user text-gray-500"></i>
+            الملف الشخصي
+          </a>
+          <button (click)="logout()" class="w-full text-right px-4 py-3 flex items-center gap-3 text-red-600 hover:bg-red-50 border border-transparent rounded-xl transition cursor-pointer">
+            <i class="pi pi-sign-out"></i>
+            تسجيل الخروج
+          </button>
         </div>
       </div>
     </div>
   </header>
 
-  <main class="min-h-[calc(100vh-80px)]">
+  <main class="min-h-[calc(100vh-81px)]">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
       <router-outlet></router-outlet>
     </div>
   </main>
 
+  <!-- Sticky AI Assistant Button -->
+  <a routerLink="/patient/ai-assistant" 
+     class="fixed bottom-6 left-6 z-50 flex items-center justify-center w-14 h-14 bg-gradient-to-r from-teal-500 to-teal-700 text-white rounded-full shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+     title="المساعد الذكي">
+    <svg class="w-7 h-7" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A2.5 2.5 0 0 0 5 15.5 2.5 2.5 0 0 0 7.5 18 2.5 2.5 0 0 0 10 15.5 2.5 2.5 0 0 0 7.5 13m9 0a2.5 2.5 0 0 0-2.5 2.5 2.5 2.5 0 0 0 2.5 2.5 2.5 2.5 0 0 0 2.5-2.5 2.5 2.5 0 0 0-2.5-2.5z"/></svg>
+  </a>
 </div>
