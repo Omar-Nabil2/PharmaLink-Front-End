@@ -259,12 +259,6 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
     return !!this.expandedSections()[section];
   }
 
-  // ── Interactions Tab ───────────────────────────────────────────────────────
-  drugChipInput = '';
-  drugChips = signal<string[]>([]);
-  interactionResult = signal<InteractionCheckResult | null>(null);
-  isInteractionLoading = signal(false);
-  interactionError = signal('');
 
   addDrugChip(): void {
     const name = typeof this.drugChipInput === 'string' ? this.drugChipInput.trim() : (this.drugChipInput?.brandName || '');
