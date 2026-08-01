@@ -134,6 +134,12 @@
                   ><i class="pi pi-pencil text-[0.8125rem]"></i></button>
                   <button
                     type="button"
+                    (click)="openAssignModal(p, $event)"
+                    class="h-8 w-8 rounded flex items-center justify-center text-purple-600 transition-colors duration-200 hover:bg-purple-50"
+                    title="تغيير / إسناد الفرع"
+                  ><i class="pi pi-building text-[0.8125rem]"></i></button>
+                  <button
+                    type="button"
                     (click)="openStatusModal(p, $event)"
                     class="h-8 w-8 rounded flex items-center justify-center transition-colors duration-200 hover:bg-muted"
                     style="color: #007671"
@@ -466,6 +472,58 @@
         class="w-full sm:w-auto h-10 lg:h-12 rounded-lg bg-destructive px-5 text-xs lg:text-base font-medium text-destructive-foreground flex items-center justify-center gap-2 transition-colors duration-200 disabled:opacity-60">
         <i *ngIf="isDeleting" class="pi pi-spin pi-spinner text-[0.8125rem]"></i>
         <span>تأكيد الحذف</span>
+      </button>
+    </div>
+  </ng-template>
+</p-dialog>
+
+<!-- ═══════════════ ASSIGN BRANCH MODAL ═══════════════ -->
+<p-dialog
+  [visible]="showAssignModal"
+  (visibleChange)="showAssignModal = $event"
+  [modal]="true" [draggable]="false" [resizable]="false"
+  styleClass="w-[90vw] sm:w-[85vw] md:w-full max-w-md mx-4"
+  contentStyleClass="max-h-[90vh] overflow-y-auto p-4 sm:p-6"
+  [dismissableMask]="true"
+>
+  <ng-template #header>
+    <span class="text-base sm:text-lg font-bold text-foreground" style="font-family: var(--font-cairo)">تغيير إسناد الفرع للصيدلي</span>
+  </ng-template>
+
+  <div dir="rtl" class="space-y-4 pt-2" style="font-family: var(--font-cairo)">
+    <p class="text-xs sm:text-sm text-muted-foreground">
+      حدد الفرع المراد إسناد الصيدلي <strong class="text-foreground font-semibold">{{ assignTargetName }}</strong> إليه:
+    </p>
+
+    <!-- Error / Warning Banner -->
+    <div *ngIf="assignError" class="bg-amber-50 border border-amber-300 rounded-lg p-3 flex items-start gap-2.5 text-amber-800 text-xs sm:text-sm">
+      <i class="pi pi-exclamation-triangle text-amber-600 mt-0.5 flex-shrink-0"></i>
+      <span class="font-medium">{{ assignError }}</span>
+    </div>
+
+    <!-- Branch Selection -->
+    <div class="space-y-1">
+      <label class="block text-xs sm:text-sm font-medium text-foreground">الفرع المستهدف <span class="text-destructive">*</span></label>
+      <select [(ngModel)]="assignSelectedBranchId" (change)="assignError = ''" class="field-input">
+        <option value="" disabled>اختر الفرع...</option>
+        <option *ngFor="let b of branches" [value]="b.branchId">
+          {{ b.branchName || b.city || b.branchId }} {{ b.branchId === assignCurrentBranchId ? ' (الفرع الحالي)' : '' }}
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <ng-template #footer>
+    <div dir="rtl" class="flex flex-col-reverse sm:flex-row items-center justify-end gap-2 w-full pt-2" style="font-family: var(--font-cairo)">
+      <button type="button" (click)="closeAssignModal()" [disabled]="isAssigningBranch"
+        class="w-full sm:w-auto h-10 lg:h-12 rounded-lg border border-border px-4 text-xs lg:text-base font-medium text-foreground transition-colors duration-200 hover:bg-muted disabled:opacity-50">
+        إلغاء
+      </button>
+      <button type="button" (click)="submitAssignBranch()" [disabled]="isAssigningBranch"
+        class="w-full sm:w-auto h-10 lg:h-12 rounded-lg text-white px-5 text-xs lg:text-base font-medium flex items-center justify-center gap-2 transition-colors duration-200 disabled:opacity-60"
+        style="background-color: #007671">
+        <i *ngIf="isAssigningBranch" class="pi pi-spin pi-spinner text-[0.8125rem]"></i>
+        <span>تأكيد الإسناد</span>
       </button>
     </div>
   </ng-template>
