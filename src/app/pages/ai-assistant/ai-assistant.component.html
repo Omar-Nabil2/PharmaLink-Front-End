@@ -95,14 +95,14 @@
           (completeMethod)="filterDrugs($event)" 
           (onSelect)="onDrugSelect($event)"
           (keydown.enter)="searchDrug()"
-          field="brandName"
+          field="name"
           placeholder="Search for a drug (e.g. Aspirin, Amoxicillin)..."
           [style]="{'width':'100%'}"
           [inputStyle]="{'width':'100%', 'padding': '0.75rem 1rem', 'border-radius': '0.5rem', 'border': '1px solid #e5e7eb'}"
           styleClass="w-full">
           <ng-template let-drug pTemplate="item">
               <div class="flex flex-col">
-                  <span class="font-bold text-gray-800">{{drug.brandName}}</span>
+                  <span class="font-bold text-gray-800">{{drug.name}}</span>
                   <span class="text-sm text-gray-500">{{drug.genericName}}</span>
               </div>
           </ng-template>
@@ -224,14 +224,14 @@
               (completeMethod)="filterDrugs($event)" 
               (onSelect)="onInteractionDrugSelect($event)"
               (keydown.enter)="addDrugChip()"
-              field="brandName"
+              field="name"
               placeholder="Search & add a drug..."
               [style]="{'width':'100%'}"
               [inputStyle]="{'width':'100%', 'padding': '0.75rem 1rem', 'border-radius': '0.5rem', 'border': '1px solid #e5e7eb'}"
               styleClass="w-full">
               <ng-template let-drug pTemplate="item">
                   <div class="flex flex-col">
-                      <span class="font-bold text-gray-800">{{drug.brandName}}</span>
+                      <span class="font-bold text-gray-800">{{drug.name}}</span>
                       <span class="text-sm text-gray-500">{{drug.genericName}}</span>
                   </div>
               </ng-template>

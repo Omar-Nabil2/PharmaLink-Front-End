@@ -10,8 +10,8 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AiAssistantService } from '@core/services/ai-assistant.service';
-import { DrugService } from '@core/services/drug.service';
-import { DrugDto } from '@core/interfaces/drug.interface';
+import { SearchService } from '@core/services/search.service';
+import { MedicineSearchDTO } from '@pages/inventory/search.model';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import {
   ChatMessage,
@@ -31,7 +31,7 @@ type ActiveTab = 'chat' | 'drug-info' | 'interactions';
 })
 export class AiAssistantComponent implements OnInit, OnDestroy {
   private readonly service = inject(AiAssistantService);
-  private readonly drugService = inject(DrugService);
+  private readonly searchService = inject(SearchService);
 
   // ── Tabs ──────────────────────────────────────────────────────────────────
   activeTab = signal<ActiveTab>('chat');
@@ -179,7 +179,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
   drugError = signal('');
   expandedSections = signal<Record<string, boolean>>({});
 
-  drugSuggestions = signal<DrugDto[]>([]);
+  drugSuggestions = signal<MedicineSearchDTO[]>([]);
 
   // ── Interactions Tab ───────────────────────────────────────────────────────
   drugChipInput: any = '';
@@ -188,7 +188,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
   isInteractionLoading = signal(false);
   interactionError = signal('');
 
-  interactionSuggestions = signal<DrugDto[]>([]);
+  interactionSuggestions = signal<MedicineSearchDTO[]>([]);
 
   ngOnInit(): void {}
 
@@ -199,10 +199,10 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
       this.interactionSuggestions.set([]);
       return;
     }
-    this.drugService.searchDrugs({ searchValue: query, pageNumber: 1, pageSize: 10 }).subscribe({
+    this.searchService.searchMedicines(query).subscribe({
       next: (res) => {
-        this.drugSuggestions.set(res.items || []);
-        this.interactionSuggestions.set(res.items || []);
+        this.drugSuggestions.set(res || []);
+        this.interactionSuggestions.set(res || []);
       },
       error: () => {
         this.drugSuggestions.set([]);
@@ -213,19 +213,19 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
 
   onDrugSelect(event: any): void {
     // PrimeNG AutoComplete sends the selected object
-    const drug: DrugDto = event.value;
-    this.drugSearchQuery = drug.brandName;
+    const drug: MedicineSearchDTO = event.value;
+    this.drugSearchQuery = drug.name;
     this.searchDrug();
   }
 
   onInteractionDrugSelect(event: any): void {
-    const drug: DrugDto = event.value;
-    this.drugChipInput = drug.brandName;
+    const drug: MedicineSearchDTO = event.value;
+    this.drugChipInput = drug.name;
     this.addDrugChip();
   }
 
   searchDrug(): void {
-    const name = typeof this.drugSearchQuery === 'string' ? this.drugSearchQuery.trim() : (this.drugSearchQuery?.brandName || '');
+    const name = typeof this.drugSearchQuery === 'string' ? this.drugSearchQuery.trim() : (this.drugSearchQuery?.name || '');
     if (!name) return;
 
     this.isDrugLoading.set(true);
@@ -261,7 +261,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
 
 
   addDrugChip(): void {
-    const name = typeof this.drugChipInput === 'string' ? this.drugChipInput.trim() : (this.drugChipInput?.brandName || '');
+    const name = typeof this.drugChipInput === 'string' ? this.drugChipInput.trim() : (this.drugChipInput?.name || '');
     if (!name) return;
     if (this.drugChips().includes(name)) {
       this.drugChipInput = '';
