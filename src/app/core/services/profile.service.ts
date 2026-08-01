@@ -8,6 +8,8 @@ import {
   UpdatePharmacyProfileRequest,
   UpdatePharmacyProfileResponse,
   PatientProfileResponse,
+  GetPharmacyAdminProfile,
+  UpdatePharmacyAdminProfileDTO
 } from '../interfaces/profile.interface';
 
 @Injectable({
@@ -15,6 +17,7 @@ import {
 })
 export class ProfileService {
   private readonly localUrl = environment.localUrl;
+  private readonly omarUrl = environment.omarUrl;
 
   constructor(private readonly http: HttpClient) { }
 
@@ -32,6 +35,14 @@ export class ProfileService {
 
   updateProfile(data: UpdatePharmacyProfileRequest): Observable<UpdatePharmacyProfileResponse> {
     return this.http.put<UpdatePharmacyProfileResponse>(`${this.localUrl}/PharmacistProfile`, data);
+  }
+
+  getPharmacyAdminProfile() {
+    return this.http.get<GetPharmacyAdminProfile>(`${this.localUrl}/PharmacyAdminProfile`);
+  }
+
+  updatePharmacyAdminProfile(data: UpdatePharmacyAdminProfileDTO) {
+    return this.http.put<any>(`${this.localUrl}/PharmacyAdminProfile`, data, { responseType: 'text' });
   }
 
 }

@@ -1,14 +1,14 @@
 <div class="max-w-6xl mx-auto space-y-6">
   <div class="space-y-1">
-    <h1 class="type-display-md text-ink">Drug catalog</h1>
-    <p class="type-body-sm text-body">Search medicines, check availability near you, and add them to your cart.</p>
+    <h1 class="type-display-md text-ink">كتالوج الأدوية</h1>
+    <p class="type-body-sm text-body">ابحث عن الدواء، اعرف حالته، وضيفه للكارت بسهولة.</p>
   </div>
 
   <div class="relative">
     <i class="pi pi-search absolute left-4 top-1/2 -translate-y-1/2 text-mute"></i>
     <input
       type="text"
-      placeholder="Search by medicine name (English or Arabic)"
+      placeholder="ابحث باسم الدواء بالعربي أو الإنجليزي"
       (input)="onSearchChange($any($event.target).value)"
       class="w-full pl-11 pr-4 py-3 rounded-full bg-canvas-softer border border-transparent type-body-md text-ink outline-none focus:border-ink focus:bg-canvas transition-colors"
     />
@@ -31,8 +31,8 @@
   </div>
 
   <div *ngIf="!isLoading && loadFailed" class="card-surface text-center space-y-4 py-12">
-    <p class="type-body-md text-ink">We couldn't load the catalog right now.</p>
-    <button type="button" (click)="loadDrugs()" class="btn-primary mx-auto">Try again</button>
+    <p class="type-body-md text-ink">مش قادرين نحمّل كتالوج الأدوية دلوقتي.</p>
+    <button type="button" (click)="loadDrugs()" class="btn-primary mx-auto">حاول تاني</button>
   </div>
 
   <div
@@ -40,9 +40,9 @@
     class="card-surface text-center space-y-2 py-12"
   >
     <i class="pi pi-inbox text-3xl text-mute"></i>
-    <h2 class="type-display-sm text-ink">{{ isFiltered ? 'No medicines match your search' : 'No medicines available' }}</h2>
+    <h2 class="type-display-sm text-ink">{{ isFiltered ? 'مفيش أدوية مطابقة لبحثك' : 'مفيش أدوية متاحة حاليًا' }}</h2>
     <p class="type-body-sm text-body">
-      {{ isFiltered ? 'Try a different name or category.' : 'Please check back later.' }}
+      {{ isFiltered ? 'جرّب اسم مختلف أو تصنيف تاني.' : 'ارجع لنا بعد شوية.' }}
     </p>
   </div>
 
@@ -68,7 +68,7 @@
             class="btn-subtle"
           >
             <i *ngIf="addingDrugId === drug.drugId" class="pi pi-spin pi-spinner text-xs"></i>
-            <span>{{ addingDrugId === drug.drugId ? 'Adding...' : 'Add to cart' }}</span>
+            <span>{{ addingDrugId === drug.drugId ? 'جاري الإضافة...' : 'أضف للكارت' }}</span>
           </button>
         </div>
       </div>
@@ -77,11 +77,11 @@
     <div class="flex items-center justify-center gap-4">
       <button type="button" (click)="goToPage(pageNumber - 1)" [disabled]="!hasPreviousPage" class="btn-subtle">
         <i class="pi pi-chevron-left text-xs"></i>
-        <span>Previous</span>
+        <span>السابق</span>
       </button>
-      <span class="type-caption text-mute">Page {{ pageNumber }} of {{ totalPages }}</span>
+      <span class="type-caption text-mute">صفحة {{ pageNumber }} من {{ totalPages }}</span>
       <button type="button" (click)="goToPage(pageNumber + 1)" [disabled]="!hasNextPage" class="btn-subtle">
-        <span>Next</span>
+        <span>التالي</span>
         <i class="pi pi-chevron-right text-xs"></i>
       </button>
     </div>

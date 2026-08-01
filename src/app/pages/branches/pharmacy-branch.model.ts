@@ -27,7 +27,6 @@ export interface PharmacyBranchResponseDTO {
   governorate: string;
   addressLine: string;
   phoneNumber: string;
-  workingHours: string;
   latitude: number | null;
   longitude: number | null;
   serviceRadiusKm: number;
@@ -41,7 +40,6 @@ export interface CreatePharmacyBranchDTO {
   governorate: string;
   addressLine: string;
   phoneNumber: string;
-  workingHours: string;
   latitude: number | null;
   longitude: number | null;
   serviceRadiusKm: number;
@@ -55,7 +53,6 @@ export interface UpdatePharmacyBranchDTO {
   governorate: string;
   addressLine: string;
   phoneNumber: string;
-  workingHours: string;
   latitude: number | null;
   longitude: number | null;
   serviceRadiusKm: number;
@@ -75,3 +72,30 @@ export interface GetPharmacyBranchParamRequest {
   pageNumber: number;
   pageSize: number;
 }
+
+export interface BranchScheduleDayDto {
+  day: number;
+  dayNameAr: string;
+  openTime: string | null;
+  closeTime: string | null;
+  isClosed: boolean;
+  isToday: boolean;
+  isCurrentlyOpen: boolean;
+}
+
+export interface BranchScheduleResponseDto {
+  branchId: string;
+  days: BranchScheduleDayDto[];
+}
+
+export interface BranchScheduleDayRequest {
+  day: number;
+  openTime: string | null;
+  closeTime: string | null;
+  isClosed: boolean;
+}
+
+export interface UpdateBranchScheduleRequest {
+  schedule: BranchScheduleDayRequest[];
+}
+

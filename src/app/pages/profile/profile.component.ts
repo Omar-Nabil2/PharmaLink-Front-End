@@ -1,9 +1,11 @@
+
+
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ProfileService } from '../../core/services/profile.service';
 import { ErrorHandlerService } from '../../core/services/error-handler.service';
-import { GetPharmacyProfileResponse, PatientProfile } from '../../core/interfaces/profile.interface';
+import { GetPharmacyProfileResponse, PatientProfile, SystemAdminProfile, GetPharmacyAdminProfile } from '../../core/interfaces/profile.interface';
 
 @Component({
   selector: 'app-profile',
@@ -12,9 +14,14 @@ import { GetPharmacyProfileResponse, PatientProfile } from '../../core/interface
   templateUrl: './profile.component.html',
 })
 export class ProfileComponent implements OnInit {
-  isPatient = false;
+  userRole: string = '';
+
   patientData: PatientProfile | null = null;
-  profileData: GetPharmacyProfileResponse | null = null;
+  pharmacyData: GetPharmacyProfileResponse | null = null;
+  adminData: SystemAdminProfile | null = null;
+  pharmacyAdminData: GetPharmacyAdminProfile | null = null;
+  isPharmacyAdmin = false;
+
   isLoading = true;
 
   constructor(
@@ -25,42 +32,95 @@ export class ProfileComponent implements OnInit {
 
   ngOnInit(): void {
     const role = typeof window !== 'undefined' ? localStorage.getItem('roleName') : null;
-    this.isPatient = (role === 'Patient');
+    this.userRole = role ? role.trim() : '';
+    this.isPharmacyAdmin = (role === 'PharmacyAdmin');
+    console.log('Detected Role in ProfileComponent:', this.userRole);
+
     this.fetchProfile();
+  }
+
+  // 🟢 فحص مرن للأدمن (يتجاهل المسافات وحالة الحروف)
+  get isAdminRole(): boolean {
+    if (!this.userRole) return false;
+    const normalized = this.userRole.toLowerCase().replace(/\s+/g, '');
+    return normalized === 'admin' || normalized === 'systemadmin';
+  }
+
+  get isPatientRole(): boolean {
+    if (!this.userRole) return false;
+    return this.userRole.toLowerCase() === 'patient';
+  }
+
+  get isPatient(): boolean {
+    return this.isPatientRole;
+  }
+
+  get profileData(): GetPharmacyProfileResponse | null {
+    return this.pharmacyData;
   }
 
   fetchProfile(): void {
     this.isLoading = true;
-    if (this.isPatient) {
-      this.profileService.getPatientProfile().subscribe({
-        next: (response) => {
-          console.log('Patient profile response:', response);
-          this.patientData = response.value;
-          this.isLoading = false;
-          this.cdr.detectChanges();
-        },
-        error: (err) => {
-          this.isLoading = false;
-          this.errorHandler.handleError(err, 'فشل تحميل الملف الشخصي للمريض');
-          this.cdr.detectChanges();
-        },
-      });
-    } else {
-      this.profileService.getProfile().subscribe({
-        next: (data) => {
-          console.log('Pharmacy profile response:', data);
 
-          this.profileData = data;
+    if (this.isPatientRole) {
+      this.profileService.getPatientProfile().subscribe({
+        next: (res) => {
+          this.patientData = res.value || res;
+          this.isLoading = false;
+          this.cdr.detectChanges();
+        },
+        error: (err) => this.handleErr(err, 'فشل تحميل الملف الشخصي للمريض')
+      });
+    } else if (this.isAdminRole) {
+      this.profileService.getPharmacyAdminProfile().subscribe({
+        next: (res: any) => {
+          const rawData = res.value || res;
+          const nameParts = (rawData.fullName || '').trim().split(' ');
+
+          // ضبط حقول الاسم
+          this.adminData = {
+            ...rawData,
+            firstName: rawData.firstName || nameParts[0] || '',
+            lastName: rawData.lastName || nameParts.slice(1).join(' ') || '',
+            fullName: rawData.fullName || `${rawData.firstName || ''} ${rawData.lastName || ''}`.trim()
+          };
+
+          this.isLoading = false;
+          this.cdr.detectChanges();
+        },
+        error: (err) => this.handleErr(err, 'فشل تحميل الملف الشخصي للأدمن')
+      });
+    }
+    else if (this.isPharmacyAdmin) {
+      this.profileService.getPharmacyAdminProfile().subscribe({
+        next: (response) => {
+          this.pharmacyAdminData = response;
           this.isLoading = false;
           this.cdr.detectChanges();
         },
         error: (err) => {
           this.isLoading = false;
-          this.errorHandler.handleError(err, 'فشل تحميل الملف الشخصي');
+          this.errorHandler.handleError(err, 'فشل تحميل الملف الشخصي لمدير الصيدلية');
           this.cdr.detectChanges();
         },
       });
     }
+    else {
+      this.profileService.getProfile().subscribe({
+        next: (data) => {
+          this.pharmacyData = data;
+          this.isLoading = false;
+          this.cdr.detectChanges();
+        },
+        error: (err) => this.handleErr(err, 'فشل تحميل الملف الشخصي للصيدلية')
+      });
+    }
+  }
+
+  private handleErr(err: any, msg: string): void {
+    this.isLoading = false;
+    this.errorHandler.handleError(err, msg);
+    this.cdr.detectChanges();
   }
 
   isDefaultAddress(index: number): boolean {

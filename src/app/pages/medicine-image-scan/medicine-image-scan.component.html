@@ -1,0 +1,159 @@
+<p-toast></p-toast>
+
+<div class="max-w-6xl mx-auto p-4 md:p-6" dir="rtl">
+  <div class="mb-6">
+    <h1 class="text-2xl font-black text-slate-900">رفع صورة دواء</h1>
+    <p class="text-sm text-slate-500 mt-1">
+      ارفع صورة علبة أو شريط دواء، والنظام هيقرأ البيانات ويطابقها مع كتالوج الأدوية بدون إضافة أي حاجة للسلة.
+    </p>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <section class="lg:col-span-5">
+      <div *ngIf="status === 'idle' || status === 'error'"
+           [ngClass]="dragAreaClass"
+           class="rounded-xl p-10 text-center cursor-pointer transition-colors duration-200 min-h-[320px] flex items-center justify-center"
+           (dragover)="onDragOver($event)"
+           (dragleave)="onDragLeave($event)"
+           (drop)="onDrop($event)"
+           (click)="fileInput.click()">
+        <input type="file" #fileInput class="hidden" accept=".jpg,.jpeg,.png,.webp" (change)="onFileSelected($event)">
+
+        <div class="flex flex-col items-center gap-4">
+          <i class="pi pi-image text-5xl text-primary"></i>
+          <h2 class="text-lg font-bold text-slate-900">اسحب صورة الدوا هنا أو اضغط للرفع</h2>
+          <p class="text-sm text-slate-500">JPG, PNG, WEBP بحد أقصى 10MB</p>
+        </div>
+      </div>
+
+      <div *ngIf="status === 'uploading' || status === 'processing'"
+           class="rounded-xl border border-slate-200 bg-white p-8 text-center shadow-sm min-h-[320px] flex items-center justify-center">
+        <div class="w-full max-w-sm">
+          <i class="pi pi-spin pi-spinner text-5xl text-primary"></i>
+          <h2 class="text-lg font-bold text-slate-900 mt-5">
+            {{ status === 'uploading' ? 'جاري رفع الصورة...' : 'جاري قراءة بيانات الدوا...' }}
+          </h2>
+          <p class="text-sm text-slate-500 mt-2">
+            {{ status === 'uploading' ? progress + '% مكتمل' : 'التحليل ممكن ياخد ثواني حسب جودة الصورة' }}
+          </p>
+          <p-progressbar [value]="progress" [showValue]="false" class="w-full mt-4"></p-progressbar>
+        </div>
+      </div>
+
+      <div *ngIf="previewUrl && status === 'success'" class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+        <h3 class="font-bold text-slate-800 mb-3 flex items-center gap-2">
+          <i class="pi pi-camera text-emerald-600"></i>
+          الصورة المرفوعة
+        </h3>
+        <div class="rounded-lg bg-slate-100 border border-slate-200 overflow-hidden min-h-[260px] flex items-center justify-center">
+          <img [src]="previewUrl" alt="صورة الدوا" class="max-h-[360px] w-full object-contain">
+        </div>
+      </div>
+    </section>
+
+    <section class="lg:col-span-7">
+      <div *ngIf="!result" class="rounded-xl border border-slate-200 bg-white p-8 shadow-sm min-h-[320px] flex items-center justify-center text-center">
+        <div>
+          <i class="pi pi-search text-4xl text-slate-300"></i>
+          <h2 class="font-bold text-slate-800 mt-4">نتيجة التحليل هتظهر هنا</h2>
+          <p class="text-sm text-slate-500 mt-2">هنعرض اسم الدوا، القوة، الشكل، الشركة، وحالة المطابقة مع الكتالوج.</p>
+        </div>
+      </div>
+
+      <div *ngIf="result" class="space-y-4">
+        <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+          <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+            <div>
+              <span class="text-xs text-slate-500">اسم الدوا</span>
+              <h2 class="text-2xl font-black text-slate-900 mt-1">{{ result.extraction.medicineName || 'غير واضح' }}</h2>
+              <p class="text-sm text-slate-500 mt-2" *ngIf="result.extraction.manufacturer">
+                الشركة: {{ result.extraction.manufacturer }}
+              </p>
+            </div>
+
+            <span class="px-3 py-1.5 rounded-full border text-xs font-bold" [ngClass]="getStatusClass(result.matchStatus)">
+              {{ getStatusLabel(result.matchStatus) }}
+            </span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-6">
+            <div class="rounded-lg bg-slate-50 border border-slate-100 p-3">
+              <span class="text-xs text-slate-500 block">القوة</span>
+              <span class="font-bold text-slate-900">{{ result.extraction.strength || 'غير واضحة' }}</span>
+            </div>
+            <div class="rounded-lg bg-slate-50 border border-slate-100 p-3">
+              <span class="text-xs text-slate-500 block">الشكل الدوائي</span>
+              <span class="font-bold text-slate-900">{{ result.extraction.dosageForm || 'غير واضح' }}</span>
+            </div>
+            <div class="rounded-lg bg-slate-50 border border-slate-100 p-3">
+              <span class="text-xs text-slate-500 block">ثقة AI</span>
+              <span class="font-bold text-slate-900">
+                {{ result.extraction.confidence ? ((result.extraction.confidence * 100) | number:'1.0-0') + '%' : 'غير متاحة' }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h3 class="font-bold text-slate-800 mb-3">مطابقة الكتالوج</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div class="rounded-lg bg-slate-50 border border-slate-100 p-3">
+              <span class="text-xs text-slate-500 block">Drug ID</span>
+              <span class="font-bold text-slate-900 break-all">{{ result.matchedDrugId || result.suggestedAlternativeDrugId || 'غير موجود' }}</span>
+            </div>
+            <div class="rounded-lg bg-slate-50 border border-slate-100 p-3">
+              <span class="text-xs text-slate-500 block">درجة المطابقة</span>
+              <span class="font-bold text-slate-900">{{ (result.matchScore * 100) | number:'1.0-0' }}%</span>
+            </div>
+          </div>
+          <p class="mt-4 text-sm text-slate-600 leading-6">{{ result.matchReason || 'لا توجد ملاحظات إضافية.' }}</p>
+        </div>
+
+        <div *ngIf="canAddCurrentResultToCart()"
+             class="rounded-xl border border-emerald-200 bg-emerald-50 p-5 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+          <div>
+            <h3 class="font-bold text-emerald-900">الدوا اتعرف في الكتالوج</h3>
+            <p class="text-sm text-emerald-700 mt-1">تقدر تضيفه للسلة بكمية 1 وتعدل الكمية من صفحة السلة.</p>
+          </div>
+          <button type="button"
+                  *ngIf="!addedToCart"
+                  class="px-5 py-2 rounded-lg bg-emerald-600 text-white font-bold hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  [disabled]="isAddingToCart"
+                  (click)="addMatchedMedicineToCart()">
+            {{ isAddingToCart ? 'جاري الإضافة...' : 'إضافة للسلة' }}
+          </button>
+          <a *ngIf="addedToCart"
+             routerLink="/patient/cart"
+             class="px-5 py-2 rounded-lg bg-emerald-600 text-white font-bold hover:bg-emerald-700 text-center">
+            الذهاب للسلة
+          </a>
+        </div>
+
+        <div *ngIf="!canAddCurrentResultToCart()"
+             class="rounded-xl border border-amber-200 bg-amber-50 p-5 shadow-sm">
+          <h3 class="font-bold text-amber-900">مش جاهز للإضافة للسلة</h3>
+          <p class="text-sm text-amber-700 mt-1">
+            لازم يكون فيه مطابقة واضحة أو بديل مقترح قبل الإضافة للسلة.
+          </p>
+        </div>
+
+        <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h3 class="font-bold text-slate-800 mb-3">النص المقروء من الصورة</h3>
+          <p class="text-sm text-slate-600 leading-7 whitespace-pre-wrap">{{ result.extraction.rawText || 'لا يوجد نص واضح.' }}</p>
+        </div>
+
+        <div class="flex flex-wrap gap-3">
+          <button type="button" class="px-5 py-2 rounded-lg bg-primary text-white font-bold hover:bg-primary-dark" (click)="reset()">
+            رفع صورة أخرى
+          </button>
+          <a routerLink="/patient/cart" class="px-5 py-2 rounded-lg bg-white border border-slate-200 text-slate-700 font-bold hover:bg-slate-50">
+            فتح السلة
+          </a>
+          <a routerLink="/patient/drugs" class="px-5 py-2 rounded-lg bg-white border border-slate-200 text-slate-700 font-bold hover:bg-slate-50">
+            فتح كتالوج الأدوية
+          </a>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>

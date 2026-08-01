@@ -25,14 +25,14 @@ interface CategoryOption {
 })
 export class DrugsComponent implements OnInit {
   readonly categories: CategoryOption[] = [
-    { label: 'All', value: 'All' },
-    { label: 'Pain Relievers', value: 'PainRelievers' },
-    { label: 'Antibiotics', value: 'Antibiotics' },
-    { label: 'Digestive System', value: 'DigestiveSystem' },
-    { label: 'Diabetes', value: 'Diabetes' },
-    { label: 'Cardiovascular', value: 'Cardiovascular' },
-    { label: 'Blood Pressure', value: 'BloodPressure' },
-    { label: 'Anti-inflammatory', value: 'AntiInflammatory' },
+    { label: 'الكل', value: 'All' },
+    { label: 'مسكنات', value: 'PainRelievers' },
+    { label: 'مضادات حيوية', value: 'Antibiotics' },
+    { label: 'الجهاز الهضمي', value: 'DigestiveSystem' },
+    { label: 'السكر', value: 'Diabetes' },
+    { label: 'القلب', value: 'Cardiovascular' },
+    { label: 'ضغط الدم', value: 'BloodPressure' },
+    { label: 'مضادات الالتهاب', value: 'AntiInflammatory' },
   ];
 
   drugs: DrugDto[] = [];
@@ -130,7 +130,7 @@ export class DrugsComponent implements OnInit {
         error: (err) => {
           this.isLoading = false;
           this.loadFailed = true;
-          this.errorHandlerService.handleError(err, 'Failed to Load Catalog');
+          this.errorHandlerService.handleError(err, 'تعذر تحميل كتالوج الأدوية');
           this.cdr.detectChanges();
         },
       });
@@ -146,10 +146,10 @@ export class DrugsComponent implements OnInit {
 
   availabilityLabel(status: DrugDto['availabilityStatus']): string {
     switch (status) {
-      case 'InStock': return 'In Stock';
-      case 'LowStock': return 'Low Stock';
-      case 'OutOfStock': return 'Out of Stock';
-      default: return 'Availability unknown';
+      case 'InStock': return 'متوفر';
+      case 'LowStock': return 'كمية محدودة';
+      case 'OutOfStock': return 'غير متوفر';
+      default: return 'حالة التوفر غير معروفة';
     }
   }
 
@@ -178,14 +178,14 @@ export class DrugsComponent implements OnInit {
         this.addingDrugId = null;
         this.messageService.add({
           severity: 'success',
-          summary: 'Added to Cart',
-          detail: `${drug.brandName} was added to your cart.`,
+          summary: 'تمت الإضافة للكارت',
+          detail: `تم إضافة ${drug.brandName} للكارت.`,
         });
         this.cdr.detectChanges();
       },
       error: (err) => {
         this.addingDrugId = null;
-        this.errorHandlerService.handleError(err, 'Failed to Add to Cart');
+        this.errorHandlerService.handleError(err, 'تعذر إضافة الدواء للكارت');
         this.cdr.detectChanges();
       },
     });

@@ -1,0 +1,51 @@
+:host {
+  display: block;
+}
+
+.hero-header {
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.08) 0%, transparent 60%),
+                      radial-gradient(circle at 80% 20%, rgba(255,255,255,0.06) 0%, transparent 50%);
+    pointer-events: none;
+  }
+}
+
+.pharmacy-card {
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(135deg, rgba(20,184,166,0.04) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+  }
+
+  &:hover::before {
+    opacity: 1;
+  }
+}
+
+.logo-wrapper {
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+
+.distance-badge {
+  font-variant-numeric: tabular-nums;
+}
+
+.filters-bar {
+  position: sticky;
+  top: 0.5rem;
+  z-index: 20;
+  backdrop-filter: blur(8px);
+}
