@@ -306,6 +306,21 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./pages/branches/pharmacy-branch.component').then((m) => m.PharmacyBranchComponent),
       },
+      {
+        path: 'pharmacists/:id',
+        loadComponent: () =>
+          import('./pages/pharmacy-admin/pharmacists/pharmacist-detail/pharmacist-detail.component').then(
+            (m) => m.PharmacistDetailComponent,
+          ),
+      },
+      {
+        path: 'pharmacists',
+        pathMatch: 'full',
+        loadComponent: () =>
+          import('./pages/pharmacy-admin/pharmacists/pharmacists-list/pharmacists-list.component').then(
+            (m) => m.PharmacistsListComponent,
+          ),
+      },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
     ],
   },
