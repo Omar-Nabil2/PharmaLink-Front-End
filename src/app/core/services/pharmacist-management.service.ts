@@ -60,4 +60,8 @@ export class PharmacistManagementService {
   getPharmacistHistory(id: string): Observable<AssignmentHistoryItemDTO[]> {
     return this.http.get<AssignmentHistoryItemDTO[]>(`${this.baseUrl}/${id}/history`);
   }
+
+  assignBranch(id: string, branchId: string): Observable<PharmacistResponseDTO> {
+    return this.http.put<PharmacistResponseDTO>(`${this.baseUrl}/${id}/assign-branch`, { branchId });
+  }
 }

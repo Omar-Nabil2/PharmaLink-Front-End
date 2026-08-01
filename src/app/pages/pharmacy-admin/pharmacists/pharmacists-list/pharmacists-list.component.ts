@@ -91,6 +91,15 @@ export class PharmacistsListComponent implements OnInit, OnDestroy {
   deleteTargetId = '';
   deleteTargetName = '';
 
+  // ── Assign Branch ──────────────────────────────────────────────────
+  showAssignModal = false;
+  isAssigningBranch = false;
+  assignTargetId = '';
+  assignTargetName = '';
+  assignCurrentBranchId = '';
+  assignSelectedBranchId = '';
+  assignError = '';
+
   // ── Computed ───────────────────────────────────────────────────────
   get totalPages(): number {
     return Math.max(1, Math.ceil(this.totalCount / this.pageSize));
@@ -502,6 +511,75 @@ export class PharmacistsListComponent implements OnInit, OnDestroy {
           this.isDeleting = false;
           const detail = err.error?.detail || err.error?.title || 'فشل حذف الصيدلي';
           this.msg.add({ severity: 'error', summary: 'خطأ', detail });
+          this.cdr.markForCheck();
+        },
+      });
+  }
+
+  // ════════════════════════════════════════════════════════════════════
+  //  ASSIGN BRANCH MODAL
+  // ════════════════════════════════════════════════════════════════════
+  openAssignModal(p: PharmacistSummaryDTO, event: Event): void {
+    event.stopPropagation();
+    this.assignTargetId = p.pharmacistId;
+    this.assignTargetName = p.fullName;
+    const activeAssignment = p.assignments?.find((a) => a.isActive);
+    this.assignCurrentBranchId = activeAssignment?.branchId || '';
+    this.assignSelectedBranchId = this.assignCurrentBranchId || (this.branches[0]?.branchId ?? '');
+    this.assignError = '';
+    this.showAssignModal = true;
+    this.cdr.markForCheck();
+  }
+
+  closeAssignModal(): void {
+    this.showAssignModal = false;
+    this.assignError = '';
+  }
+
+  submitAssignBranch(): void {
+    if (!this.assignSelectedBranchId) {
+      this.assignError = 'يرجى اختيار الفرع المراد الإسناد إليه';
+      this.cdr.markForCheck();
+      return;
+    }
+
+    if (this.assignSelectedBranchId === this.assignCurrentBranchId) {
+      this.assignError = 'الصيدلي مسند بالفعل إلى هذا الفرع.';
+      this.msg.add({
+        severity: 'warn',
+        summary: 'تنبيه',
+        detail: 'الصيدلي مسند بالفعل إلى هذا الفرع.',
+      });
+      this.cdr.markForCheck();
+      return;
+    }
+
+    this.isAssigningBranch = true;
+    this.cdr.markForCheck();
+
+    this.svc
+      .assignBranch(this.assignTargetId, this.assignSelectedBranchId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.isAssigningBranch = false;
+          this.msg.add({
+            severity: 'success',
+            summary: 'تم النجاح',
+            detail: `تم إسناد الصيدلي "${this.assignTargetName}" للفرع بنجاح`,
+          });
+          this.closeAssignModal();
+          this.loadPharmacists();
+        },
+        error: (err) => {
+          this.isAssigningBranch = false;
+          const detail = err.error?.detail || err.error?.title || 'الصيدلي مسند بالفعل إلى هذا الفرع.';
+          this.assignError = detail;
+          this.msg.add({
+            severity: 'error',
+            summary: 'خطأ في الإسناد',
+            detail: detail,
+          });
           this.cdr.markForCheck();
         },
       });
