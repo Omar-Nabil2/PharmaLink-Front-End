@@ -14,7 +14,7 @@ import {
 })
 export class AiAssistantService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = environment.baseUrl;
+  private readonly baseUrl = environment.localUrl; // Use localUrl to test new local AI endpoints
 
   /**
    * Send a chat message to the AI assistant (non-streaming).
