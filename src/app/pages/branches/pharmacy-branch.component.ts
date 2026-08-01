@@ -127,7 +127,6 @@ export class PharmacyBranchComponent implements OnInit {
       city: ['', [Validators.required, Validators.maxLength(100)]],
       addressLine: ['', [Validators.required, Validators.maxLength(250)]],
       phoneNumber: ['', [Validators.required, Validators.pattern(/^(?:\+20|0020|0)?1[0125][0-9]{8}$/)]],
-      workingHours: ['', [Validators.required, Validators.maxLength(150)]],
       serviceRadiusKm: [5, [Validators.required, Validators.min(0)]],
       latitude: [null, [Validators.required, Validators.min(-90), Validators.max(90)]],
       longitude: [null, [Validators.required, Validators.min(-180), Validators.max(180)]],
@@ -214,7 +213,6 @@ export class PharmacyBranchComponent implements OnInit {
           city: freshBranch.city,
           addressLine: freshBranch.addressLine,
           phoneNumber: freshBranch.phoneNumber,
-          workingHours: freshBranch.workingHours,
           serviceRadiusKm: freshBranch.serviceRadiusKm,
           latitude: freshBranch.latitude,
           longitude: freshBranch.longitude,
@@ -322,7 +320,6 @@ export class PharmacyBranchComponent implements OnInit {
         governorate: 'اسم المحافظة مطلوب ولا يجب أن يتجاوز 100 حرف.',
         addressLine: 'العنوان التفصيلي مطلوب ولا يجب أن يتجاوز 250 حرفاً.',
         phoneNumber: 'يرجى إدخال رقم هاتف مصري صحيح (مثال: 01012345678).',
-        workingHours: 'مواعيد العمل مطلوبة ولا يجب أن تتجاوز 150 حرفاً.',
         serviceRadiusKm: 'نطاق الخدمة يجب أن يكون رقماً أكبر من أو يساوي الصفر.',
         latitude: 'في حال إدخال خطوط الطول أو العرض، يجب إدخال كلاهما ضمن النطاق الجغرافي الصحيح.',
         longitude: 'في حال إدخال خطوط الطول أو العرض، يجب إدخال كلاهما ضمن النطاق الجغرافي الصحيح.'
@@ -360,7 +357,6 @@ export class PharmacyBranchComponent implements OnInit {
       governorate: 'اسم المحافظة مطلوب ولا يجب أن يتجاوز 100 حرف.',
       addressLine: 'العنوان التفصيلي مطلوب ولا يجب أن يتجاوز 250 حرفاً.',
       phoneNumber: 'يرجى إدخال رقم هاتف مصري صحيح (مثال: 01012345678).',
-      workingHours: 'مواعيد العمل مطلوبة ولا يجب أن تتجاوز 150 حرفاً.',
       serviceRadiusKm: 'نطاق الخدمة يجب أن يكون رقماً أكبر من أو يساوي الصفر.',
       latitude: 'في حال إدخال خطوط الطول أو العرض، يجب إدخال كلاهما ضمن النطاق الجغرافي الصحيح.',
       longitude: 'في حال إدخال خطوط الطول أو العرض، يجب إدخال كلاهما ضمن النطاق الجغرافي الصحيح.'

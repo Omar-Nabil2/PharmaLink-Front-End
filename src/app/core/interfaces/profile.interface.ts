@@ -69,17 +69,31 @@ export interface PatientProfileResponse {
 }
 
 export interface SystemAdminProfile {
-  adminId?: string;
-  fullName?: string;
-  firstName?: string; 
-  lastName?: string;  
-  email?: string;
-  phoneNumber?: string;
-  status?: string;
-  createdAt?: string;
+    adminId?: string;
+    fullName?: string;
+    firstName?: string;
+    lastName?: string;
+    email?: string;
+    phoneNumber?: string;
+    status?: string;
+    createdAt?: string;
 }
 
 export interface UpdateSystemAdminProfileRequest {
-  fullName: string;
-  phoneNumber: string;
+    fullName: string;
+    phoneNumber: string;
+}
+
+export interface GetPharmacyAdminProfile {
+    fullName: string;
+    email: string;
+    phoneNumber: string;
+    legalName: string;
+    licenseNumber: string;
+    logoUrl: string;
+    verificationStatus: number | string;
+}
+export interface UpdatePharmacyAdminProfileDTO {
+    fullName: string;
+    phoneNumber: string;
 }

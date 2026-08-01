@@ -8,8 +8,8 @@ import {
   UpdatePharmacyProfileRequest,
   UpdatePharmacyProfileResponse,
   PatientProfileResponse,
-  SystemAdminProfile,
-  UpdateSystemAdminProfileRequest
+  GetPharmacyAdminProfile,
+  UpdatePharmacyAdminProfileDTO
 } from '../interfaces/profile.interface';
 
 @Injectable({
@@ -17,8 +17,8 @@ import {
 })
 export class ProfileService {
   private readonly localUrl = environment.localUrl;
-//  private readonly localUrl ='https://localhost:5001/api/v1';
- 
+  private readonly omarUrl = environment.omarUrl;
+
   constructor(private readonly http: HttpClient) { }
 
   getProfile(): Observable<GetPharmacyProfileResponse> {
@@ -37,17 +37,12 @@ export class ProfileService {
     return this.http.put<UpdatePharmacyProfileResponse>(`${this.localUrl}/PharmacistProfile`, data);
   }
 
-  getSystemAdminProfile(): Observable<{ value: SystemAdminProfile } | SystemAdminProfile> {
-  return this.http.get<any>(`${this.localUrl}/admin/profile`);
-}
-updateSystemAdminProfile(data: UpdateSystemAdminProfileRequest): Observable<SystemAdminProfile> {
-    return this.http.put<SystemAdminProfile>(`${this.localUrl}/admin/profile`, data);
+  getPharmacyAdminProfile() {
+    return this.http.get<GetPharmacyAdminProfile>(`${this.localUrl}/PharmacyAdminProfile`);
   }
-getPharmacistProfile(): Observable<any> {
-    return this.http.get(`${this.localUrl}/PharmacistProfile`);
-}
 
-updatePharmacistProfile(data: any): Observable<any> {
-    return this.http.put(`${this.localUrl}/PharmacistProfile`, data); // أو patch حسب الـ Backend لديك
-}
+  updatePharmacyAdminProfile(data: UpdatePharmacyAdminProfileDTO) {
+    return this.http.put<any>(`${this.localUrl}/PharmacyAdminProfile`, data, { responseType: 'text' });
+  }
+
 }

@@ -5,7 +5,7 @@ import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ProfileService } from '../../core/services/profile.service';
 import { ErrorHandlerService } from '../../core/services/error-handler.service';
-import { GetPharmacyProfileResponse, PatientProfile, SystemAdminProfile } from '../../core/interfaces/profile.interface';
+import { GetPharmacyProfileResponse, PatientProfile, SystemAdminProfile, GetPharmacyAdminProfile } from '../../core/interfaces/profile.interface';
 
 @Component({
   selector: 'app-profile',
@@ -15,11 +15,13 @@ import { GetPharmacyProfileResponse, PatientProfile, SystemAdminProfile } from '
 })
 export class ProfileComponent implements OnInit {
   userRole: string = '';
-  
+
   patientData: PatientProfile | null = null;
   pharmacyData: GetPharmacyProfileResponse | null = null;
   adminData: SystemAdminProfile | null = null;
-  
+  pharmacyAdminData: GetPharmacyAdminProfile | null = null;
+  isPharmacyAdmin = false;
+
   isLoading = true;
 
   constructor(
@@ -31,7 +33,7 @@ export class ProfileComponent implements OnInit {
   ngOnInit(): void {
     const role = typeof window !== 'undefined' ? localStorage.getItem('roleName') : null;
     this.userRole = role ? role.trim() : '';
-    
+    this.isPharmacyAdmin = (role === 'PharmacyAdmin');
     console.log('Detected Role in ProfileComponent:', this.userRole);
 
     this.fetchProfile();
@@ -70,7 +72,7 @@ export class ProfileComponent implements OnInit {
         error: (err) => this.handleErr(err, 'فشل تحميل الملف الشخصي للمريض')
       });
     } else if (this.isAdminRole) {
-      this.profileService.getSystemAdminProfile().subscribe({
+      this.profileService.getPharmacyAdminProfile().subscribe({
         next: (res: any) => {
           const rawData = res.value || res;
           const nameParts = (rawData.fullName || '').trim().split(' ');
@@ -88,7 +90,22 @@ export class ProfileComponent implements OnInit {
         },
         error: (err) => this.handleErr(err, 'فشل تحميل الملف الشخصي للأدمن')
       });
-    } else {
+    }
+    else if (this.isPharmacyAdmin) {
+      this.profileService.getPharmacyAdminProfile().subscribe({
+        next: (response) => {
+          this.pharmacyAdminData = response;
+          this.isLoading = false;
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          this.isLoading = false;
+          this.errorHandler.handleError(err, 'فشل تحميل الملف الشخصي لمدير الصيدلية');
+          this.cdr.detectChanges();
+        },
+      });
+    }
+    else {
       this.profileService.getProfile().subscribe({
         next: (data) => {
           this.pharmacyData = data;
