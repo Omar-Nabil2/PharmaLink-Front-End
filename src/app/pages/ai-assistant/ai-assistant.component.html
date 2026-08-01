@@ -131,13 +131,22 @@
             <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
           </svg>
         </div>
-        <input
-          class="search-input"
-          type="text"
-          [(ngModel)]="drugSearchQuery"
-          (keydown)="onDrugKeydown($event)"
-          placeholder="Enter drug name (e.g. Aspirin, Amoxicillin, Paracetamol)..."
-        />
+        <div class="search-input-group">
+          <input
+            class="search-input"
+            type="text"
+            [(ngModel)]="drugSearchQuery"
+            (input)="onDrugSearchInput($event)"
+            (keydown.enter)="searchDrug()"
+            placeholder="Enter drug name (e.g. Aspirin, Amoxicillin, Paracetamol)..."
+          />
+          <div class="autocomplete-dropdown" *ngIf="showDrugSuggestions() && drugSuggestions().length > 0">
+            <div class="autocomplete-item" *ngFor="let drug of drugSuggestions()" (click)="selectDrugSuggestion(drug)">
+              <span class="item-brand">{{ drug.brandName }}</span>
+              <span class="item-generic">{{ drug.genericName || 'N/A' }}</span>
+            </div>
+          </div>
+        </div>
         <button class="search-btn" (click)="searchDrug()" [disabled]="isDrugLoading() || !drugSearchQuery.trim()">
           <span *ngIf="!isDrugLoading()">Search</span>
           <span class="spinner" *ngIf="isDrugLoading()"></span>
@@ -296,13 +305,23 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:10px;height:10px"><path stroke-linecap="round" d="M6 18L18 6M6 6l12 12"/></svg>
               </button>
             </div>
-            <input
-              class="chip-input"
-              type="text"
-              [(ngModel)]="drugChipInput"
-              (keydown)="onChipKeydown($event)"
-              placeholder="Type drug name and press Enter..."
-            />
+            <div class="search-input-group" style="flex: 1; min-width: 200px;">
+              <input
+                class="chip-input search-input"
+                style="width: 100%; border: none; padding: 0.5rem; background: transparent; box-shadow: none;"
+                type="text"
+                [(ngModel)]="drugChipInput"
+                (input)="onInteractionSearchInput($event)"
+                (keydown)="onChipKeydown($event)"
+                placeholder="Type drug name and press Enter..."
+              />
+              <div class="autocomplete-dropdown" *ngIf="showInteractionSuggestions() && interactionSuggestions().length > 0">
+                <div class="autocomplete-item" *ngFor="let drug of interactionSuggestions()" (click)="selectInteractionSuggestion(drug)">
+                  <span class="item-brand">{{ drug.brandName }}</span>
+                  <span class="item-generic">{{ drug.genericName || 'N/A' }}</span>
+                </div>
+              </div>
+            </div>
           </div>
           <button class="add-chip-btn" (click)="addDrugChip()" [disabled]="!drugChipInput.trim()">Add</button>
         </div>

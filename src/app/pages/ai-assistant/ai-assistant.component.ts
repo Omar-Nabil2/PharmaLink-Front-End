@@ -3,12 +3,17 @@ import {
   Component,
   ElementRef,
   OnDestroy,
+  OnInit,
   ViewChild,
   inject,
   signal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AiAssistantService } from '@core/services/ai-assistant.service';
+import { DrugService } from '@core/services/drug.service';
+import { DrugDto } from '@core/interfaces/drug.interface';
+import { Subject, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import {
   ChatMessage,
   DrugInfoResult,
@@ -25,8 +30,9 @@ type ActiveTab = 'chat' | 'drug-info' | 'interactions';
   templateUrl: './ai-assistant.component.html',
   styleUrl: './ai-assistant.component.scss',
 })
-export class AiAssistantComponent implements OnDestroy {
+export class AiAssistantComponent implements OnInit, OnDestroy {
   private readonly service = inject(AiAssistantService);
+  private readonly drugService = inject(DrugService);
 
   // ── Tabs ──────────────────────────────────────────────────────────────────
   activeTab = signal<ActiveTab>('chat');
@@ -174,6 +180,93 @@ export class AiAssistantComponent implements OnDestroy {
   drugError = signal('');
   expandedSections = signal<Record<string, boolean>>({});
 
+  drugSearchSubject = new Subject<string>();
+  drugSuggestions = signal<DrugDto[]>([]);
+  showDrugSuggestions = signal(false);
+
+  // ── Interactions Tab ───────────────────────────────────────────────────────
+  drugChipInput = '';
+  drugChips = signal<string[]>([]);
+  interactionResult = signal<InteractionCheckResult | null>(null);
+  isInteractionLoading = signal(false);
+  interactionError = signal('');
+
+  interactionSearchSubject = new Subject<string>();
+  interactionSuggestions = signal<DrugDto[]>([]);
+  showInteractionSuggestions = signal(false);
+
+  private subs = new Subscription();
+
+  ngOnInit(): void {
+    this.subs.add(
+      this.drugSearchSubject.pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        switchMap(term => {
+          if (!term.trim()) return [];
+          return this.drugService.searchDrugs({ searchValue: term, pageNumber: 1, pageSize: 10 });
+        })
+      ).subscribe({
+        next: (res: any) => {
+          this.drugSuggestions.set(res.items || []);
+          this.showDrugSuggestions.set(true);
+        },
+        error: () => this.drugSuggestions.set([])
+      })
+    );
+
+    this.subs.add(
+      this.interactionSearchSubject.pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        switchMap(term => {
+          if (!term.trim()) return [];
+          return this.drugService.searchDrugs({ searchValue: term, pageNumber: 1, pageSize: 10 });
+        })
+      ).subscribe({
+        next: (res: any) => {
+          this.interactionSuggestions.set(res.items || []);
+          this.showInteractionSuggestions.set(true);
+        },
+        error: () => this.interactionSuggestions.set([])
+      })
+    );
+  }
+
+  onDrugSearchInput(event: Event): void {
+    const val = (event.target as HTMLInputElement).value;
+    this.drugSearchQuery = val;
+    if (val.trim().length >= 1) {
+      this.drugSearchSubject.next(val);
+    } else {
+      this.showDrugSuggestions.set(false);
+      this.drugSuggestions.set([]);
+    }
+  }
+
+  selectDrugSuggestion(drug: DrugDto): void {
+    this.drugSearchQuery = drug.brandName;
+    this.showDrugSuggestions.set(false);
+    this.searchDrug();
+  }
+
+  onInteractionSearchInput(event: Event): void {
+    const val = (event.target as HTMLInputElement).value;
+    this.drugChipInput = val;
+    if (val.trim().length >= 1) {
+      this.interactionSearchSubject.next(val);
+    } else {
+      this.showInteractionSuggestions.set(false);
+      this.interactionSuggestions.set([]);
+    }
+  }
+
+  selectInteractionSuggestion(drug: DrugDto): void {
+    this.drugChipInput = drug.brandName;
+    this.showInteractionSuggestions.set(false);
+    this.addDrugChip();
+  }
+
   searchDrug(): void {
     const name = this.drugSearchQuery.trim();
     if (!name) return;
@@ -315,6 +408,6 @@ export class AiAssistantComponent implements OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // cleanup if needed
+    this.subs.unsubscribe();
   }
 }
