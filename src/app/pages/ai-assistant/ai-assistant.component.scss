@@ -1,0 +1,121 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 81px; /* Below the header (80px + 1px border) */
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #fff;
+  z-index: 45; /* Below the 50 of the header */
+}
+
+/* Ensure PrimeNG AutoComplete spans full width */
+::ng-deep .p-autocomplete {
+  width: 100%;
+}
+
+::ng-deep .p-autocomplete-input {
+  width: 100%;
+}
+
+.severity-none {
+  border-color: #22c55e;
+}
+.severity-minor {
+  border-color: #eab308;
+}
+.severity-moderate {
+  border-color: #f97316;
+}
+.severity-severe {
+  border-color: #ef4444;
+}
+.severity-contraindicated {
+  border-color: #991b1b;
+  background-color: #fef2f2;
+  color: #991b1b;
+}
+
+// Markdown Styles for Chat Bubbles
+::ng-deep .prose {
+  p {
+    margin-bottom: 0.75rem;
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+  
+  ul {
+    list-style-type: disc;
+    padding-inline-start: 1.5rem;
+    margin-bottom: 0.75rem;
+    
+    li {
+      margin-bottom: 0.25rem;
+    }
+  }
+  
+  ol {
+    list-style-type: decimal;
+    padding-inline-start: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  h1, h2, h3, h4 {
+    font-weight: 700;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    color: inherit;
+  }
+  
+  h3 {
+    font-size: 1.1rem;
+  }
+  
+  strong {
+    font-weight: 700;
+    color: inherit;
+  }
+  
+  hr {
+    border-color: rgba(0, 0, 0, 0.1);
+    margin: 1rem 0;
+  }
+}
+
+::ng-deep .prose-invert {
+  hr {
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+}
+
+/* Custom Scrollbar for Chat */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1; /* Tailwind slate-300 */
+  border-radius: 20px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #94a3b8; /* Tailwind slate-400 */
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.message-enter {
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
