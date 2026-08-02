@@ -10,7 +10,7 @@ import { CreatePatientAddressRequest, UpdatePatientAddressRequest, PatientAddres
   providedIn: 'root'
 })
 export class PatientAddressesService {
-  private readonly baseUrl = environment.localUrl + '/PatientAddresses';
+  private readonly baseUrl = environment.baseUrl + '/PatientAddresses';
 
   constructor(private http: HttpClient) {}
 

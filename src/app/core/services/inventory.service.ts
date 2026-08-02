@@ -17,8 +17,8 @@ import { AdjustStockDTO } from '@core/interfaces/inventory.interface';
 @Injectable({ providedIn: 'root' })
 export class InventoryService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = environment.localUrl;
-  private readonly omarUrl = environment.localUrl;
+  private readonly baseUrl = environment.baseUrl;
+  private readonly omarUrl = environment.baseUrl;
   private readonly resource = 'Inventory';
 
   // ── Signal store ────────────────────────────────────────────
@@ -143,6 +143,6 @@ export class InventoryService {
   }
 
   adjustStock(inventoryId: string, payload: AdjustStockDTO) {
-    return this.http.patch<any>(`${environment.localUrl}/Inventory/${inventoryId}/adjust-stock`, payload);
+    return this.http.patch<any>(`${environment.baseUrl}/Inventory/${inventoryId}/adjust-stock`, payload);
   }
 }

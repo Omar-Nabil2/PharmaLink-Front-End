@@ -19,7 +19,7 @@
 
 
 //   private http = inject(HttpClient);
-//   private readonly localUrl = environment.localUrl;
+//   private readonly localUrl = environment.baseUrl;
 
 //   uploadPrescription(file: File): Observable<HttpEvent<PrescriptionReviewUploadResponse>> {
 //     const formData = new FormData();
@@ -143,7 +143,7 @@ import {
 export class PrescriptionReviewService {
   private http = inject(HttpClient);
 
-  private readonly baseUrl = environment.localUrl;
+  private readonly baseUrl = environment.baseUrl;
   private readonly url = `${this.baseUrl}`;
 
 

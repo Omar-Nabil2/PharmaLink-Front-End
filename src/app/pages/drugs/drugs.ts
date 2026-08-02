@@ -62,7 +62,7 @@ export class DrugsComponent implements OnInit {
   private readonly errorHandlerService = inject(ErrorHandlerService);
   private readonly messageService = inject(MessageService);
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = environment.localUrl;
+  private readonly baseUrl = environment.baseUrl;
 
   async ngOnInit(): Promise<void> {
     this.searchInput$.pipe(debounceTime(400), distinctUntilChanged()).subscribe((term) => {

@@ -8,7 +8,7 @@ import { AdminOrderDTO, AdminOrderDetailDTO, AdminOrdersFilter, PaginatedList } 
 @Injectable({ providedIn: 'root' })
 export class AdminOrdersService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = environment.localUrl;
+  private readonly baseUrl = environment.baseUrl;
 
   getOrders(filter: AdminOrdersFilter): Observable<any> {
     let params = new HttpParams()

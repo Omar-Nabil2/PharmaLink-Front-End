@@ -15,7 +15,7 @@ export interface PaginatedList<T> {
 @Injectable({ providedIn: 'root' })
 export class AdminDrugService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = environment.localUrl;
+  private readonly baseUrl = environment.baseUrl;
 
   getDrugs(filters: DrugSearchRequest): Observable<PaginatedList<DrugDto>> {
     let params = new HttpParams()

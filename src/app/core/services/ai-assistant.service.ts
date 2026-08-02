@@ -14,7 +14,7 @@ import {
 })
 export class AiAssistantService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = environment.localUrl; // Use localUrl to test new local AI endpoints
+  private readonly baseUrl = environment.baseUrl; // Use localUrl to test new local AI endpoints
 
   /**
    * Send a chat message to the AI assistant (non-streaming).
@@ -57,13 +57,20 @@ export class AiAssistantService {
         const { done, value } = await reader.read();
         if (done) break;
         const chunk = decoder.decode(value, { stream: true });
-        // SSE format: "data: <token>\n\n"
+        // SSE format: "data: <json-encoded-token>\n\n"
         const lines = chunk.split('\n');
         for (const line of lines) {
           if (line.startsWith('data:')) {
-            const token = line.slice(5).trim();
-            if (token && token !== '[DONE]') {
-              yield token;
+            const tokenStr = line.slice(5).trim();
+            if (tokenStr && tokenStr !== '[DONE]') {
+              try {
+                // The backend now sends JSON-serialized strings to preserve spaces and newlines
+                const token = JSON.parse(tokenStr);
+                yield token;
+              } catch (e) {
+                // Fallback for raw text if JSON parse fails
+                yield tokenStr;
+              }
             }
           } else if (line.trim() && !line.startsWith('event:') && !line.startsWith(':')) {
             // Plain text stream fallback

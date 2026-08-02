@@ -9,7 +9,7 @@ import { Cart } from '../interfaces/cart.interface';
   providedIn: 'root'
 })
 export class CartService {
-  private readonly baseUrl = environment.localUrl + '/Cart';
+  private readonly baseUrl = environment.baseUrl + '/Cart';
 
   constructor(private http: HttpClient) {}
 
