@@ -15,7 +15,7 @@ export const routes: Routes = [
         component: HomeComponent,
 
       },
-        {
+      {
         path: 'profile/edit',
         loadComponent: () =>
           import('./pages/profile/update-profile/update-profile.component').then(
@@ -141,6 +141,18 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'drugs',
+        loadComponent: () => import('./pages/drugs/drugs').then((m) => m.DrugsComponent),
+      },
+      {
+        path: 'ai-assistant',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./pages/ai-assistant/ai-assistant.component').then(
+            (m) => m.AiAssistantComponent,
+          ),
+      },
+      {
         path: 'prescriptions/upload',
         loadComponent: () =>
           import('./pages/prescriptions/upload-prescription/upload-prescription.component').then(
@@ -155,11 +167,25 @@ export const routes: Routes = [
           ).then((m) => m.PatientPrescriptionsListComponent),
       },
       {
+        path: 'medical-inquiries',
+        loadComponent: () =>
+          import('./pages/patient-medical-inquiries/patient-medical-inquiries.component').then(
+            (m) => m.PatientMedicalInquiriesComponent,
+          ),
+      },
+      {
         path: 'prescriptions/review/:id',
         loadComponent: () =>
           import(
             './pages/prescription-detail.component/prescription-detail.component'
           ).then((m) => m.PatientPrescriptionDetailComponent),
+      },
+      {
+        path: 'image-search',
+        loadComponent: () =>
+          import('./pages/medicine-image-scan/medicine-image-scan.component').then(
+            (m) => m.MedicineImageScanComponent,
+          ),
       },
       {
         path: 'addresses',
@@ -235,6 +261,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'prescriptions/review/:id',
+        loadComponent: () =>
+          import('./pages/prescriptions/review-prescription/review-prescription.component').then(
+            (m) => m.ReviewPrescriptionComponent
+          ),
+      },
+      {
         path: 'assigned-orders',
         loadComponent: () =>
           import('./pages/pharmacist/assigned-orders/assigned-orders').then(
@@ -267,6 +300,47 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./pages/pharmacist/prescription-queue/prescription-queue').then(
             (m) => m.PrescriptionQueue,
+          ),
+      },
+      { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
+    ],
+  },
+
+  {
+    path: 'review-team',
+    canActivate: [authGuard],
+    data: { role: AppRoles.PrescriptionReviewTeam },
+    loadComponent: () =>
+      import('./layouts/review-team-layout/review-team-layout.component').then(
+        (m) => m.ReviewTeamLayoutComponent,
+      ),
+    children: [
+      {
+        path: 'dashboard',
+        loadComponent: () =>
+          import('./pages/review-team/review-team-dashboard.component').then(
+            (m) => m.ReviewTeamDashboardComponent,
+          ),
+      },
+      {
+        path: 'prescriptions',
+        loadComponent: () =>
+          import('./pages/pharmacist/prescription-queue/prescription-queue').then(
+            (m) => m.PrescriptionQueue,
+          ),
+      },
+      {
+        path: 'prescriptions/review/:id',
+        loadComponent: () =>
+          import('./pages/prescriptions/review-prescription/review-prescription.component').then(
+            (m) => m.ReviewPrescriptionComponent,
+          ),
+      },
+      {
+        path: 'medical-inquiries',
+        loadComponent: () =>
+          import('./pages/review-team/medical-inquiries.component').then(
+            (m) => m.MedicalInquiriesComponent,
           ),
       },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
@@ -318,6 +392,21 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./pages/branches/pharmacy-branch.component').then(
             (m) => m.PharmacyBranchComponent,
+          ),
+      },
+      {
+        path: 'pharmacists/:id',
+        loadComponent: () =>
+          import('./pages/pharmacy-admin/pharmacists/pharmacist-detail/pharmacist-detail.component').then(
+            (m) => m.PharmacistDetailComponent,
+          ),
+      },
+      {
+        path: 'pharmacists',
+        pathMatch: 'full',
+        loadComponent: () =>
+          import('./pages/pharmacy-admin/pharmacists/pharmacists-list/pharmacists-list.component').then(
+            (m) => m.PharmacistsListComponent,
           ),
       },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
@@ -398,8 +487,8 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./pages/profile/profile.component').then((m) => m.ProfileComponent),
       },
-{
-        path: 'profile/edit', 
+      {
+        path: 'profile/edit',
         loadComponent: () =>
           import('./pages/profile/update-profile/update-profile.component').then(
             (m) => m.UpdateProfileComponent,

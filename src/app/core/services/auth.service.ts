@@ -18,7 +18,7 @@ import { environment } from '@environments/environment';
   providedIn: 'root',
 })
 export class AuthService {
-  private readonly localUrl = environment.localUrl;
+  private readonly localUrl = environment.baseUrl;
 
   private currentUserSignal = signal<UserAuthData | null>(this.loadUserFromStorage());
 
@@ -61,6 +61,8 @@ export class AuthService {
     const r = role.toLowerCase().replace(/\s+/g, '');
     if (r === 'admin' || r === 'systemadmin' || r === 'administrator') return AppRoles.Admin;
     if (r === 'pharmacist') return AppRoles.Pharmacist;
+    if (r === 'prescriptionreviewteam' || r === 'reviewteam' || r === 'pharmacyreviewteam')
+      return AppRoles.PrescriptionReviewTeam;
     if (r === 'pharmacyadmin' || r === 'owner' || r === 'pharmacyowner')
       return AppRoles.PharmacyAdmin;
     if (r === 'patient') return AppRoles.Patient;
@@ -106,6 +108,8 @@ export class AuthService {
         return '/owner/dashboard';
       case AppRoles.Pharmacist:
         return '/pharmacist/dashboard';
+      case AppRoles.PrescriptionReviewTeam:
+        return '/review-team/dashboard';
       case AppRoles.Patient:
         return '/patient/dashboard';
       default:

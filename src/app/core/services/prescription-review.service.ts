@@ -19,7 +19,7 @@
 
 
 //   private http = inject(HttpClient);
-//   private readonly localUrl = environment.localUrl;
+//   private readonly localUrl = environment.baseUrl;
 
 //   uploadPrescription(file: File): Observable<HttpEvent<PrescriptionReviewUploadResponse>> {
 //     const formData = new FormData();
@@ -133,15 +133,9 @@ import {
   PharmacistOrderDetailsDto,
   PrescriptionReviewDto,
   PrescriptionReviewQueryDto,
+  PrescriptionReviewUploadResponse,
   Result
 } from '@core/interfaces/prescription-review.interface';
-
-export interface PrescriptionReviewUploadResponse {
-  reviewId: string;
-  status: string;
-  imageUrl: string;
-  medicines: any[];
-}
 
 @Injectable({
   providedIn: 'root'
@@ -149,7 +143,7 @@ export interface PrescriptionReviewUploadResponse {
 export class PrescriptionReviewService {
   private http = inject(HttpClient);
 
-  private readonly baseUrl = environment.localUrl;
+  private readonly baseUrl = environment.baseUrl;
   private readonly url = `${this.baseUrl}`;
 
 
@@ -165,6 +159,13 @@ export class PrescriptionReviewService {
     });
 
     return this.http.request<PrescriptionReviewUploadResponse>(req);
+  }
+
+  addSelectedMedicinesToCart(reviewId: string, prescriptionReviewMedicineIds: string[]): Observable<any> {
+    return this.http.post(
+      `${this.url}/PrescriptionReviews/${reviewId}/add-selected-medicines-to-cart`,
+      { prescriptionReviewMedicineIds }
+    );
   }
 
   getReview(id: string): Observable<PrescriptionReviewDto> {

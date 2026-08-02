@@ -625,7 +625,7 @@ export class AdminPharmaciesComponent implements OnInit, OnDestroy {
     return locationSet.size > 0 ? Array.from(locationSet).join(' ، ') : '—';
   }
 
-  /** Resolves absolute logo URL using environment.localUrl server host */
+  /** Resolves absolute logo URL using environment.baseUrl server host */
   getLogoUrl(logoUrl?: string | null): string {
     if (!logoUrl) return '';
     if (
@@ -636,7 +636,7 @@ export class AdminPharmaciesComponent implements OnInit, OnDestroy {
     ) {
       return logoUrl;
     }
-    const host = environment.localUrl.replace(/\/api\/v1\/?$/, '');
+    const host = environment.baseUrl.replace(/\/api\/v1\/?$/, '');
     const path = logoUrl.startsWith('/') ? logoUrl : `/${logoUrl}`;
     return `${host}${path}`;
   }

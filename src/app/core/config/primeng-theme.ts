@@ -1,5 +1,5 @@
-import { definePreset } from '@primeuix/themes';
-import Aura from '@primeuix/themes/aura';
+import { definePreset } from '@primeng/themes';
+import Aura from '@primeng/themes/aura';
 
 /** Pharma Link / Uber-inspired black & white PrimeNG preset */
 export const PharmaLinkPreset = definePreset(Aura, {
@@ -21,7 +21,7 @@ export const PharmaLinkPreset = definePreset(Aura, {
       light: {
         primary: {
           color: '#000000',
-          inverseColor: '#ffffff',
+          contrastColor: '#ffffff', // تم التعديل هنا
           hoverColor: '#282828',
           activeColor: '#000000',
         },

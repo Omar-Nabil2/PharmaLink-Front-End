@@ -671,7 +671,7 @@ export class AdminPharmacyOwnersComponent implements OnInit, OnDestroy {
     ) {
       return logoUrl;
     }
-    const baseUrl = environment.localUrl || 'https://localhost:5001';
+    const baseUrl = environment.baseUrl || 'https://localhost:5001';
     const host = baseUrl.replace(/\/api\/v1\/?$/, '').replace(/\/$/, '');
     const path = logoUrl.startsWith('/') ? logoUrl : `/${logoUrl}`;
     return `${host}${path}`;

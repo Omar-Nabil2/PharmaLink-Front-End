@@ -12,7 +12,7 @@ import { inject } from '@angular/core';
 export class DrugService {
   // private readonly baseUrl =`https://localhost:5001/api/v1`;
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = environment.localUrl;
+  private readonly baseUrl = environment.baseUrl;
 
 
   constructor() {}

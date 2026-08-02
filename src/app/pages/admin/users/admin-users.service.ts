@@ -6,6 +6,7 @@ import {
   AdminUserDto,
   AdminUserFilterDto,
   UpdateUserStatusDto,
+  UpdateUserRoleDto,
   PaginatedList
 } from './admin-users.model';
 
@@ -42,5 +43,9 @@ export class AdminUsersService {
 
   updateUserStatus(userId: string, dto: UpdateUserStatusDto): Observable<void> {
     return this.http.put<void>(`${this.apiUrl}/${userId}/status`, dto);
+  }
+
+  updateUserRole(userId: string, dto: UpdateUserRoleDto): Observable<AdminUserDto> {
+    return this.http.put<AdminUserDto>(`${this.apiUrl}/${userId}/role`, dto);
   }
 }
