@@ -1,12 +1,10 @@
-import { Component, OnInit, OnDestroy, AfterViewInit, QueryList, ViewChildren, ElementRef } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit, OnDestroy, AfterViewInit, QueryList, ViewChildren, ElementRef, ChangeDetectorRef } from '@angular/core';import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { AuthService } from '../../../core/services/auth.service';
 import { ErrorHandlerService } from '../../../core/services/error-handler.service';
 import { HttpErrorResponse } from '@angular/common/http';
-
 @Component({
   selector: 'app-verify-otp',
   standalone: true,
@@ -32,7 +30,9 @@ export class VerifyOtpComponent implements OnInit, OnDestroy, AfterViewInit {
     private readonly authService: AuthService,
     private readonly errorHandlerService: ErrorHandlerService,
     private readonly messageService: MessageService,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly cdr: ChangeDetectorRef 
+
   ) {}
 
   ngOnInit(): void {
@@ -66,18 +66,18 @@ export class VerifyOtpComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   // Timer Management
-  startTimer(): void {
+startTimer(): void {
     this.stopTimer();
     this.countdownSeconds = 120;
     this.timerInterval = setInterval(() => {
       if (this.countdownSeconds > 0) {
         this.countdownSeconds--;
+        this.cdr.markForCheck(); 
       } else {
         this.stopTimer();
       }
     }, 1000);
   }
-
   stopTimer(): void {
     if (this.timerInterval) {
       clearInterval(this.timerInterval);
