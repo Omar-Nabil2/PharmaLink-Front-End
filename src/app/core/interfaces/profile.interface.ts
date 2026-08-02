@@ -44,6 +44,11 @@ export interface PatientAddress {
     isDefault: boolean;
     latitude: number;
     longitude: number;
+    label?: string;
+    buildingNumber?: string;
+    floorNumber?: string;
+    apartmentNumber?: string;
+    additionalInstructions?: string;
 }
 
 
@@ -54,6 +59,7 @@ export interface PatientProfile {
     phoneNumber: string;
     status: string;
     createdAt: string;
+    profilePictureUrl?: string;
     addresses: PatientAddress[];
 }
 
