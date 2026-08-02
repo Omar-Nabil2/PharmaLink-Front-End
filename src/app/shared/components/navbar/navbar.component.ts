@@ -3,6 +3,7 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { clearAuthSession } from '@core/utils/auth-storage';
 import { AuthService } from '@core/services/auth.service';
+import { environment } from '@environments/environment';
 
 @Component({
   selector: 'app-navbar',
@@ -27,6 +28,12 @@ export class NavbarComponent {
   get fullName(): string {
     if (typeof window === 'undefined') return '';
     return localStorage.getItem('fullName') || 'Profile';
+  }
+
+  get profilePictureUrl(): string | null {
+    if (typeof window === 'undefined') return null;
+    const url = localStorage.getItem('profilePictureUrl');
+    return url ? environment.baseUrl.replace('/api/v1', '/') + url : null;
   }
 
   get dashboardPath(): string {

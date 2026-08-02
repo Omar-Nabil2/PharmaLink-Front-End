@@ -4,6 +4,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ProfileService } from '../../core/services/profile.service';
+import { environment } from '../../../environments/environment';
 import { ErrorHandlerService } from '../../core/services/error-handler.service';
 import { GetPharmacyProfileResponse, PatientProfile, SystemAdminProfile, GetPharmacyAdminProfile } from '../../core/interfaces/profile.interface';
 
@@ -14,6 +15,7 @@ import { GetPharmacyProfileResponse, PatientProfile, SystemAdminProfile, GetPhar
   templateUrl: './profile.component.html',
 })
 export class ProfileComponent implements OnInit {
+  serverUrl = environment.baseUrl.replace('/api/v1', '/');
   userRole: string = '';
 
   patientData: PatientProfile | null = null;
@@ -65,7 +67,10 @@ export class ProfileComponent implements OnInit {
     if (this.isPatientRole) {
       this.profileService.getPatientProfile().subscribe({
         next: (res) => {
-          this.patientData = res.value || res;
+          this.patientData = res;
+          if (this.patientData?.profilePictureUrl) {
+             localStorage.setItem('profilePictureUrl', this.patientData.profilePictureUrl);
+          }
           this.isLoading = false;
           this.cdr.detectChanges();
         },
@@ -121,6 +126,21 @@ export class ProfileComponent implements OnInit {
     this.isLoading = false;
     this.errorHandler.handleError(err, msg);
     this.cdr.detectChanges();
+  }
+
+  onFileSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      this.isLoading = true;
+      this.profileService.uploadPatientProfilePicture(file).subscribe({
+        next: () => {
+          this.fetchProfile(); // Refresh to get the new image URL
+        },
+        error: (err) => {
+          this.handleErr(err, 'فشل في رفع الصورة');
+        }
+      });
+    }
   }
 
   isDefaultAddress(index: number): boolean {
