@@ -37,7 +37,7 @@ export class ProfileService {
   uploadPatientProfilePicture(file: File): Observable<any> {
     const formData = new FormData();
     formData.append('Image', file);
-    return this.http.put(`${this.localUrl}/patients/profile/picture`, formData);
+    return this.http.put(`${this.localUrl}/patients/profile/picture`, formData, { responseType: 'text' });
   }
 
   updateProfile(data: UpdatePharmacyProfileRequest): Observable<UpdatePharmacyProfileResponse> {
