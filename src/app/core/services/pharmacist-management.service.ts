@@ -16,7 +16,7 @@ import {
 @Injectable({ providedIn: 'root' })
 export class PharmacistManagementService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = `${environment.localUrl}/Pharmacists`;
+  private readonly baseUrl = `${environment.baseUrl}/Pharmacists`;
 
   getAllPharmacists(params: PharmacistFilterParams): Observable<PaginatedList<PharmacistSummaryDTO>> {
     let httpParams = new HttpParams()

@@ -12,7 +12,7 @@ import {
   providedIn: 'root',
 })
 export class PharmacyService {
-  private readonly baseUrl = environment.localUrl;
+  private readonly baseUrl = environment.baseUrl;
 
   constructor(private readonly http: HttpClient) {}
 

@@ -14,7 +14,7 @@ import { Observable } from 'rxjs';
 })
 export class MedicalInquiryService {
   private readonly http = inject(HttpClient);
-  private readonly url = `${environment.localUrl}/MedicalInquiries`;
+  private readonly url = `${environment.baseUrl}/MedicalInquiries`;
 
   create(request: CreateMedicalInquiryRequest): Observable<MedicalInquiry> {
     return this.http.post<MedicalInquiry>(this.url, request);

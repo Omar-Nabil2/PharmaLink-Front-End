@@ -92,17 +92,17 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
 
     this.chatInput = '';
 
+    // Build history (exclude first system greeting, errors, and the current message)
+    const history = this.messages()
+      .filter((m) => m.content !== this.messages()[0]?.content && !m.isError)
+      .map((m) => ({ role: m.role, content: m.content }));
+
     // Push user message
     const updatedMsgs = [
       ...this.messages(),
       { role: 'user' as const, content: text, timestamp: new Date() },
     ];
     this.messages.set(updatedMsgs);
-
-    // Build history (exclude first system greeting and errors)
-    const history = updatedMsgs
-      .filter((m) => m.content !== updatedMsgs[0]?.content && !m.isError)
-      .map((m) => ({ role: m.role, content: m.content }));
 
     // Add placeholder for AI reply
     const placeholderIdx = updatedMsgs.length;

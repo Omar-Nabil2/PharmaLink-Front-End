@@ -9,7 +9,7 @@ import { MedicineImageScanResponse } from '@core/interfaces/ai-scan.interface';
 })
 export class AiScanService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = environment.localUrl;
+  private readonly baseUrl = environment.baseUrl;
 
   scanMedicineImage(file: File): Observable<HttpEvent<MedicineImageScanResponse>> {
     const formData = new FormData();

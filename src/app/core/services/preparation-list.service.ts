@@ -9,8 +9,8 @@ import { environment } from '../../../environments/environment'; // <-- ضيف �
 })
 export class PreparationListService {
     // غيرنا السطر ده عشان يقرأ من الـ environment
-    // تقدر تستخدم environment.omarUrl لو الباك إند شغال عندك لوكال على بورت 5001
-    private baseUrl = environment.localUrl; // استخدم environment.baseUrl لو الباك إند شغال على السيرفر
+    // تقدر تستخدم environment.baseUrl لو الباك إند شغال عندك لوكال على بورت 5001
+    private baseUrl = environment.baseUrl; // استخدم environment.baseUrl لو الباك إند شغال على السيرفر
 
     constructor(private http: HttpClient) { }
 

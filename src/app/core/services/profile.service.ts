@@ -16,8 +16,8 @@ import {
   providedIn: 'root',
 })
 export class ProfileService {
-  private readonly localUrl = environment.localUrl;
-  private readonly omarUrl = environment.omarUrl;
+  private readonly localUrl = environment.baseUrl;
+  private readonly omarUrl = environment.baseUrl;
 
   constructor(private readonly http: HttpClient) { }
 
