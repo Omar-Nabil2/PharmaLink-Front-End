@@ -20,6 +20,7 @@ export class AdminLayoutComponent {
     { label: 'كتالوج الأدوية', icon: 'pi pi-link', routerLink: '/admin/drugs' },
     { label: 'جميع الطلبات', icon: 'pi pi-list', routerLink: '/admin/orders' },
     { label: 'إدارة المستخدمين', icon: 'pi pi-users', routerLink: '/admin/users' },
+    
     { label: 'موافقات الصيدليات', icon: 'pi pi-verified', routerLink: '/admin/approvals' },
     { label: 'الملف الشخصي', icon: 'pi pi-user', routerLink: '/admin/profile' },
   ];
