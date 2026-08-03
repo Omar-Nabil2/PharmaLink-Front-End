@@ -1,5 +1,40 @@
+<!-- Reusable Promo Block Template -->
+<ng-template #promoBlock let-block>
+  <section class="space-y-6" *ngIf="block">
+    <!-- Full Width Row -->
+    <div *ngIf="block.type === 'full'" class="w-full rounded-[2rem] overflow-hidden shadow-sm relative group">
+      <a [routerLink]="block.images[0].link" class="block w-full">
+        <img [src]="block.images[0].url" [alt]="block.images[0].alt" class="w-full h-auto block group-hover:scale-[1.02] transition-transform duration-500">
+      </a>
+    </div>
+
+    <!-- 2-Column Grid (Wide/Medium) -->
+    <div *ngIf="block.type === 'grid-2'" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <a *ngFor="let img of block.images" [routerLink]="img.link" class="block rounded-[2rem] overflow-hidden shadow-sm relative group">
+        <img [src]="img.url" [alt]="img.alt" class="w-full h-auto block group-hover:scale-[1.03] transition-transform duration-500">
+      </a>
+    </div>
+
+    <!-- 3-Column Grid (Medium Landscape) -->
+    <div *ngIf="block.type === 'grid-3'" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <a *ngFor="let img of block.images" [routerLink]="img.link" class="block rounded-[2rem] overflow-hidden shadow-sm relative group">
+        <img [src]="img.url" [alt]="img.alt" class="w-full h-auto block group-hover:scale-[1.03] transition-transform duration-500">
+      </a>
+    </div>
+
+    <!-- 4-Column Grid (Portrait/Square) -->
+    <div *ngIf="block.type === 'grid-4'" class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <a *ngFor="let img of block.images" [routerLink]="img.link" class="block rounded-[2rem] overflow-hidden shadow-sm relative group">
+        <img [src]="img.url" [alt]="img.alt" class="w-full h-auto block group-hover:scale-[1.03] transition-transform duration-500">
+      </a>
+    </div>
+  </section>
+</ng-template>
+
 <div class="space-y-12" dir="rtl">
   
+  <ng-container *ngTemplateOutlet="promoBlock; context: {$implicit: promoGallery[0]}"></ng-container>
+
   <!-- Hero Section -->
   <section class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
     <!-- Main Welcome Card -->
@@ -64,12 +99,12 @@
 
   <!-- Quick Actions -->
   <section>
-    <div class="flex items-end justify-between gap-4 mb-8">
-      <div>
-        <h2 class="text-2xl md:text-3xl font-black text-slate-800">الخدمات السريعة</h2>
-        <p class="text-base text-slate-500 mt-2 font-medium">اختار الخدمة المناسبة وكمّل في خطوات بسيطة.</p>
-      </div>
+    <div class="flex items-center justify-between mb-8">
+      <h2 class="text-2xl font-black text-slate-800">الخدمات السريعة</h2>
     </div>
+
+    <ng-container *ngTemplateOutlet="promoBlock; context: {$implicit: promoGallery[1]}"></ng-container>
+    <div class="h-8"></div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
       
@@ -115,6 +150,9 @@
 
     </div>
   </section>
+
+  <ng-container *ngTemplateOutlet="promoBlock; context: {$implicit: promoGallery[2]}"></ng-container>
+  <ng-container *ngTemplateOutlet="promoBlock; context: {$implicit: promoGallery[3]}"></ng-container>
 
   <!-- Bottom Sections -->
   <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -186,4 +224,9 @@
       </div>
     </div>
   </section>
+
+  <ng-container *ngTemplateOutlet="promoBlock; context: {$implicit: promoGallery[4]}"></ng-container>
+  <ng-container *ngTemplateOutlet="promoBlock; context: {$implicit: promoGallery[5]}"></ng-container>
+  <ng-container *ngTemplateOutlet="promoBlock; context: {$implicit: promoGallery[6]}"></ng-container>
+  
 </div>
