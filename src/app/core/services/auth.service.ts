@@ -12,13 +12,14 @@ import {
   ChangePasswordRequest,
 } from '../interfaces/auth.interface';
 import { AppRole, AppRoles, UserAuthData } from '@core/enums/app-roles.constant';
-import { environment } from '@environments/environment';
+import { environment } from '@environments/environment.prod';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private readonly localUrl = environment.baseUrl;
+  // private readonly localUrl = environment.baseUrl;
+  private readonly localUrl ='https://localhost:5001/api/v1' ;
 
   private currentUserSignal = signal<UserAuthData | null>(this.loadUserFromStorage());
 
