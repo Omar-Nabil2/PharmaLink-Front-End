@@ -4,6 +4,8 @@ import { CommonModule } from '@angular/common';
 import { clearAuthSession } from '@core/utils/auth-storage';
 import { AuthService } from '@core/services/auth.service';
 import { environment } from '@environments/environment';
+import { ProfileService } from '@core/services/profile.service';
+import { AppRoles } from '@core/enums/app-roles.constant';
 
 @Component({
   selector: 'app-navbar',
@@ -15,7 +17,27 @@ import { environment } from '@environments/environment';
 export class NavbarComponent {
   menuOpen = false;
 
-  constructor(private readonly router: Router, private readonly authService: AuthService) {}
+  constructor(
+    private readonly router: Router,
+    private readonly authService: AuthService,
+    private readonly profileService: ProfileService
+  ) {}
+
+  ngOnInit() {
+    if (this.isLoggedIn && !localStorage.getItem('profilePictureUrl')) {
+      if (this.authService.getNormalizedRole() === AppRoles.Patient) {
+        this.profileService.getPatientProfilePictureUrl().subscribe({
+          next: (res) => {
+            if (res.url) {
+              const fullUrl = environment.baseUrl.replace('/api/v1', '/') + res.url;
+              localStorage.setItem('profilePictureUrl', fullUrl);
+            }
+          },
+          error: () => {}
+        });
+      }
+    }
+  }
 
   @HostListener('window:storage')
   onStorageChange(): void {}
