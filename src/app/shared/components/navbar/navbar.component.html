@@ -58,8 +58,8 @@
           <a routerLink="/profile" class="btn-subtle gap-2 !ps-1.5 !py-1">
             <div class="w-8 h-8 rounded-full overflow-hidden border border-surface-pressed shrink-0">
                <img *ngIf="profilePictureUrl" [src]="profilePictureUrl" alt="Profile" class="w-full h-full object-cover">
-               <div *ngIf="!profilePictureUrl" class="w-full h-full flex items-center justify-center bg-canvas text-body">
-                 <i class="pi pi-user text-xs"></i>
+               <div *ngIf="!profilePictureUrl" class="w-full h-full flex items-center justify-center bg-teal-100 text-teal-700 font-bold">
+                 <span>{{ fullName.charAt(0) }}</span>
                </div>
             </div>
             <span class="pe-1">{{ fullName }}</span>
@@ -95,8 +95,8 @@
           <a routerLink="/profile" (click)="menuOpen = false" class="btn-subtle w-full justify-start gap-3">
             <div class="w-8 h-8 rounded-full overflow-hidden border border-surface-pressed shrink-0">
                <img *ngIf="profilePictureUrl" [src]="profilePictureUrl" alt="Profile" class="w-full h-full object-cover">
-               <div *ngIf="!profilePictureUrl" class="w-full h-full flex items-center justify-center bg-canvas text-body">
-                 <i class="pi pi-user text-xs"></i>
+               <div *ngIf="!profilePictureUrl" class="w-full h-full flex items-center justify-center bg-teal-100 text-teal-700 font-bold">
+                 <span>{{ fullName.charAt(0) }}</span>
                </div>
             </div>
             <span>{{ fullName }}</span>

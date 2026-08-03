@@ -93,8 +93,8 @@
         <!-- Profile Picture Container -->
         <div class="relative group cursor-pointer w-16 h-16 shrink-0 rounded-full overflow-hidden border border-surface-pressed" (click)="fileInput.click()">
           <img *ngIf="patientData.profilePictureUrl" [src]="serverUrl + patientData.profilePictureUrl" class="w-full h-full object-cover" alt="Profile Picture">
-          <div *ngIf="!patientData.profilePictureUrl" class="bg-canvas text-ink w-full h-full flex items-center justify-center">
-            <i class="pi pi-user text-2xl"></i>
+          <div *ngIf="!patientData.profilePictureUrl" class="bg-teal-100 text-teal-700 w-full h-full flex items-center justify-center font-bold">
+            <span class="text-2xl">{{ patientData.fullName?.charAt(0) }}</span>
           </div>
           <!-- Overlay on hover -->
           <div class="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
