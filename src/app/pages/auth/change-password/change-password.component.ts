@@ -117,8 +117,8 @@ export class ChangePasswordComponent implements OnInit {
       this.changeForm.markAllAsTouched();
       this.messageService.add({
         severity: 'warn',
-        summary: 'Check form details',
-        detail: 'Please fill in all fields correctly.',
+        summary: 'تأكد من البيانات',
+        detail: 'يرجى تعبئة جميع الحقول بشكل صحيح.',
       });
       return;
     }
@@ -129,8 +129,8 @@ export class ChangePasswordComponent implements OnInit {
         this.isLoading = false;
         this.messageService.add({
           severity: 'success',
-          summary: 'Password updated',
-          detail: 'Your password has been changed successfully.',
+          summary: 'تم التحديث بنجاح',
+          detail: 'تم تغيير كلمة المرور الخاصة بك بنجاح.',
           life: 4000,
         });
         this.changeForm.reset();
@@ -152,7 +152,7 @@ export class ChangePasswordComponent implements OnInit {
           });
         }
 
-        this.errorHandler.handleError(err, 'Failed to change password');
+        this.errorHandler.handleError(err, 'فشل في تغيير كلمة المرور');
       },
     });
   }
