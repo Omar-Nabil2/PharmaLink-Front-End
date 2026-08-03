@@ -44,10 +44,9 @@ export class PatientLayoutComponent implements OnInit {
     if (this.authService.isLoggedIn() && !localStorage.getItem('profilePictureUrl')) {
       this.profileService.getPatientProfilePictureUrl().subscribe({
         next: (res) => {
-          if (res.url) {
-            const fullUrl = environment.baseUrl.replace('/api/v1', '/') + res.url;
-            localStorage.setItem('profilePictureUrl', fullUrl);
-          }
+            if (res.url) {
+              localStorage.setItem('profilePictureUrl', res.url);
+            }
         },
         error: () => {}
       });

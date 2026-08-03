@@ -29,8 +29,7 @@ export class NavbarComponent {
         this.profileService.getPatientProfilePictureUrl().subscribe({
           next: (res) => {
             if (res.url) {
-              const fullUrl = environment.baseUrl.replace('/api/v1', '/') + res.url;
-              localStorage.setItem('profilePictureUrl', fullUrl);
+              localStorage.setItem('profilePictureUrl', res.url);
             }
           },
           error: () => {}
