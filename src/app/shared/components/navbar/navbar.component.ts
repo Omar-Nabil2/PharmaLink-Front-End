@@ -32,8 +32,7 @@ export class NavbarComponent {
 
   get profilePictureUrl(): string | null {
     if (typeof window === 'undefined') return null;
-    const url = localStorage.getItem('profilePictureUrl');
-    return url ? environment.baseUrl.replace('/api/v1', '/') + url : null;
+    return localStorage.getItem('profilePictureUrl');
   }
 
   get dashboardPath(): string {
