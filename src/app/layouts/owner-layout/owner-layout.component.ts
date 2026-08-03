@@ -35,6 +35,13 @@ export class OwnerLayoutComponent {
   readonly roleLabel = signal('مالك صيدلية');
 
   readonly avatarInitial = computed(() => this.fullName().charAt(0).toUpperCase() || 'م');
+  profilePictureUrl: string | null = null;
+
+  ngOnInit(): void {
+    if (typeof window !== 'undefined') {
+      this.profilePictureUrl = localStorage.getItem('profilePictureUrl');
+    }
+  }
 
   constructor() {
     this.router.events
