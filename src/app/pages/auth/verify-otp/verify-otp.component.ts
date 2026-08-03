@@ -51,19 +51,15 @@ export class VerifyOtpComponent implements OnInit, OnDestroy, AfterViewInit {
       return;
     }
 
-    // التحقق هل الـ Timer شغال أساساً في الـ localStorage (لمنع إعادة إرسال الريكวست عند الـ Refresh)
     const savedEndTime = localStorage.getItem('otp_timer_end');
     if (!savedEndTime) {
-      // لو أول دخول حقيقي للصفحة، نرسل الريكวست ونبدأ التايمر (دقيقة)
       this.sendOtpRequest(true);
     } else {
-      // لو تم عمل Refresh، نستكمل التايمر بناءً على الوقت المتبقي بدون إرسال ريكวست جديد
       this.startTimer(false);
     }
   }
 
   ngAfterViewInit(): void {
-    // Focus first input automatically
     setTimeout(() => {
       this.focusInput(0);
     }, 300);
@@ -78,7 +74,7 @@ export class VerifyOtpComponent implements OnInit, OnDestroy, AfterViewInit {
     const storageKey = 'otp_timer_end';
     const now = Date.now();
     let endTime: number;
-    const timerDurationMs = 60 * 1000; // دقيقة واحدة
+    const timerDurationMs = 60 * 1000;
 
     if (reset) {
       endTime = now + timerDurationMs;
@@ -143,18 +139,15 @@ export class VerifyOtpComponent implements OnInit, OnDestroy, AfterViewInit {
     return this.countdownSeconds === 0 && !this.isResending && !this.isLoading;
   }
 
-  // Unified KeyDown Handler: Manages Entry, Deletion, and Navigation
   onKeyDown(event: KeyboardEvent, index: number): void {
     const key = event.key;
 
     if (key === 'Backspace') {
-      event.preventDefault(); // Stop default browser action
+      event.preventDefault();
 
       if (this.otpDigits[index]) {
-        // Clear current index if filled
         this.otpDigits[index] = '';
       } else {
-        // If empty, clear previous index and move backward asynchronously
         if (index > 0) {
           this.otpDigits[index - 1] = '';
         }
@@ -163,12 +156,10 @@ export class VerifyOtpComponent implements OnInit, OnDestroy, AfterViewInit {
         }, 0);
       }
     } else if (/^[0-9]$/.test(key)) {
-      event.preventDefault(); // Stop browser typing to prevent double entry
+      event.preventDefault();
       
-      // Update cell value
       this.otpDigits[index] = key;
       
-      // Advance focus asynchronously to prevent key event leakages to the next box
       setTimeout(() => {
         this.focusInput(index + 1);
       }, 0);
@@ -183,7 +174,6 @@ export class VerifyOtpComponent implements OnInit, OnDestroy, AfterViewInit {
         this.focusInput(index + 1);
       }, 0);
     } else {
-      // Prevent entering non-numeric letters/symbols but allow system operations (Tab, Shift, Control)
       const allowedSystemKeys = ['Tab', 'Enter', 'Delete', 'ArrowUp', 'ArrowDown', 'Control', 'Alt', 'Meta', 'Shift'];
       if (!allowedSystemKeys.includes(key)) {
         event.preventDefault();
@@ -194,14 +184,12 @@ export class VerifyOtpComponent implements OnInit, OnDestroy, AfterViewInit {
   onPaste(event: ClipboardEvent): void {
     event.preventDefault();
     const pastedData = event.clipboardData?.getData('text') || '';
-    // Extract only digits
     const digitsOnly = pastedData.replace(/[^0-9]/g, '').slice(0, 6);
 
     if (digitsOnly.length > 0) {
       for (let i = 0; i < 6; i++) {
         this.otpDigits[i] = digitsOnly[i] || '';
       }
-      // Focus the last populated index
       const focusIndex = Math.min(digitsOnly.length, 5);
       this.focusInput(focusIndex);
     }
@@ -217,7 +205,7 @@ export class VerifyOtpComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  // API Methods
+  // --- الربط الحقيقي بدالة إرسال الرمز ---
   sendOtpRequest(isInitialLoad: boolean = false): void {
     if (!this.userId) return;
 
@@ -225,28 +213,30 @@ export class VerifyOtpComponent implements OnInit, OnDestroy, AfterViewInit {
       this.isResending = true;
     }
 
-    // Simulate API network latency delay
-    setTimeout(() => {
-      this.isResending = false;
-      
-      // تفعيل التايمر (دقيقة كاملة) وإعادة ضبط وقت النهاية عند الضغط على إعادة إرسال أو أول دخول
-      this.startTimer(true);
+    this.authService.requestPhoneVerification(this.userId).subscribe({
+      next: () => {
+        this.isResending = false;
+        this.startTimer(true);
 
-      // Simulated success response
-      this.messageService.add({
-        severity: 'success',
-        summary: 'تم إرسال الرمز',
-        detail: 'تم إرسال رمز التحقق إلى رقم هاتفك المسجل.'
-      });
+        this.messageService.add({
+          severity: 'success',
+          summary: 'تم إرسال الرمز',
+          detail: 'تم إرسال رمز التحقق إلى رقم هاتفك المسجل.'
+        });
 
-      // Clear fields on resend
-      if (!isInitialLoad) {
-        this.otpDigits = ['', '', '', '', '', ''];
-        this.focusInput(0);
+        if (!isInitialLoad) {
+          this.otpDigits = ['', '', '', '', '', ''];
+          this.focusInput(0);
+        }
+      },
+      error: (err: HttpErrorResponse) => {
+        this.isResending = false;
+        this.errorHandlerService.handleError(err, 'فشل إرسال الرمز');
       }
-    }, 800);
+    });
   }
 
+  // --- الربط الحقيقي بدالة التحقق من الرمز ---
   onVerify(): void {
     if (!this.userId) return;
 
@@ -255,55 +245,33 @@ export class VerifyOtpComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.isLoading = true;
 
-    // Simulate API network latency delay
-    setTimeout(() => {
-      try {
-        // Mock code "112233" as success
-        if (code === '112233') {
-          this.isLoading = false;
-          this.messageService.add({
-            severity: 'success',
-            summary: 'تم التحقق بنجاح',
-            detail: 'تم توثيق رقم الهاتف بنجاح.'
-          });
-
-          // Clear local storage keys after verification completes
-          if (typeof window !== 'undefined') {
-            localStorage.removeItem('userId');
-            localStorage.removeItem('otp_timer_end');
-          }
-
-          // Navigate to login
-          setTimeout(() => {
-            this.router.navigate(['/auth/login']);
-          }, 1500);
-        } else {
-          this.isLoading = false;
-          
-          const mockError = new HttpErrorResponse({
-            status: 400,
-            statusText: 'Bad Request',
-            error: {
-              title: 'Verification Failed',
-              errors: {
-                code: 'Otp.InvalidCode',
-                message: 'The verification code entered is incorrect. (Use 112233 for testing success).'
-              }
-            }
-          });
-
-          this.errorHandlerService.handleError(mockError, 'فشل التحقق');
-
-          this.otpDigits = ['', '', '', '', '', ''];
-          setTimeout(() => {
-            this.focusInput(0);
-          }, 100);
-        }
-      } catch (err) {
+    this.authService.verifyPhone(this.userId, code).subscribe({
+      next: () => {
         this.isLoading = false;
-        console.error('[VerifyFatalError]', err);
+        this.messageService.add({
+          severity: 'success',
+          summary: 'تم التحقق بنجاح',
+          detail: 'تم توثيق رقم الهاتف بنجاح.'
+        });
+
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('userId');
+          localStorage.removeItem('otp_timer_end');
+        }
+
+        setTimeout(() => {
+          this.router.navigate(['/auth/login']);
+        }, 1500);
+      },
+      error: (err: HttpErrorResponse) => {
+        this.isLoading = false;
+        this.errorHandlerService.handleError(err, 'فشل التحقق');
+        this.otpDigits = ['', '', '', '', '', ''];
+        setTimeout(() => {
+          this.focusInput(0);
+        }, 100);
       }
-    }, 800);
+    });
   }
 
   onCancel(): void {
@@ -314,7 +282,6 @@ export class VerifyOtpComponent implements OnInit, OnDestroy, AfterViewInit {
     this.router.navigate(['/auth/register']);
   }
 
-  // Helper validation getter
   get isCodeComplete(): boolean {
     return this.otpDigits.every(digit => digit !== '');
   }
