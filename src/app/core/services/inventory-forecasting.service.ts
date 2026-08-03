@@ -13,13 +13,17 @@ import {
 })
 export class InventoryForecastingService {
     private readonly http = inject(HttpClient);
-    private readonly baseUrl = `${environment.baseUrl}/api/v1/inventory`;
+    private readonly baseUrl = `${environment.baseUrl}/inventory`;
 
     /**
      * جلب تقرير التنبؤ الخاص بفرع معين
      */
-    getBranchForecastReport(branchId: string): Observable<ForecastReportResponse> {
-        return this.http.get<ForecastReportResponse>(`${this.baseUrl}/branches/${branchId}/forecast-report`);
+    getBranchForecastReport(branchId: string, pageNumber: number = 1, pageSize: number = 5): Observable<ForecastReportResponse> {
+        let params = new HttpParams()
+            .set('pageNumber', pageNumber.toString())
+            .set('pageSize', pageSize.toString());
+
+        return this.http.get<ForecastReportResponse>(`${this.baseUrl}/branches/${branchId}/forecast-report`, { params });
     }
 
     /**
@@ -49,4 +53,6 @@ export class InventoryForecastingService {
     getPendingPurchaseOrders(branchId: string): Observable<PurchaseOrderDTO[]> {
         return this.http.get<PurchaseOrderDTO[]>(`${this.baseUrl}/${branchId}/pending-purchase-orders`);
     }
+
+
 }

@@ -58,7 +58,9 @@ export class OwnerLayoutComponent {
     { label: 'المخزون', icon: 'pi pi-box', routerLink: '/owner/inventory' },
     { label: 'الطلبات', icon: 'pi pi-shopping-cart', routerLink: '/owner/orders' },
     { label: 'الفروع', icon: 'pi pi-sitemap', routerLink: '/owner/branches' },
+    { label: 'الذكاء الاصطناعي', icon: 'pi pi-sparkles', routerLink: '/owner/ai-forecasting' },
     { label: 'بيانات الصيدلية', icon: 'pi pi-shop', routerLink: '/owner/pharmacy-profile' },
+
   ];
 
   toggleCollapse(): void {

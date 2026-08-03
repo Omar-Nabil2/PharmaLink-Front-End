@@ -6,10 +6,18 @@ export interface ForecastLogDTO {
     aiRationale: string;
 }
 
+export interface PaginationData {
+    currentPage: number;
+    pageSize: number;
+    totalCount: number;
+    totalPages: number;
+}
+
 export interface ForecastReportResponse {
     success: boolean;
     message?: string;
     data: ForecastLogDTO[];
+    pagination?: PaginationData; // 👈 ضفنا الجزء ده هنا
 }
 
 export interface TriggerForecastResponse {
@@ -24,7 +32,7 @@ export interface PurchaseOrderDTO {
     drugName: string;
     branchName: string;
     orderedQuantity: number;
-    status: string | number; // حسب لو باعتها Enum Number ولا String
+    status: string | number;
     aiRationale: string;
     createdAt: string;
 }
