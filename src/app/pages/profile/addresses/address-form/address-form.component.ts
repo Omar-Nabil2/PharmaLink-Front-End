@@ -163,4 +163,8 @@ export class AddressFormComponent implements OnInit {
       }
     );
   }
+
+  setLabel(label: string): void {
+    this.addressForm.patchValue({ label });
+  }
 }

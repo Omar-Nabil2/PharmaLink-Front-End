@@ -36,28 +36,29 @@
 
     <form [formGroup]="addressForm" (ngSubmit)="onSubmit()" class="p-6 md:p-8">
       
-      <!-- Label Section (Chips) -->
-      <div class="mb-8">
-        <label class="block text-slate-700 font-bold text-sm mb-3">تسمية العنوان (اختياري)</label>
-        <div class="flex flex-wrap gap-3">
-          <label class="cursor-pointer">
-            <input type="radio" formControlName="label" value="المنزل" class="peer sr-only">
-            <div class="px-5 py-2.5 rounded-xl border-2 border-slate-100 bg-slate-50 text-slate-600 font-bold text-sm peer-checked:border-teal-600 peer-checked:bg-teal-50 peer-checked:text-teal-700 transition-all flex items-center gap-2 hover:border-slate-300">
-              <i class="pi pi-home"></i> المنزل
-            </div>
-          </label>
-          <label class="cursor-pointer">
-            <input type="radio" formControlName="label" value="العمل" class="peer sr-only">
-            <div class="px-5 py-2.5 rounded-xl border-2 border-slate-100 bg-slate-50 text-slate-600 font-bold text-sm peer-checked:border-teal-600 peer-checked:bg-teal-50 peer-checked:text-teal-700 transition-all flex items-center gap-2 hover:border-slate-300">
-              <i class="pi pi-briefcase"></i> العمل
-            </div>
-          </label>
-          <label class="cursor-pointer">
-            <input type="radio" formControlName="label" value="أخرى" class="peer sr-only">
-            <div class="px-5 py-2.5 rounded-xl border-2 border-slate-100 bg-slate-50 text-slate-600 font-bold text-sm peer-checked:border-teal-600 peer-checked:bg-teal-50 peer-checked:text-teal-700 transition-all flex items-center gap-2 hover:border-slate-300">
-              <i class="pi pi-map-marker"></i> أخرى
-            </div>
-          </label>
+      <!-- Label Section -->
+      <div class="mb-8 group">
+        <label for="label" class="block text-slate-700 font-bold text-sm mb-3">تسمية العنوان (اختياري)</label>
+        
+        <!-- Suggestions -->
+        <div class="flex flex-wrap gap-3 mb-3">
+          <button type="button" (click)="setLabel('المنزل')" class="px-5 py-2 rounded-xl border-2 text-sm font-bold flex items-center gap-2 transition-all" [ngClass]="addressForm.get('label')?.value === 'المنزل' ? 'border-teal-600 bg-teal-50 text-teal-700' : 'border-slate-100 bg-slate-50 text-slate-600 hover:border-slate-300'">
+            <i class="pi pi-home"></i> المنزل
+          </button>
+          <button type="button" (click)="setLabel('العمل')" class="px-5 py-2 rounded-xl border-2 text-sm font-bold flex items-center gap-2 transition-all" [ngClass]="addressForm.get('label')?.value === 'العمل' ? 'border-teal-600 bg-teal-50 text-teal-700' : 'border-slate-100 bg-slate-50 text-slate-600 hover:border-slate-300'">
+            <i class="pi pi-briefcase"></i> العمل
+          </button>
+        </div>
+
+        <div class="relative">
+          <input 
+            type="text" 
+            id="label" 
+            formControlName="label"
+            class="w-full bg-slate-50 border-2 border-slate-100 rounded-xl px-4 py-3 text-slate-800 focus:outline-none focus:border-teal-500 focus:bg-white focus:ring-4 focus:ring-teal-500/10 transition-all duration-300"
+            placeholder="مثال: منزل العائلة، العيادة، إلخ..."
+          >
+          <i class="pi pi-tag absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-teal-500"></i>
         </div>
       </div>
 
