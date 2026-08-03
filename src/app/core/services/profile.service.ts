@@ -34,10 +34,14 @@ export class ProfileService {
     return this.http.put<PatientProfile>(`${this.localUrl}/patients/profile`, data);
   }
 
-  uploadPatientProfilePicture(file: File): Observable<any> {
+  uploadPatientProfilePicture(file: File): Observable<void> {
     const formData = new FormData();
     formData.append('Image', file);
-    return this.http.put(`${this.localUrl}/patients/profile/picture`, formData);
+    return this.http.put<void>(`${this.localUrl}/patients/profile/picture`, formData);
+  }
+
+  getPatientProfilePictureUrl(): Observable<{url: string}> {
+    return this.http.get<{url: string}>(`${this.localUrl}/patients/profile/picture`);
   }
 
   updateProfile(data: UpdatePharmacyProfileRequest): Observable<UpdatePharmacyProfileResponse> {

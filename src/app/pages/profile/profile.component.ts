@@ -69,7 +69,8 @@ export class ProfileComponent implements OnInit {
         next: (res) => {
           this.patientData = res;
           if (this.patientData?.profilePictureUrl) {
-             localStorage.setItem('profilePictureUrl', this.patientData.profilePictureUrl);
+             const fullUrl = this.serverUrl + this.patientData.profilePictureUrl;
+             localStorage.setItem('profilePictureUrl', fullUrl);
           }
           this.isLoading = false;
           this.cdr.detectChanges();
@@ -134,7 +135,20 @@ export class ProfileComponent implements OnInit {
       this.isLoading = true;
       this.profileService.uploadPatientProfilePicture(file).subscribe({
         next: () => {
-          this.fetchProfile(); // Refresh to get the new image URL
+          this.profileService.getPatientProfilePictureUrl().subscribe({
+            next: (res) => {
+              if (res.url && this.patientData) {
+                this.patientData.profilePictureUrl = res.url;
+                const fullUrl = this.serverUrl + res.url;
+                localStorage.setItem('profilePictureUrl', fullUrl);
+              }
+              this.isLoading = false;
+              this.cdr.detectChanges();
+            },
+            error: (err) => {
+              this.handleErr(err, 'تم رفع الصورة ولكن فشل جلب الرابط الجديد');
+            }
+          });
         },
         error: (err) => {
           this.handleErr(err, 'فشل في رفع الصورة');
