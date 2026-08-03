@@ -4,6 +4,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ProfileService } from '../../core/services/profile.service';
+import { environment } from '../../../environments/environment';
 import { ErrorHandlerService } from '../../core/services/error-handler.service';
 import { GetPharmacyProfileResponse, PatientProfile, SystemAdminProfile, GetPharmacyAdminProfile } from '../../core/interfaces/profile.interface';
 
@@ -14,6 +15,7 @@ import { GetPharmacyProfileResponse, PatientProfile, SystemAdminProfile, GetPhar
   templateUrl: './profile.component.html',
 })
 export class ProfileComponent implements OnInit {
+  serverUrl = environment.baseUrl.replace('/api/v1', '/');
   userRole: string = '';
 
   patientData: PatientProfile | null = null;
@@ -65,7 +67,11 @@ export class ProfileComponent implements OnInit {
     if (this.isPatientRole) {
       this.profileService.getPatientProfile().subscribe({
         next: (res) => {
-          this.patientData = res.value || res;
+          this.patientData = res;
+          if (this.patientData?.profilePictureUrl) {
+             const fullUrl = this.serverUrl + this.patientData.profilePictureUrl;
+             localStorage.setItem('profilePictureUrl', fullUrl);
+          }
           this.isLoading = false;
           this.cdr.detectChanges();
         },
@@ -121,6 +127,34 @@ export class ProfileComponent implements OnInit {
     this.isLoading = false;
     this.errorHandler.handleError(err, msg);
     this.cdr.detectChanges();
+  }
+
+  onFileSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      this.isLoading = true;
+      this.profileService.uploadPatientProfilePicture(file).subscribe({
+        next: () => {
+          this.profileService.getPatientProfilePictureUrl().subscribe({
+            next: (res) => {
+              if (res.url && this.patientData) {
+                this.patientData.profilePictureUrl = res.url;
+                const fullUrl = this.serverUrl + res.url;
+                localStorage.setItem('profilePictureUrl', fullUrl);
+              }
+              this.isLoading = false;
+              this.cdr.detectChanges();
+            },
+            error: (err) => {
+              this.handleErr(err, 'تم رفع الصورة ولكن فشل جلب الرابط الجديد');
+            }
+          });
+        },
+        error: (err) => {
+          this.handleErr(err, 'فشل في رفع الصورة');
+        }
+      });
+    }
   }
 
   isDefaultAddress(index: number): boolean {

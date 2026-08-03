@@ -7,6 +7,7 @@ import {
   UpdatePatientProfileRequest,
   UpdatePharmacyProfileRequest,
   UpdatePharmacyProfileResponse,
+  PatientProfile,
   PatientProfileResponse,
   GetPharmacyAdminProfile,
   UpdatePharmacyAdminProfileDTO
@@ -16,8 +17,8 @@ import {
   providedIn: 'root',
 })
 export class ProfileService {
-  private readonly localUrl = environment.localUrl;
-  private readonly omarUrl = environment.omarUrl;
+  private readonly localUrl = environment.baseUrl;
+  private readonly omarUrl = environment.baseUrl;
 
   constructor(private readonly http: HttpClient) { }
 
@@ -25,12 +26,22 @@ export class ProfileService {
     return this.http.get<GetPharmacyProfileResponse>(`${this.localUrl}/PharmacistProfile`);
   }
 
-  getPatientProfile(): Observable<PatientProfileResponse> {
-    return this.http.get<PatientProfileResponse>(`${this.localUrl}/patients/profile`);
+  getPatientProfile(): Observable<PatientProfile> {
+    return this.http.get<PatientProfile>(`${this.localUrl}/patients/profile`);
   }
 
-  updatePatientProfile(data: UpdatePatientProfileRequest): Observable<PatientProfileResponse> {
-    return this.http.put<PatientProfileResponse>(`${this.localUrl}/patients/profile`, data);
+  updatePatientProfile(data: UpdatePatientProfileRequest): Observable<PatientProfile> {
+    return this.http.put<PatientProfile>(`${this.localUrl}/patients/profile`, data);
+  }
+
+  uploadPatientProfilePicture(file: File): Observable<void> {
+    const formData = new FormData();
+    formData.append('Image', file);
+    return this.http.put<void>(`${this.localUrl}/patients/profile/picture`, formData);
+  }
+
+  getPatientProfilePictureUrl(): Observable<{url: string}> {
+    return this.http.get<{url: string}>(`${this.localUrl}/patients/profile/picture`);
   }
 
   updateProfile(data: UpdatePharmacyProfileRequest): Observable<UpdatePharmacyProfileResponse> {

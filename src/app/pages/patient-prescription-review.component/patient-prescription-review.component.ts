@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { PrescriptionReviewService } from '@core/services/prescription-review.service';
 import { GetAllPrescriptionReviewDto } from '@core/interfaces/prescription-review.interface';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-patient-prescriptions-list',
@@ -61,6 +62,16 @@ export class PatientPrescriptionsListComponent implements OnInit {
     if (page >= 1 && page <= this.totalPages && page !== this.currentPage) {
       this.loadPrescriptions(page);
     }
+  }
+
+  // الحصول على رابط الصورة كاملاً
+  getImageUrl(imageUrl?: string): string {
+    if (!imageUrl) return 'assets/images/prescription-placeholder.png';
+    if (imageUrl.startsWith('http')) return imageUrl;
+    
+    // إزالة /api/v1 إذا كانت الصورة في root server
+    const serverUrl = environment.baseUrl.replace('/api/v1', '');
+    return `${serverUrl}/${imageUrl.replace(/^\//, '')}`;
   }
 
   // تنسيق حالة الروشتة (Colors)

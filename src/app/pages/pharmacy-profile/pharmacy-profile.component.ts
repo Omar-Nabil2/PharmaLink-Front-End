@@ -45,7 +45,7 @@ export class PharmacyProfileComponent implements OnInit {
     if (relativePath.startsWith('http')) return relativePath;
 
     // Prepend the backend server base API URL (pointing to wwwroot static files)
-    const baseUrl = environment.localUrl.replace(/\/api.*$/, ''); // Strip /api/v1 suffix
+    const baseUrl = environment.baseUrl.replace(/\/api.*$/, ''); // Strip /api/v1 suffix
     return `${baseUrl}/${relativePath.replace(/^\//, '')}`;
   });
   

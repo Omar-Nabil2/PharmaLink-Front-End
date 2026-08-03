@@ -39,6 +39,11 @@ export class AddressFormComponent implements OnInit {
       addressLine: ['', [Validators.required, Validators.minLength(5)]],
       city: ['', Validators.required],
       governorate: ['', Validators.required],
+      label: [null],
+      buildingNumber: [null],
+      floorNumber: [null],
+      apartmentNumber: [null],
+      additionalInstructions: [null],
       isDefault: [false],
       latitude: [0],
       longitude: [0]
@@ -63,6 +68,11 @@ export class AddressFormComponent implements OnInit {
           addressLine: address.addressLine,
           city: address.city,
           governorate: address.governorate,
+          label: address.label,
+          buildingNumber: address.buildingNumber,
+          floorNumber: address.floorNumber,
+          apartmentNumber: address.apartmentNumber,
+          additionalInstructions: address.additionalInstructions,
           isDefault: address.isDefault,
           latitude: address.latitude,
           longitude: address.longitude
@@ -152,5 +162,9 @@ export class AddressFormComponent implements OnInit {
         this.errorHandler.handleError(new Error(errorMsg), errorMsg);
       }
     );
+  }
+
+  setLabel(label: string): void {
+    this.addressForm.patchValue({ label });
   }
 }

@@ -10,7 +10,7 @@ import {
 @Injectable({ providedIn: 'root' })
 export class PharmacyDashboardService {
   private readonly http = inject(HttpClient);
-  private readonly localUrl = environment.localUrl;
+  private readonly localUrl = environment.baseUrl;
   private readonly resource = 'pharmacy/dashboard';
 
   private readonly _data = signal<PharmacyDashboardDTO | null>(null);

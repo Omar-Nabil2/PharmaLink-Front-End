@@ -27,10 +27,16 @@
     <!-- Owner card + collapse toggle -->
     <div class="p-4 border-t border-border">
       <div class="flex items-center gap-3">
-        <div
-          class="h-10 w-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold shrink-0">
-          {{ avatarInitial() }}
-        </div>
+          @if (!profilePictureUrl) {
+          <div class="h-10 w-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold shrink-0">
+            {{ avatarInitial() }}
+          </div>
+        }
+        @if (profilePictureUrl) {
+          <div class="h-10 w-10 rounded-full overflow-hidden shrink-0 border border-primary/20">
+            <img [src]="profilePictureUrl" alt="Profile" class="w-full h-full object-cover">
+          </div>
+        }
         @if (!collapsed()) {
         <div class="flex-1 min-w-0">
           <p class="text-[0.9375rem] font-medium truncate">{{ fullName() }}</p>
@@ -105,9 +111,16 @@
           <div class="relative">
             <div (click)="toggleUserMenu()"
               class="flex items-center gap-2 cursor-pointer hover:bg-muted rounded-lg px-2 py-1.5">
-              <div class="h-9 w-9 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold">
-                {{ avatarInitial() }}
-              </div>
+              @if (!profilePictureUrl) {
+                <div class="h-9 w-9 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold">
+                  {{ avatarInitial() }}
+                </div>
+              }
+              @if (profilePictureUrl) {
+                <div class="h-9 w-9 rounded-full overflow-hidden border border-primary/20">
+                  <img [src]="profilePictureUrl" alt="Profile" class="w-full h-full object-cover">
+                </div>
+              }
               <div class="hidden sm:block">
                 <p class="text-[0.9375rem] font-medium leading-tight">{{ fullName() }}</p>
                 <p class="text-xs text-muted-foreground leading-tight">{{ roleLabel() }}</p>

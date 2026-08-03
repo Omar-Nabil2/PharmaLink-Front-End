@@ -109,7 +109,7 @@ export class PharmacyDetailComponent implements OnInit {
     }
   }
 
-  /** Resolves absolute logo URL using environment.localUrl server host */
+  /** Resolves absolute logo URL using environment.baseUrl server host */
   getLogoUrl(logoUrl?: string | null): string {
     if (!logoUrl) return '';
     if (
@@ -120,7 +120,7 @@ export class PharmacyDetailComponent implements OnInit {
     ) {
       return logoUrl;
     }
-    const host = environment.localUrl.replace(/\/api\/v1\/?$/, '');
+    const host = environment.baseUrl.replace(/\/api\/v1\/?$/, '');
     const path = logoUrl.startsWith('/') ? logoUrl : `/${logoUrl}`;
     return `${host}${path}`;
   }

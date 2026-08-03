@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, AfterViewInit, QueryList, ViewChildren, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, QueryList, ViewChildren, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -24,15 +24,16 @@ export class VerifyOtpComponent implements OnInit, OnDestroy, AfterViewInit {
   isLoading = false;
   isResending = false;
 
-  // Countdown timer variables
-  countdownSeconds = 120; // 2 minutes
+  // Countdown timer variables (1 minute = 60 seconds)
+  countdownSeconds = 60; 
   timerInterval: any = null;
 
   constructor(
     private readonly authService: AuthService,
     private readonly errorHandlerService: ErrorHandlerService,
     private readonly messageService: MessageService,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -50,8 +51,15 @@ export class VerifyOtpComponent implements OnInit, OnDestroy, AfterViewInit {
       return;
     }
 
-    // Auto-request initial verification code on landing
-    this.sendOtpRequest(true);
+    // التحقق هل الـ Timer شغال أساساً في الـ localStorage (لمنع إعادة إرسال الريكวست عند الـ Refresh)
+    const savedEndTime = localStorage.getItem('otp_timer_end');
+    if (!savedEndTime) {
+      // لو أول دخول حقيقي للصفحة، نرسل الريكวست ونبدأ التايمر (دقيقة)
+      this.sendOtpRequest(true);
+    } else {
+      // لو تم عمل Refresh، نستكمل التايمر بناءً على الوقت المتبقي بدون إرسال ريكวست جديد
+      this.startTimer(false);
+    }
   }
 
   ngAfterViewInit(): void {
@@ -65,15 +73,53 @@ export class VerifyOtpComponent implements OnInit, OnDestroy, AfterViewInit {
     this.stopTimer();
   }
 
-  // Timer Management
-  startTimer(): void {
-    this.stopTimer();
-    this.countdownSeconds = 120;
-    this.timerInterval = setInterval(() => {
-      if (this.countdownSeconds > 0) {
-        this.countdownSeconds--;
+  // Timer Management (60 Seconds with LocalStorage persistence)
+  startTimer(reset: boolean = false): void {
+    const storageKey = 'otp_timer_end';
+    const now = Date.now();
+    let endTime: number;
+    const timerDurationMs = 60 * 1000; // دقيقة واحدة
+
+    if (reset) {
+      endTime = now + timerDurationMs;
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(storageKey, endTime.toString());
+      }
+    } else {
+      const savedEndTime = localStorage.getItem(storageKey);
+      if (savedEndTime) {
+        endTime = parseInt(savedEndTime, 10);
       } else {
+        endTime = now + timerDurationMs;
+        if (typeof window !== 'undefined') {
+          localStorage.setItem(storageKey, endTime.toString());
+        }
+      }
+    }
+
+    this.stopTimer();
+
+    const remainingMs = endTime - now;
+    this.countdownSeconds = Math.max(0, Math.floor(remainingMs / 1000));
+
+    if (this.countdownSeconds === 0) {
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem(storageKey);
+      }
+      return;
+    }
+
+    this.timerInterval = setInterval(() => {
+      const currentNow = Date.now();
+      const currentRemainingMs = endTime - currentNow;
+      this.countdownSeconds = Math.max(0, Math.floor(currentRemainingMs / 1000));
+      this.cdr.markForCheck();
+
+      if (this.countdownSeconds <= 0) {
         this.stopTimer();
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem(storageKey);
+        }
       }
     }, 1000);
   }
@@ -171,7 +217,7 @@ export class VerifyOtpComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  // Mocked API Methods (Original endpoints under maintenance)
+  // API Methods
   sendOtpRequest(isInitialLoad: boolean = false): void {
     if (!this.userId) return;
 
@@ -182,9 +228,11 @@ export class VerifyOtpComponent implements OnInit, OnDestroy, AfterViewInit {
     // Simulate API network latency delay
     setTimeout(() => {
       this.isResending = false;
-      this.startTimer();
+      
+      // تفعيل التايمر (دقيقة كاملة) وإعادة ضبط وقت النهاية عند الضغط على إعادة إرسال أو أول دخول
+      this.startTimer(true);
 
-      // Simulated success response: Ok(new { message = "Verification code sent to your registered phone number." });
+      // Simulated success response
       this.messageService.add({
         severity: 'success',
         summary: 'تم إرسال الرمز',
@@ -213,16 +261,16 @@ export class VerifyOtpComponent implements OnInit, OnDestroy, AfterViewInit {
         // Mock code "112233" as success
         if (code === '112233') {
           this.isLoading = false;
-          // Simulated success response: Ok(new { message = "Phone number verified successfully." });
           this.messageService.add({
             severity: 'success',
             summary: 'تم التحقق بنجاح',
             detail: 'تم توثيق رقم الهاتف بنجاح.'
           });
 
-          // Clear local storage key after verification completes
+          // Clear local storage keys after verification completes
           if (typeof window !== 'undefined') {
             localStorage.removeItem('userId');
+            localStorage.removeItem('otp_timer_end');
           }
 
           // Navigate to login
@@ -230,9 +278,8 @@ export class VerifyOtpComponent implements OnInit, OnDestroy, AfterViewInit {
             this.router.navigate(['/auth/login']);
           }, 1500);
         } else {
-          this.isLoading = false; // Explicitly ensure loading state is cleared
+          this.isLoading = false;
           
-          // Simulated API error response for incorrect codes
           const mockError = new HttpErrorResponse({
             status: 400,
             statusText: 'Bad Request',
@@ -247,7 +294,6 @@ export class VerifyOtpComponent implements OnInit, OnDestroy, AfterViewInit {
 
           this.errorHandlerService.handleError(mockError, 'فشل التحقق');
 
-          // Human-friendly recovery: clear entries and refocus first input so they can try again
           this.otpDigits = ['', '', '', '', '', ''];
           setTimeout(() => {
             this.focusInput(0);
@@ -261,9 +307,9 @@ export class VerifyOtpComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onCancel(): void {
-    // Clear registration key and return to register
     if (typeof window !== 'undefined') {
       localStorage.removeItem('userId');
+      localStorage.removeItem('otp_timer_end');
     }
     this.router.navigate(['/auth/register']);
   }

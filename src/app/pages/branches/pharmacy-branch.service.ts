@@ -19,7 +19,7 @@ import {
 })
 export class PharmacyBranchService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = `${environment.localUrl}/pharmacies/branches`;
+  private readonly baseUrl = `${environment.baseUrl}/pharmacies/branches`;
 
   getBranches(
     params: GetPharmacyBranchParamRequest,

@@ -89,11 +89,23 @@
   <!-- 🧑‍⚕️ 2. Patient Profile Layout -->
   <div *ngIf="!isLoading && !isAdminRole && isPatient && patientData" class="space-y-6">
     <div class="card-surface border border-surface-pressed overflow-hidden !p-0">
-      <div class="bg-canvas-soft px-6 py-4 flex items-center gap-3">
-        <div class="bg-canvas text-ink p-2 rounded-full w-10 h-10 flex items-center justify-center">
-          <i class="pi pi-user"></i>
+      <div class="bg-canvas-soft px-6 py-4 flex items-center gap-4">
+        <!-- Profile Picture Container -->
+        <div class="relative group cursor-pointer w-16 h-16 shrink-0 rounded-full overflow-hidden border border-surface-pressed" (click)="fileInput.click()">
+          <img *ngIf="patientData.profilePictureUrl" [src]="patientData.profilePictureUrl" class="w-full h-full object-cover" alt="Profile Picture">
+          <div *ngIf="!patientData.profilePictureUrl" class="bg-teal-100 text-teal-700 w-full h-full flex items-center justify-center font-bold">
+            <span class="text-2xl">{{ patientData.fullName?.charAt(0) }}</span>
+          </div>
+          <!-- Overlay on hover -->
+          <div class="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+            <i class="pi pi-camera text-white text-lg"></i>
+          </div>
+          <input type="file" #fileInput class="hidden" accept="image/*" (change)="onFileSelected($event)">
         </div>
-        <h2 class="type-display-sm">المعلومات الشخصية</h2>
+        <div>
+          <h2 class="type-display-sm">المعلومات الشخصية</h2>
+          <p class="type-body-sm text-body">اضغط على الصورة لتغييرها</p>
+        </div>
       </div>
 
       <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">

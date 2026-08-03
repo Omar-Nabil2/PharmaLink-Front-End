@@ -3,6 +3,9 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { clearAuthSession } from '@core/utils/auth-storage';
 import { AuthService } from '@core/services/auth.service';
+import { environment } from '@environments/environment';
+import { ProfileService } from '@core/services/profile.service';
+import { AppRoles } from '@core/enums/app-roles.constant';
 
 @Component({
   selector: 'app-navbar',
@@ -14,7 +17,26 @@ import { AuthService } from '@core/services/auth.service';
 export class NavbarComponent {
   menuOpen = false;
 
-  constructor(private readonly router: Router, private readonly authService: AuthService) {}
+  constructor(
+    private readonly router: Router,
+    private readonly authService: AuthService,
+    private readonly profileService: ProfileService
+  ) {}
+
+  ngOnInit() {
+    if (this.isLoggedIn && !localStorage.getItem('profilePictureUrl')) {
+      if (this.authService.getNormalizedRole() === AppRoles.Patient) {
+        this.profileService.getPatientProfilePictureUrl().subscribe({
+          next: (res) => {
+            if (res.url) {
+              localStorage.setItem('profilePictureUrl', res.url);
+            }
+          },
+          error: () => {}
+        });
+      }
+    }
+  }
 
   @HostListener('window:storage')
   onStorageChange(): void {}
@@ -27,6 +49,11 @@ export class NavbarComponent {
   get fullName(): string {
     if (typeof window === 'undefined') return '';
     return localStorage.getItem('fullName') || 'Profile';
+  }
+
+  get profilePictureUrl(): string | null {
+    if (typeof window === 'undefined') return null;
+    return localStorage.getItem('profilePictureUrl');
   }
 
   get dashboardPath(): string {

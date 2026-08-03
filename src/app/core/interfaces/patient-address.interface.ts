@@ -3,6 +3,11 @@ export interface CreatePatientAddressRequest {
   addressLine: string;
   city: string;
   governorate: string;
+  label?: string | null;
+  buildingNumber?: string | null;
+  floorNumber?: string | null;
+  apartmentNumber?: string | null;
+  additionalInstructions?: string | null;
   latitude: number;
   longitude: number;
   isDefault: boolean;
@@ -13,6 +18,11 @@ export interface UpdatePatientAddressRequest {
   addressLine: string;
   city: string;
   governorate: string;
+  label?: string | null;
+  buildingNumber?: string | null;
+  floorNumber?: string | null;
+  apartmentNumber?: string | null;
+  additionalInstructions?: string | null;
   latitude: number;
   longitude: number;
   isDefault: boolean;

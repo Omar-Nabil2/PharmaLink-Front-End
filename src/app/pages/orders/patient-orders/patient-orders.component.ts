@@ -197,7 +197,9 @@ export class PatientOrdersComponent implements OnInit, OnDestroy {
 
   getMedicinesSummary(order: PatientOrder): string {
     let summary: string[] = [];
-    if (order.fulfillmentLegs) {
+    
+    // الأدوية التي تم تخصيصها لصيدليات
+    if (order.fulfillmentLegs && order.fulfillmentLegs.length > 0) {
       order.fulfillmentLegs.forEach(leg => {
         if (leg.items) {
           leg.items.forEach(item => {
@@ -206,7 +208,15 @@ export class PatientOrdersComponent implements OnInit, OnDestroy {
         }
       });
     }
-    return summary.length > 0 ? summary.join(' ، ') : 'لا يوجد تفاصيل';
+    
+    // الأدوية التي لا تزال قيد الانتظار (لم تخصص بعد)
+    if (order.pendingAssignmentItems && order.pendingAssignmentItems.length > 0) {
+      order.pendingAssignmentItems.forEach(item => {
+        summary.push(`${item.drugName || item.genericName} × ${item.quantityNeeded}`);
+      });
+    }
+
+    return summary.length > 0 ? summary.join(' ، ') : 'لا توجد تفاصيل للأدوية';
   }
 
   getPharmacyNames(order: PatientOrder): string {

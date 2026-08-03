@@ -23,6 +23,7 @@ export class SidebarComponent implements OnInit {
   
   fullName = '';
   roleName = '';
+  profilePictureUrl: string | null = null;
   
   constructor(public authService: AuthService) {}
 
@@ -30,6 +31,7 @@ export class SidebarComponent implements OnInit {
     if (typeof window !== 'undefined') {
       this.fullName = localStorage.getItem('fullName') || 'User';
       this.roleName = localStorage.getItem('roleName') || 'Guest';
+      this.profilePictureUrl = localStorage.getItem('profilePictureUrl');
     }
   }
 

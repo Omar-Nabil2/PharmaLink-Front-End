@@ -9,7 +9,7 @@ import { PharmacyProfileResponseDto, UpdatePharmacyProfileDto } from './pharmacy
 })
 export class PharmacyProfileService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = environment.localUrl;
+  private readonly baseUrl = environment.baseUrl;
   private readonly endpoint = `${this.baseUrl}/pharmacy/profile`;
 
   /**

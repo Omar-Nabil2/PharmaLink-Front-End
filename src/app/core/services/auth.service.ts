@@ -18,7 +18,7 @@ import { environment } from '@environments/environment';
   providedIn: 'root',
 })
 export class AuthService {
-  private readonly localUrl = environment.localUrl;
+  private readonly localUrl = environment.baseUrl;
 
   private currentUserSignal = signal<UserAuthData | null>(this.loadUserFromStorage());
 

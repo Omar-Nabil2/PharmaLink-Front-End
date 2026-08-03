@@ -20,7 +20,7 @@ import {
 @Injectable({ providedIn: 'root' })
 export class AdminPharmacyService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = environment.localUrl;
+  private readonly baseUrl = environment.baseUrl;
 
   // ─── AdminPharmaciesDashboard endpoints ────────────────────────────────────
 
