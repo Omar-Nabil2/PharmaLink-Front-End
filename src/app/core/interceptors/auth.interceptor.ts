@@ -50,7 +50,8 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
           // Only for resource GETs — form/API mutations keep component-level handling
           const isGet = authReq.method.toUpperCase() === 'GET';
           const alreadyOnNotFound = currentUrl === '/not-found';
-          if (isGet && !skipAuthApi && !alreadyOnNotFound) {
+          const isProfilePictureApi = authReq.url.includes('/profile/picture');
+          if (isGet && !skipAuthApi && !alreadyOnNotFound && !isProfilePictureApi) {
             router.navigate(['/not-found']);
           }
           break;
