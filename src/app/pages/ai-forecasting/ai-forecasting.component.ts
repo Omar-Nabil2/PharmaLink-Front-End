@@ -15,6 +15,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { SearchService } from '@core/services/search.service';
 import { PharmacyBranchSearchDTO } from '@pages/inventory/search.model';
+import { SignalrService } from '@core/services/signalr.service';
 
 @Component({
     selector: 'app-ai-forecasting',
@@ -40,6 +41,7 @@ export class AiForecastingComponent {
     private readonly messageService = inject(MessageService);
     private readonly searchService = inject(SearchService);
     private readonly destroyRef = inject(DestroyRef);
+    private readonly signalrService = inject(SignalrService);
 
     readonly branchId = input<string | undefined>(undefined);
 
@@ -51,6 +53,8 @@ export class AiForecastingComponent {
     readonly selectedBranchFilter = signal<PharmacyBranchSearchDTO | null>(null);
     private readonly branchFilterQuery$ = new Subject<string>();
 
+    private currentSubscribedBranchId: string | null = null;
+
     constructor() {
         this.branchFilterQuery$
             .pipe(
@@ -60,6 +64,22 @@ export class AiForecastingComponent {
                 takeUntilDestroyed(this.destroyRef),
             )
             .subscribe((results) => this.branchFilterSuggestions.set(results ?? []));
+
+        this.signalrService.poCreated$
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe((notification) => {
+                // إظهار التوست
+                this.messageService.add({
+                    severity: 'warn',
+                    summary: 'تنبيه ذكي: أوامر شراء جديدة!',
+                    detail: `تم إنشاء أمر شراء للصنف ${notification.drugName} بكمية ${notification.recommendedOrderQuantity}`,
+                    life: 8000
+                });
+
+                // تحديث الجداول
+                this.poResource.reload();
+                this.forecastResource.reload();
+            });
     }
 
     onBranchFilterSearch(query: string): void {
@@ -70,11 +90,29 @@ export class AiForecastingComponent {
         this.selectedBranchFilter.set(branch);
         this.selectedBranchId.set(branch.branchId);
         this.currentPage.set(1);
+
+        if (this.currentSubscribedBranchId) {
+            this.signalrService.unsubscribeFromBranch(this.currentSubscribedBranchId);
+        }
+        this.signalrService.subscribeToBranch(branch.branchId);
+        this.currentSubscribedBranchId = branch.branchId;
+
+        this.poResource.reload();
+        this.forecastResource.reload();
+
     }
 
     onBranchFilterCleared(): void {
         this.selectedBranchFilter.set(null);
         this.selectedBranchId.set(undefined);
+
+        if (this.currentSubscribedBranchId) {
+            this.signalrService.unsubscribeFromBranch(this.currentSubscribedBranchId);
+            this.currentSubscribedBranchId = null;
+        }
+
+        this.poResource.reload();
+        this.forecastResource.reload();
     }
 
     readonly currentPage = signal<number>(1);
