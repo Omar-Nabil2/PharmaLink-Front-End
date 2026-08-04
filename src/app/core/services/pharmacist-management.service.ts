@@ -24,10 +24,10 @@ export class PharmacistManagementService {
       .set('pageSize', params.pageSize.toString());
 
     if (params.search && params.search.trim()) {
-      httpParams = httpParams.set('search', params.search.trim());
+      httpParams = httpParams.set('Search', params.search.trim());
     }
     if (params.branchId) {
-      httpParams = httpParams.set('branchId', params.branchId);
+      httpParams = httpParams.set('BranchId', params.branchId);
     }
     if (params.userStatus !== undefined && params.userStatus !== null) {
       httpParams = httpParams.set('userStatus', params.userStatus.toString());
