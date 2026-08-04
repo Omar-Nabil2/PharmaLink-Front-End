@@ -18,8 +18,7 @@ import { environment } from '@environments/environment.prod';
   providedIn: 'root',
 })
 export class AuthService {
-  // private readonly localUrl = environment.baseUrl;
-  private readonly localUrl ='https://localhost:5001/api/v1' ;
+  private readonly localUrl = environment.baseUrl;
 
   private currentUserSignal = signal<UserAuthData | null>(this.loadUserFromStorage());
 
