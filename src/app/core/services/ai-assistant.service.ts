@@ -101,4 +101,46 @@ export class AiAssistantService {
       drugNames,
     });
   }
+
+  /**
+   * Agentic AI Chat - Multi-step reasoning with 9 tools.
+   */
+  agentChat(userQuery: string, conversationId?: string): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/agent/chat`, {
+      userQuery,
+      conversationId: conversationId || 'conv-' + Date.now(),
+    });
+  }
+
+  /**
+   * Ingest RAG document.
+   */
+  ingestRagDocument(title: string, category: string, content: string, sourceUrl: string = ''): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/rag/ingest`, { title, category, content, sourceUrl });
+  }
+
+  /**
+   * Query RAG vector store.
+   */
+  queryRag(query: string, topK: number = 3): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/rag/query`, { query, topK });
+  }
+
+  /**
+   * Multimodal: Analyze prescription image.
+   */
+  analyzePrescription(file: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('file', file, file.name);
+    return this.http.post<any>(`${this.baseUrl}/multimodal/analyze-prescription`, formData);
+  }
+
+  /**
+   * Multimodal: Recognize medicine image.
+   */
+  recognizeMedicine(file: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('file', file, file.name);
+    return this.http.post<any>(`${this.baseUrl}/multimodal/recognize-medicine`, formData);
+  }
 }
