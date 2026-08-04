@@ -9,12 +9,13 @@ import { Select } from 'primeng/select';
 import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
 import { CheckboxModule } from 'primeng/checkbox';
-import { MessageService } from 'primeng/api';
+import { TreeSelectModule } from 'primeng/treeselect';
+import { MessageService, TreeNode } from 'primeng/api';
 import { AdminDrugService } from '@core/services/admin-drug.service';
+import { CategoryService } from '@core/services/category.service';
 import {
   CreateDrugDto,
   DRUG_CATEGORY_LABELS,
-  DrugCategory,
   DrugDto,
   DrugSearchRequest,
   UpdateDrugDto,
@@ -30,10 +31,10 @@ import {
     ButtonModule,
     InputTextModule,
     DialogModule,
-    Select,
     TagModule,
     ToastModule,
     CheckboxModule,
+    TreeSelectModule
   ],
   providers: [MessageService],
   templateUrl: './admin-drugs.component.html',
@@ -41,6 +42,7 @@ import {
 })
 export class AdminDrugsComponent implements OnInit {
   private readonly drugService = inject(AdminDrugService);
+  private readonly categoryService = inject(CategoryService);
   private readonly messageService = inject(MessageService);
 
   drugs = signal<DrugDto[]>([]);
@@ -50,7 +52,7 @@ export class AdminDrugsComponent implements OnInit {
 
   // Filters state
   searchValue = signal<string>('');
-  selectedCategory = signal<DrugCategory | null>(null);
+  selectedCategory = signal<number | null>(null);
   sortColumn = signal<string>('BrandName');
   sortDirection = signal<string>('ASC');
 
@@ -75,36 +77,19 @@ export class AdminDrugsComponent implements OnInit {
   formPrice = signal<number>(10.0);
   formManufacturer = signal<string>('Pharma');
   formDrugClass = signal<string>('General');
-  formCategory = signal<DrugCategory>(DrugCategory.PainRelievers);
+  formCategory = signal<number | undefined>(undefined);
+  formCategoryNode = signal<TreeNode | null>(null);
   formRequiresPrescription = signal<boolean>(false);
   formIsActive = signal<boolean>(true);
 
-  // Category dropdown options
-  categoryOptions = [
-    { label: 'جميع التصنيفات', value: null },
-    { label: 'مسكنات الألم', value: DrugCategory.PainRelievers },
-    { label: 'مضادات حيوية', value: DrugCategory.Antibiotics },
-    { label: 'الجهاز الهضمي', value: DrugCategory.DigestiveSystem },
-    { label: 'السكري', value: DrugCategory.Diabetes },
-    { label: 'القلب والأوعية', value: DrugCategory.Cardiovascular },
-    { label: 'ضغط الدم', value: DrugCategory.BloodPressure },
-    { label: 'مضادات الالتهاب', value: DrugCategory.AntiInflammatory },
-    { label: 'أخرى', value: DrugCategory.Other },
-  ];
-
-  formCategoryOptions = [
-    { label: 'مسكنات الألم', value: DrugCategory.PainRelievers },
-    { label: 'مضادات حيوية', value: DrugCategory.Antibiotics },
-    { label: 'الجهاز الهضمي', value: DrugCategory.DigestiveSystem },
-    { label: 'السكري', value: DrugCategory.Diabetes },
-    { label: 'القلب والأوعية', value: DrugCategory.Cardiovascular },
-    { label: 'ضغط الدم', value: DrugCategory.BloodPressure },
-    { label: 'مضادات الالتهاب', value: DrugCategory.AntiInflammatory },
-    { label: 'أخرى', value: DrugCategory.Other },
-  ];
+  categoryTree = signal<TreeNode[]>([]);
+  selectedCategoryNode = signal<TreeNode | null>(null);
 
   ngOnInit(): void {
-    // Initial load triggered automatically via p-table lazy load or explicitly
+    // Load categories
+    this.categoryService.getCategoriesAsTree().subscribe((tree) => {
+      this.categoryTree.set(tree);
+    });
   }
 
   loadDrugs(): void {
@@ -112,7 +97,7 @@ export class AdminDrugsComponent implements OnInit {
 
     const filters: DrugSearchRequest = {
       searchValue: this.searchValue().trim() || undefined,
-      category: this.selectedCategory(),
+      categoryId: this.selectedCategory(),
       sortColumn: this.sortColumn(),
       sortDirection: this.sortDirection(),
       pageNumber: this.pageNumber(),
@@ -143,7 +128,20 @@ export class AdminDrugsComponent implements OnInit {
     this.loadDrugs();
   }
 
-  onCategoryChange(): void {
+  onCategoryChange(event: any): void {
+    if (event && event.node) {
+      this.selectedCategory.set(event.node.data);
+    } else {
+      this.selectedCategory.set(null);
+    }
+    this.first.set(0);
+    this.pageNumber.set(1);
+    this.loadDrugs();
+  }
+
+  onCategoryClear(): void {
+    this.selectedCategory.set(null);
+    this.selectedCategoryNode.set(null);
     this.first.set(0);
     this.pageNumber.set(1);
     this.loadDrugs();
@@ -191,7 +189,8 @@ export class AdminDrugsComponent implements OnInit {
     this.formPrice.set(10.0);
     this.formManufacturer.set('Pharma');
     this.formDrugClass.set('General');
-    this.formCategory.set(DrugCategory.PainRelievers);
+    this.formCategory.set(undefined);
+    this.formCategoryNode.set(null);
     this.formRequiresPrescription.set(false);
     this.formIsActive.set(true);
     this.isFormDialogOpen.set(true);
@@ -208,7 +207,8 @@ export class AdminDrugsComponent implements OnInit {
     this.formPrice.set(drug.price ?? 0);
     this.formManufacturer.set(drug.manufacturer ?? '');
     this.formDrugClass.set(drug.drugClass ?? '');
-    this.formCategory.set(drug.category ?? DrugCategory.Other);
+    this.formCategory.set(drug.categoryId ?? undefined);
+    this.formCategoryNode.set(drug.categoryId ? this.findNodeById(this.categoryTree(), drug.categoryId) : null);
     this.formRequiresPrescription.set(drug.requiresPrescription ?? false);
     this.formIsActive.set(drug.isActive ?? true);
     this.isFormDialogOpen.set(true);
@@ -244,7 +244,7 @@ export class AdminDrugsComponent implements OnInit {
         price: this.formPrice(),
         manufacturer: this.formManufacturer().trim(),
         drugClass: this.formDrugClass().trim(),
-        category: this.formCategory(),
+        categoryId: this.formCategory(),
         requiresPrescription: this.formRequiresPrescription(),
         isActive: this.formIsActive(),
       };
@@ -277,7 +277,7 @@ export class AdminDrugsComponent implements OnInit {
         price: this.formPrice(),
         manufacturer: this.formManufacturer().trim(),
         drugClass: this.formDrugClass().trim(),
-        category: this.formCategory(),
+        categoryId: this.formCategory(),
         requiresPrescription: this.formRequiresPrescription(),
       };
 
@@ -349,21 +349,12 @@ export class AdminDrugsComponent implements OnInit {
   }
 
   // Formatting Helpers
-  getCategoryLabel(category: DrugCategory): string {
-    return DRUG_CATEGORY_LABELS[category] || 'أخرى';
+  getCategoryLabel(category: any): string {
+    return category?.nameAr ?? category?.nameEn ?? 'أخرى';
   }
 
-  getCategorySeverity(category: DrugCategory): 'success' | 'info' | 'warn' | 'danger' | 'secondary' {
-    switch (category) {
-      case DrugCategory.PainRelievers: return 'info';
-      case DrugCategory.Antibiotics: return 'danger';
-      case DrugCategory.DigestiveSystem: return 'warn';
-      case DrugCategory.Diabetes: return 'secondary';
-      case DrugCategory.Cardiovascular: return 'info';
-      case DrugCategory.BloodPressure: return 'warn';
-      case DrugCategory.AntiInflammatory: return 'danger';
-      default: return 'secondary';
-    }
+  getCategorySeverity(category: any): 'success' | 'info' | 'warn' | 'danger' | 'secondary' {
+    return 'secondary';
   }
 
   getStatusLabel(drug: DrugDto): string {
@@ -374,5 +365,16 @@ export class AdminDrugsComponent implements OnInit {
   getStatusSeverity(drug: DrugDto): 'success' | 'info' | 'warn' | 'danger' | 'secondary' {
     if (!drug.isActive) return 'danger';
     return 'success';
+  }
+
+  private findNodeById(nodes: TreeNode[], id: number): TreeNode | null {
+    for (const node of nodes) {
+      if (node.data === id) return node;
+      if (node.children) {
+        const found = this.findNodeById(node.children, id);
+        if (found) return found;
+      }
+    }
+    return null;
   }
 }

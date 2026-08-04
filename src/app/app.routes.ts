@@ -402,6 +402,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'ai-forecasting',
+        loadComponent: () =>
+          import('./pages/ai-forecasting/ai-forecasting.component').then(
+            (m) => m.AiForecastingComponent,
+          ),
+      },
+      {
         path: 'pharmacists',
         pathMatch: 'full',
         loadComponent: () =>
@@ -409,6 +416,7 @@ export const routes: Routes = [
             (m) => m.PharmacistsListComponent,
           ),
       },
+
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
     ],
   },
