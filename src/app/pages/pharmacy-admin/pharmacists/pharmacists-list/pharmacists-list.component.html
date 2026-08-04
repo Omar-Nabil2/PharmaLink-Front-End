@@ -2,7 +2,7 @@
   <p-toast position="top-center" />
 
   <div class="space-y-4">
-    <!-- ── Page header -->
+    <!-- ── Page header ───────────────────────────────────────────── -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
       <div class="flex items-center gap-3">
         <h1 class="text-base md:text-xl lg:text-2xl font-bold tracking-tight text-foreground">إدارة الصيادلة</h1>
@@ -10,39 +10,58 @@
       </div>
     </div>
 
-    <!-- ── Toolbar -->
+    <!-- ── Toolbar: search + branch autocomplete + status p-select + add ── -->
     <div class="bg-card rounded-xl border border-border p-4 flex gap-3 flex-wrap items-center">
+      <!-- Live search -->
       <div class="relative flex-1 min-w-[15rem]">
         <i class="pi pi-search absolute right-3 top-1/2 -translate-y-1/2 text-[0.8125rem] text-muted-foreground"></i>
         <input
           type="text"
-          placeholder="ابحث بالاسم أو البريد الإلكتروني..."
+          placeholder="ابحث باسم الصيدلي أو البريد الإلكتروني..."
           [ngModel]="searchTerm"
           (ngModelChange)="onSearchChange($event)"
-          class="w-full h-10 lg:h-12 rounded-lg border border-border bg-background pr-10 pl-4 text-xs lg:text-base text-foreground outline-none transition-colors duration-200 focus:border-[#007671]"
+          class="w-full h-10 lg:h-12 rounded-lg border border-border bg-background pr-10 pl-4 text-xs lg:text-base text-foreground leading-normal outline-none transition-colors duration-200 focus:border-[#007671]"
         />
       </div>
 
-      <select
-        class="h-10 lg:h-12 rounded-lg border border-border bg-background px-3 text-xs lg:text-sm text-foreground outline-none transition-colors duration-200 focus:border-[#007671]"
-        [value]="selectedBranchId ?? ''"
-        (change)="selectedBranchId = $any($event.target).value === '' ? null : $any($event.target).value; onFilterChange()"
-      >
-        <option value="">كل الفروع</option>
-        <option *ngFor="let b of branches" [value]="b.branchId">{{ b.branchName }}</option>
-      </select>
+      <!-- Branch filter autocomplete (exact same as /owner/inventory) -->
+      <div class="relative min-w-[12rem]">
+        <p-autoComplete
+          [ngModel]="selectedBranchFilter"
+          (completeMethod)="onBranchFilterSearch($event.query)"
+          (onSelect)="onBranchFilterSelected($event.value)"
+          (onClear)="onBranchFilterCleared()"
+          [suggestions]="branchFilterSuggestions"
+          optionLabel="branchName"
+          [showClear]="true"
+          [minLength]="0"
+          [delay]="0"
+          placeholder="جميع الفروع"
+          styleClass="w-full inv-autocomplete"
+          appendTo="body"
+          emptyMessage="لا توجد نتائج"
+        >
+          <ng-template let-branch #item>
+            <div dir="rtl" class="flex flex-col py-1">
+              <span class="text-xs lg:text-base font-medium text-foreground">{{ branch.branchName }}</span>
+              <span *ngIf="branch.addressLine" class="text-xs lg:text-base text-muted-foreground">{{ branch.addressLine }}</span>
+            </div>
+          </ng-template>
+        </p-autoComplete>
+      </div>
 
-      <select
-        class="h-10 lg:h-12 rounded-lg border border-border bg-background px-3 text-xs lg:text-sm text-foreground outline-none transition-colors duration-200 focus:border-[#007671]"
-        [value]="selectedStatus ?? ''"
-        (change)="selectedStatus = $any($event.target).value === '' ? null : +$any($event.target).value; onFilterChange()"
-      >
-        <option value="">كل الحالات</option>
-        <option value="1">نشط</option>
-        <option value="2">غير نشط</option>
-        <option value="3">معلق</option>
-      </select>
+      <!-- Status filter (exact same p-select as /owner/inventory) -->
+      <p-select
+        [options]="statusFilterOptions"
+        optionLabel="label"
+        optionValue="value"
+        [ngModel]="selectedStatus"
+        (onChange)="onStatusFilterChange($event.value)"
+        styleClass="h-10 lg:h-12 min-w-[10rem] text-xs lg:text-base"
+        appendTo="body"
+      />
 
+      <!-- Reset filters -->
       <button
         *ngIf="hasActiveFilters"
         type="button"
@@ -53,6 +72,7 @@
         <span>إعادة تعيين</span>
       </button>
 
+      <!-- Add Pharmacist button (primary #007671) -->
       <button
         type="button"
         (click)="openCreateModal()"
@@ -66,8 +86,9 @@
       </button>
     </div>
 
-    <!-- ── Table container -->
+    <!-- ── Table container ──────────────────────────────────────── -->
     <div class="bg-card rounded-xl border border-border overflow-hidden">
+      <!-- Loading Skeletons -->
       <div *ngIf="isLoading" class="p-4 space-y-3">
         <div *ngFor="let row of [0,1,2,3,4,5]" class="flex items-center gap-4 animate-pulse">
           <div class="h-4 flex-1 bg-muted rounded"></div>
@@ -78,106 +99,109 @@
         </div>
       </div>
 
+      <!-- Empty state (matching /owner/inventory) -->
       <div *ngIf="!isLoading && pharmacists.length === 0" class="p-12 flex flex-col items-center justify-center text-center gap-3">
         <div class="h-16 w-16 rounded-full bg-muted flex items-center justify-center">
           <i class="pi pi-users text-2xl text-muted-foreground"></i>
         </div>
-        <p class="text-sm md:text-base lg:text-lg font-semibold text-foreground">لا يوجد صيادلة</p>
-        <p class="text-xs lg:text-base text-muted-foreground max-w-md">لم يتم تسجيل أي صيادلة حتى الآن أو لا توجد نتائج مطابقة للبحث.</p>
+        <p class="text-sm md:text-base lg:text-lg font-semibold text-foreground">لا يوجد صيادلة مطبقين</p>
+        <p class="text-xs lg:text-base text-muted-foreground">جرّب تغيير كلمة البحث أو تصفية الفرع أو الحالة.</p>
       </div>
 
-      <div *ngIf="!isLoading && pharmacists.length > 0" class="overflow-x-auto">
-        <table class="w-full text-right" style="min-width: 52rem">
-          <thead>
-            <tr class="bg-muted/50">
-              <th class="text-right p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground whitespace-nowrap">الصيدلي</th>
-              <th class="text-right p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground whitespace-nowrap">البريد / الهاتف</th>
-              <th class="text-right p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground whitespace-nowrap">الفرع المعين</th>
-              <th class="text-right p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground whitespace-nowrap">الحالة</th>
-              <th class="text-center p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground whitespace-nowrap">الإجراءات</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              *ngFor="let p of pharmacists; trackBy: trackById"
-              class="border-t border-border transition-colors duration-200 hover:bg-muted/30 cursor-pointer"
-              (click)="viewDetails(p)"
-            >
-              <td class="p-4 whitespace-nowrap">
-                <div class="flex items-center gap-2">
-                  <div class="h-9 w-9 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0" style="background-color: #007671">
-                    {{ p.fullName.charAt(0).toUpperCase() }}
-                  </div>
-                  <span class="text-xs lg:text-base font-medium text-foreground">{{ p.fullName }}</span>
-                </div>
-              </td>
-              <td class="p-4 whitespace-nowrap">
-                <div class="flex flex-col gap-0.5">
-                  <span class="text-xs text-foreground" dir="ltr">{{ p.email }}</span>
-                  <span class="text-[10px] text-muted-foreground" dir="ltr">{{ p.phoneNumber }}</span>
-                </div>
-              </td>
-              <td class="p-4 text-xs lg:text-sm text-muted-foreground whitespace-nowrap">{{ getBranchName(p) }}</td>
-              <td class="p-4 whitespace-nowrap">
-                <span [class]="getStatusClass(p.status)">
-                  <span class="status-dot"></span>
-                  {{ getStatusLabel(p.status) }}
-                </span>
-              </td>
-              <td class="p-4" (click)="$event.stopPropagation()">
-                <div class="flex items-center justify-center gap-1">
-                  <button
-                    type="button"
-                    (click)="openEditModal(p, $event)"
-                    class="h-8 w-8 rounded flex items-center justify-center text-blue-500 transition-colors duration-200 hover:bg-blue-50"
-                    title="تعديل البيانات"
-                  ><i class="pi pi-pencil text-[0.8125rem]"></i></button>
-                  <button
-                    type="button"
-                    (click)="openAssignModal(p, $event)"
-                    class="h-8 w-8 rounded flex items-center justify-center text-purple-600 transition-colors duration-200 hover:bg-purple-50"
-                    title="تغيير / إسناد الفرع"
-                  ><i class="pi pi-building text-[0.8125rem]"></i></button>
-                  <button
-                    type="button"
-                    (click)="openStatusModal(p, $event)"
-                    class="h-8 w-8 rounded flex items-center justify-center transition-colors duration-200 hover:bg-muted"
-                    style="color: #007671"
-                    title="تغيير الحالة"
-                  ><i class="pi pi-sync text-[0.8125rem]"></i></button>
-                  <button
-                    type="button"
-                    (click)="openDeleteModal(p, $event)"
-                    class="h-8 w-8 rounded flex items-center justify-center text-red-500 transition-colors duration-200 hover:bg-red-50"
-                    title="حذف الحساب"
-                  ><i class="pi pi-trash text-[0.8125rem]"></i></button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+      <!-- Data table using p-table (exact same as /owner/inventory) -->
+      <p-table
+        *ngIf="!isLoading && pharmacists.length > 0"
+        [value]="pharmacists"
+        [lazy]="true"
+        [paginator]="true"
+        [rows]="pageSize"
+        [first]="first"
+        [totalRecords]="totalCount"
+        [rowsPerPageOptions]="[10, 20, 50]"
+        (onPage)="onPageChange($event)"
+        styleClass="w-full text-xs lg:text-base"
+        [tableStyle]="{ 'min-width': '52rem' }"
+      >
+        <ng-template #header>
+          <tr class="bg-muted/50">
+            <th class="text-right p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground">الصيدلي</th>
+            <th class="text-right p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground">البريد / الهاتف</th>
+            <th class="text-right p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground">الفرع المعين</th>
+            <th class="text-right p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground">الحالة</th>
+            <th class="text-center p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground">إجراءات</th>
+          </tr>
+        </ng-template>
 
-        <!-- Pagination -->
-        <div class="flex items-center justify-between p-4 border-t border-border text-xs text-muted-foreground">
-          <span>إجمالي النتائج: <strong class="text-foreground">{{ totalCount }}</strong></span>
-          <div class="flex items-center gap-1">
-            <button class="h-8 w-8 rounded border border-border bg-background flex items-center justify-center hover:bg-muted transition-colors disabled:opacity-40"
-              [disabled]="pageNumber <= 1" (click)="onPageChange(pageNumber - 1)">
-              <i class="pi pi-chevron-right text-[0.75rem]"></i>
-            </button>
-            <button *ngFor="let page of pagesArray"
-              class="h-8 min-w-[2rem] px-2 rounded border text-xs font-medium transition-colors"
-              [class.border-border]="page !== pageNumber" [class.bg-background]="page !== pageNumber" [class.hover:bg-muted]="page !== pageNumber"
-              [class.text-white]="page === pageNumber" [class.border-transparent]="page === pageNumber"
-              [style.backgroundColor]="page === pageNumber ? '#007671' : ''"
-              (click)="onPageChange(page)">{{ page }}</button>
-            <button class="h-8 w-8 rounded border border-border bg-background flex items-center justify-center hover:bg-muted transition-colors disabled:opacity-40"
-              [disabled]="pageNumber >= totalPages" (click)="onPageChange(pageNumber + 1)">
-              <i class="pi pi-chevron-left text-[0.75rem]"></i>
-            </button>
-          </div>
-        </div>
-      </div>
+        <ng-template #body let-p>
+          <tr class="border-t border-border transition-colors duration-200 hover:bg-muted/30 cursor-pointer" (click)="viewDetails(p.pharmacistId)">
+            <td class="p-4">
+              <div class="flex items-center gap-3">
+                <div class="h-9 w-9 rounded-full flex items-center justify-center font-bold text-white text-xs lg:text-sm flex-shrink-0" style="background-color: #007671">
+                  {{ p.fullName ? p.fullName.charAt(0) : '؟' }}
+                </div>
+                <div class="flex flex-col">
+                  <span class="font-medium text-xs lg:text-base text-foreground leading-normal hover:underline">{{ p.fullName }}</span>
+                  <span class="text-[10px] lg:text-xs text-muted-foreground font-mono">ID: {{ p.pharmacistId | slice:0:8 }}...</span>
+                </div>
+              </div>
+            </td>
+            <td class="p-4">
+              <div class="flex flex-col gap-0.5 text-xs lg:text-sm">
+                <span class="text-foreground" dir="ltr" style="text-align: right">{{ p.email }}</span>
+                <span class="text-muted-foreground font-mono" dir="ltr" style="text-align: right">{{ p.phoneNumber }}</span>
+              </div>
+            </td>
+            <td class="p-4">
+              <span *ngIf="p.activeBranchName" class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">
+                <i class="pi pi-building text-[10px]"></i>
+                {{ p.activeBranchName }}
+              </span>
+              <span *ngIf="!p.activeBranchName" class="text-xs text-muted-foreground italic">غير عين لفرع</span>
+            </td>
+            <td class="p-4">
+              <span
+                class="inline-flex items-center rounded-full px-3 py-1 text-[10px] lg:text-xs font-medium"
+                [ngClass]="{
+                  'bg-emerald-50 text-emerald-700 border border-emerald-200': parseStatusNumber(p.status) === 1,
+                  'bg-rose-50 text-rose-700 border border-rose-200': parseStatusNumber(p.status) === 2,
+                  'bg-amber-50 text-amber-700 border border-amber-200': parseStatusNumber(p.status) === 3
+                }"
+              >
+                {{ getStatusLabel(p.status) }}
+              </span>
+            </td>
+            <td class="p-4" (click)="$event.stopPropagation()">
+              <div class="flex items-center justify-center gap-1">
+                <button
+                  type="button"
+                  (click)="openEditModal(p, $event)"
+                  class="h-8 w-8 rounded flex items-center justify-center text-blue-500 transition-colors duration-200 hover:bg-blue-50"
+                  title="تعديل البيانات"
+                ><i class="pi pi-pencil text-[0.8125rem]"></i></button>
+                <button
+                  type="button"
+                  (click)="openAssignModal(p, $event)"
+                  class="h-8 w-8 rounded flex items-center justify-center text-purple-600 transition-colors duration-200 hover:bg-purple-50"
+                  title="تغيير / إسناد الفرع"
+                ><i class="pi pi-building text-[0.8125rem]"></i></button>
+                <button
+                  type="button"
+                  (click)="openStatusModal(p, $event)"
+                  class="h-8 w-8 rounded flex items-center justify-center transition-colors duration-200 hover:bg-muted"
+                  style="color: #007671"
+                  title="تغيير الحالة"
+                ><i class="pi pi-sync text-[0.8125rem]"></i></button>
+                <button
+                  type="button"
+                  (click)="openDeleteModal(p, $event)"
+                  class="h-8 w-8 rounded flex items-center justify-center text-red-500 transition-colors duration-200 hover:bg-red-50"
+                  title="حذف الحساب"
+                ><i class="pi pi-trash text-[0.8125rem]"></i></button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
     </div>
   </div>
 </main>
@@ -187,7 +211,7 @@
   [visible]="showCreateModal"
   (visibleChange)="showCreateModal = $event"
   [modal]="true" [draggable]="false" [resizable]="false"
-  styleClass="w-[90vw] sm:w-[85vw] md:w-full max-w-xl mx-4"
+  styleClass="w-[90vw] sm:w-[85vw] md:w-full max-w-lg mx-4"
   contentStyleClass="max-h-[90vh] overflow-y-auto p-4 sm:p-6"
   [dismissableMask]="true"
 >
@@ -195,77 +219,68 @@
     <span class="text-base sm:text-lg font-bold text-foreground" style="font-family: var(--font-cairo)">إضافة صيدلي جديد</span>
   </ng-template>
 
-  <div dir="rtl" class="flex flex-col gap-4 pt-2" style="font-family: var(--font-cairo)">
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+  <div dir="rtl" class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2" style="font-family: var(--font-cairo)">
+    <!-- Full Name -->
+    <div class="space-y-1">
+      <label class="block text-xs sm:text-sm font-medium text-foreground">الاسم الكامل <span class="text-destructive">*</span></label>
+      <input type="text" [(ngModel)]="createForm.fullName"
+        placeholder="أحمد محمد"
+        class="field-input" [class.border-destructive]="createErrors['fullName']"
+        (ngModelChange)="createErrors['fullName'] = ''" />
+      <p *ngIf="createErrors['fullName']" class="text-xs text-destructive mt-0.5 flex items-center gap-1">
+        <i class="pi pi-exclamation-circle text-[10px]"></i>{{ createErrors['fullName'] }}
+      </p>
+    </div>
 
-      <!-- Full Name -->
-      <div class="space-y-1 md:col-span-2">
-        <label class="block text-xs sm:text-sm font-medium text-foreground">الاسم الكامل <span class="text-destructive">*</span></label>
-        <input type="text" [(ngModel)]="createForm.fullName"
-          placeholder="د. أحمد محمود"
-          class="field-input" [class.border-destructive]="createErrors['fullName']"
-          (ngModelChange)="createErrors['fullName'] = ''" />
-        <p *ngIf="createErrors['fullName']" class="text-xs text-destructive mt-0.5 flex items-center gap-1">
-          <i class="pi pi-exclamation-circle text-[10px]"></i>{{ createErrors['fullName'] }}
-        </p>
-      </div>
+    <!-- Email -->
+    <div class="space-y-1">
+      <label class="block text-xs sm:text-sm font-medium text-foreground">البريد الإلكتروني <span class="text-destructive">*</span></label>
+      <input type="email" [(ngModel)]="createForm.email"
+        dir="ltr" style="text-align:right" placeholder="pharmacist@example.com"
+        class="field-input" [class.border-destructive]="createErrors['email']"
+        (ngModelChange)="createErrors['email'] = ''" />
+      <p *ngIf="createErrors['email']" class="text-xs text-destructive mt-0.5 flex items-center gap-1">
+        <i class="pi pi-exclamation-circle text-[10px]"></i>{{ createErrors['email'] }}
+      </p>
+    </div>
 
-      <!-- Email -->
-      <div class="space-y-1">
-        <label class="block text-xs sm:text-sm font-medium text-foreground">البريد الإلكتروني <span class="text-destructive">*</span></label>
-        <input type="email" [(ngModel)]="createForm.email"
-          dir="ltr" style="text-align:right" placeholder="pharmacist@example.com"
-          class="field-input" [class.border-destructive]="createErrors['email']"
-          (ngModelChange)="createErrors['email'] = ''" />
-        <p *ngIf="createErrors['email']" class="text-xs text-destructive mt-0.5 flex items-center gap-1">
-          <i class="pi pi-exclamation-circle text-[10px]"></i>{{ createErrors['email'] }}
-        </p>
-      </div>
+    <!-- Phone -->
+    <div class="space-y-1">
+      <label class="block text-xs sm:text-sm font-medium text-foreground">رقم الهاتف <span class="text-destructive">*</span></label>
+      <input type="text" [(ngModel)]="createForm.phoneNumber"
+        dir="ltr" style="text-align:right" placeholder="01012345678"
+        class="field-input" [class.border-destructive]="createErrors['phoneNumber']"
+        (ngModelChange)="createErrors['phoneNumber'] = ''" />
+      <p *ngIf="createErrors['phoneNumber']" class="text-xs text-destructive mt-0.5 flex items-center gap-1">
+        <i class="pi pi-exclamation-circle text-[10px]"></i>{{ createErrors['phoneNumber'] }}
+      </p>
+    </div>
 
-      <!-- Phone -->
-      <div class="space-y-1">
-        <label class="block text-xs sm:text-sm font-medium text-foreground">رقم الهاتف <span class="text-destructive">*</span></label>
-        <input type="text" [(ngModel)]="createForm.phoneNumber"
-          dir="ltr" style="text-align:right" placeholder="01012345678"
-          class="field-input" [class.border-destructive]="createErrors['phoneNumber']"
-          (ngModelChange)="createErrors['phoneNumber'] = ''" />
-        <p *ngIf="createErrors['phoneNumber']" class="text-xs text-destructive mt-0.5 flex items-center gap-1">
-          <i class="pi pi-exclamation-circle text-[10px]"></i>{{ createErrors['phoneNumber'] }}
-        </p>
-      </div>
+    <!-- Password -->
+    <div class="space-y-1">
+      <label class="block text-xs sm:text-sm font-medium text-foreground">كلمة المرور <span class="text-destructive">*</span></label>
+      <input type="password" [(ngModel)]="createForm.password"
+        placeholder="••••••••"
+        class="field-input" [class.border-destructive]="createErrors['password']"
+        (ngModelChange)="createErrors['password'] = ''" />
+      <p *ngIf="createErrors['password']" class="text-xs text-destructive mt-0.5 flex items-center gap-1">
+        <i class="pi pi-exclamation-circle text-[10px]"></i>{{ createErrors['password'] }}
+      </p>
+      <p *ngIf="!createErrors['password']" class="text-[10px] text-muted-foreground mt-0.5">
+        8 أحرف على الأقل، حرف كبير وصغير، رقم، ورمز خاص
+      </p>
+    </div>
 
-      <!-- Password -->
-      <div class="space-y-1">
-        <label class="block text-xs sm:text-sm font-medium text-foreground">كلمة المرور <span class="text-destructive">*</span></label>
-        <input type="password" [(ngModel)]="createForm.password"
-          placeholder="••••••••"
-          class="field-input" [class.border-destructive]="createErrors['password']"
-          (ngModelChange)="createErrors['password'] = ''" />
-        <p *ngIf="createErrors['password']" class="text-xs text-destructive mt-0.5 flex items-center gap-1">
-          <i class="pi pi-exclamation-circle text-[10px]"></i>{{ createErrors['password'] }}
-        </p>
-        <!-- Password hint -->
-        <p *ngIf="!createErrors['password']" class="text-[10px] text-muted-foreground mt-0.5">
-          8 أحرف على الأقل، حرف كبير وصغير، رقم، ورمز خاص
-        </p>
-      </div>
-
-
-
-      <!-- Branch -->
-      <div class="space-y-1 md:col-span-2">
-        <label class="block text-xs sm:text-sm font-medium text-foreground">الفرع المعين <span class="text-destructive">*</span></label>
-        <select [(ngModel)]="createForm.branchId"
-          class="field-input" [class.border-destructive]="createErrors['branchId']"
-          (ngModelChange)="createErrors['branchId'] = ''">
-          <option value="">اختر الفرع...</option>
-          <option *ngFor="let b of branches" [value]="b.branchId">{{ b.branchName }} — {{ b.city }}</option>
-        </select>
-        <p *ngIf="createErrors['branchId']" class="text-xs text-destructive mt-0.5 flex items-center gap-1">
-          <i class="pi pi-exclamation-circle text-[10px]"></i>{{ createErrors['branchId'] }}
-        </p>
-      </div>
-
+    <!-- Branch -->
+    <div class="space-y-1 md:col-span-2">
+      <label class="block text-xs sm:text-sm font-medium text-foreground">الفرع المعين <span class="text-destructive">*</span></label>
+      <select [(ngModel)]="createForm.branchId" class="field-input" [class.border-destructive]="createErrors['branchId']" (ngModelChange)="createErrors['branchId'] = ''">
+        <option value="" disabled>اختر الفرع...</option>
+        <option *ngFor="let b of branches" [value]="b.branchId">{{ b.branchName }}</option>
+      </select>
+      <p *ngIf="createErrors['branchId']" class="text-xs text-destructive mt-0.5 flex items-center gap-1">
+        <i class="pi pi-exclamation-circle text-[10px]"></i>{{ createErrors['branchId'] }}
+      </p>
     </div>
   </div>
 
@@ -276,10 +291,10 @@
         إلغاء
       </button>
       <button type="button" (click)="submitCreate()" [disabled]="isSaving"
-        class="w-full sm:w-auto h-10 lg:h-12 rounded-lg px-6 text-xs lg:text-base font-medium text-white flex items-center justify-center gap-2 transition-colors duration-200 disabled:opacity-50"
+        class="w-full sm:w-auto h-10 lg:h-12 rounded-lg text-white px-5 text-xs lg:text-base font-medium flex items-center justify-center gap-2 transition-colors duration-200 disabled:opacity-60"
         style="background-color: #007671">
         <i *ngIf="isSaving" class="pi pi-spin pi-spinner text-[0.8125rem]"></i>
-        <span>تأكيد الإضافة</span>
+        <span>إنشاء الحساب</span>
       </button>
     </div>
   </ng-template>
@@ -298,9 +313,7 @@
     <span class="text-base sm:text-lg font-bold text-foreground" style="font-family: var(--font-cairo)">تعديل بيانات الصيدلي</span>
   </ng-template>
 
-  <div dir="rtl" class="flex flex-col gap-4 pt-2" style="font-family: var(--font-cairo)">
-
-    <!-- Full Name -->
+  <div dir="rtl" class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2" style="font-family: var(--font-cairo)">
     <div class="space-y-1">
       <label class="block text-xs sm:text-sm font-medium text-foreground">الاسم الكامل <span class="text-destructive">*</span></label>
       <input type="text" [(ngModel)]="editForm.fullName"
@@ -311,7 +324,6 @@
       </p>
     </div>
 
-    <!-- Phone -->
     <div class="space-y-1">
       <label class="block text-xs sm:text-sm font-medium text-foreground">رقم الهاتف <span class="text-destructive">*</span></label>
       <input type="text" [(ngModel)]="editForm.phoneNumber"
@@ -323,24 +335,15 @@
       </p>
     </div>
 
-    <!-- Password (optional) -->
-    <div class="space-y-1">
-      <label class="block text-xs sm:text-sm font-medium text-foreground">
-        كلمة المرور الجديدة
-        <span class="text-muted-foreground text-[10px] mr-1">(اختياري — اتركها فارغة إذا لم تكن تريد التغيير)</span>
-      </label>
-      <input type="password" [(ngModel)]="editForm.password"
-        placeholder="••••••••"
+    <div class="space-y-1 md:col-span-2">
+      <label class="block text-xs sm:text-sm font-medium text-foreground">كلمة المرور الجديدة (اختياري)</label>
+      <input type="password" [(ngModel)]="editForm.password" placeholder="اتركها فارغة للإبقاء على الحالية"
         class="field-input" [class.border-destructive]="editErrors['password']"
         (ngModelChange)="editErrors['password'] = ''" />
       <p *ngIf="editErrors['password']" class="text-xs text-destructive mt-0.5 flex items-center gap-1">
         <i class="pi pi-exclamation-circle text-[10px]"></i>{{ editErrors['password'] }}
       </p>
-      <p *ngIf="!editErrors['password']" class="text-[10px] text-muted-foreground mt-0.5">
-        إذا أدخلت كلمة مرور: 8 أحرف على الأقل، حرف كبير وصغير، رقم، ورمز خاص
-      </p>
     </div>
-
   </div>
 
   <ng-template #footer>
@@ -350,10 +353,10 @@
         إلغاء
       </button>
       <button type="button" (click)="submitEdit()" [disabled]="isUpdating"
-        class="w-full sm:w-auto h-10 lg:h-12 rounded-lg px-6 text-xs lg:text-base font-medium text-white flex items-center justify-center gap-2 transition-colors duration-200 disabled:opacity-50"
+        class="w-full sm:w-auto h-10 lg:h-12 rounded-lg text-white px-5 text-xs lg:text-base font-medium flex items-center justify-center gap-2 transition-colors duration-200 disabled:opacity-60"
         style="background-color: #007671">
         <i *ngIf="isUpdating" class="pi pi-spin pi-spinner text-[0.8125rem]"></i>
-        <span>حفظ التعديلات</span>
+        <span>حفظ التغييرات</span>
       </button>
     </div>
   </ng-template>
@@ -372,49 +375,23 @@
     <span class="text-base sm:text-lg font-bold text-foreground" style="font-family: var(--font-cairo)">تغيير حالة الصيدلي</span>
   </ng-template>
 
-  <div dir="rtl" class="flex flex-col gap-4 pt-2" style="font-family: var(--font-cairo)">
-    <!-- Current pharmacist info -->
-    <div class="bg-muted/50 rounded-lg px-4 py-3 flex items-center gap-3">
-      <div class="h-9 w-9 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0" style="background-color: #007671">
-        {{ statusTargetName.charAt(0).toUpperCase() }}
-      </div>
-      <div>
-        <p class="text-xs lg:text-sm font-semibold text-foreground">{{ statusTargetName }}</p>
-        <p class="text-[10px] text-muted-foreground">تغيير الحالة الحالية</p>
-      </div>
-    </div>
+  <div dir="rtl" class="space-y-4 pt-2" style="font-family: var(--font-cairo)">
+    <p class="text-xs sm:text-sm text-muted-foreground">
+      حدد الحالة الجديدة للحساب <strong class="text-foreground font-semibold">{{ statusTargetName }}</strong>:
+    </p>
 
-    <!-- Status options as radio-style cards -->
     <div class="space-y-2">
-      <label
-        class="flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-colors duration-200"
-        [class.border-green-500]="newStatus == 1"
-        [class.border-border]="newStatus != 1"
-        [class.bg-green-50]="newStatus == 1"
-      >
-        <input type="radio" name="statusChoice" [value]="1" [(ngModel)]="newStatus" class="accent-green-600" />
-        <span class="status-badge badge-active"><span class="status-dot"></span>نشط</span>
-        <span class="text-[10px] lg:text-xs text-muted-foreground mr-auto">يمكنه تسجيل الدخول وتنفيذ المهام</span>
+      <label class="flex items-center gap-2 p-3 rounded-lg border border-border cursor-pointer transition-colors hover:bg-muted/50">
+        <input type="radio" name="status" [value]="1" [(ngModel)]="newStatus" class="accent-[#007671]" />
+        <span class="text-xs sm:text-sm font-medium text-foreground">نشط (Active)</span>
       </label>
-      <label
-        class="flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-colors duration-200"
-        [class.border-red-400]="newStatus == 2"
-        [class.border-border]="newStatus != 2"
-        [class.bg-red-50]="newStatus == 2"
-      >
-        <input type="radio" name="statusChoice" [value]="2" [(ngModel)]="newStatus" class="accent-red-500" />
-        <span class="status-badge badge-inactive"><span class="status-dot"></span>غير نشط</span>
-        <span class="text-[10px] lg:text-xs text-muted-foreground mr-auto">تم إنهاء الخدمة</span>
+      <label class="flex items-center gap-2 p-3 rounded-lg border border-border cursor-pointer transition-colors hover:bg-muted/50">
+        <input type="radio" name="status" [value]="2" [(ngModel)]="newStatus" class="accent-[#007671]" />
+        <span class="text-xs sm:text-sm font-medium text-foreground">غير نشط (Inactive)</span>
       </label>
-      <label
-        class="flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-colors duration-200"
-        [class.border-yellow-400]="newStatus == 3"
-        [class.border-border]="newStatus != 3"
-        [class.bg-yellow-50]="newStatus == 3"
-      >
-        <input type="radio" name="statusChoice" [value]="3" [(ngModel)]="newStatus" class="accent-yellow-500" />
-        <span class="status-badge badge-suspended"><span class="status-dot"></span>معلق</span>
-        <span class="text-[10px] lg:text-xs text-muted-foreground mr-auto">موقف مؤقتاً</span>
+      <label class="flex items-center gap-2 p-3 rounded-lg border border-border cursor-pointer transition-colors hover:bg-muted/50">
+        <input type="radio" name="status" [value]="3" [(ngModel)]="newStatus" class="accent-[#007671]" />
+        <span class="text-xs sm:text-sm font-medium text-foreground">معلق (Suspended)</span>
       </label>
     </div>
   </div>
@@ -426,7 +403,7 @@
         إلغاء
       </button>
       <button type="button" (click)="submitStatusChange()" [disabled]="isChangingStatus"
-        class="w-full sm:w-auto h-10 lg:h-12 rounded-lg px-6 text-xs lg:text-base font-medium text-white flex items-center justify-center gap-2 transition-colors duration-200 disabled:opacity-50"
+        class="w-full sm:w-auto h-10 lg:h-12 rounded-lg text-white px-5 text-xs lg:text-base font-medium flex items-center justify-center gap-2 transition-colors duration-200 disabled:opacity-60"
         style="background-color: #007671">
         <i *ngIf="isChangingStatus" class="pi pi-spin pi-spinner text-[0.8125rem]"></i>
         <span>تحديث الحالة</span>

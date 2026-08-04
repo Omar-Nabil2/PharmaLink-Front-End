@@ -10,12 +10,17 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subject, EMPTY } from 'rxjs';
-import { debounceTime, distinctUntilChanged, takeUntil, catchError } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, takeUntil, catchError, switchMap } from 'rxjs/operators';
 import { ToastModule } from 'primeng/toast';
 import { DialogModule } from 'primeng/dialog';
+import { AutoCompleteModule } from 'primeng/autocomplete';
+import { SelectModule } from 'primeng/select';
+import { TableModule } from 'primeng/table';
 import { MessageService } from 'primeng/api';
 import { PharmacistManagementService } from '@core/services/pharmacist-management.service';
 import { PharmacyBranchService } from '../../../branches/pharmacy-branch.service';
+import { SearchService } from '@core/services/search.service';
+import { PharmacyBranchSearchDTO } from '@pages/inventory/search.model';
 import {
   CreatePharmacistRequest,
   PharmacistSummaryDTO,
@@ -33,7 +38,15 @@ interface FieldErrors {
   selector: 'app-pharmacists-list',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, FormsModule, ToastModule, DialogModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ToastModule,
+    DialogModule,
+    AutoCompleteModule,
+    SelectModule,
+    TableModule,
+  ],
   providers: [MessageService],
   templateUrl: './pharmacists-list.component.html',
   styleUrl: './pharmacists-list.component.scss',
@@ -41,11 +54,13 @@ interface FieldErrors {
 export class PharmacistsListComponent implements OnInit, OnDestroy {
   private readonly svc = inject(PharmacistManagementService);
   private readonly branchSvc = inject(PharmacyBranchService);
+  private readonly searchService = inject(SearchService);
   private readonly msg = inject(MessageService);
   private readonly router = inject(Router);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly destroy$ = new Subject<void>();
   private readonly searchSubject$ = new Subject<string>();
+  private readonly branchFilterQuery$ = new Subject<string>();
 
   // ── List state ─────────────────────────────────────────────────────
   pharmacists: PharmacistSummaryDTO[] = [];
@@ -54,10 +69,22 @@ export class PharmacistsListComponent implements OnInit, OnDestroy {
   totalCount = 0;
   pageNumber = 1;
   pageSize = 10;
+  first = 0;
 
   searchTerm = '';
   selectedBranchId: string | null = null;
   selectedStatus: number | null = null;
+
+  // ── Filter Options for p-select & p-autoComplete ──────────────
+  readonly statusFilterOptions = [
+    { label: 'جميع الحالات', value: null },
+    { label: 'نشط', value: 1 },
+    { label: 'غير نشط', value: 2 },
+    { label: 'معلق', value: 3 },
+  ];
+
+  branchFilterSuggestions: PharmacyBranchSearchDTO[] = [];
+  selectedBranchFilter: PharmacyBranchSearchDTO | null = null;
 
   // ── Create form ────────────────────────────────────────────────────
   showCreateModal = false;
@@ -105,18 +132,6 @@ export class PharmacistsListComponent implements OnInit, OnDestroy {
     return Math.max(1, Math.ceil(this.totalCount / this.pageSize));
   }
 
-  get pagesArray(): number[] {
-    const pages: number[] = [];
-    for (
-      let i = Math.max(1, this.pageNumber - 2);
-      i <= Math.min(this.totalPages, this.pageNumber + 2);
-      i++
-    ) {
-      pages.push(i);
-    }
-    return pages;
-  }
-
   get hasActiveFilters(): boolean {
     return !!(this.searchTerm || this.selectedBranchId || this.selectedStatus !== null);
   }
@@ -127,8 +142,27 @@ export class PharmacistsListComponent implements OnInit, OnDestroy {
       .pipe(debounceTime(400), distinctUntilChanged(), takeUntil(this.destroy$))
       .subscribe(() => {
         this.pageNumber = 1;
+        this.first = 0;
         this.loadPharmacists();
       });
+
+    // Branch filter autocomplete stream (toolbar): debounce 300ms, switchMap.
+    this.branchFilterQuery$
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        switchMap((term) =>
+          term.trim().length >= 1
+            ? this.searchService.searchBranches(term)
+            : this.searchService.searchBranches(''),
+        ),
+        takeUntil(this.destroy$),
+      )
+      .subscribe((results) => {
+        this.branchFilterSuggestions = results ?? [];
+        this.cdr.markForCheck();
+      });
+
     this.loadBranches();
     this.loadPharmacists();
   }
@@ -136,6 +170,34 @@ export class PharmacistsListComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  // ── Branch filter autocomplete handlers ────────────────────────────
+  onBranchFilterSearch(query: string): void {
+    this.branchFilterQuery$.next(query ?? '');
+  }
+
+  onBranchFilterSelected(branch: PharmacyBranchSearchDTO): void {
+    this.selectedBranchFilter = branch;
+    this.selectedBranchId = branch.branchId;
+    this.pageNumber = 1;
+    this.first = 0;
+    this.loadPharmacists();
+  }
+
+  onBranchFilterCleared(): void {
+    this.selectedBranchFilter = null;
+    this.selectedBranchId = null;
+    this.pageNumber = 1;
+    this.first = 0;
+    this.loadPharmacists();
+  }
+
+  onStatusFilterChange(value: number | null): void {
+    this.selectedStatus = value;
+    this.pageNumber = 1;
+    this.first = 0;
+    this.loadPharmacists();
   }
 
   // ── Data loading ───────────────────────────────────────────────────
@@ -178,27 +240,37 @@ export class PharmacistsListComponent implements OnInit, OnDestroy {
   }
 
   // ── Toolbar ────────────────────────────────────────────────────────
-  onSearchChange(value: string): void {
-    this.searchTerm = value;
-    this.searchSubject$.next(value);
+  onSearchChange(term: string): void {
+    this.searchSubject$.next(term);
   }
 
   onFilterChange(): void {
     this.pageNumber = 1;
+    this.first = 0;
     this.loadPharmacists();
   }
 
   resetFilters(): void {
     this.searchTerm = '';
     this.selectedBranchId = null;
+    this.selectedBranchFilter = null;
     this.selectedStatus = null;
     this.pageNumber = 1;
+    this.first = 0;
     this.loadPharmacists();
   }
 
-  onPageChange(page: number): void {
-    if (page < 1 || page > this.totalPages) return;
-    this.pageNumber = page;
+  onPageChange(event: any): void {
+    if (typeof event === 'number') {
+      this.pageNumber = event;
+      this.first = (event - 1) * this.pageSize;
+    } else if (event && typeof event === 'object') {
+      const rows = event.rows ?? this.pageSize;
+      const firstIndex = event.first ?? 0;
+      this.first = firstIndex;
+      this.pageSize = rows;
+      this.pageNumber = Math.floor(firstIndex / rows) + 1;
+    }
     this.loadPharmacists();
   }
 
@@ -308,23 +380,24 @@ export class PharmacistsListComponent implements OnInit, OnDestroy {
       .subscribe({
         next: () => {
           this.isSaving = false;
-          this.showCreateModal = false;
-          this.msg.add({ severity: 'success', summary: 'نجاح', detail: 'تم إنشاء حساب الصيدلي بنجاح' });
+          this.closeCreateModal();
+          this.msg.add({
+            severity: 'success',
+            summary: 'نجاح',
+            detail: 'تم إنشاء حساب الصيدلي بنجاح',
+          });
           this.loadPharmacists();
         },
         error: (err) => {
           this.isSaving = false;
-          const detail = err.error?.detail || err.error?.title || 'فشل إنشاء حساب الصيدلي';
-          // Map backend conflict errors to field errors
-          if (err.status === 409) {
-            const msg = (err.error?.detail || '').toLowerCase();
-            if (msg.includes('email') || msg.includes('بريد')) {
-              this.createErrors = { ...this.createErrors, email: 'البريد الإلكتروني مستخدم بالفعل' };
-            } else if (msg.includes('phone') || msg.includes('هاتف')) {
-              this.createErrors = { ...this.createErrors, phoneNumber: 'رقم الهاتف مستخدم بالفعل' };
-            }
+          const serverMsg = err.error?.detail || err.error?.title || 'فشل إنشاء الحساب';
+          if (serverMsg.includes('email') || serverMsg.includes('البريد')) {
+            this.createErrors['email'] = serverMsg;
+          } else if (serverMsg.includes('phone') || serverMsg.includes('الهاتف')) {
+            this.createErrors['phoneNumber'] = serverMsg;
+          } else {
+            this.msg.add({ severity: 'error', summary: 'خطأ في الإنشاء', detail: serverMsg });
           }
-          this.msg.add({ severity: 'error', summary: 'خطأ', detail });
           this.cdr.markForCheck();
         },
       });
@@ -336,7 +409,11 @@ export class PharmacistsListComponent implements OnInit, OnDestroy {
   openEditModal(p: PharmacistSummaryDTO, event: Event): void {
     event.stopPropagation();
     this.editingId = p.pharmacistId;
-    this.editForm = { fullName: p.fullName, phoneNumber: p.phoneNumber, password: '' };
+    this.editForm = {
+      fullName: p.fullName,
+      phoneNumber: p.phoneNumber,
+      password: '',
+    };
     this.editErrors = {};
     this.showEditModal = true;
     this.cdr.markForCheck();
@@ -344,7 +421,6 @@ export class PharmacistsListComponent implements OnInit, OnDestroy {
 
   closeEditModal(): void {
     this.showEditModal = false;
-    this.editingId = '';
     this.editErrors = {};
   }
 
@@ -352,14 +428,12 @@ export class PharmacistsListComponent implements OnInit, OnDestroy {
     const e: FieldErrors = {};
     const name = this.editForm.fullName.trim();
     const phone = this.editForm.phoneNumber.trim();
-    const pass = this.editForm.password ?? '';
+    const pass = this.editForm.password;
 
     if (!name) {
       e['fullName'] = 'الاسم الكامل مطلوب';
     } else if (name.length < 3) {
       e['fullName'] = 'الاسم يجب أن يكون 3 أحرف على الأقل';
-    } else if (name.length > 100) {
-      e['fullName'] = 'الاسم يجب ألا يتجاوز 100 حرف';
     }
 
     const phoneRegex = /^(010|011|012|015)\d{8}$/;
@@ -369,18 +443,15 @@ export class PharmacistsListComponent implements OnInit, OnDestroy {
       e['phoneNumber'] = 'رقم الهاتف يجب أن يبدأ بـ 010/011/012/015 ويتكون من 11 رقماً';
     }
 
-    // Password is optional on edit, but if entered, must meet requirements
-    if (pass.length > 0) {
+    if (pass && pass.length > 0) {
       if (pass.length < 8) {
-        e['password'] = 'كلمة المرور يجب أن تكون 8 أحرف على الأقل';
+        e['password'] = 'كلمة المرور الجديدة يجب أن تكون 8 أحرف على الأقل';
       } else if (!/[A-Z]/.test(pass)) {
-        e['password'] = 'يجب أن تحتوي كلمة المرور على حرف كبير واحد على الأقل';
+        e['password'] = 'يجب أن تحتوي على حرف كبير واحد على الأقل';
       } else if (!/[a-z]/.test(pass)) {
-        e['password'] = 'يجب أن تحتوي كلمة المرور على حرف صغير واحد على الأقل';
+        e['password'] = 'يجب أن تحتوي على حرف صغير واحد على الأقل';
       } else if (!/\d/.test(pass)) {
-        e['password'] = 'يجب أن تحتوي كلمة المرور على رقم واحد على الأقل';
-      } else if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(pass)) {
-        e['password'] = 'يجب أن تحتوي كلمة المرور على رمز خاص واحد على الأقل';
+        e['password'] = 'يجب أن تحتوي على رقم واحد على الأقل';
       }
     }
 
@@ -398,7 +469,7 @@ export class PharmacistsListComponent implements OnInit, OnDestroy {
     const payload: UpdatePharmacistRequest = {
       fullName: this.editForm.fullName.trim(),
       phoneNumber: this.editForm.phoneNumber.trim(),
-      password: this.editForm.password?.trim() || undefined,
+      ...(this.editForm.password ? { password: this.editForm.password } : {}),
     };
 
     this.svc
@@ -407,16 +478,13 @@ export class PharmacistsListComponent implements OnInit, OnDestroy {
       .subscribe({
         next: () => {
           this.isUpdating = false;
-          this.showEditModal = false;
-          this.msg.add({ severity: 'success', summary: 'نجاح', detail: 'تم تحديث بيانات الصيدلي بنجاح' });
+          this.closeEditModal();
+          this.msg.add({ severity: 'success', summary: 'نجاح', detail: 'تم تحديث بيانات الصيدلي' });
           this.loadPharmacists();
         },
         error: (err) => {
           this.isUpdating = false;
-          const detail = err.error?.detail || err.error?.title || 'فشل تحديث البيانات';
-          if (err.status === 409) {
-            this.editErrors = { ...this.editErrors, phoneNumber: 'رقم الهاتف مستخدم بالفعل' };
-          }
+          const detail = err.error?.detail || err.error?.title || 'فشل التحديث';
           this.msg.add({ severity: 'error', summary: 'خطأ', detail });
           this.cdr.markForCheck();
         },
@@ -430,23 +498,16 @@ export class PharmacistsListComponent implements OnInit, OnDestroy {
     event.stopPropagation();
     this.statusTargetId = p.pharmacistId;
     this.statusTargetName = p.fullName;
-    this.newStatus = this.parseStatusNumber(p.status);
+    this.newStatus = this.parseStatusNumber(p.status) as UserStatus;
     this.showStatusModal = true;
     this.cdr.markForCheck();
   }
 
   closeStatusModal(): void {
     this.showStatusModal = false;
-    this.statusTargetId = '';
   }
 
   submitStatusChange(): void {
-    // Status dropdown always has a value, just verify it's valid
-    if (![1, 2, 3].includes(Number(this.newStatus))) {
-      this.msg.add({ severity: 'warn', summary: 'تنبيه', detail: 'يرجى اختيار حالة صالحة' });
-      return;
-    }
-
     this.isChangingStatus = true;
     this.cdr.markForCheck();
 
@@ -599,25 +660,5 @@ export class PharmacistsListComponent implements OnInit, OnDestroy {
     if (num === 2) return 'غير نشط';
     if (num === 3) return 'معلق';
     return 'غير محدد';
-  }
-
-  getStatusClass(s: any): string {
-    const num = this.parseStatusNumber(s);
-    if (num === 1) return 'status-badge badge-active';
-    if (num === 2) return 'status-badge badge-inactive';
-    if (num === 3) return 'status-badge badge-suspended';
-    return 'status-badge badge-default';
-  }
-
-  getBranchName(p: PharmacistSummaryDTO): string {
-    if (p.activeBranchName) return p.activeBranchName;
-    const activeAss = p.assignments?.find((a) => a.isActive);
-    if (!activeAss) return 'غير مسند لفرع';
-    const match = this.branches.find((b) => b.branchId === activeAss.branchId);
-    return match ? match.branchName : 'فرع';
-  }
-
-  trackById(_index: number, item: any): string {
-    return item?.pharmacistId ?? String(_index);
   }
 }
