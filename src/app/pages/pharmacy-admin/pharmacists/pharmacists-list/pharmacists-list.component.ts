@@ -241,6 +241,7 @@ export class PharmacistsListComponent implements OnInit, OnDestroy {
 
   // ── Toolbar ────────────────────────────────────────────────────────
   onSearchChange(term: string): void {
+    this.searchTerm = term;
     this.searchSubject$.next(term);
   }
 

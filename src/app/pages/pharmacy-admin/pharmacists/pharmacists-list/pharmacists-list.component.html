@@ -128,7 +128,7 @@
             <th class="text-right p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground">البريد / الهاتف</th>
             <th class="text-right p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground">الفرع المعين</th>
             <th class="text-right p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground">الحالة</th>
-            <th class="text-center p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground">إجراءات</th>
+            <th class="text-right p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground">إجراءات</th>
           </tr>
         </ng-template>
 
@@ -141,7 +141,6 @@
                 </div>
                 <div class="flex flex-col">
                   <span class="font-medium text-xs lg:text-base text-foreground leading-normal hover:underline">{{ p.fullName }}</span>
-                  <span class="text-[10px] lg:text-xs text-muted-foreground font-mono">ID: {{ p.pharmacistId | slice:0:8 }}...</span>
                 </div>
               </div>
             </td>
@@ -171,7 +170,7 @@
               </span>
             </td>
             <td class="p-4" (click)="$event.stopPropagation()">
-              <div class="flex items-center justify-center gap-1">
+              <div class="flex items-center justify-start gap-1">
                 <button
                   type="button"
                   (click)="openEditModal(p, $event)"
