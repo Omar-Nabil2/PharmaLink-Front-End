@@ -57,9 +57,16 @@
                 <ng-template pTemplate="body" let-item>
                     <tr>
                         <!-- اسم الدواء -->
-                        <td>
-                            <div class="font-semibold">{{ item.drugName }}</div>
-                            <div class="text-sm text-gray-500">{{ item.arabicName }}</div>
+                        <td class="py-3 font-medium">
+                            <div class="flex items-center gap-3">
+                                @if (item.imageUrl) {
+                                    <img [src]="item.imageUrl" [alt]="item.drugName" class="w-10 h-10 object-cover rounded shadow-sm mix-blend-multiply" onerror="this.src='assets/images/placeholder-drug.png'">
+                                }
+                                <div class="flex flex-col">
+                                    <div class="font-semibold">{{ item.arabicName || item.drugName }}</div>
+                                    <div *ngIf="item.arabicName" class="text-xs text-gray-400 font-mono mt-0.5">{{ item.drugName }}</div>
+                                </div>
+                            </div>
                         </td>
                         <td class="text-center">{{ item.stockQuantity }}</td>
                         <td class="text-center">{{ item.reservedQuantity }}</td>

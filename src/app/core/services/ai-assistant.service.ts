@@ -113,10 +113,21 @@ export class AiAssistantService {
   }
 
   /**
-   * Ingest RAG document.
+   * Ingest RAG document (Text).
    */
   ingestRagDocument(title: string, category: string, content: string, sourceUrl: string = ''): Observable<any> {
     return this.http.post<any>(`${this.baseUrl}/rag/ingest`, { title, category, content, sourceUrl });
+  }
+
+  /**
+   * Ingest RAG document (File - Image, PDF, etc.).
+   */
+  ingestRagFile(title: string, category: string, file: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('File', file, file.name);
+    formData.append('Title', title);
+    formData.append('Category', category);
+    return this.http.post<any>(`${this.baseUrl}/rag/ingest-file`, formData);
   }
 
   /**

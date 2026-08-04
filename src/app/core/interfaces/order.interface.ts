@@ -20,7 +20,9 @@ export interface PatientOrderItem {
   orderItemId: string;
   drugId: string;
   drugName: string;
-  genericName: string;
+  genericName?: string;
+  arabicName?: string;
+  imageUrl?: string;
   quantityNeeded: number;
   itemStatus: string;
   strength: string;
