@@ -8,6 +8,7 @@ export interface CartItem {
   lineTotal: number;
   // Extra UI field
   drugArabicName?: string;
+  drugImageUrl?: string;
   loading?: boolean;
 }
 

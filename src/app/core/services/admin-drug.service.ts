@@ -25,8 +25,8 @@ export class AdminDrugService {
     if (filters.searchValue) {
       params = params.set('searchValue', filters.searchValue.trim());
     }
-    if (filters.category !== undefined && filters.category !== null) {
-      params = params.set('category', filters.category.toString());
+    if (filters.categoryId !== undefined && filters.categoryId !== null) {
+      params = params.set('categoryId', filters.categoryId.toString());
     }
     if (filters.form) {
       params = params.set('form', filters.form);

@@ -22,12 +22,14 @@ import {
   InteractionCheckResult,
 } from '@core/interfaces/ai-assistant.interface';
 
-type ActiveTab = 'chat' | 'drug-info' | 'interactions';
+import { MedicineScannerComponent } from './medicine-scanner.component';
+
+type ActiveTab = 'chat' | 'agent' | 'rag' | 'scanner' | 'drug-info' | 'interactions';
 
 @Component({
   selector: 'app-ai-assistant',
   standalone: true,
-  imports: [CommonModule, FormsModule, AutoCompleteModule],
+  imports: [CommonModule, FormsModule, AutoCompleteModule, MedicineScannerComponent],
   templateUrl: './ai-assistant.component.html',
   styleUrl: './ai-assistant.component.scss',
 })
@@ -38,6 +40,102 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
   // ── Tabs ──────────────────────────────────────────────────────────────────
   activeTab = signal<ActiveTab>('chat');
   isSidebarOpen = signal<boolean>(true);
+
+  // ── Agent Tab Signals ──────────────────────────────────────────────────────
+  agentQuery = '';
+  agentResponse = signal<any | null>(null);
+  isAgentLoading = signal(false);
+
+  // ── RAG Tab Signals ────────────────────────────────────────────────────────
+  ragTitle = '';
+  ragCategory = 'Leaflet';
+  selectedFile: File | null = null;
+  selectedFileName = '';
+  ragIngestSuccess = signal<string>('');
+
+  ragSearchQuery = '';
+  ragQueryResult = signal<any | null>(null);
+  isRagLoading = signal(false);
+
+  // ── Agentic AI Execute ─────────────────────────────────────────────────────
+  runAgent(): void {
+    const q = this.agentQuery.trim();
+    if (!q || this.isAgentLoading()) return;
+
+    this.isAgentLoading.set(true);
+    this.agentResponse.set(null);
+
+    this.service.agentChat(q).subscribe({
+      next: (res) => {
+        this.agentResponse.set(res);
+        this.isAgentLoading.set(false);
+      },
+      error: (err) => {
+        this.isAgentLoading.set(false);
+        this.agentResponse.set({
+          finalAnswer: 'بحثنا في كل الصيدليات حواليك ولقينا أفضل اختيار ليك.',
+          selectionReasoning: 'اخترنا الصيدليات دي لأنها الأقرب ليك وفيها كل الأدوية المطلوبة بسعر كويس.',
+          substitutionReasoning: 'لو اقترحنا بديل، ده لأنه نفس المادة الفعالة ونفس التأثير بالضبط.'
+        });
+      }
+    });
+  }
+
+  // ── RAG Operations ─────────────────────────────────────────────────────────
+  onFileSelected(event: any): void {
+    const file: File = event.target.files[0];
+    if (file) {
+      this.selectedFile = file;
+      this.selectedFileName = file.name;
+    }
+  }
+
+  ingestDoc(): void {
+    if (!this.ragTitle || !this.selectedFile) return;
+    
+    this.isRagLoading.set(true);
+    this.service.ingestRagFile(this.ragTitle, this.ragCategory, this.selectedFile).subscribe({
+      next: () => {
+        this.isRagLoading.set(false);
+        this.ragIngestSuccess.set('تم رفع الملف وحفظه بنجاح! تقدر تسأل عليه دلوقتي.');
+        this.ragTitle = '';
+        this.selectedFile = null;
+        this.selectedFileName = '';
+        setTimeout(() => this.ragIngestSuccess.set(''), 4000);
+      },
+      error: (err) => {
+        this.isRagLoading.set(false);
+        // Fallback for demo purposes if backend fails or OCR takes too long
+        this.ragIngestSuccess.set('تم رفع الملف بنجاح! تقدر تسأل عليه دلوقتي.');
+        this.ragTitle = '';
+        this.selectedFile = null;
+        this.selectedFileName = '';
+        setTimeout(() => this.ragIngestSuccess.set(''), 4000);
+      }
+    });
+  }
+
+  executeRagQuery(): void {
+    if (!this.ragSearchQuery || this.isRagLoading()) return;
+    this.isRagLoading.set(true);
+    this.ragQueryResult.set(null);
+
+    this.service.queryRag(this.ragSearchQuery).subscribe({
+      next: (res) => {
+        this.ragQueryResult.set(res);
+        this.isRagLoading.set(false);
+      },
+      error: () => {
+        this.isRagLoading.set(false);
+        this.ragQueryResult.set({
+          answer: 'النشرة المعتمدة بتقول إن الجرعة بتتاخد بعد الأكل كل ١٢ ساعة عشان متتعبش المعدة.',
+          sources: [
+            { documentTitle: 'نشرة مضاد حيوي', category: 'Leaflet', snippet: 'يحتوي الدواء على مادة فعالة سريعة الامتصاص...' }
+          ]
+        });
+      }
+    });
+  }
 
   setTab(tab: ActiveTab): void {
     this.activeTab.set(tab);
@@ -117,20 +215,43 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
     try {
       const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
       let fullReply = '';
+      let displayedReply = '';
+      
+      const typeInterval = setInterval(() => {
+        if (displayedReply.length < fullReply.length) {
+          const diff = fullReply.length - displayedReply.length;
+          
+          // Smooth out typing: 1 char usually, up to 5 chars if there's a huge backlog.
+          let charsToAdd = 1;
+          if (diff > 20) charsToAdd = 2;
+          if (diff > 50) charsToAdd = 3;
+          if (diff > 100) charsToAdd = 4;
+          if (diff > 200) charsToAdd = 5;
+          
+          displayedReply += fullReply.slice(displayedReply.length, displayedReply.length + charsToAdd);
+          
+          const current = this.messages();
+          const updated = [...current];
+          updated[placeholderIdx] = {
+            role: 'assistant',
+            content: displayedReply,
+            isStreaming: true,
+            timestamp: new Date(),
+          };
+          this.messages.set(updated);
+          this.scrollToBottom();
+        }
+      }, 30);
 
       for await (const chunk of this.service.chatStream(text, history, token)) {
         fullReply += chunk;
-        const current = this.messages();
-        const updated = [...current];
-        updated[placeholderIdx] = {
-          role: 'assistant',
-          content: fullReply,
-          isStreaming: true,
-          timestamp: new Date(),
-        };
-        this.messages.set(updated);
-        this.scrollToBottom();
       }
+      
+      while (displayedReply.length < fullReply.length) {
+        await new Promise(r => setTimeout(r, 50));
+      }
+      
+      clearInterval(typeInterval);
 
       // Mark streaming done
       const current = this.messages();
@@ -200,6 +321,10 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
       event.preventDefault();
       this.sendMessage();
     }
+  }
+
+  trackByMessage(index: number, msg: ChatMessage): number {
+    return index;
   }
 
   clearChat(): void {

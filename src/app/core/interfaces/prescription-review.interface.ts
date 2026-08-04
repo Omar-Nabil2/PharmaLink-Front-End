@@ -134,6 +134,7 @@ export interface ApiResponse<T> {
 export interface OrderItemDto {
   drugId: string;
   drugName: string;
+  arabicName?: string;
   imageUrl: string;
   quantity: number;
   strength: string;

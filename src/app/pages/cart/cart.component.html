@@ -37,12 +37,14 @@
         
         <!-- Drug Info -->
         <div class="flex items-center gap-4 flex-1">
-          <div class="w-16 h-16 bg-teal-50 rounded-lg flex items-center justify-center text-teal-600 shrink-0">
-            <!-- Pill Icon -->
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547l-2.46 2.46a2.62 2.62 0 103.705 3.705l2.46-2.46a2 2 0 00.548-1.022l.477-2.387a6 6 0 00-.517-3.86l-.159-.318a6 6 0 01-.517-3.86l.38-1.93a2 2 0 00-.547-1.806l-2.46-2.46a2.62 2.62 0 013.705-3.705l2.46 2.46a2 2 0 001.022.548l2.387.477a6 6 0 003.86-.517l.318-.159a6 6 0 013.86-.517l1.93.38a2 2 0 001.806.547l2.46 2.46a2.62 2.62 0 11-3.705 3.705l-2.46-2.46z"></path></svg>
+          <div class="w-16 h-16 bg-teal-50 rounded-lg flex items-center justify-center text-teal-600 shrink-0 overflow-hidden border border-teal-100">
+            <img *ngIf="item.drugImageUrl" [src]="item.drugImageUrl" [alt]="item.drugBrandName" class="w-full h-full object-contain mix-blend-multiply" onerror="this.src='assets/images/placeholder-drug.png'">
+            <!-- Pill Icon fallback -->
+            <svg *ngIf="!item.drugImageUrl" class="w-8 h-8 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547l-2.46 2.46a2.62 2.62 0 103.705 3.705l2.46-2.46a2 2 0 00.548-1.022l.477-2.387a6 6 0 00-.517-3.86l-.159-.318a6 6 0 01-.517-3.86l.38-1.93a2 2 0 00-.547-1.806l-2.46-2.46a2.62 2.62 0 013.705-3.705l2.46 2.46a2 2 0 001.022.548l2.387.477a6 6 0 003.86-.517l.318-.159a6 6 0 013.86-.517l1.93.38a2 2 0 001.806.547l2.46 2.46a2.62 2.62 0 11-3.705 3.705l-2.46-2.46z"></path></svg>
           </div>
           <div>
             <h3 class="text-lg font-bold text-gray-800">{{ item.drugArabicName || item.drugBrandName }}</h3>
+            <p *ngIf="item.drugArabicName" class="text-xs text-gray-500 font-mono mt-0.5">{{ item.drugBrandName }} {{ item.drugGenericName ? '(' + item.drugGenericName + ')' : '' }}</p>
             <p class="text-teal-600 font-medium text-sm mt-1">{{ item.unitPriceSnapshot | number:'1.2-2' }} ج</p>
           </div>
         </div>

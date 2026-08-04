@@ -23,7 +23,9 @@ export interface InventoryItem {
     branchId: string;
     drugId: string;
     drugName: string;
+    genericName: string;
     arabicName: string;
+    imageUrl?: string;
     stockQuantity: number;
     reservedQuantity: number;
     unitPrice: number;
