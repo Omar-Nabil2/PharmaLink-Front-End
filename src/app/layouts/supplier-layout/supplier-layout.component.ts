@@ -49,7 +49,7 @@ export class SupplierLayoutComponent {
     // ─── روابط المورد ───
     readonly navItems: SupplierNavItem[] = [
         { label: 'لوحة التحكم (الطلبات)', icon: 'pi pi-inbox', routerLink: '/supplier/dashboard' },
-        { label: 'أدويتي (قريباً)', icon: 'pi pi-box', routerLink: '/supplier/drugs' },
+        { label: 'أدويتي', icon: 'pi pi-box', routerLink: '/supplier/drugs' },
         { label: 'الملف الشخصي', icon: 'pi pi-building', routerLink: '/supplier/profile' },
     ];
 

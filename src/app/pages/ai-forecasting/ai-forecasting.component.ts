@@ -7,15 +7,18 @@ import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
-import { InventoryForecastingService } from '@core/services/inventory-forecasting.service';
+import { AutoCompleteModule } from 'primeng/autocomplete';
+import { DialogModule } from 'primeng/dialog'; // أضفنا ده
+import { SelectModule } from 'primeng/select'; // أضفنا ده لـ PrimeNG 18
 import { of, Subject } from 'rxjs';
-import { ForecastReportResponse, PurchaseOrderDTO } from '@core/interfaces/inventory-forecasting.model';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { AutoCompleteModule } from 'primeng/autocomplete';
+
+import { InventoryForecastingService } from '@core/services/inventory-forecasting.service';
 import { SearchService } from '@core/services/search.service';
-import { PharmacyBranchSearchDTO } from '@pages/inventory/search.model';
 import { SignalrService } from '@core/services/signalr.service';
+import { ForecastReportResponse, PurchaseOrderDTO } from '@core/interfaces/inventory-forecasting.model';
+import { PharmacyBranchSearchDTO } from '@pages/inventory/search.model';
 
 @Component({
     selector: 'app-ai-forecasting',
@@ -30,7 +33,9 @@ import { SignalrService } from '@core/services/signalr.service';
         TableModule,
         ButtonModule,
         ToastModule,
-        AutoCompleteModule
+        AutoCompleteModule,
+        DialogModule, // جديد
+        SelectModule  // جديد
     ],
     providers: [MessageService],
     templateUrl: './ai-forecasting.component.html',
@@ -46,7 +51,14 @@ export class AiForecastingComponent {
     readonly branchId = input<string | undefined>(undefined);
 
     readonly isTriggering = signal<boolean>(false);
-    readonly isApproving = signal<Record<string, boolean>>({});
+
+    // ── المتغيرات الخاصة بنافذة تعيين المورد ──
+    readonly showSupplierDialog = signal<boolean>(false);
+    readonly selectedPoForAssign = signal<PurchaseOrderDTO | null>(null);
+    readonly availableSuppliers = signal<any[]>([]);
+    readonly isLoadingSuppliers = signal<boolean>(false);
+    readonly selectedSupplierId = signal<string | null>(null);
+    readonly isAssigning = signal<boolean>(false);
 
     readonly selectedBranchId = signal<string | undefined>(undefined);
     readonly branchFilterSuggestions = signal<PharmacyBranchSearchDTO[]>([]);
@@ -68,7 +80,6 @@ export class AiForecastingComponent {
         this.signalrService.poCreated$
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe((notification) => {
-                // إظهار التوست
                 this.messageService.add({
                     severity: 'warn',
                     summary: 'تنبيه ذكي: أوامر شراء جديدة!',
@@ -76,41 +87,30 @@ export class AiForecastingComponent {
                     life: 8000
                 });
 
-                // تحديث الجداول
                 this.poResource.reload();
                 this.forecastResource.reload();
             });
     }
 
-    onBranchFilterSearch(query: string): void {
-        this.branchFilterQuery$.next(query ?? '');
-    }
-
+    // ... (نفس الكود الخاص بـ Filters و Resources بدون تغيير) ...
+    onBranchFilterSearch(query: string): void { this.branchFilterQuery$.next(query ?? ''); }
     onBranchFilterSelected(branch: PharmacyBranchSearchDTO): void {
         this.selectedBranchFilter.set(branch);
         this.selectedBranchId.set(branch.branchId);
         this.currentPage.set(1);
-
-        if (this.currentSubscribedBranchId) {
-            this.signalrService.unsubscribeFromBranch(this.currentSubscribedBranchId);
-        }
+        if (this.currentSubscribedBranchId) this.signalrService.unsubscribeFromBranch(this.currentSubscribedBranchId);
         this.signalrService.subscribeToBranch(branch.branchId);
         this.currentSubscribedBranchId = branch.branchId;
-
         this.poResource.reload();
         this.forecastResource.reload();
-
     }
-
     onBranchFilterCleared(): void {
         this.selectedBranchFilter.set(null);
         this.selectedBranchId.set(undefined);
-
         if (this.currentSubscribedBranchId) {
             this.signalrService.unsubscribeFromBranch(this.currentSubscribedBranchId);
             this.currentSubscribedBranchId = null;
         }
-
         this.poResource.reload();
         this.forecastResource.reload();
     }
@@ -119,11 +119,7 @@ export class AiForecastingComponent {
     readonly pageSize = signal<number>(5);
 
     readonly forecastResource = rxResource({
-        params: () => ({
-            branchId: this.selectedBranchId() || this.branchId(),
-            page: this.currentPage(),
-            size: this.pageSize()
-        }),
+        params: () => ({ branchId: this.selectedBranchId() || this.branchId(), page: this.currentPage(), size: this.pageSize() }),
         stream: ({ params }) => {
             if (!params.branchId) return of({ success: true, data: [] } as ForecastReportResponse);
             return this.forecastingService.getBranchForecastReport(params.branchId, params.page, params.size);
@@ -133,13 +129,10 @@ export class AiForecastingComponent {
     readonly forecastLogs = computed(() => this.forecastResource.value()?.data ?? []);
     readonly totalForecastRecords = computed(() => this.forecastResource.value()?.pagination?.totalCount ?? 0);
 
-    // ── دالة لتغيير الصفحة من الجدول ──
     onPageChange(event: any): void {
         const first = event.first ?? 0;
         const rows = event.rows ?? 5;
         const page = Math.floor(first / rows) + 1;
-
-        // نتأكد إن الصفحة فعلاً اتغيرت قبل ما نحدث الـ Signals عشان نمنع الـ Reset العشوائي
         if (this.currentPage() !== page || this.pageSize() !== rows) {
             this.currentPage.set(page);
             this.pageSize.set(rows);
@@ -173,17 +166,57 @@ export class AiForecastingComponent {
         });
     }
 
-    approveOrder(orderId: string): void {
-        this.isApproving.update(state => ({ ...state, [orderId]: true }));
-        this.forecastingService.approvePurchaseOrder(orderId).subscribe({
+    // ── الدوال الجديدة الخاصة بتعيين المورد ──
+
+    openAssignDialog(po: any): void {
+        console.log('PO Data:', po); // السطر ده هيطبعلك الـ Object كله في الكونسول عشان تشوف اسم الخاصية إيه بالظبط
+
+        // هنا بناخد الـ ID سواء كان مبعوت كابيتال أو سمول
+        const targetDrugId = po.drugId || po.DrugId;
+
+        if (!targetDrugId) {
+            this.messageService.add({ severity: 'error', summary: 'خطأ', detail: 'معرف الدواء غير موجود في الطلبية' });
+            return;
+        }
+
+        this.selectedPoForAssign.set(po);
+        this.selectedSupplierId.set(null);
+        this.availableSuppliers.set([]);
+        this.showSupplierDialog.set(true);
+        this.isLoadingSuppliers.set(true);
+
+        // استخدم targetDrugId المتغير الجديد هنا
+        this.forecastingService.getSuppliersForDrug(targetDrugId).subscribe({
+            next: (suppliers) => {
+                this.availableSuppliers.set(suppliers);
+                this.isLoadingSuppliers.set(false);
+            },
+            error: () => {
+                this.messageService.add({ severity: 'error', summary: 'خطأ', detail: 'تعذر جلب الموردين المتاحين لهذا الدواء' });
+                this.isLoadingSuppliers.set(false);
+                this.showSupplierDialog.set(false);
+            }
+        });
+    }
+
+    confirmAssignment(): void {
+        const po = this.selectedPoForAssign();
+        const supplierId = this.selectedSupplierId();
+        const branchId = this.selectedBranchId() || this.branchId();
+
+        if (!po || !supplierId || !branchId) return;
+
+        this.isAssigning.set(true);
+        this.forecastingService.assignSupplierToOrder(po.id, supplierId, branchId).subscribe({
             next: (res) => {
-                this.messageService.add({ severity: 'success', summary: 'تم الاعتماد', detail: 'تم اعتماد أمر الشراء بنجاح وإضافته للمخزون' });
+                this.messageService.add({ severity: 'success', summary: 'تم الإرسال', detail: res.message || 'تم إرسال أمر الشراء للمورد بنجاح' });
+                this.showSupplierDialog.set(false);
                 this.poResource.reload();
-                this.isApproving.update(state => ({ ...state, [orderId]: false }));
+                this.isAssigning.set(false);
             },
             error: (err) => {
-                this.messageService.add({ severity: 'error', summary: 'خطأ', detail: 'تعذر اعتماد الأمر، قد يكون تم معالجته مسبقاً' });
-                this.isApproving.update(state => ({ ...state, [orderId]: false }));
+                this.messageService.add({ severity: 'error', summary: 'خطأ', detail: 'تعذر إرسال الأمر للمورد' });
+                this.isAssigning.set(false);
             }
         });
     }

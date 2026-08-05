@@ -1,0 +1,138 @@
+<div class="card p-6 bg-white rounded-2xl shadow-sm border border-gray-100">
+    <p-toast position="top-center"></p-toast>
+    <p-confirmDialog></p-confirmDialog>
+
+    <!-- الهيدر وزرار التحديث -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+        <div>
+            <h2 class="text-2xl font-bold text-gray-800">سجل الطلبيات</h2>
+            <p class="text-gray-500 mt-1 text-sm">تابع حالة الطلبيات المرسلة للموردين وقم باستلام الشحنات الواصلة.</p>
+        </div>
+
+        @if (selectedBranchId()) {
+        <p-button icon="pi pi-refresh" label="تحديث البيانات" [rounded]="true" severity="secondary" [outlined]="true"
+            size="small" (onClick)="loadOrders()" [loading]="isLoading()">
+        </p-button>
+        }
+    </div>
+
+    <!-- شريط الأدوات: الفروع + الفلاتر + البحث -->
+    <div
+        class="mb-6 flex flex-col md:flex-row flex-wrap gap-4 items-end bg-gray-50/50 p-5 rounded-xl border border-gray-100">
+
+        <!-- فلتر الفرع -->
+        <div class="flex flex-col gap-2 w-full md:w-[300px]">
+            <label class="text-sm font-semibold text-gray-700">فرع الصيدلية:</label>
+            <p-autoComplete [ngModel]="selectedBranchFilter()" (onSelect)="onBranchSelected($event)"
+                (onClear)="onBranchCleared()" [suggestions]="branchFilterSuggestions()"
+                (completeMethod)="onBranchFilterSearch($event)" field="branchName" optionLabel="branchName"
+                dataKey="branchId" [dropdown]="true" placeholder="ابحث عن الفرع..." styleClass="w-full"
+                inputStyleClass="w-full" [showClear]="true">
+                <!-- ضفنا inputStyleClass="w-full" عشان الـ input يملى المساحة صح -->
+
+                <ng-template let-branch pTemplate="item">
+                    <div class="flex items-center gap-2">
+                        <i class="pi pi-building text-blue-500"></i>
+                        <span class="font-medium">{{ branch.branchName }}</span>
+                    </div>
+                </ng-template>
+            </p-autoComplete>
+        </div>
+
+        @if (selectedBranchId()) {
+        <!-- فلتر الحالة -->
+        <div class="flex flex-col gap-2 w-full md:w-[250px]">
+            <label class="text-sm font-semibold text-gray-700">حالة الطلبية:</label>
+            <p-select [options]="statusOptions" [ngModel]="selectedStatus()" (onChange)="onStatusChange($event)"
+                optionLabel="label" optionValue="value" placeholder="كل الحالات" styleClass="w-full" [showClear]="true">
+            </p-select>
+        </div>
+
+        <!-- البحث النصي (مضبوط بـ Tailwind للـ RTL) -->
+        <div class="flex flex-col gap-2 w-full md:w-[300px] mr-auto"> <!-- mr-auto بتزقه لأقصى اليسار -->
+            <label class="text-sm font-semibold text-gray-700">بحث باسم الدواء:</label>
+            <div class="relative w-full">
+                <!-- الأيقونة بقت Absolute عشان نظبط مكانها بالملي بعيد عن الكلام -->
+                <i class="pi pi-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                <input type="text" pInputText [value]="searchQuery()" (input)="onSearchChange($event)"
+                    placeholder="ابحث هنا..." class="w-full pl-10 pr-3 py-2" />
+            </div>
+        </div>
+        }
+    </div>
+
+    <!-- الجدول يقرا من الداتا المفلترة -->
+    @if (selectedBranchId()) {
+    <p-table [value]="filteredOrders()" [loading]="isLoading()" [paginator]="true" [rows]="10"
+        [tableStyle]="{ 'min-width': '60rem' }" styleClass="p-datatable-striped">
+        <!-- شلنا p-datatable-gridlines عشان شكل الجدول يبقى أنضف وأشيك -->
+
+        <ng-template pTemplate="header">
+            <tr>
+                <th class="text-right">اسم الدواء</th>
+                <th class="text-center">الكمية المطلوبة</th>
+                <th class="text-center">تاريخ الطلب</th>
+                <th class="text-center">الحالة</th>
+                <th class="text-center">الإجراءات</th>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-order>
+            <tr>
+                <td class="font-semibold text-gray-800 text-right">{{ order.drugName || 'غير متوفر' }}</td>
+                <td class="text-center">
+                    <span class="bg-blue-50 text-blue-700 px-3 py-1.5 rounded-md font-bold text-sm">
+                        {{ order.orderedQuantity }} عبوة
+                    </span>
+                </td>
+                <td class="text-center text-gray-600 text-sm font-medium">
+                    {{ order.createdAt | date:'dd/MM/yyyy - hh:mm a' }}
+                </td>
+                <td class="text-center">
+                    <p-tag [value]="translateStatus(order.status)" [severity]="getSeverity(order.status)"></p-tag>
+                </td>
+                <td class="text-center">
+                    @if (order.status === 'Shipped') {
+                    <p-button label="استلام" icon="pi pi-check-circle" severity="success" size="small"
+                        [outlined]="false" (onClick)="confirmReceive(order)">
+                    </p-button>
+                    } @else if (order.status === 'Delivered') {
+                    <span
+                        class="inline-flex items-center gap-1 text-green-600 font-semibold text-sm bg-green-50 px-3 py-1 rounded-md">
+                        <i class="pi pi-check-circle"></i> تم الاستلام
+                    </span>
+                    } @else {
+                    <!-- تحسين شكل جملة في الانتظار -->
+                    <span
+                        class="inline-flex items-center gap-1.5 text-gray-500 text-sm bg-gray-100 px-3 py-1 rounded-md font-medium">
+                        <i class="pi pi-clock text-xs"></i> قيد الانتظار
+                    </span>
+                    }
+                </td>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="5" class="text-center p-12 text-gray-500">
+                    <div class="flex flex-col items-center justify-center">
+                        <i class="pi pi-search text-4xl text-gray-300 mb-3"></i>
+                        <span class="text-lg font-medium">لا توجد طلبات تطابق الفلتر الحالي.</span>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+
+    } @else {
+    <!-- Empty State قبل اختيار الفرع -->
+    <div class="text-center p-16 bg-gray-50/50 rounded-2xl border-2 border-dashed border-gray-200">
+        <div
+            class="bg-white w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm border border-gray-100">
+            <i class="pi pi-building text-3xl text-blue-400"></i>
+        </div>
+        <h3 class="text-xl font-bold text-gray-700 mb-2">لم يتم تحديد فرع</h3>
+        <p class="text-gray-500">الرجاء اختيار فرع الصيدلية من القائمة أعلاه لعرض الطلبيات الخاصة به.</p>
+    </div>
+    }
+</div>

@@ -409,6 +409,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'supplier-orders',
+        loadComponent: () =>
+          import('./pages/orders/pharmacy-supplier-orders/pharmacy-orders.component').then(
+            (m) => m.PharmacyOrdersComponent,
+          ),
+      },
+      {
         path: 'pharmacy-profile',
         loadComponent: () =>
           import('./pages/pharmacy-profile/pharmacy-profile.component').then(
@@ -444,6 +451,7 @@ export const routes: Routes = [
             (m) => m.PharmacistsListComponent,
           ),
       },
+
 
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
     ],
