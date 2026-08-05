@@ -1,0 +1,109 @@
+<main dir="rtl" class="flex-1 p-6 overflow-auto bg-background text-foreground" style="font-family: var(--font-cairo)">
+    <p-toast position="top-center" />
+
+    <div class="space-y-6">
+        <!-- Header & Search Box -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div class="flex items-center gap-3">
+                <h1 class="text-base md:text-xl lg:text-2xl font-bold">أدويتي</h1>
+                <span class="text-[10px] lg:text-xs font-medium text-muted-foreground hidden sm:block">/ الأدوية التي
+                    أقوم بتوريدها</span>
+            </div>
+
+            <div class="flex items-center gap-3 w-full sm:w-auto">
+                <!-- مربع البحث -->
+                <div class="relative flex-1 sm:w-64">
+                    <i class="pi pi-search absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"></i>
+                    <input type="text" [value]="searchQuery()" (input)="onSearch($event)"
+                        placeholder="ابحث باسم الدواء..."
+                        class="w-full h-10 pr-9 pl-4 rounded-lg border border-border bg-background text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all">
+                </div>
+
+                <button type="button" (click)="openAddDialog()"
+                    class="h-10 rounded-lg px-4 text-sm font-medium text-white flex items-center gap-2 bg-primary hover:opacity-90 transition-opacity whitespace-nowrap">
+                    <i class="pi pi-plus"></i> إضافة دواء
+                </button>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="bg-card rounded-xl border border-border overflow-hidden">
+            <p-table [value]="myDrugs()" [loading]="isLoading()" [lazy]="true" (onLazyLoad)="onPageChange($event)"
+                [paginator]="true" [rows]="pageSize()" [totalRecords]="totalRecords()"
+                [first]="(currentPage() - 1) * pageSize()" [rowsPerPageOptions]="[5, 10, 20]"
+                styleClass="w-full text-xs lg:text-base">
+
+                <ng-template #header>
+                    <tr class="bg-muted/50">
+                        <th class="text-right p-4 font-semibold text-muted-foreground">اسم الدواء (العلامة التجارية)
+                        </th>
+                        <th class="text-center p-4 font-semibold text-muted-foreground w-32">إجراءات</th>
+                    </tr>
+                </ng-template>
+
+                <ng-template #body let-drug>
+                    <tr class="border-t border-border hover:bg-muted/30 transition-colors">
+                        <td class="p-4 font-medium">{{ drug.brandName }}</td>
+                        <td class="p-4 text-center">
+                            <button type="button" (click)="removeDrug(drug.drugId)"
+                                [disabled]="deletingIds()[drug.drugId]"
+                                class="h-8 w-8 rounded-lg text-destructive hover:bg-destructive/10 flex items-center justify-center mx-auto transition-colors">
+                                <i class="pi"
+                                    [ngClass]="deletingIds()[drug.drugId] ? 'pi-spin pi-spinner' : 'pi-trash'"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </ng-template>
+
+                <ng-template #emptymessage>
+                    <tr>
+                        <td colspan="2" class="p-12 text-center text-muted-foreground">
+                            <i class="pi pi-box text-3xl mb-3 block"></i>
+                            لا توجد أدوية في قائمتك حالياً. اضغط على "إضافة دواء" للبدء.
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+
+    <!-- نافذة الإضافة -->
+    <p-dialog [(visible)]="showAddDialog" [modal]="true" header="إضافة دواء جديد للقائمة" [style]="{ width: '400px' }"
+        [draggable]="false" [resizable]="false" dir="rtl">
+        <div class="flex flex-col gap-2 py-4">
+            <label class="text-sm font-semibold text-foreground">ابحث عن الدواء</label>
+
+            <p-autoComplete [(ngModel)]="selectedDrug" [suggestions]="searchedDrugs()"
+                (completeMethod)="searchAvailableDrugs($event)" field="brandName" optionLabel="brandName"
+                dataKey="drugId" [delay]="300" [minLength]="2" placeholder="اكتب اسم الدواء للبحث..."
+                emptyMessage="لم يتم العثور على أدوية" styleClass="w-full" [inputStyle]="{'width':'100%'}"
+                appendTo="body">
+
+                <ng-template let-drug pTemplate="item">
+                    <div class="flex items-center gap-2">
+                        <i class="pi pi-box text-muted-foreground text-sm"></i>
+                        <span class="font-medium">{{ drug.brandName }}</span>
+                    </div>
+                </ng-template>
+
+                <ng-template pTemplate="loader" *ngIf="isAvailableLoading()">
+                    <i class="pi pi-spinner pi-spin"></i>
+                </ng-template>
+            </p-autoComplete>
+
+            <small class="text-xs text-muted-foreground mt-1">اكتب حرفين على الأقل لبدء البحث.</small>
+        </div>
+
+        <ng-template pTemplate="footer">
+            <div class="flex justify-end gap-3 mt-4">
+                <button class="px-4 py-2 text-sm text-muted-foreground hover:bg-muted rounded-lg"
+                    (click)="showAddDialog.set(false)">إلغاء</button>
+                <button
+                    class="px-4 py-2 text-sm text-white bg-primary rounded-lg flex items-center gap-2 disabled:opacity-50 transition-opacity"
+                    (click)="addDrug()" [disabled]="!selectedDrug() || isAdding()">
+                    <i class="pi" [ngClass]="isAdding() ? 'pi-spin pi-spinner' : 'pi-check'"></i> تأكيد الإضافة
+                </button>
+            </div>
+        </ng-template>
+    </p-dialog>
+</main>

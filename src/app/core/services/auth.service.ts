@@ -22,7 +22,7 @@ export class AuthService {
 
   private currentUserSignal = signal<UserAuthData | null>(this.loadUserFromStorage());
 
-  constructor(private readonly http: HttpClient) {}
+  constructor(private readonly http: HttpClient) { }
 
   currentUser = computed(() => this.currentUserSignal());
   isLoggedIn = computed(() => this.currentUserSignal() !== null);
@@ -61,6 +61,7 @@ export class AuthService {
     const r = role.toLowerCase().replace(/\s+/g, '');
     if (r === 'admin' || r === 'systemadmin' || r === 'administrator') return AppRoles.Admin;
     if (r === 'pharmacist') return AppRoles.Pharmacist;
+    if (r === 'supplier') return AppRoles.Supplier;
     if (r === 'prescriptionreviewteam' || r === 'reviewteam' || r === 'pharmacyreviewteam')
       return AppRoles.PrescriptionReviewTeam;
     if (r === 'pharmacyadmin' || r === 'owner' || r === 'pharmacyowner')
@@ -110,6 +111,8 @@ export class AuthService {
         return '/pharmacist/dashboard';
       case AppRoles.PrescriptionReviewTeam:
         return '/review-team/dashboard';
+      case AppRoles.Supplier:
+        return '/supplier/dashboard';
       case AppRoles.Patient:
         return '/patient/dashboard';
       default:

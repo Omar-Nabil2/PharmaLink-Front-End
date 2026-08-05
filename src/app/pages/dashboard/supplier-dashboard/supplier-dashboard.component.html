@@ -1,0 +1,141 @@
+<main dir="rtl" class="flex-1 p-6 overflow-auto bg-background text-foreground" style="font-family: var(--font-cairo)">
+    <p-toast position="top-center" />
+
+    <div class="space-y-6">
+        <!-- Header -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div class="flex items-center gap-3">
+                <h1 class="text-base md:text-xl lg:text-2xl font-bold">لوحة تحكم المورّد</h1>
+                <span class="text-[10px] lg:text-xs font-medium text-muted-foreground hidden sm:block">/ الطلبات
+                    الواردة</span>
+            </div>
+
+            <!-- فلتر الحالة -->
+            <div class="flex items-center gap-2">
+                <label class="text-xs lg:text-[0.9375rem] text-muted-foreground font-medium">تصفية:</label>
+                <p-select [options]="statusOptions" [(ngModel)]="selectedStatus" (onChange)="ordersResource.reload()"
+                    optionLabel="label" optionValue="value" styleClass="w-48">
+                </p-select>
+            </div>
+        </div>
+
+        <!-- KPI Cards -->
+        <div class="grid gap-6 sm:grid-cols-3">
+            <div class="bg-card rounded-xl shadow-sm p-6 border border-border flex justify-between items-center">
+                <div>
+                    <p class="text-xs lg:text-base text-muted-foreground font-medium">إجمالي الطلبات</p>
+                    <p class="mt-2 text-2xl md:text-3xl font-bold">{{ kpis().total }}</p>
+                </div>
+                <div class="h-12 w-12 rounded-lg flex items-center justify-center bg-muted text-muted-foreground">
+                    <i class="pi pi-list text-2xl"></i>
+                </div>
+            </div>
+            <div class="bg-card rounded-xl shadow-sm p-6 border border-border flex justify-between items-center">
+                <div>
+                    <p class="text-xs lg:text-base text-muted-foreground font-medium">طلبات جديدة</p>
+                    <p class="mt-2 text-2xl md:text-3xl font-bold text-warning-foreground">{{ kpis().newOrders }}</p>
+                </div>
+                <div
+                    class="h-12 w-12 rounded-lg flex items-center justify-center bg-warning/20 text-warning-foreground">
+                    <i class="pi pi-bell text-2xl"></i>
+                </div>
+            </div>
+            <div class="bg-card rounded-xl shadow-sm p-6 border border-border flex justify-between items-center">
+                <div>
+                    <p class="text-xs lg:text-base text-muted-foreground font-medium">جاري تجهيزها</p>
+                    <p class="mt-2 text-2xl md:text-3xl font-bold text-primary">{{ kpis().processing }}</p>
+                </div>
+                <div class="h-12 w-12 rounded-lg flex items-center justify-center bg-primary/10 text-primary">
+                    <i class="pi pi-box text-2xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="bg-card rounded-xl border border-border overflow-hidden">
+            <p-table [value]="orders()" [loading]="isLoading()" styleClass="w-full text-xs lg:text-base"
+                [tableStyle]="{ 'min-width': '60rem' }">
+                <ng-template #header>
+                    <tr class="bg-muted/50">
+                        <th class="text-right p-4 font-semibold text-muted-foreground">رقم الطلب</th>
+                        <th class="text-right p-4 font-semibold text-muted-foreground">الصيدلية / الفرع</th>
+                        <th class="text-right p-4 font-semibold text-muted-foreground">الدواء</th>
+                        <th class="text-center p-4 font-semibold text-muted-foreground">الكمية</th>
+                        <th class="text-center p-4 font-semibold text-muted-foreground">الحالة</th>
+                        <th class="text-center p-4 font-semibold text-muted-foreground">تاريخ الطلب</th>
+                        <th class="text-center p-4 font-semibold text-muted-foreground">إجراءات</th>
+                    </tr>
+                </ng-template>
+
+                <ng-template #body let-order>
+                    <tr class="border-t border-border hover:bg-muted/30 transition-colors">
+                        <td class="p-4 font-mono">{{ order.orderId | slice:0:8 }}</td>
+                        <td class="p-4 font-medium">{{ order.pharmacyBranchName }}</td>
+                        <td class="p-4">{{ order.drugName }}</td>
+                        <td class="p-4 text-center font-bold text-lg">{{ order.requestedQuantity }}</td>
+
+                        <td class="p-4 text-center">
+                            <span
+                                class="inline-flex items-center rounded-full px-3 py-1 text-[10px] lg:text-xs font-medium"
+                                [ngClass]="getStatusBadge(order.currentStatus).class">
+                                {{ getStatusBadge(order.currentStatus).label }}
+                            </span>
+                        </td>
+
+                        <td class="p-4 text-center text-muted-foreground">{{ order.orderedAt | date:'short' }}</td>
+
+                        <td class="p-4 text-center">
+                            <!-- الأزرار بتظهر بناءً على حالة الطلب -->
+
+                            <!-- طلب جديد: قبول أو رفض -->
+                            @if (order.currentStatus === 'SentToSupplier') {
+                            <div class="flex items-center justify-center gap-2">
+                                <button (click)="acceptOrder(order.orderId)" [disabled]="actionLoading()[order.orderId]"
+                                    class="h-8 px-3 rounded-lg bg-info text-white text-xs hover:opacity-90">
+                                    <i class="pi pi-check text-[10px] ml-1"></i> قبول
+                                </button>
+                                <button (click)="rejectOrder(order.orderId)" [disabled]="actionLoading()[order.orderId]"
+                                    class="h-8 px-3 rounded-lg bg-destructive text-white text-xs hover:opacity-90">
+                                    <i class="pi pi-times text-[10px] ml-1"></i> رفض
+                                </button>
+                            </div>
+                            }
+
+                            <!-- تم القبول: بدء التجهيز -->
+                            @if (order.currentStatus === 'AcceptedBySupplier') {
+                            <button (click)="updateStatus(order.orderId, POStatus.ProcessingBySupplier)"
+                                [disabled]="actionLoading()[order.orderId]"
+                                class="h-8 px-4 rounded-lg bg-primary text-primary-foreground text-xs hover:opacity-90">
+                                <i class="pi pi-box text-[10px] ml-1"></i> بدء التجهيز
+                            </button>
+                            }
+
+                            <!-- جاري التجهيز: شحن -->
+                            @if (order.currentStatus === 'ProcessingBySupplier') {
+                            <button (click)="updateStatus(order.orderId, POStatus.Shipped)"
+                                [disabled]="actionLoading()[order.orderId]"
+                                class="h-8 px-4 rounded-lg bg-accent text-accent-foreground text-xs hover:opacity-90">
+                                <i class="pi pi-truck text-[10px] ml-1"></i> شحن الطلبية
+                            </button>
+                            }
+
+                            <!-- حالات نهائية (شحن/توصيل/مرفوض) -->
+                            @if (['Shipped', 'Delivered', 'RejectedBySupplier'].includes(order.currentStatus)) {
+                            <span class="text-xs text-muted-foreground">لا يوجد إجراء</span>
+                            }
+                        </td>
+                    </tr>
+                </ng-template>
+
+                <ng-template #emptymessage>
+                    <tr>
+                        <td colspan="7" class="p-12 text-center text-muted-foreground">
+                            <i class="pi pi-inbox text-3xl mb-3 block"></i>
+                            لا توجد طلبات لعرضها حالياً
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+</main>
