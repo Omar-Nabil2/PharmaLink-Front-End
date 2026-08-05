@@ -1,0 +1,169 @@
+<main dir="rtl" class="flex-1 p-6 overflow-auto bg-background text-foreground" style="font-family: var(--font-cairo)">
+    <p-toast position="top-center" />
+
+    <div class="space-y-6">
+        <!-- ── Page Header & Filter ─────────────────────────────────── -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <h1 class="text-base md:text-xl lg:text-2xl font-bold">لوحة تحكم المورّد</h1>
+                <span class="text-[10px] lg:text-xs font-medium text-muted-foreground hidden sm:block">/ الطلبات
+                    الواردة</span>
+            </div>
+
+            <!-- فلتر الحالة -->
+            <div
+                class="flex items-center gap-3 bg-card p-2 px-4 rounded-xl border border-border shadow-sm w-full sm:w-auto">
+                <label
+                    class="text-xs lg:text-[0.9375rem] text-muted-foreground font-semibold whitespace-nowrap">تصفية:</label>
+                <p-select [options]="statusOptions" [(ngModel)]="selectedStatus" (onChange)="ordersResource.reload()"
+                    optionLabel="label" optionValue="value" styleClass="w-full sm:w-48 border-none shadow-none"
+                    appendTo="body">
+                </p-select>
+            </div>
+        </div>
+
+        <!-- ── KPI Cards ───────────────────────────────────────────── -->
+        <div class="grid gap-6 sm:grid-cols-3">
+            <div
+                class="bg-card rounded-2xl shadow-sm p-6 border border-border flex justify-between items-center hover:shadow-md transition-shadow duration-200">
+                <div>
+                    <p class="text-xs lg:text-sm text-muted-foreground font-semibold mb-1">إجمالي الطلبات</p>
+                    <p class="text-2xl md:text-3xl font-bold text-foreground">{{ kpis().total }}</p>
+                </div>
+                <div
+                    class="h-14 w-14 rounded-full flex items-center justify-center bg-muted text-muted-foreground border border-border/50">
+                    <i class="pi pi-list text-2xl"></i>
+                </div>
+            </div>
+
+            <div
+                class="bg-card rounded-2xl shadow-sm p-6 border border-border flex justify-between items-center hover:shadow-md transition-shadow duration-200">
+                <div>
+                    <p class="text-xs lg:text-sm text-muted-foreground font-semibold mb-1">طلبات جديدة</p>
+                    <p class="text-2xl md:text-3xl font-bold text-warning-foreground">{{ kpis().newOrders }}</p>
+                </div>
+                <div
+                    class="h-14 w-14 rounded-full flex items-center justify-center bg-warning/20 text-warning-foreground border border-warning/30">
+                    <i class="pi pi-bell text-2xl"></i>
+                </div>
+            </div>
+
+            <div
+                class="bg-card rounded-2xl shadow-sm p-6 border border-border flex justify-between items-center hover:shadow-md transition-shadow duration-200">
+                <div>
+                    <p class="text-xs lg:text-sm text-muted-foreground font-semibold mb-1">جاري تجهيزها</p>
+                    <p class="text-2xl md:text-3xl font-bold text-primary">{{ kpis().processing }}</p>
+                </div>
+                <div
+                    class="h-14 w-14 rounded-full flex items-center justify-center bg-primary/10 text-primary border border-primary/20">
+                    <i class="pi pi-box text-2xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Table Section ───────────────────────────────────────── -->
+        <div class="bg-card rounded-2xl border border-border overflow-hidden shadow-sm">
+            <p-table [value]="orders()" [loading]="isLoading()"
+                styleClass="w-full text-xs lg:text-base p-datatable-striped" [tableStyle]="{ 'min-width': '64rem' }">
+
+                <ng-template #header>
+                    <tr class="bg-muted/30">
+                        <th class="text-right p-4 font-semibold text-muted-foreground">رقم الطلب</th>
+                        <th class="text-right p-4 font-semibold text-muted-foreground">الصيدلية / الفرع</th>
+                        <th class="text-right p-4 font-semibold text-muted-foreground">الدواء</th>
+                        <th class="text-center p-4 font-semibold text-muted-foreground">الكمية</th>
+                        <th class="text-center p-4 font-semibold text-muted-foreground">الحالة</th>
+                        <th class="text-center p-4 font-semibold text-muted-foreground">تاريخ الطلب</th>
+                        <th class="text-center p-4 font-semibold text-muted-foreground">إجراءات</th>
+                    </tr>
+                </ng-template>
+
+                <ng-template #body let-order>
+                    <tr class="border-t border-border hover:bg-muted/50 transition-colors">
+                        <td class="p-4 font-mono text-sm text-muted-foreground">{{ order.orderId | slice:0:8 }}</td>
+                        <td class="p-4 font-medium text-foreground">
+                            <div class="flex items-center gap-2">
+                                <i class="pi pi-building text-muted-foreground text-xs"></i>
+                                {{ order.pharmacyBranchName }}
+                            </div>
+                        </td>
+                        <td class="p-4 font-medium text-foreground">{{ order.drugName }}</td>
+                        <td class="p-4 text-center">
+                            <span class="font-bold text-base bg-muted px-3 py-1 rounded-md">{{ order.requestedQuantity
+                                }}</span>
+                        </td>
+                        <td class="p-4 text-center">
+                            <span
+                                class="inline-flex items-center justify-center rounded-full px-3 py-1.5 text-[11px] lg:text-xs font-semibold shadow-sm w-max"
+                                [ngClass]="getStatusBadge(order.currentStatus).class">
+                                {{ getStatusBadge(order.currentStatus).label }}
+                            </span>
+                        </td>
+                        <td class="p-4 text-center text-sm text-muted-foreground font-medium">
+                            {{ order.orderedAt | date:'dd/MM/yyyy - hh:mm a' }}
+                        </td>
+                        <td class="p-4 text-center">
+
+                            <!-- طلب جديد: قبول أو رفض -->
+                            @if (order.currentStatus === 'SentToSupplier') {
+                            <div class="flex items-center justify-center gap-2">
+                                <button (click)="acceptOrder(order.orderId)" [disabled]="actionLoading()[order.orderId]"
+                                    class="inline-flex items-center justify-center gap-1.5 h-9 px-4 rounded-lg bg-[#007671] text-white text-xs font-medium hover:bg-[#005f5b] transition-colors shadow-sm disabled:opacity-50 whitespace-nowrap">
+                                    <i class="pi pi-check text-[11px]"></i> قبول
+                                </button>
+                                <button (click)="rejectOrder(order.orderId)" [disabled]="actionLoading()[order.orderId]"
+                                    class="inline-flex items-center justify-center gap-1.5 h-9 px-4 rounded-lg bg-red-500 text-white text-xs font-medium hover:bg-red-600 transition-colors shadow-sm disabled:opacity-50 whitespace-nowrap">
+                                    <i class="pi pi-times text-[11px]"></i> رفض
+                                </button>
+                            </div>
+                            }
+
+                            <!-- تم القبول: بدء التجهيز -->
+                            @if (order.currentStatus === 'AcceptedBySupplier') {
+                            <button (click)="updateStatus(order.orderId, POStatus.ProcessingBySupplier)"
+                                [disabled]="actionLoading()[order.orderId]"
+                                class="inline-flex items-center justify-center gap-1.5 h-9 px-5 rounded-lg bg-primary text-primary-foreground text-xs font-medium hover:opacity-90 transition-opacity shadow-sm disabled:opacity-50 mx-auto whitespace-nowrap">
+                                <i class="pi pi-box text-[11px]"></i> بدء التجهيز
+                            </button>
+                            }
+
+                            <!-- جاري التجهيز: شحن -->
+                            @if (order.currentStatus === 'ProcessingBySupplier') {
+                            <button (click)="updateStatus(order.orderId, POStatus.Shipped)"
+                                [disabled]="actionLoading()[order.orderId]"
+                                class="inline-flex items-center justify-center gap-1.5 h-9 px-5 rounded-lg bg-blue-600 text-white text-xs font-medium hover:bg-blue-700 transition-colors shadow-sm disabled:opacity-50 mx-auto whitespace-nowrap">
+                                <i class="pi pi-truck text-[11px]"></i> شحن الطلبية
+                            </button>
+                            }
+
+                            <!-- حالات نهائية -->
+                            @if (['Shipped', 'Delivered', 'RejectedBySupplier'].includes(order.currentStatus)) {
+                            <span
+                                class="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground bg-muted/50 px-3 py-1.5 rounded-md">
+                                <i class="pi pi-info-circle text-[10px]"></i> لا يوجد إجراء
+                            </span>
+                            }
+                        </td>
+                    </tr>
+                </ng-template>
+
+                <!-- ── Empty State ── -->
+                <ng-template #emptymessage>
+                    <tr>
+                        <td colspan="7">
+                            <div class="flex flex-col items-center justify-center text-center p-16 bg-muted/10">
+                                <div
+                                    class="bg-background w-20 h-20 rounded-full flex items-center justify-center shadow-sm border border-border mb-4">
+                                    <i class="pi pi-inbox text-3xl text-muted-foreground"></i>
+                                </div>
+                                <h3 class="text-lg font-bold text-foreground mb-1">لا توجد طلبات لعرضها حالياً</h3>
+                                <p class="text-sm text-muted-foreground">لم يتم استلام أي طلبات مطابقة للفلتر المحدد.
+                                </p>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+</main>

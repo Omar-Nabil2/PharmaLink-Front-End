@@ -54,5 +54,16 @@ export class InventoryForecastingService {
         return this.http.get<PurchaseOrderDTO[]>(`${this.baseUrl}/${branchId}/pending-purchase-orders`);
     }
 
+    // جلب الموردين المتاحين لدواء معين
+    getSuppliersForDrug(drugId: string) {
+        return this.http.get<any[]>(`${this.baseUrl}/drugs/${drugId}/suppliers`);
+    }
+
+    // إرسال أمر الشراء لمورد معين
+    assignSupplierToOrder(orderId: string, supplierId: string, branchId: string) {
+        // لاحظ إن branchId غالباً مبعوت كـ Query Parameter حسب كود الـ C# بتاعك
+        return this.http.post<any>(`${this.baseUrl}/${orderId}/assign-supplier/${supplierId}?branchId=${branchId}`, {});
+    }
+
 
 }

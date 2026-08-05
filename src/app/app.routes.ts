@@ -348,6 +348,34 @@ export const routes: Routes = [
   },
 
   {
+    path: 'supplier',
+    canActivate: [authGuard],
+    data: { role: AppRoles.Supplier },
+    loadComponent: () =>
+      import('./layouts/supplier-layout/supplier-layout.component').then((m) => m.SupplierLayoutComponent),
+    children: [
+      {
+        path: 'dashboard',
+        loadComponent: () =>
+          import('./pages/dashboard/supplier-dashboard/supplier-dashboard.component').then(
+            (m) => m.SupplierDashboardComponent,
+          ),
+      },
+      {
+        path: 'drugs',
+        loadComponent: () =>
+          import('./pages/supplier-drug/supplier-drugs.component').then((m) => m.SupplierDrugsComponent),
+      },
+      {
+        path: 'profile',
+        loadComponent: () =>
+          import('./pages/supplier-profile/supplier-profile.component').then((m) => m.SupplierProfileComponent),
+      },
+      { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
+    ],
+  },
+
+  {
     path: 'owner',
     canActivate: [authGuard],
     data: { role: AppRoles.PharmacyAdmin },
@@ -377,6 +405,13 @@ export const routes: Routes = [
         path: 'orders',
         loadComponent: () =>
           import('./pages/orders/pharmacy-orders/pharmacy-orders.component').then(
+            (m) => m.PharmacyOrdersComponent,
+          ),
+      },
+      {
+        path: 'supplier-orders',
+        loadComponent: () =>
+          import('./pages/orders/pharmacy-supplier-orders/pharmacy-orders.component').then(
             (m) => m.PharmacyOrdersComponent,
           ),
       },
@@ -416,6 +451,7 @@ export const routes: Routes = [
             (m) => m.PharmacistsListComponent,
           ),
       },
+
 
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
     ],

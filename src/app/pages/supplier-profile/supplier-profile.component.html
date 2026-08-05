@@ -1,0 +1,58 @@
+<main dir="rtl" class="flex-1 p-6 overflow-auto bg-background text-foreground" style="font-family: var(--font-cairo)">
+    <p-toast position="top-center" />
+
+    <div class="max-w-3xl mx-auto space-y-6">
+        <div class="flex items-center gap-3">
+            <h1 class="text-base md:text-xl lg:text-2xl font-bold">الملف الشخصي</h1>
+            <span class="text-[10px] lg:text-xs font-medium text-muted-foreground hidden sm:block">/ بيانات
+                الشركة</span>
+        </div>
+
+        @if (isLoading()) {
+        <div class="bg-card rounded-xl border border-border p-6 animate-pulse">
+            <div class="h-10 bg-muted rounded mb-4 w-full"></div>
+            <div class="h-10 bg-muted rounded mb-4 w-full"></div>
+            <div class="h-10 bg-muted rounded mb-4 w-full"></div>
+        </div>
+        } @else {
+        <div class="bg-card rounded-xl border border-border p-6 shadow-sm">
+
+            <!-- Email (Read-only) - لو حابب تعرضه -->
+            <div class="mb-4">
+                <label class="block text-sm font-semibold text-foreground mb-1">البريد الإلكتروني (للتسجيل)</label>
+                <input type="text" [value]="profileResource.value()?.email" disabled
+                    class="w-full h-11 rounded-lg border border-border bg-muted/50 px-4 text-sm text-muted-foreground cursor-not-allowed">
+            </div>
+
+            <!-- Editable Form -->
+            <form (ngSubmit)="saveProfile()" #profileForm="ngForm" class="space-y-4">
+
+                <div>
+                    <label class="block text-sm font-semibold text-foreground mb-1">اسم الشركة / المورد <span
+                            class="text-destructive">*</span></label>
+                    <input type="text" name="fullName" [(ngModel)]="formData().fullName" required
+                        class="w-full h-11 rounded-lg border border-border bg-background px-4 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all">
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-foreground mb-1">رقم التواصل <span
+                                class="text-destructive">*</span></label>
+                        <input type="text" name="phoneNumber" [(ngModel)]="formData().phoneNumber" required
+                            class="w-full h-11 rounded-lg border border-border bg-background px-4 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all">
+                    </div>
+
+                </div>
+
+                <div class="pt-4 border-t border-border flex justify-end">
+                    <button type="submit" [disabled]="profileForm.invalid || isSaving()"
+                        class="h-11 px-8 rounded-lg text-sm font-medium text-white bg-primary hover:opacity-90 transition-opacity flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i class="pi" [ngClass]="isSaving() ? 'pi-spin pi-spinner' : 'pi-save'"></i>
+                        حفظ التعديلات
+                    </button>
+                </div>
+            </form>
+        </div>
+        }
+    </div>
+</main>
