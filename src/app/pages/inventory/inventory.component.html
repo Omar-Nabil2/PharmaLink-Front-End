@@ -85,6 +85,7 @@
           @for (row of [0, 1, 2, 3, 4, 5]; track row) {
             <div class="flex items-center gap-4 animate-pulse">
               <div class="h-4 flex-1 bg-muted rounded"></div>
+              <div class="h-4 w-28 bg-muted rounded"></div>
               <div class="h-4 w-16 bg-muted rounded"></div>
               <div class="h-4 w-16 bg-muted rounded"></div>
               <div class="h-4 w-24 bg-muted rounded"></div>
@@ -132,11 +133,12 @@
           [rowsPerPageOptions]="[10, 20, 50]"
           (onPage)="onPageChange($event)"
           styleClass="w-full text-xs lg:text-base"
-          [tableStyle]="{ 'min-width': '56rem' }"
+          [tableStyle]="{ 'min-width': '66rem' }"
         >
           <ng-template #header>
             <tr class="bg-muted/50">
               <th class="text-right p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground">اسم الدواء</th>
+              <th class="text-right p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground">الفرع</th>
               <th class="text-right p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground">المخزون</th>
               <th class="text-right p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground">المحجوز</th>
               <th class="text-right p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground">تاريخ الانتهاء</th>
@@ -155,13 +157,18 @@
                   @if (item.arabicName?.trim() && item.drugName) {
                     <span class="text-xs lg:text-base font-normal leading-normal text-muted-foreground">{{ item.drugName }}</span>
                   }
-                  @if (isAllBranchesView() && item.branchName) {
-                    <span class="inline-flex w-fit items-center gap-1 rounded-full bg-primary/10 text-primary px-2 py-0.5 text-[10px] lg:text-xs font-medium">
-                      <i class="pi pi-building text-[0.6875rem]"></i>
-                      {{ item.branchName }}
-                    </span>
-                  }
                 </div>
+              </td>
+              <!-- Branch column -->
+              <td class="p-4 whitespace-nowrap">
+                @if (item.branchName?.trim()) {
+                  <span class="inline-flex items-center gap-1.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200 px-2.5 py-1 text-xs lg:text-sm font-medium">
+                    <i class="pi pi-building text-[0.75rem]"></i>
+                    {{ item.branchName }}
+                  </span>
+                } @else {
+                  <span class="text-xs text-muted-foreground italic">—</span>
+                }
               </td>
               <td class="p-4 text-xs lg:text-base font-normal leading-normal whitespace-nowrap">{{ item.stockQuantity | number }}</td>
               <td class="p-4 text-xs lg:text-base font-normal leading-normal whitespace-nowrap">{{ item.reservedQuantity | number }}</td>
