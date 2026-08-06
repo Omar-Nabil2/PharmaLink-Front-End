@@ -5,11 +5,8 @@ import { Subject } from 'rxjs';
 
 export interface PoNotificationDto {
     branchId: string;
-    drugName: string;
-    currentStock: number;
-    predictedStockoutDate: string | null;
-    recommendedOrderQuantity: number;
-    aiRationale: string;
+    branchName: string;
+
 }
 
 @Injectable({

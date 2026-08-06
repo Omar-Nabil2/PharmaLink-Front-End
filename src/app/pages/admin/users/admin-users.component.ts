@@ -25,7 +25,7 @@ export class AdminUsersComponent implements OnInit {
   users = signal<AdminUserDto[]>([]);
   totalCount = signal<number>(0);
   isLoading = signal<boolean>(false);
-  
+
   // Filters
   filter = signal<AdminUserFilterDto>({
     pageNumber: 1,
@@ -40,7 +40,7 @@ export class AdminUsersComponent implements OnInit {
   isDetailsModalOpen = signal<boolean>(false);
   roleDraft = signal<string>('');
   isUpdatingRole = signal<boolean>(false);
-  
+
   // Options
   roleOptions = [
     { label: 'الكل', value: undefined },
@@ -48,7 +48,9 @@ export class AdminUsersComponent implements OnInit {
     { label: 'صيدلي', value: 'Pharmacist' },
     { label: 'صيدلي مراجعة', value: 'PrescriptionReviewTeam' },
     { label: 'مدير صيدلية', value: 'PharmacyAdmin' },
-    { label: 'مدير نظام', value: 'Admin' }
+    { label: 'مدير نظام', value: 'Admin' },
+    { label: 'مورد', value: 'Supplier' },
+
   ];
 
   statusOptions = [
@@ -133,6 +135,7 @@ export class AdminUsersComponent implements OnInit {
       case 'PrescriptionReviewTeam': return 'صيدلي مراجعة';
       case 'PharmacyAdmin': return 'مدير صيدلية';
       case 'Admin': return 'مدير نظام';
+      case 'Supplier': return 'مورد';
       default: return role;
     }
   }
@@ -180,7 +183,7 @@ export class AdminUsersComponent implements OnInit {
     const isCurrentlyActive = user.status === UserStatus.Active;
     const newStatus = isCurrentlyActive ? UserStatus.Inactive : UserStatus.Active;
     const actionText = isCurrentlyActive ? 'إلغاء تنشيط' : 'تنشيط';
-    
+
     this.confirmationService.confirm({
       message: `هل أنت متأكد أنك تريد ${actionText} حساب "${user.fullName}"؟`,
       header: 'تأكيد تغيير حالة الحساب',

@@ -83,7 +83,7 @@ export class AiForecastingComponent {
                 this.messageService.add({
                     severity: 'warn',
                     summary: 'تنبيه ذكي: أوامر شراء جديدة!',
-                    detail: `تم إنشاء أمر شراء للصنف ${notification.drugName} بكمية ${notification.recommendedOrderQuantity}`,
+                    detail: `تم إنشاء أمر شراء للفرع "${notification.branchName}" (ID: ${notification.branchId})`,
                     life: 8000
                 });
 
