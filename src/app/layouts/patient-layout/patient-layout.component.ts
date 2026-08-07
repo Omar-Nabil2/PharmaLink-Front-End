@@ -3,7 +3,33 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
 import { ProfileService } from '@core/services/profile.service';
+import { CartService } from '@core/services/cart.service';
 import { environment } from '@environments/environment';
+
+import { trigger, transition, style, query, animate } from '@angular/animations';
+
+export const routeTransitionAnimations = trigger('routeAnimations', [
+  transition('* <=> *', [
+    style({ position: 'relative' }),
+    query(':enter, :leave', [
+      style({
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+      })
+    ], { optional: true }),
+    query(':enter', [
+      style({ opacity: 0, transform: 'translateY(30px)' })
+    ], { optional: true }),
+    query(':leave', [
+      animate('200ms ease-out', style({ opacity: 0 }))
+    ], { optional: true }),
+    query(':enter', [
+      animate('300ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
+    ], { optional: true })
+  ])
+]);
 
 @Component({
   selector: 'app-patient-layout',
@@ -11,11 +37,15 @@ import { environment } from '@environments/environment';
   imports: [CommonModule, RouterLink, RouterLinkActive, RouterOutlet],
   templateUrl: './patient-layout.component.html',
   styleUrl: './patient-layout.component.scss',
+  animations: [routeTransitionAnimations]
 })
 export class PatientLayoutComponent implements OnInit {
   private authService = inject(AuthService);
   private profileService = inject(ProfileService);
   private router = inject(Router);
+  public cartService = inject(CartService);
+
+  cartCount$ = this.cartService.cartCount$;
 
   patientNavItems = [
     { label: 'الرئيسية', routerLink: '/patient/dashboard' },
@@ -40,8 +70,16 @@ export class PatientLayoutComponent implements OnInit {
     return localStorage.getItem('profilePictureUrl');
   }
 
+  prepareRoute(outlet: RouterOutlet) {
+    return outlet && outlet.isActivated ? outlet.activatedRoute.snapshot.url.join('') : '';
+  }
+
   ngOnInit() {
-    if (this.authService.isLoggedIn() && !localStorage.getItem('profilePictureUrl')) {
+    if (this.authService.isLoggedIn()) {
+      // Initialize cart count
+      this.cartService.getCart().subscribe({ error: () => {} });
+      
+      if (!localStorage.getItem('profilePictureUrl')) {
       this.profileService.getPatientProfilePictureUrl().subscribe({
         next: (res) => {
             if (res.url) {
@@ -51,6 +89,7 @@ export class PatientLayoutComponent implements OnInit {
         error: () => {}
       });
     }
+  }
   }
 
   toggleProfileMenu(): void {

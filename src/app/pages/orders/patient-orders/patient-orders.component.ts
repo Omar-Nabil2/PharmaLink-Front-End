@@ -22,7 +22,7 @@ export class PatientOrdersComponent implements OnInit, OnDestroy {
   // Pagination & Filtering
   filter: PatientOrdersFilter = {
     pageNumber: 1,
-    pageSize: 10,
+    pageSize: 9,
     search: '' // 👈 إضافة خاصية البحث برقم الطلب
   };
   
@@ -64,7 +64,7 @@ export class PatientOrdersComponent implements OnInit, OnDestroy {
         let processedOrders = rawItems.map(order => ({
           ...order,
           orderNumber: order.orderNumber || `ORD-${order.orderId?.substring(0, 8).toUpperCase()}`,
-          createdAt: order.createdAt || new Date().toISOString()
+          createdAt: order.createdAt ? (order.createdAt.endsWith('Z') ? order.createdAt : order.createdAt + 'Z') : new Date().toISOString()
         }));
 
         // 2. فلترة بالسيرش (إذا الباك إند لم يفلترها)
