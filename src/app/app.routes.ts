@@ -458,6 +458,36 @@ export const routes: Routes = [
   },
 
   {
+    path: 'driver',
+    canActivate: [authGuard],
+    data: { role: AppRoles.DeliveryDriver }, // تأكد إنك ضايف DeliveryDriver في AppRoles
+    loadComponent: () =>
+      import('./layouts/driver-layout/driver-layout.component').then((m) => m.DriverLayoutComponent),
+    children: [
+      {
+        path: 'dashboard',
+        loadComponent: () =>
+          import('./pages/dashboard/driver-dashboard/driver-dashboard.component').then(
+            (m) => m.DriverDashboardComponent,
+          ),
+      },
+      {
+        path: 'profile',
+        loadComponent: () =>
+          import('./pages/profile/profile.component').then((m) => m.ProfileComponent),
+      },
+      {
+        path: 'profile/edit',
+        loadComponent: () =>
+          import('./pages/profile/update-profile/update-profile.component').then(
+            (m) => m.UpdateProfileComponent,
+          ),
+      },
+      { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
+    ],
+  },
+
+  {
     path: 'admin',
     canActivate: [authGuard],
     data: { role: AppRoles.Admin },
