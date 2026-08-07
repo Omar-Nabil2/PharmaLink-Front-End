@@ -32,26 +32,88 @@
   <div *ngIf="!isLoading && !error && cart && cart.items && cart.items.length > 0" class="flex flex-col gap-6">
 
     <!-- Steps Indicator Header -->
-    <div class="flex items-center justify-center gap-4 mb-4 bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
-      <div class="flex items-center gap-2">
-        <span class="w-8 h-8 rounded-full bg-teal-600 text-white flex items-center justify-center font-bold text-sm">1</span>
-        <span class="font-semibold text-gray-800">العنوان</span>
-      </div>
-      <div class="w-12 h-0.5 bg-gray-200"></div>
-      <div class="flex items-center gap-2">
-        <span class="w-8 h-8 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center font-bold text-sm">2</span>
-        <span class="font-medium text-gray-500">مراجعة الأدوية</span>
-      </div>
-      <div class="w-12 h-0.5 bg-gray-200"></div>
-      <div class="flex items-center gap-2">
-        <span class="w-8 h-8 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center font-bold text-sm">3</span>
-        <span class="font-medium text-gray-500">الدفع</span>
+    <div class="bg-white py-6 px-4 md:px-8 rounded-2xl border border-gray-100 shadow-sm mb-2 relative overflow-hidden">
+      <!-- Background subtle gradient -->
+      <div class="absolute inset-0 bg-gradient-to-l from-teal-50/50 to-transparent pointer-events-none"></div>
+      
+      <div class="relative flex items-start justify-between max-w-2xl mx-auto w-full">
+        <!-- Step 1 -->
+        <div class="flex flex-col items-center gap-2 z-10 flex-1">
+          <div class="w-12 h-12 rounded-full bg-teal-600 text-white flex items-center justify-center font-bold shadow-lg shadow-teal-600/30 ring-4 ring-white relative z-10">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+          </div>
+          <span class="font-bold text-teal-800 text-sm">الاستلام والعنوان</span>
+        </div>
+        
+        <!-- Line 1 -->
+        <div class="flex-auto border-t-2 border-teal-200 border-dashed mt-6 -mx-8 relative z-0"></div>
+        
+        <!-- Step 2 -->
+        <div class="flex flex-col items-center gap-2 z-10 flex-1">
+          <div class="w-12 h-12 rounded-full bg-teal-50 text-teal-600 flex items-center justify-center font-bold ring-4 ring-white border-2 border-teal-200 shadow-sm relative z-10">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+          </div>
+          <span class="font-bold text-gray-500 text-sm">مراجعة الطلب</span>
+        </div>
+        
+        <!-- Line 2 -->
+        <div class="flex-auto border-t-2 border-gray-200 border-dashed mt-6 -mx-8 relative z-0"></div>
+
+        <!-- Step 3 -->
+        <div class="flex flex-col items-center gap-2 z-10 flex-1">
+          <div class="w-12 h-12 rounded-full bg-gray-50 text-gray-400 flex items-center justify-center font-bold ring-4 ring-white border-2 border-gray-100 shadow-sm relative z-10">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
+          </div>
+          <span class="font-bold text-gray-400 text-sm">الدفع</span>
+        </div>
       </div>
     </div>
 
-    <!-- 1. Delivery Address Selection -->
+    <!-- 1. Fulfillment Mode Selection -->
     <div class="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
-      <h2 class="text-lg font-bold text-gray-800 mb-4">اختر عنوان التوصيل</h2>
+      <h2 class="text-lg font-bold text-gray-800 mb-4">طريقة الاستلام</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        
+        <!-- Delivery -->
+        <div (click)="setFulfillmentMode('Delivery')"
+             [class.border-teal-600]="fulfillmentMode === 'Delivery'"
+             [class.bg-teal-50/20]="fulfillmentMode === 'Delivery'"
+             class="border border-gray-200 rounded-xl p-4 cursor-pointer transition-all hover:border-teal-400 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="text-teal-600">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
+            </div>
+            <span class="font-bold text-gray-800">توصيل للمنزل</span>
+          </div>
+          <div *ngIf="fulfillmentMode === 'Delivery'" class="text-teal-600">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+          </div>
+        </div>
+
+        <!-- Pickup -->
+        <div (click)="setFulfillmentMode('Pickup')"
+             [class.border-teal-600]="fulfillmentMode === 'Pickup'"
+             [class.bg-teal-50/20]="fulfillmentMode === 'Pickup'"
+             class="border border-gray-200 rounded-xl p-4 cursor-pointer transition-all hover:border-teal-400 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="text-teal-600">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+            </div>
+            <span class="font-bold text-gray-800">استلام من الفرع</span>
+          </div>
+          <div *ngIf="fulfillmentMode === 'Pickup'" class="text-teal-600">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 2. Delivery Address Selection -->
+    <div class="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
+      <h2 class="text-lg font-bold text-gray-800 mb-4">
+        {{ fulfillmentMode === 'Delivery' ? 'اختر عنوان التوصيل' : 'اختر موقعك لمعرفة أقرب فرع' }}
+      </h2>
       
       <div *ngIf="addresses.length === 0" class="text-gray-500 text-sm py-2">
         لا توجد عناوين مسجلة. يرجى إضافة عنوان جديد أولاً.
@@ -88,7 +150,7 @@
       </div>
     </div>
 
-    <!-- 2. Review Drugs / Items Section -->
+    <!-- 3. Review Drugs / Items Section -->
     <div class="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
       <h2 class="text-lg font-bold text-gray-800 mb-4">مراجعة الأدوية</h2>
       <div class="divide-y divide-gray-100">
@@ -103,7 +165,7 @@
       </div>
     </div>
 
-    <!-- 3. Payment Method Section -->
+    <!-- 4. Payment Method Section -->
     <div class="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
       <h2 class="text-lg font-bold text-gray-800 mb-4">طريقة الدفع</h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -158,10 +220,201 @@
       </div>
 
       <button (click)="confirmOrder()" [disabled]="!canConfirm" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 px-4 rounded-lg transition-colors flex justify-center items-center gap-2 disabled:opacity-50 mt-2">
-        <span *ngIf="isSubmitting" class="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></span>
-        <span>تأكيد الطلب</span>
+        <span>البحث عن أفضل الفروع</span>
       </button>
     </div>
 
   </div>
 </div>
+
+<!-- Success Modal (Order Created) -->
+<p-dialog [(visible)]="showSuccessModal" [modal]="true" [draggable]="false" [resizable]="false" 
+          [style]="{ width: '90vw', maxWidth: '600px' }" 
+          [closable]="false"
+          styleClass="rounded-3xl overflow-hidden font-cairo shadow-2xl border-0">
+  
+  <ng-template pTemplate="header">
+    <div class="w-full text-center pt-6 pb-2" dir="rtl">
+      <div class="w-20 h-20 bg-green-100 text-green-500 rounded-full flex items-center justify-center mx-auto mb-4 border-4 border-white shadow-md">
+        <i class="pi pi-check text-4xl font-bold"></i>
+      </div>
+      <h2 class="text-2xl font-black text-slate-800">تم إنشاء طلبك بنجاح!</h2>
+      <p class="text-slate-500 mt-1">طلب رقم <span class="font-bold text-slate-700 font-mono tracking-widest">#{{ createdOrder?.orderId?.substring(0, 8)?.toUpperCase() }}</span></p>
+    </div>
+  </ng-template>
+
+  <div *ngIf="createdOrder" class="py-2 px-2 md:px-4" dir="rtl">
+    
+    <!-- Strategy / Distance Summary -->
+    <div class="bg-teal-50 border border-teal-100 rounded-xl p-4 mb-6 flex items-center justify-between text-teal-800 shadow-sm">
+      <div class="flex items-center gap-3">
+        <i class="pi pi-map-marker text-xl"></i>
+        <span class="font-medium text-sm">إجمالي المسافة المتوقعة: <strong class="font-bold">{{ createdOrder.totalDistanceKm | number:'1.1-2' }} كم</strong></span>
+      </div>
+      <div *ngIf="createdOrder.isFullyFulfilled" class="bg-teal-600 text-white px-3 py-1 rounded-lg text-xs font-bold shadow-sm">
+        متوفر بالكامل
+      </div>
+    </div>
+
+    <!-- Fulfilled Items Grouped by Branch -->
+    <div *ngIf="createdOrder.fulfillmentGroups && createdOrder.fulfillmentGroups.length > 0" class="mb-6">
+      <h4 class="text-base font-bold text-slate-800 mb-3 flex items-center gap-2">
+        <i class="pi pi-box text-teal-600"></i>
+        الأدوية المتوفرة ومصادرها
+      </h4>
+      <div class="flex flex-col gap-3">
+        <div *ngFor="let group of createdOrder.fulfillmentGroups" class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm relative overflow-hidden">
+          <div class="absolute right-0 top-0 bottom-0 w-1.5 bg-teal-500"></div>
+          <div class="flex justify-between items-start mb-3 border-b border-slate-100 pb-3">
+            <div>
+              <div class="font-bold text-slate-800">{{ group.branchName || 'صيدلية قريبة' }}</div>
+              <div class="text-xs text-slate-500 mt-0.5">على بُعد <span class="text-teal-600 font-bold">{{ group.distanceKm | number:'1.1-2' }} كم</span></div>
+            </div>
+            <div class="font-black text-slate-700">{{ group.subtotal | number:'1.2-2' }} ج.م</div>
+          </div>
+          <div class="flex flex-col gap-2.5">
+            <div *ngFor="let item of group.items" class="flex justify-between text-sm items-center bg-slate-50 p-2 rounded-lg border border-slate-100">
+              <span class="text-slate-700 font-semibold">{{ item.drugNameAr || item.drugName }}</span>
+              <div class="flex items-center gap-3 text-xs">
+                <span class="bg-white px-2 py-1 rounded shadow-sm font-bold text-slate-500 border border-slate-200">الكمية: {{ item.quantity }}</span>
+                <span class="font-bold text-slate-600">{{ item.lineTotal | number:'1.2-2' }} ج</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Unfulfillable Items -->
+    <div *ngIf="createdOrder.unavailableItems && createdOrder.unavailableItems.length > 0" class="mb-2">
+      <h4 class="text-base font-bold text-slate-800 mb-3 flex items-center gap-2">
+        <i class="pi pi-exclamation-triangle text-amber-500"></i>
+        أدوية غير متوفرة حالياً
+      </h4>
+      <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 shadow-sm">
+        <p class="text-xs text-amber-800 mb-3 font-semibold leading-relaxed">نأسف، لم نتمكن من العثور على الفروع القريبة لتوفير هذه الأدوية. سيتم استثناؤها من الطلب ولن يتم محاسبتك عليها.</p>
+        <div class="flex flex-wrap gap-2">
+          <div *ngFor="let missing of createdOrder.unavailableItems" class="bg-white border border-amber-200 px-3 py-1.5 rounded-lg text-xs font-bold text-amber-900 shadow-sm flex items-center gap-2">
+            {{ missing.drugNameAr || missing.drugName }}
+            <span class="bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded">الكمية: {{ missing.quantityNeeded }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="flex flex-col sm:flex-row items-center gap-3 w-full border-t border-slate-100 pt-5 pb-3 px-4" dir="rtl">
+      <button pButton label="متابعة طلباتي" icon="pi pi-list" 
+              class="w-full sm:flex-1 p-button-success bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 rounded-xl transition-all shadow-md border-none flex justify-center" 
+              (click)="goToOrders()"></button>
+              
+      <button pButton label="العودة للرئيسية" icon="pi pi-home" 
+              class="w-full sm:flex-1 p-button-outlined text-slate-600 border-slate-300 hover:bg-slate-50 font-bold py-3 rounded-xl transition-all flex justify-center" 
+              (click)="goToDashboard()"></button>
+    </div>
+  </ng-template>
+</p-dialog>
+
+<!-- Preview Modal -->
+<p-dialog [(visible)]="showPreviewModal" [modal]="true" [draggable]="false" [resizable]="false" 
+          [style]="{ width: '90vw', maxWidth: '600px' }" 
+          [closable]="false"
+          styleClass="rounded-3xl overflow-hidden font-cairo shadow-2xl border-0">
+  
+  <ng-template pTemplate="header">
+    <div *ngIf="!isPreviewing && routingPlan" class="w-full text-center pt-6 pb-2" dir="rtl">
+      <div class="w-16 h-16 bg-teal-100 text-teal-600 rounded-full flex items-center justify-center mx-auto mb-4 border-4 border-white shadow-md">
+        <i class="pi pi-check-circle text-3xl font-bold"></i>
+      </div>
+      <h2 class="text-2xl font-black text-slate-800">تم العثور على الفروع المناسبة!</h2>
+    </div>
+  </ng-template>
+
+  <!-- Loading State -->
+  <div *ngIf="isPreviewing" class="py-12 px-4 text-center" dir="rtl">
+    <div class="animate-spin rounded-full h-16 w-16 border-b-4 border-teal-600 mx-auto mb-6"></div>
+    <h2 class="text-2xl font-black text-slate-800 mb-2">يرجى الانتظار...</h2>
+    <p class="text-slate-500 font-medium text-lg">يتم الآن إيجاد أنسب الفروع لتوفير أدويتك بأسرع وقت.</p>
+  </div>
+
+  <!-- Loaded Plan State -->
+  <div *ngIf="!isPreviewing && routingPlan" class="py-2 px-2 md:px-4" dir="rtl">
+    <!-- Strategy / Distance Summary -->
+    <div class="bg-teal-50 border border-teal-100 rounded-xl p-4 mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between text-teal-800 shadow-sm gap-2">
+      <div class="flex items-center gap-3">
+        <i class="pi pi-map-marker text-xl"></i>
+        <span class="font-medium text-base">إجمالي المسافة: <strong class="font-bold text-lg">{{ routingPlan.totalDistanceKm | number:'1.1-2' }} كم</strong></span>
+      </div>
+      <div *ngIf="routingPlan.isFullyFulfilled" class="bg-teal-600 text-white px-3 py-1 rounded-lg text-sm font-bold shadow-sm">
+        أدويتك متوفرة بالكامل
+      </div>
+      <div *ngIf="!routingPlan.isFullyFulfilled" class="bg-amber-500 text-white px-3 py-1 rounded-lg text-sm font-bold shadow-sm">
+        متوفر جزئياً
+      </div>
+    </div>
+
+    <!-- Fulfilled Items Grouped by Branch -->
+    <div *ngIf="routingPlan.legs && routingPlan.legs.length > 0" class="mb-6">
+      <h4 class="text-lg font-bold text-slate-800 mb-3 flex items-center gap-2">
+        <i class="pi pi-box text-teal-600"></i>
+        الأدوية التي سيتم توفيرها
+      </h4>
+      <div class="flex flex-col gap-4">
+        <div *ngFor="let leg of routingPlan.legs" class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm relative overflow-hidden">
+          <div class="absolute right-0 top-0 bottom-0 w-1.5 bg-teal-500"></div>
+          <div class="flex justify-between items-start mb-4 border-b border-slate-100 pb-3">
+            <div>
+              <div class="font-bold text-slate-800 text-lg">{{ leg.branchName || 'صيدلية قريبة' }}</div>
+              <div class="text-sm text-slate-500 mt-0.5">على بُعد <span class="text-teal-600 font-bold text-base">{{ leg.distanceKm | number:'1.1-2' }} كم</span></div>
+            </div>
+            <div class="font-black text-slate-700 text-lg">{{ leg.legSubtotal | number:'1.2-2' }} ج.م</div>
+          </div>
+          <div class="flex flex-col gap-3">
+            <div *ngFor="let item of leg.items" class="flex justify-between text-base items-center bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+              <span class="text-slate-700 font-bold">{{ item.drugNameAr || item.drugName }}</span>
+              <div class="flex items-center gap-3 text-sm">
+                <span class="bg-white px-2 py-1 rounded shadow-sm font-bold text-slate-500 border border-slate-200">الكمية: {{ item.quantity }}</span>
+                <span class="font-bold text-slate-600 text-base">{{ item.lineTotal | number:'1.2-2' }} ج</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Unfulfillable Items -->
+    <div *ngIf="routingPlan.unfulfillableItems && routingPlan.unfulfillableItems.length > 0" class="mb-2">
+      <h4 class="text-lg font-bold text-slate-800 mb-3 flex items-center gap-2">
+        <i class="pi pi-exclamation-triangle text-amber-500"></i>
+        أدوية غير متوفرة
+      </h4>
+      <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 shadow-sm">
+        <p class="text-sm text-amber-800 mb-3 font-semibold leading-relaxed">نأسف، لم نتمكن من العثور على الفروع القريبة لتوفير هذه الأدوية. سيتم استثناؤها ولن يتم محاسبتك عليها.</p>
+        <div class="flex flex-wrap gap-2">
+          <div *ngFor="let missing of routingPlan.unfulfillableItems" class="bg-white border border-amber-200 px-3 py-1.5 rounded-lg text-sm font-bold text-amber-900 shadow-sm flex items-center gap-2">
+            {{ missing.drugNameAr || missing.drugName }}
+            <span class="bg-amber-100 text-amber-800 px-2 py-0.5 rounded">الكمية: {{ missing.quantityRequested }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div *ngIf="!isPreviewing && routingPlan" class="flex flex-col sm:flex-row items-center gap-3 w-full border-t border-slate-100 pt-5 pb-3 px-4" dir="rtl">
+      <button pButton label="تأكيد الطلب" icon="pi pi-check" 
+              class="w-full sm:flex-1 p-button-success bg-teal-600 hover:bg-teal-700 text-white font-bold text-lg py-3 rounded-xl transition-all shadow-md border-none flex justify-center disabled:opacity-50 disabled:cursor-not-allowed" 
+              [disabled]="isSubmitting"
+              (click)="submitOrder()">
+        <span *ngIf="isSubmitting" class="animate-spin rounded-full h-4 w-4 border-b-2 border-white ml-2"></span>
+      </button>
+              
+      <button pButton label="إلغاء الطلب" icon="pi pi-times" 
+              class="w-full sm:flex-1 p-button-outlined text-slate-600 border-slate-300 hover:bg-red-50 hover:text-red-600 hover:border-red-200 font-bold text-lg py-3 rounded-xl transition-all flex justify-center" 
+              [disabled]="isSubmitting"
+              (click)="cancelOrder()"></button>
+    </div>
+  </ng-template>
+</p-dialog>

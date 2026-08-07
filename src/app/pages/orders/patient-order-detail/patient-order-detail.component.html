@@ -24,17 +24,46 @@
     <!-- Top Summary Card -->
     <div class="bg-white rounded-xl p-6 border border-gray-100 shadow-sm mb-6 flex flex-col md:flex-row justify-between md:items-center gap-4">
       <div>
-        <div class="flex items-center gap-3 mb-2">
+        <div class="flex items-center gap-3 mb-2 flex-wrap">
           <span [class]="getStatusClass(order.orderStatus)" class="px-3 py-1 rounded-full text-xs font-semibold">
             {{ getStatusText(order.orderStatus) }}
           </span>
           <span class="text-gray-500 font-mono text-sm tracking-wider">{{ order.orderNumber }}</span>
+          
+          <!-- Fulfillment Mode -->
+          <span class="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-xs font-semibold flex items-center gap-1.5 border border-indigo-100">
+            <svg *ngIf="order.fulfillmentMode === 'Delivery'" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
+            <svg *ngIf="order.fulfillmentMode === 'Pickup'" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+            {{ order.fulfillmentMode === 'Delivery' ? 'توصيل للمنزل' : 'استلام من الفرع' }}
+          </span>
         </div>
-        <p class="text-gray-500 text-sm">تاريخ الطلب: <span class="font-medium text-gray-700">{{ order.createdAt | date:'dd-MM-yyyy hh:mm a' }}</span></p>
+        <!-- Date & Time -->
+        <div class="flex items-center gap-2 mt-1 text-slate-600 text-xs font-bold bg-slate-50 w-fit px-3 py-2 rounded-xl border border-slate-100">
+          <div class="flex items-center gap-1.5">
+            <i class="pi pi-calendar text-teal-600"></i>
+            <span>{{ order.createdAt | date:'dd MMM yyyy' }}</span>
+          </div>
+          <div class="w-1 h-1 rounded-full bg-slate-300"></div>
+          <div class="flex items-center gap-1.5">
+            <i class="pi pi-clock text-teal-600"></i>
+            <span dir="ltr">{{ order.createdAt | date:'shortTime' }}</span>
+          </div>
+        </div>
       </div>
       <div class="text-right">
         <p class="text-gray-500 text-sm mb-1">الإجمالي</p>
         <p class="font-bold text-teal-700 text-2xl" dir="ltr">{{ order.totalAmount | number:'1.2-2' }} ج</p>
+      </div>
+    </div>
+
+    <!-- AI Reasoning Section -->
+    <div *ngIf="order.aiRoutingDescription" class="mb-8">
+      <h2 class="text-lg font-bold text-teal-800 mb-4 flex items-center gap-2">
+        <svg class="w-5 h-5 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+        خطة توفير الطلب (الذكاء الاصطناعي)
+      </h2>
+      <div class="bg-gradient-to-r from-teal-50 to-white border border-teal-100 rounded-xl p-5 shadow-sm">
+        <p class="text-gray-700 leading-relaxed text-sm whitespace-pre-wrap">{{ order.aiRoutingDescription }}</p>
       </div>
     </div>
 
@@ -56,17 +85,26 @@
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
               </div>
               <div>
-                <h3 class="font-bold text-gray-800">{{ leg.pharmacyName }}</h3>
-                <p class="text-sm text-gray-500">{{ leg.branchName }} • تبعد {{ leg.distanceKm | number:'1.1-1' }} كم</p>
+                <h3 class="font-bold text-gray-800 text-lg">{{ leg.pharmacyName }}</h3>
+                <p class="text-sm text-gray-600 mt-0.5">{{ leg.branchName }} • <span class="font-medium text-teal-700">تبعد {{ leg.distanceKm | number:'1.1-3' }} كم</span></p>
+                <p *ngIf="leg.workingHours" class="text-xs text-gray-500 mt-1.5 flex items-center gap-1.5">
+                  <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                  مواعيد العمل: <span class="font-medium" dir="ltr">{{ leg.workingHours }}</span>
+                </p>
               </div>
             </div>
-            <div class="flex flex-col md:items-end">
-              <span class="text-sm font-medium text-teal-700 bg-teal-100 px-3 py-1 rounded-full mb-1 w-fit">
-                {{ getLegStatusText(leg.legStatus) }}
-              </span>
-              <span *ngIf="leg.estimatedPreparationMinutes" class="text-xs text-gray-500 mt-1">
-                وقت التجهيز المتوقع: {{ leg.estimatedPreparationMinutes }} دقيقة
-              </span>
+            <div class="flex flex-col md:items-end gap-2 mt-3 md:mt-0">
+              <div class="flex items-center gap-2">
+                <a [href]="leg.googleMapsUrl || 'https://www.google.com/maps/dir/?api=1&destination=' + leg.latitude + ',' + leg.longitude + '&travelmode=walking'" 
+                   target="_blank"
+                   class="text-xs font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 px-3 py-1.5 rounded-full flex items-center gap-1.5 transition-colors shadow-sm">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                  الاتجاهات (مشي)
+                </a>
+                <span class="text-sm font-bold text-teal-800 bg-teal-100 border border-teal-200 px-3 py-1.5 rounded-full shadow-sm w-fit">
+                  {{ getLegStatusText(leg.legStatus) }}
+                </span>
+              </div>
             </div>
           </div>
 
@@ -88,9 +126,9 @@
                         <img *ngIf="item.imageUrl" [src]="item.imageUrl" [alt]="item.drugName" class="w-full h-full object-contain mix-blend-multiply" onerror="this.src='assets/images/placeholder-drug.png'">
                         <svg *ngIf="!item.imageUrl" class="w-5 h-5 text-teal-400 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547l-2.46 2.46a2.62 2.62 0 103.705 3.705l2.46-2.46a2 2 0 00.548-1.022l.477-2.387a6 6 0 00-.517-3.86l-.159-.318a6 6 0 01-.517-3.86l.38-1.93a2 2 0 00-.547-1.806l-2.46-2.46a2.62 2.62 0 013.705-3.705l2.46 2.46a2 2 0 001.022.548l2.387.477a6 6 0 003.86-.517l.318-.159a6 6 0 013.86-.517l1.93.38a2 2 0 001.806.547l2.46 2.46a2.62 2.62 0 11-3.705 3.705l-2.46-2.46z"></path></svg>
                       </div>
-                      <div>
-                        <p class="font-medium text-gray-800">{{ item.arabicName || item.drugName }}</p>
-                        <p *ngIf="item.arabicName" class="text-xs text-gray-400 mt-0.5 font-mono">{{ item.drugName }}</p>
+                      <div class="flex flex-col justify-center">
+                        <p class="font-bold text-gray-900 text-sm md:text-base leading-tight">{{ item.arabicName ? item.arabicName : item.drugName }}</p>
+                        <p *ngIf="item.arabicName && item.drugName" class="text-[11px] md:text-xs text-gray-500 mt-1 font-medium tracking-wide uppercase" dir="ltr" style="text-align: right;">{{ item.drugName }}</p>
                       </div>
                     </td>
                     <td class="py-3 text-center text-gray-700 font-medium">{{ item.quantityNeeded }}</td>
@@ -129,9 +167,9 @@
                     <img *ngIf="item.imageUrl" [src]="item.imageUrl" [alt]="item.drugName" class="w-full h-full object-contain mix-blend-multiply" onerror="this.src='assets/images/placeholder-drug.png'">
                     <svg *ngIf="!item.imageUrl" class="w-5 h-5 text-red-300 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547l-2.46 2.46a2.62 2.62 0 103.705 3.705l2.46-2.46a2 2 0 00.548-1.022l.477-2.387a6 6 0 00-.517-3.86l-.159-.318a6 6 0 01-.517-3.86l.38-1.93a2 2 0 00-.547-1.806l-2.46-2.46a2.62 2.62 0 013.705-3.705l2.46 2.46a2 2 0 001.022.548l2.387.477a6 6 0 003.86-.517l.318-.159a6 6 0 013.86-.517l1.93.38a2 2 0 001.806.547l2.46 2.46a2.62 2.62 0 11-3.705 3.705l-2.46-2.46z"></path></svg>
                   </div>
-                  <div>
-                    <p class="font-medium text-gray-800">{{ item.arabicName || item.drugName }}</p>
-                    <p *ngIf="item.arabicName" class="text-xs text-gray-400 mt-0.5 font-mono">{{ item.drugName }}</p>
+                  <div class="flex flex-col justify-center">
+                    <p class="font-bold text-gray-900 text-sm md:text-base leading-tight">{{ item.arabicName ? item.arabicName : item.drugName }}</p>
+                    <p *ngIf="item.arabicName && item.drugName" class="text-[11px] md:text-xs text-gray-500 mt-1 font-medium tracking-wide uppercase" dir="ltr" style="text-align: right;">{{ item.drugName }}</p>
                   </div>
                 </td>
                 <td class="py-3 text-center text-gray-700 font-medium">{{ item.quantityNeeded }}</td>
