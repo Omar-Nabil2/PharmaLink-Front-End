@@ -190,7 +190,8 @@
           <td class="py-4 px-6 text-mute type-body-sm">{{ order.createdAt | date:'yyyy-MM-dd' }}</td>
           <td class="py-4 px-6 text-center">
             <a 
-              [routerLink]="['/admin/orders', order.orderId]" 
+              [routerLink]="['./', order.orderId]" 
+              title="عرض التفاصيل"
               class="text-link type-body-sm-strong hover:underline text-[#0f9d76]">
               التفاصيل
             </a>

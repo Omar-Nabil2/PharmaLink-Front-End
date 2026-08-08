@@ -15,5 +15,6 @@ export class ReviewTeamLayoutComponent {
     { label: 'الرئيسية', routerLink: '/review-team/dashboard' },
     { label: 'مراجعة الروشتات', routerLink: '/review-team/prescriptions' },
     { label: 'استفسارات المرضى', routerLink: '/review-team/medical-inquiries' },
+    { label: 'طلبات تتطلب مراجعة', routerLink: '/review-team/orders' },
   ];
 }

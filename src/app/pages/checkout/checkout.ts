@@ -14,12 +14,14 @@ import { Cart, CartItem } from '../../../app/core/interfaces/cart.interface';
 import { AddressResponse } from '../../../app/core/interfaces/address.interface';
 import { FulfillmentMode, OrderCreatedResponse } from '../../../app/core/interfaces/order.interface';
 
+import { PrescriptionUploaderComponent } from '../../../app/shared/components/prescription-uploader/prescription-uploader';
+
 const DELIVERY_FEE = 15;
 
 @Component({
   selector: 'app-checkout',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, PrescriptionUploaderComponent],
   templateUrl: './checkout.html',
   styleUrls: ['./checkout.scss'],
 })
@@ -34,6 +36,9 @@ export class CheckoutComponent implements OnInit {
   isSubmitting = false;
   error: string | null = null;
   createdOrder: OrderCreatedResponse | null = null;
+
+  requiresPrescription = false;
+  temporaryPrescriptionId: string | null = null;
 
   constructor(
     private readonly cartService: CartService,
@@ -95,6 +100,10 @@ export class CheckoutComponent implements OnInit {
       next: ({ cart, addresses }) => {
         this.cart = cart;
         this.addresses = addresses || [];
+        
+        if (this.cart && this.cart.items) {
+          this.requiresPrescription = this.cart.items.some(i => i.requiresPrescription);
+        }
 
         const defaultAddress = this.addresses.find((a) => a.isDefault) || this.addresses[0];
         this.selectedAddressId = defaultAddress ? defaultAddress.addressId : null;
@@ -143,7 +152,8 @@ export class CheckoutComponent implements OnInit {
   }
 
   get canConfirm(): boolean {
-    return !!this.selectedAddressId && this.hasItems && !this.isSubmitting;
+    const hasPrescriptionIfNeeded = !this.requiresPrescription || !!this.temporaryPrescriptionId;
+    return !!this.selectedAddressId && this.hasItems && !this.isSubmitting && hasPrescriptionIfNeeded;
   }
 
   trackByAddressId(index: number, address: AddressResponse): string {
@@ -152,6 +162,10 @@ export class CheckoutComponent implements OnInit {
 
   trackByItemId(index: number, item: CartItem): string {
     return item.cartItemId;
+  }
+
+  onPrescriptionUploaded(id: string): void {
+    this.temporaryPrescriptionId = id || null;
   }
 
   confirmOrder(): void {
@@ -163,12 +177,17 @@ export class CheckoutComponent implements OnInit {
       this.messageService.add({ severity: 'warn', summary: 'تنبيه', detail: 'سلة المشتريات فارغة.' });
       return;
     }
+    if (this.requiresPrescription && !this.temporaryPrescriptionId) {
+      this.messageService.add({ severity: 'warn', summary: 'تنبيه', detail: 'يرجى رفع الروشتة أولاً لإتمام الطلب.' });
+      return;
+    }
 
     this.isSubmitting = true;
     this.orderService
       .createOrder({
         deliveryAddressId: this.selectedAddressId,
         fulfillmentMode: this.fulfillmentMode,
+        temporaryPrescriptionId: this.temporaryPrescriptionId ?? undefined
       })
       .subscribe({
         next: (order: OrderCreatedResponse) => {

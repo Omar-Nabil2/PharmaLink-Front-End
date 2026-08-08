@@ -25,9 +25,9 @@ export interface AdminOrderAnalyticsDTO {
 
 /**
  * Numeric OrderStatus values from the backend Domain.Enums.OrderStatus byte enum.
- *  1 = Pending | 2 = Processing | 3 = Shipped | 4 = Completed | 5 = Cancelled
+ *  1 = Pending | 2 = Processing | 3 = Shipped | 4 = Completed | 5 = Cancelled | 6 = PendingPrescriptionReview | 7 = PrescriptionRejected
  */
-export type OrderStatusValue = 1 | 2 | 3 | 4 | 5 | number;
+export type OrderStatusValue = 1 | 2 | 3 | 4 | 5 | 6 | 7 | number;
 
 /** Summary row in the Recent Orders table. */
 export interface AdminRecentOrderDTO {
