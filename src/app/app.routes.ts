@@ -302,6 +302,13 @@ export const routes: Routes = [
             (m) => m.PrescriptionQueue,
           ),
       },
+      {
+        path: 'prescription-analytics',
+        loadComponent: () =>
+          import(
+            './pages/pharmacist/prescription-analytics/prescription-analytics.component'
+          ).then((m) => m.PrescriptionAnalyticsComponent),
+      },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
     ],
   },
@@ -451,8 +458,13 @@ export const routes: Routes = [
             (m) => m.PharmacistsListComponent,
           ),
       },
-
-
+      {
+        path: 'prescription-analytics',
+        loadComponent: () =>
+          import(
+            './pages/pharmacist/prescription-analytics/prescription-analytics.component'
+          ).then((m) => m.PrescriptionAnalyticsComponent),
+      },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
     ],
   },

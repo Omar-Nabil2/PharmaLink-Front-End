@@ -1,0 +1,436 @@
+<section class="rag-page" dir="rtl">
+
+  <!-- ══ Page Header ══════════════════════════════════════════════════════ -->
+  <div class="rag-header">
+    <div class="rag-header__icon">
+      <i class="pi pi-sparkles"></i>
+    </div>
+    <div>
+      <h1 class="rag-header__title">تحليلات الروشتات الذكية</h1>
+      <p class="rag-header__sub">اسأل الدكتور زياد عن اتجاهات الأدوية، الطلب السوقي، ونقاط النقص</p>
+    </div>
+  </div>
+
+  <!-- ══ Query Panel ═══════════════════════════════════════════════════════ -->
+  <div class="query-panel">
+    <form [formGroup]="form" (ngSubmit)="submit()">
+
+      <!-- Question Textarea -->
+      <div class="query-panel__field">
+        <label class="field-label" for="question">
+          <i class="pi pi-comments"></i> سؤالك
+        </label>
+        <textarea
+          id="question"
+          formControlName="question"
+          class="field-input query-panel__textarea"
+          [class.is-invalid]="questionCtrl?.invalid && questionCtrl?.touched"
+          placeholder="مثال: ما هي أكثر أدوية السكر طلباً خلال الشهر الماضي؟"
+          rows="3"
+        ></textarea>
+        @if (questionCtrl?.invalid && questionCtrl?.touched) {
+          <span class="field-error">
+            <i class="pi pi-info-circle"></i>
+            @if (questionCtrl?.errors?.['required']) { يرجى كتابة سؤالك أولاً }
+            @else if (questionCtrl?.errors?.['minlength']) { السؤال قصير جداً (5 أحرف على الأقل) }
+          </span>
+        }
+      </div>
+
+      <!-- Quick Suggestions -->
+      <div class="query-panel__suggestions">
+        <span class="query-panel__suggestions-label">أمثلة سريعة:</span>
+        @for (s of suggestions; track s) {
+          <button type="button" class="suggestion-chip" (click)="applySuggestion(s)">
+            {{ s }}
+          </button>
+        }
+      </div>
+
+      <!-- Advanced Filters Toggle -->
+      <button type="button" class="toggle-advanced" (click)="toggleAdvanced()">
+        <i class="pi" [class.pi-chevron-down]="!showAdvanced()" [class.pi-chevron-up]="showAdvanced()"></i>
+        {{ showAdvanced() ? 'إخفاء الفلاتر المتقدمة' : 'فلاتر متقدمة (اختياري)' }}
+      </button>
+
+      @if (showAdvanced()) {
+        <div class="advanced-filters">
+          <div class="advanced-filters__grid">
+
+            <div class="field-group">
+              <label class="field-label" for="city">
+                <i class="pi pi-map-marker"></i> المدينة
+              </label>
+              <input id="city" type="text" formControlName="city"
+                class="field-input" placeholder="مثال: القاهرة، الإسكندرية، طنطا" />
+            </div>
+
+            <div class="field-group">
+              <label class="field-label" for="governorate">
+                <i class="pi pi-map"></i> المحافظة
+              </label>
+              <input id="governorate" type="text" formControlName="governorate"
+                class="field-input" placeholder="مثال: القاهرة، الجيزة" />
+            </div>
+
+            <div class="field-group">
+              <label class="field-label" for="startDate">
+                <i class="pi pi-calendar"></i> من تاريخ
+              </label>
+              <input id="startDate" type="date" formControlName="startDate" class="field-input" />
+            </div>
+
+            <div class="field-group">
+              <label class="field-label" for="endDate">
+                <i class="pi pi-calendar"></i> إلى تاريخ
+              </label>
+              <input id="endDate" type="date" formControlName="endDate" class="field-input" />
+            </div>
+
+            <div class="field-group field-group--full">
+              <label class="field-label" for="branchId">
+                <i class="pi pi-building"></i> معرّف الفرع (اختياري — للتحليل الخاص بفرعك)
+              </label>
+              <input id="branchId" type="text" formControlName="branchId"
+                class="field-input" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" />
+              <span class="field-hint">
+                <i class="pi pi-info-circle"></i>
+                اتركه فارغاً للبحث في بيانات السوق العامة
+              </span>
+            </div>
+
+          </div>
+        </div>
+      }
+
+      <!-- Actions -->
+      <div class="query-panel__actions">
+        <button type="submit" class="btn-primary btn-large query-btn" [disabled]="isLoading()">
+          @if (isLoading()) {
+            <i class="pi pi-spin pi-spinner"></i> جارٍ التحليل...
+          } @else {
+            <i class="pi pi-sparkles"></i> ابدأ التحليل
+          }
+        </button>
+        @if (result()) {
+          <button type="button" class="btn-secondary" (click)="reset()">
+            <i class="pi pi-refresh"></i> إعادة
+          </button>
+        }
+      </div>
+
+    </form>
+  </div>
+
+  <!-- ══ Loading Skeleton ══════════════════════════════════════════════════ -->
+  @if (isLoading()) {
+    <div class="loading-state">
+      <div class="loading-state__avatar">
+        <i class="pi pi-spin pi-spinner"></i>
+      </div>
+      <div class="loading-state__text">
+        <p class="loading-state__title">الدكتور زياد يحلل الروشتات...</p>
+        <p class="loading-state__sub">يتم البحث في قاعدة البيانات وتحليل الأنماط الدوائية</p>
+      </div>
+      <div class="skeleton-bars">
+        <div class="skeleton-bar" style="width: 80%"></div>
+        <div class="skeleton-bar" style="width: 65%"></div>
+        <div class="skeleton-bar" style="width: 72%"></div>
+      </div>
+    </div>
+  }
+
+  <!-- ══ Error State ═══════════════════════════════════════════════════════ -->
+  @if (hasError()) {
+    <div class="error-card">
+      <i class="pi pi-times-circle error-card__icon"></i>
+      <div>
+        <p class="error-card__title">تعذّر إتمام التحليل</p>
+        <p class="error-card__msg">{{ errorMessage() }}</p>
+      </div>
+    </div>
+  }
+
+  <!-- ══ No Data State ═════════════════════════════════════════════════════ -->
+  @if (hasNoData()) {
+    <div class="no-data-card">
+      <i class="pi pi-search no-data-card__icon"></i>
+      <h3 class="no-data-card__title">لا توجد روشتات مطابقة</h3>
+      <p class="no-data-card__text" [innerHTML]="result()!.answer.replace(/\n/g, '<br>')"></p>
+    </div>
+  }
+
+  <!-- ══ Results ═══════════════════════════════════════════════════════════ -->
+  @if (hasResults()) {
+    <div class="results-section">
+
+      <!-- Scope banner -->
+      <div class="scope-banner">
+        <div class="scope-banner__item">
+          <i class="pi pi-map-marker"></i>
+          <span>{{ result()!.analysisScope }}</span>
+        </div>
+        <div class="scope-banner__divider"></div>
+        <div class="scope-banner__item">
+          <i class="pi pi-calendar"></i>
+          <span>{{ result()!.analysisTimeRange }}</span>
+        </div>
+        <div class="scope-banner__divider"></div>
+        <div class="scope-banner__item">
+          <i class="pi pi-file"></i>
+          <span>{{ result()!.totalPrescriptionsAnalyzed }} روشتة محللة</span>
+        </div>
+        <div class="scope-banner__divider"></div>
+        <div class="scope-banner__item scope-banner__item--muted">
+          <i class="pi pi-microchip-ai"></i>
+          <span>{{ result()!.usedProvider }}</span>
+        </div>
+      </div>
+
+      <!-- KPI Cards Row -->
+      <div class="kpi-row">
+        <div class="kpi-card kpi-card--primary">
+          <div class="kpi-card__icon"><i class="pi pi-file-check"></i></div>
+          <div>
+            <p class="kpi-card__value">{{ result()!.totalPrescriptionsAnalyzed }}</p>
+            <p class="kpi-card__label">إجمالي الروشتات المحللة</p>
+          </div>
+        </div>
+
+        @if (result()!.topPrescribedDrugs.length > 0) {
+          <div class="kpi-card kpi-card--accent">
+            <div class="kpi-card__icon"><i class="pi pi-star-fill"></i></div>
+            <div>
+              <p class="kpi-card__value">{{ result()!.topPrescribedDrugs[0].medicineName }}</p>
+              <p class="kpi-card__label">الدواء الأكثر طلباً</p>
+            </div>
+          </div>
+          <div class="kpi-card kpi-card--info">
+            <div class="kpi-card__icon"><i class="pi pi-percentage"></i></div>
+            <div>
+              <p class="kpi-card__value">{{ result()!.topPrescribedDrugs[0].percentage }}%</p>
+              <p class="kpi-card__label">نسبة أكثر دواء في الروشتات</p>
+            </div>
+          </div>
+        }
+
+        @if (result()!.shortageWarnings.length > 0) {
+          <div class="kpi-card kpi-card--warning">
+            <div class="kpi-card__icon"><i class="pi pi-exclamation-triangle"></i></div>
+            <div>
+              <p class="kpi-card__value">{{ result()!.shortageWarnings.length }}</p>
+              <p class="kpi-card__label">تحذيرات نقص مخزون</p>
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- AI Answer -->
+      <div class="answer-card">
+        <div class="answer-card__header">
+          <div class="answer-card__avatar">
+            <i class="pi pi-user"></i>
+          </div>
+          <div>
+            <p class="answer-card__name">د. زياد</p>
+            <p class="answer-card__role">أخصائي التحليلات الإكلينيكية — PharmaLink</p>
+          </div>
+          <div class="answer-card__badge">
+            <i class="pi pi-sparkles"></i> تحليل ذكي
+          </div>
+        </div>
+        <div class="answer-card__body" [innerHTML]="result()!.answer.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')">
+        </div>
+        <div class="answer-card__footer">
+          <span><i class="pi pi-clock"></i> {{ result()!.executionTimeMs }} ms</span>
+        </div>
+      </div>
+
+      <!-- Charts Row -->
+      @if (result()!.topPrescribedDrugs.length > 0) {
+        <div class="charts-row">
+
+          <!-- Top Drugs Bar Chart -->
+          <div class="chart-card">
+            <h3 class="chart-card__title">
+              <i class="pi pi-chart-bar"></i> الأدوية الأكثر طلباً
+            </h3>
+            <div class="chart-card__canvas">
+              <p-chart
+                type="bar"
+                [data]="drugsChartData()"
+                [options]="drugsChartOptions"
+                height="260px"
+              />
+            </div>
+          </div>
+
+          <!-- Categories Doughnut -->
+          @if (result()!.mostRequestedCategories.length > 0) {
+            <div class="chart-card chart-card--sm">
+              <h3 class="chart-card__title">
+                <i class="pi pi-chart-pie"></i> التوزيع حسب التصنيف
+              </h3>
+              <div class="chart-card__canvas chart-card__canvas--donut">
+                <p-chart
+                  type="doughnut"
+                  [data]="categoriesChartData()"
+                  [options]="categoriesChartOptions"
+                  height="260px"
+                />
+              </div>
+            </div>
+          }
+
+        </div>
+      }
+
+      <!-- Top Drugs Table -->
+      @if (result()!.topPrescribedDrugs.length > 0) {
+        <div class="data-card">
+          <h3 class="data-card__title">
+            <i class="pi pi-list"></i> تفاصيل الأدوية الأكثر طلباً
+          </h3>
+          <p-table
+            [value]="result()!.topPrescribedDrugs"
+            [paginator]="result()!.topPrescribedDrugs.length > 8"
+            [rows]="8"
+            styleClass="rag-table"
+            responsiveLayout="scroll"
+          >
+            <ng-template #header>
+              <tr>
+                <th>#</th>
+                <th>اسم الدواء</th>
+                <th>الاسم الجنيسي</th>
+                <th>عدد الروشتات</th>
+                <th>إجمالي الكمية</th>
+                <th>النسبة</th>
+                <th>نوع</th>
+              </tr>
+            </ng-template>
+            <ng-template #body let-drug let-i="rowIndex">
+              <tr>
+                <td>
+                  @if (i < 3) {
+                    <span class="rank-badge rank-badge--{{ i + 1 }}">{{ i + 1 }}</span>
+                  } @else {
+                    <span class="rank-num">{{ i + 1 }}</span>
+                  }
+                </td>
+                <td><strong>{{ drug.medicineName }}</strong></td>
+                <td class="text-muted">{{ drug.genericName || '—' }}</td>
+                <td>
+                  <span class="count-pill">{{ drug.mentionCount }}</span>
+                </td>
+                <td>{{ drug.totalQuantity }} عبوة</td>
+                <td>
+                  <div class="percentage-bar">
+                    <div class="percentage-bar__fill" [style.width.%]="drug.percentage"></div>
+                    <span>{{ drug.percentage }}%</span>
+                  </div>
+                </td>
+                <td>
+                  @if (drug.isPediatric) {
+                    <span class="tag tag--pediatric"><i class="pi pi-heart"></i> أطفال</span>
+                  } @else {
+                    <span class="tag tag--adult">بالغون</span>
+                  }
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      }
+
+      <!-- Shortage Warnings -->
+      @if (result()!.shortageWarnings.length > 0) {
+        <div class="data-card">
+          <h3 class="data-card__title">
+            <i class="pi pi-exclamation-triangle"></i> تحذيرات نقص المخزون
+          </h3>
+          <div class="warnings-grid">
+            @for (w of result()!.shortageWarnings; track w.drugName) {
+              <div class="warning-card" [class]="getUrgencyConfig(w.urgencyLevel).class">
+                <div class="warning-card__header">
+                  <i [class]="getUrgencyConfig(w.urgencyLevel).icon"></i>
+                  <strong>{{ w.drugName }}</strong>
+                  <span class="warning-card__badge">{{ getUrgencyConfig(w.urgencyLevel).label }}</span>
+                </div>
+                <p class="warning-card__reason">{{ w.highDemandReason }}</p>
+                <div class="warning-card__stock">
+                  <span>المخزون المتاح:</span>
+                  <span class="warning-card__stock-val" [class.zero]="w.availableStock === 0">
+                    {{ w.availableStock === -1 ? 'غير محدد' : w.availableStock + ' عبوة' }}
+                  </span>
+                </div>
+                <p class="warning-card__rec">
+                  <i class="pi pi-lightbulb"></i> {{ w.recommendation }}
+                </p>
+              </div>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Demand Insights -->
+      @if (result()!.demandForecastingInsights.length > 0) {
+        <div class="data-card">
+          <h3 class="data-card__title">
+            <i class="pi pi-chart-line"></i> توقعات الطلب
+          </h3>
+          <ul class="insights-list">
+            @for (insight of result()!.demandForecastingInsights; track insight) {
+              <li class="insights-list__item">
+                <i class="pi pi-arrow-up-right"></i>
+                {{ insight }}
+              </li>
+            }
+          </ul>
+        </div>
+      }
+
+      <!-- Matched Prescriptions -->
+      @if (result()!.matchedPrescriptions.length > 0) {
+        <div class="data-card">
+          <h3 class="data-card__title">
+            <i class="pi pi-file-text"></i> الروشتات المطابقة
+            <span class="data-card__count">{{ result()!.matchedPrescriptions.length }}</span>
+          </h3>
+          <p-table
+            [value]="result()!.matchedPrescriptions"
+            [paginator]="result()!.matchedPrescriptions.length > 6"
+            [rows]="6"
+            styleClass="rag-table"
+            responsiveLayout="scroll"
+          >
+            <ng-template #header>
+              <tr>
+                <th>المدينة</th>
+                <th>المحافظة</th>
+                <th>التاريخ</th>
+                <th>درجة التطابق</th>
+              </tr>
+            </ng-template>
+            <ng-template #body let-ref>
+              <tr>
+                <td>{{ ref.city || '—' }}</td>
+                <td>{{ ref.governorate || '—' }}</td>
+                <td>{{ ref.createdAt | date: 'yyyy/MM/dd' }}</td>
+                <td>
+                  <div class="score-pill" [class.score-high]="ref.similarityScore >= 0.6"
+                       [class.score-med]="ref.similarityScore >= 0.35 && ref.similarityScore < 0.6"
+                       [class.score-low]="ref.similarityScore < 0.35">
+                    {{ formatScore(ref.similarityScore) }}
+                  </div>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      }
+
+    </div>
+  }
+
+</section>

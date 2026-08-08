@@ -54,6 +54,7 @@ export class OwnerLayoutComponent {
 
   readonly navItems: OwnerNavItem[] = [
     { label: 'لوحة التحكم', icon: 'pi pi-th-large', routerLink: '/owner/dashboard' },
+    { label: 'تحليلات الروشتات', icon: 'pi pi-chart-bar', routerLink: '/owner/prescription-analytics' },
     { label: 'الصيادلة', icon: 'pi pi-users', routerLink: '/owner/pharmacists' },
     { label: 'المخزون', icon: 'pi pi-box', routerLink: '/owner/inventory' },
     { label: 'الطلبات', icon: 'pi pi-shopping-cart', routerLink: '/owner/orders' },
@@ -61,7 +62,6 @@ export class OwnerLayoutComponent {
     { label: 'الفروع', icon: 'pi pi-sitemap', routerLink: '/owner/branches' },
     { label: 'الذكاء الاصطناعي', icon: 'pi pi-sparkles', routerLink: '/owner/ai-forecasting' },
     { label: 'بيانات الصيدلية', icon: 'pi pi-shop', routerLink: '/owner/pharmacy-profile' },
-
   ];
 
   toggleCollapse(): void {
