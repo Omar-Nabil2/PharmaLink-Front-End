@@ -1,4 +1,4 @@
-<div class="patient-theme h-screen overflow-y-auto bg-canvas-softer font-sans flex flex-col" dir="rtl">
+<div class="patient-theme min-h-screen bg-canvas-softer font-sans flex flex-col" dir="rtl">
   <header class="sticky top-0 z-50 bg-canvas/95 backdrop-blur border-b border-surface-pressed">
     <div class="w-full px-4 sm:px-6 lg:px-8">
       <div class="h-20 flex items-center justify-between gap-4">
@@ -128,7 +128,7 @@
     </div>
   </header>
 
-  <main class="flex-grow overflow-x-hidden">
+  <main class="flex-grow overflow-x-clip">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8 min-h-[calc(100vh-80px)]">
       <div class="relative w-full" [@routeAnimations]="prepareRoute(outlet)">
         <router-outlet #outlet="outlet"></router-outlet>
