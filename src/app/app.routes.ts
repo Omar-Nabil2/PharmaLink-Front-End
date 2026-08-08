@@ -243,7 +243,19 @@ export const routes: Routes = [
             (m) => m.ChangePasswordComponent,
           ),
       },
+      {
+        path: 'not-found',
+        loadComponent: () => import('./pages/errors/not-found/not-found.component').then((m) => m.NotFoundComponent),
+      },
+      {
+        path: 'access-denied',
+        loadComponent: () => import('./pages/errors/access-denied/access-denied.component').then((m) => m.AccessDeniedComponent),
+      },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
+      {
+        path: '**',
+        loadComponent: () => import('./pages/errors/not-found/not-found.component').then((m) => m.NotFoundComponent),
+      },
     ],
   },
 
@@ -325,7 +337,19 @@ export const routes: Routes = [
             (m) => m.ChangePasswordComponent,
           ),
       },
+      {
+        path: 'not-found',
+        loadComponent: () => import('./pages/errors/not-found/not-found.component').then((m) => m.NotFoundComponent),
+      },
+      {
+        path: 'access-denied',
+        loadComponent: () => import('./pages/errors/access-denied/access-denied.component').then((m) => m.AccessDeniedComponent),
+      },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
+      {
+        path: '**',
+        loadComponent: () => import('./pages/errors/not-found/not-found.component').then((m) => m.NotFoundComponent),
+      },
     ],
   },
 
@@ -399,7 +423,19 @@ export const routes: Routes = [
               (m) => m.ChangePasswordComponent,
             ),
         },
+        {
+          path: 'not-found',
+          loadComponent: () => import('./pages/errors/not-found/not-found.component').then((m) => m.NotFoundComponent),
+        },
+        {
+          path: 'access-denied',
+          loadComponent: () => import('./pages/errors/access-denied/access-denied.component').then((m) => m.AccessDeniedComponent),
+        },
         { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
+        {
+          path: '**',
+          loadComponent: () => import('./pages/errors/not-found/not-found.component').then((m) => m.NotFoundComponent),
+        },
     ],
   },
 
@@ -441,7 +477,19 @@ export const routes: Routes = [
             (m) => m.ChangePasswordComponent,
           ),
       },
+      {
+        path: 'not-found',
+        loadComponent: () => import('./pages/errors/not-found/not-found.component').then((m) => m.NotFoundComponent),
+      },
+      {
+        path: 'access-denied',
+        loadComponent: () => import('./pages/errors/access-denied/access-denied.component').then((m) => m.AccessDeniedComponent),
+      },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
+      {
+        path: '**',
+        loadComponent: () => import('./pages/errors/not-found/not-found.component').then((m) => m.NotFoundComponent),
+      },
     ],
   },
 
@@ -540,7 +588,19 @@ export const routes: Routes = [
             (m) => m.ChangePasswordComponent,
           ),
       },
+      {
+        path: 'not-found',
+        loadComponent: () => import('./pages/errors/not-found/not-found.component').then((m) => m.NotFoundComponent),
+      },
+      {
+        path: 'access-denied',
+        loadComponent: () => import('./pages/errors/access-denied/access-denied.component').then((m) => m.AccessDeniedComponent),
+      },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
+      {
+        path: '**',
+        loadComponent: () => import('./pages/errors/not-found/not-found.component').then((m) => m.NotFoundComponent),
+      },
     ],
   },
 
@@ -632,7 +692,19 @@ export const routes: Routes = [
             (m) => m.ChangePasswordComponent,
           ),
       },
+      {
+        path: 'not-found',
+        loadComponent: () => import('./pages/errors/not-found/not-found.component').then((m) => m.NotFoundComponent),
+      },
+      {
+        path: 'access-denied',
+        loadComponent: () => import('./pages/errors/access-denied/access-denied.component').then((m) => m.AccessDeniedComponent),
+      },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
+      {
+        path: '**',
+        loadComponent: () => import('./pages/errors/not-found/not-found.component').then((m) => m.NotFoundComponent),
+      },
     ],
   },
 

@@ -8,7 +8,7 @@ import { FooterComponent } from '../../shared/components/footer/footer.component
 @Component({
   selector: 'app-pharmacist-layout',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, NavbarComponent, SidebarComponent, FooterComponent],
+  imports: [CommonModule, RouterOutlet, NavbarComponent, SidebarComponent],
   templateUrl: './pharmacist-layout.component.html',
   styleUrl: './pharmacist-layout.component.scss',
 })
