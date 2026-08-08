@@ -1,0 +1,227 @@
+<div class="max-w-7xl mx-auto space-y-8 px-4 sm:px-6 lg:px-8 py-8" dir="rtl">
+  
+  <!-- Breadcrumbs -->
+  <nav class="flex items-center gap-2 overflow-x-auto whitespace-nowrap text-sm text-slate-500 bg-slate-50 py-3 px-5 rounded-2xl border border-slate-100">
+    <a routerLink="/patient/dashboard" class="hover:text-primary transition-colors flex items-center gap-1">
+      <i class="pi pi-home text-xs"></i> الرئيسية
+    </a>
+    <i class="pi pi-angle-left text-xs text-slate-300"></i>
+    <a routerLink="/patient/drugs" class="hover:text-primary transition-colors">
+      الأدوية
+    </a>
+    <ng-container *ngIf="drug">
+      <i class="pi pi-angle-left text-xs text-slate-300"></i>
+      <span class="font-semibold text-slate-800">{{ drug.brandName }}</span>
+    </ng-container>
+  </nav>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="animate-pulse space-y-8">
+    <div class="flex flex-col md:flex-row gap-8">
+      <div class="w-full md:w-1/3 h-80 bg-slate-100 rounded-3xl"></div>
+      <div class="flex-1 space-y-4">
+        <div class="h-10 bg-slate-100 rounded-xl w-3/4"></div>
+        <div class="h-6 bg-slate-100 rounded-xl w-1/2"></div>
+        <div class="h-6 bg-slate-100 rounded-xl w-1/4"></div>
+        <div class="h-16 bg-slate-100 rounded-xl w-full mt-8"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="loadFailed" class="bg-red-50 border border-red-100 rounded-3xl p-8 text-center space-y-4">
+    <i class="pi pi-exclamation-triangle text-4xl text-red-500"></i>
+    <h2 class="text-xl font-bold text-red-700">عذراً، لم نتمكن من تحميل بيانات الدواء</h2>
+    <button (click)="loadDrugDetails()" class="btn-primary mx-auto">حاول مرة أخرى</button>
+  </div>
+
+  <!-- Drug Details -->
+  <ng-container *ngIf="!isLoading && !loadFailed && drug">
+    <div class="flex flex-col md:flex-row gap-8 lg:gap-12">
+      
+      <!-- Image Section -->
+      <div class="w-full md:w-1/3 lg:w-2/5 shrink-0">
+        <div class="bg-white rounded-[2rem] border border-slate-100 p-8 flex items-center justify-center h-80 md:h-[400px] shadow-sm relative group overflow-hidden">
+          <div class="absolute inset-0 bg-gradient-to-tr from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          <img 
+            [src]="drug.imageUrl || 'assets/images/placeholder-drug.png'" 
+            [alt]="drug.brandName"
+            class="max-w-full max-h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500 relative z-10"
+            onerror="this.src='assets/images/placeholder-drug.png'"
+          >
+          <div *ngIf="drug.discount > 0" class="absolute top-4 right-4 bg-red-500 text-white text-xs font-bold px-3 py-1.5 rounded-full z-20 shadow-md shadow-red-500/20">
+            خصم {{ drug.discount }}%
+          </div>
+        </div>
+      </div>
+
+      <!-- Info Section -->
+      <div class="flex-1 flex flex-col">
+        <div class="flex items-start justify-between gap-4 mb-2">
+          <p-tag [value]="availabilityLabel(drug.availabilityStatus)" [severity]="availabilitySeverity(drug.availabilityStatus)" styleClass="rounded-full px-4"></p-tag>
+          <p-tag *ngIf="drug.requiresPrescription" value="وصفة طبية مطلوبة" severity="warn" icon="pi pi-file-edit" styleClass="rounded-full px-4"></p-tag>
+        </div>
+
+        <h1 class="text-3xl md:text-4xl lg:text-5xl font-black text-slate-800 leading-tight mb-2">
+          {{ drug.brandName }}
+        </h1>
+        <h2 class="text-xl md:text-2xl font-bold text-slate-500 mb-6">
+          {{ drug.arabicName }}
+        </h2>
+
+        <!-- Pricing -->
+        <div class="bg-slate-50 rounded-2xl p-6 border border-slate-100 mb-8 flex items-center justify-between flex-wrap gap-4">
+          <div class="flex flex-col">
+            <span class="text-sm text-slate-500 font-medium mb-1">السعر</span>
+            <div class="flex items-baseline gap-3">
+              <span class="text-4xl font-black text-primary">{{ (drug.finalPrice || drug.price) | currency:'EGP' }}</span>
+              <span *ngIf="drug.discount > 0" class="text-lg text-slate-400 line-through font-medium">{{ drug.price | currency:'EGP' }}</span>
+            </div>
+          </div>
+          <button 
+            (click)="addToCart()" 
+            [disabled]="drug.availabilityStatus === 'OutOfStock' || addingToCart"
+            class="bg-primary hover:bg-primary-600 text-white font-bold py-4 px-8 rounded-xl flex items-center gap-3 transition-all hover:shadow-lg hover:shadow-primary/30 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none active:scale-95"
+          >
+            <i *ngIf="addingToCart" class="pi pi-spin pi-spinner"></i>
+            <i *ngIf="!addingToCart" class="pi pi-cart-plus text-xl"></i>
+            <span class="text-lg">{{ addingToCart ? 'جاري الإضافة...' : 'أضف للكارت' }}</span>
+          </button>
+        </div>
+
+        <!-- Quick Attributes Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8">
+          <div class="bg-white rounded-2xl p-4 border border-slate-100 flex flex-col gap-1">
+            <span class="text-xs text-slate-400 font-medium uppercase tracking-wider">الشكل الدوائي</span>
+            <span class="font-bold text-slate-700">{{ drug.form || 'غير محدد' }}</span>
+          </div>
+          <div class="bg-white rounded-2xl p-4 border border-slate-100 flex flex-col gap-1">
+            <span class="text-xs text-slate-400 font-medium uppercase tracking-wider">التركيز</span>
+            <span class="font-bold text-slate-700">{{ drug.strength || 'غير محدد' }}</span>
+          </div>
+          <div class="bg-white rounded-2xl p-4 border border-slate-100 flex flex-col gap-1">
+            <span class="text-xs text-slate-400 font-medium uppercase tracking-wider">الشركة المصنعة</span>
+            <span class="font-bold text-slate-700 truncate" [title]="drug.manufacturer">{{ drug.manufacturer || 'غير محدد' }}</span>
+          </div>
+          <div class="bg-white rounded-2xl p-4 border border-slate-100 flex flex-col gap-1">
+            <span class="text-xs text-slate-400 font-medium uppercase tracking-wider">الاسم العلمي</span>
+            <span class="font-bold text-slate-700 truncate" [title]="drug.genericName">{{ drug.genericName || 'غير محدد' }}</span>
+          </div>
+          <div class="bg-white rounded-2xl p-4 border border-slate-100 flex flex-col gap-1">
+            <span class="text-xs text-slate-400 font-medium uppercase tracking-wider">التصنيف</span>
+            <span class="font-bold text-slate-700">{{ drug.drugClass || 'غير محدد' }}</span>
+          </div>
+          <div class="bg-white rounded-2xl p-4 border border-slate-100 flex flex-col gap-1">
+            <span class="text-xs text-slate-400 font-medium uppercase tracking-wider">النوع</span>
+            <span class="font-bold text-slate-700">{{ drug.type || 'غير محدد' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Detailed Tabs Section -->
+    <div class="bg-white rounded-[2rem] border border-slate-100 overflow-hidden shadow-sm mt-8">
+      <!-- Tabs Header -->
+      <div class="flex border-b border-slate-100 overflow-x-auto hide-scrollbar">
+        <button 
+          (click)="activeTab = 'desc'" 
+          class="px-8 py-5 font-bold text-sm md:text-base whitespace-nowrap transition-colors border-b-2 relative"
+          [class.text-primary]="activeTab === 'desc'"
+          [class.border-primary]="activeTab === 'desc'"
+          [class.text-slate-500]="activeTab !== 'desc'"
+          [class.border-transparent]="activeTab !== 'desc'"
+          [class.hover:text-slate-800]="activeTab !== 'desc'"
+        >
+          الوصف والتفاصيل
+        </button>
+        <button 
+          (click)="activeTab = 'meta'" 
+          class="px-8 py-5 font-bold text-sm md:text-base whitespace-nowrap transition-colors border-b-2 relative"
+          [class.text-primary]="activeTab === 'meta'"
+          [class.border-primary]="activeTab === 'meta'"
+          [class.text-slate-500]="activeTab !== 'meta'"
+          [class.border-transparent]="activeTab !== 'meta'"
+          [class.hover:text-slate-800]="activeTab !== 'meta'"
+        >
+          الكلمات المفتاحية
+        </button>
+        <button 
+          (click)="activeTab = 'extra'" 
+          class="px-8 py-5 font-bold text-sm md:text-base whitespace-nowrap transition-colors border-b-2 relative"
+          [class.text-primary]="activeTab === 'extra'"
+          [class.border-primary]="activeTab === 'extra'"
+          [class.text-slate-500]="activeTab !== 'extra'"
+          [class.border-transparent]="activeTab !== 'extra'"
+          [class.hover:text-slate-800]="activeTab !== 'extra'"
+        >
+          معلومات إضافية
+        </button>
+      </div>
+
+      <!-- Tabs Content -->
+      <div class="p-8">
+        <!-- Description Tab -->
+        <div *ngIf="activeTab === 'desc'" class="space-y-6 animate-fade-in">
+          <div *ngIf="drug.descriptionAr || drug.descriptionEn; else noDesc">
+            <div *ngIf="drug.descriptionAr" class="space-y-2">
+              <h3 class="text-lg font-bold text-slate-800">الوصف (عربي)</h3>
+              <p class="text-slate-600 leading-relaxed">{{ drug.descriptionAr }}</p>
+            </div>
+            <hr *ngIf="drug.descriptionAr && drug.descriptionEn" class="border-slate-100 my-6">
+            <div *ngIf="drug.descriptionEn" class="space-y-2" dir="ltr">
+              <h3 class="text-lg font-bold text-slate-800">Description (English)</h3>
+              <p class="text-slate-600 leading-relaxed">{{ drug.descriptionEn }}</p>
+            </div>
+          </div>
+          <ng-template #noDesc>
+            <p class="text-slate-400 italic text-center py-8">لا يوجد وصف متاح لهذا الدواء.</p>
+          </ng-template>
+        </div>
+
+        <!-- Meta Tab -->
+        <div *ngIf="activeTab === 'meta'" class="space-y-6 animate-fade-in">
+          <div class="grid md:grid-cols-2 gap-8">
+            <div class="space-y-2">
+              <h3 class="text-lg font-bold text-slate-800">Meta Keywords (Arabic)</h3>
+              <p class="text-slate-600 leading-relaxed">{{ drug.metaKeywordsAr || 'N/A' }}</p>
+            </div>
+            <div class="space-y-2" dir="ltr">
+              <h3 class="text-lg font-bold text-slate-800">Meta Keywords (English)</h3>
+              <p class="text-slate-600 leading-relaxed">{{ drug.metaKeywordsEn || 'N/A' }}</p>
+            </div>
+            <div class="space-y-2">
+              <h3 class="text-lg font-bold text-slate-800">Meta Description (Arabic)</h3>
+              <p class="text-slate-600 leading-relaxed">{{ drug.metaDescriptionAr || 'N/A' }}</p>
+            </div>
+            <div class="space-y-2" dir="ltr">
+              <h3 class="text-lg font-bold text-slate-800">Meta Description (English)</h3>
+              <p class="text-slate-600 leading-relaxed">{{ drug.metaDescriptionEn || 'N/A' }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Extra Tab -->
+        <div *ngIf="activeTab === 'extra'" class="space-y-6 animate-fade-in">
+          <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="space-y-1">
+              <p class="text-sm text-slate-400 font-medium">الرابط الفريد (Slug)</p>
+              <p class="font-semibold text-slate-700 break-all" dir="ltr">{{ drug.slug || 'N/A' }}</p>
+            </div>
+            <div class="space-y-1">
+              <p class="text-sm text-slate-400 font-medium">نوع التدفق (Flow Type)</p>
+              <p class="font-semibold text-slate-700">{{ drug.flowType || 'N/A' }}</p>
+            </div>
+            <div class="space-y-1">
+              <p class="text-sm text-slate-400 font-medium">العلامة التجارية (Brand Ar)</p>
+              <p class="font-semibold text-slate-700">{{ drug.brandAr || 'N/A' }}</p>
+            </div>
+            <div class="space-y-1">
+              <p class="text-sm text-slate-400 font-medium">العلامة التجارية (Brand En)</p>
+              <p class="font-semibold text-slate-700">{{ drug.brandEn || 'N/A' }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>

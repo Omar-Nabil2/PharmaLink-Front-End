@@ -145,6 +145,10 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/drugs/drugs').then((m) => m.DrugsComponent),
       },
       {
+        path: 'drugs/:id',
+        loadComponent: () => import('./pages/drugs/drug-details/drug-details.component').then((m) => m.DrugDetailsComponent),
+      },
+      {
         path: 'ai-assistant',
         canActivate: [authGuard],
         loadComponent: () =>

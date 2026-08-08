@@ -9,6 +9,7 @@ import { MessageService, TreeNode } from 'primeng/api';
 import { TagModule } from 'primeng/tag';
 import { TreeSelectModule } from 'primeng/treeselect';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { DrugService } from '../../core/services/drug.service';
 import { CartService } from '../../core/services/cart.service';
 import { CategoryService } from '../../core/services/category.service';
@@ -18,7 +19,7 @@ import { DrugDto, DrugCategory } from '../../core/interfaces/drug.interface';
 @Component({
   selector: 'app-drugs',
   standalone: true,
-  imports: [CommonModule, TagModule, TreeSelectModule, FormsModule],
+  imports: [CommonModule, TagModule, TreeSelectModule, FormsModule, RouterLink],
   templateUrl: './drugs.html',
 })
 export class DrugsComponent implements OnInit {
@@ -227,7 +228,8 @@ export class DrugsComponent implements OnInit {
     this.loadDrugs();
   }
 
-  addToCart(drug: DrugDto): void {
+  addToCart(drug: DrugDto, event?: Event): void {
+    if (event) event.stopPropagation();
     if (drug.availabilityStatus === 'OutOfStock' || this.addingDrugId) return;
 
     this.addingDrugId = drug.drugId;

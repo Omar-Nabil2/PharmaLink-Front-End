@@ -103,7 +103,7 @@
 
     <div *ngIf="!isLoading && !loadFailed && drugs.length > 0" class="space-y-6 mt-6">
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        <div *ngFor="let drug of drugs" class="card-surface flex flex-col gap-3 p-4 hover:shadow-lg hover:border-primary transition-all duration-300 relative group overflow-hidden">
+        <div *ngFor="let drug of drugs" class="card-surface flex flex-col gap-3 p-4 hover:shadow-lg hover:border-primary transition-all duration-300 relative group overflow-hidden cursor-pointer" [routerLink]="['/patient/drugs', drug.drugId]">
           <div class="w-full h-40 bg-white rounded-lg overflow-hidden flex items-center justify-center border border-slate-100 group-hover:scale-[1.02] transition-transform duration-300">
             <img 
               [src]="drug.imageUrl || 'assets/images/placeholder-drug.png'" 
@@ -131,7 +131,7 @@
             </div>
             <button
               type="button"
-              (click)="addToCart(drug)"
+              (click)="addToCart(drug, $event)"
               [disabled]="drug.availabilityStatus === 'OutOfStock' || addingDrugId === drug.drugId"
               class="btn-primary"
             >
