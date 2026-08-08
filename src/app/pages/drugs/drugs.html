@@ -1,4 +1,4 @@
-<div class="max-w-6xl mx-auto space-y-6">
+<div class="max-w-7xl mx-auto space-y-6 px-4 sm:px-6 lg:px-8 py-6">
   <div class="space-y-1">
     <h1 class="type-display-md text-ink">كتالوج الأدوية</h1>
     <p class="type-body-sm text-body">تصفح أقسام الأدوية، ابحث عن الدواء، وضيفه للكارت بسهولة.</p>
@@ -19,11 +19,11 @@
 
   <!-- Categories View -->
   <ng-container *ngIf="viewMode === 'categories'">
-    <div *ngIf="isLoading" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-6">
+    <div *ngIf="isLoading" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-6">
       <div *ngFor="let _ of [1,2,3,4,5,6,7,8]" class="card-surface animate-pulse h-32"></div>
     </div>
     
-    <div *ngIf="!isLoading" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-6">
+    <div *ngIf="!isLoading" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-6">
       <div 
         *ngFor="let cat of displayedCategories; let i = index" 
         (click)="onCategoryClick(cat)"
@@ -71,7 +71,7 @@
       </div>
     </div>
 
-    <div *ngIf="isLoading" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+    <div *ngIf="isLoading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-6">
       <div *ngFor="let _ of [1, 2, 3, 4, 5, 6]" class="card-surface animate-pulse h-48"></div>
     </div>
 
@@ -92,7 +92,7 @@
     </div>
 
     <div *ngIf="!isLoading && !loadFailed && drugs.length > 0" class="space-y-6 mt-6">
-      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         <div *ngFor="let drug of drugs" class="card-surface flex flex-col gap-3 p-4 hover:shadow-lg hover:border-primary transition-all duration-300 relative group overflow-hidden">
           <div class="w-full h-40 bg-white rounded-lg overflow-hidden flex items-center justify-center border border-slate-100 group-hover:scale-[1.02] transition-transform duration-300">
             <img 
