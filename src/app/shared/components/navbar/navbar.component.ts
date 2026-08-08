@@ -21,7 +21,7 @@ export class NavbarComponent {
     private readonly router: Router,
     private readonly authService: AuthService,
     private readonly profileService: ProfileService
-  ) {}
+  ) { }
 
   ngOnInit() {
     if (this.isLoggedIn && !localStorage.getItem('profilePictureUrl')) {
@@ -32,14 +32,14 @@ export class NavbarComponent {
               localStorage.setItem('profilePictureUrl', res.url);
             }
           },
-          error: () => {}
+          error: () => { }
         });
       }
     }
   }
 
   @HostListener('window:storage')
-  onStorageChange(): void {}
+  onStorageChange(): void { }
 
   get isLoggedIn(): boolean {
     if (typeof window === 'undefined') return false;
@@ -58,6 +58,20 @@ export class NavbarComponent {
 
   get dashboardPath(): string {
     return this.authService.getDashboardPath();
+  }
+
+  get profilePath(): string {
+    const role = this.authService.getNormalizedRole();
+    switch (role) {
+      case AppRoles.DeliveryDriver:
+        return '/driver/profile';
+      case AppRoles.Admin:
+        return '/admin/profile';
+      case AppRoles.Pharmacist:
+        return '/pharmacist/profile';
+      default:
+        return '/profile';
+    }
   }
 
   logout(): void {

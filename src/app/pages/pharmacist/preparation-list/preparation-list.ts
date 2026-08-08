@@ -82,7 +82,11 @@ export class PreparationListComponent implements OnInit {
         order.allowedStatuses = this.getAllowedStatuses(order);
         order.isUpdating = false;
 
-        this.showToast('تم تحديث حالة الطلب بنجاح', 'success');
+        if (order.status === 'OutForDelivery') {
+          this.showToast('تم تحديث الحالة وإرسال تنبيه للطيارين بنجاح 🛵', 'success');
+        } else {
+          this.showToast('تم تحديث حالة الطلب بنجاح', 'success');
+        }
 
         if (order.status === 'Delivered' || order.status === 'Cancelled') {
           this.orders = this.orders.filter(o => o.legId !== order.legId);
@@ -100,7 +104,11 @@ export class PreparationListComponent implements OnInit {
           order.isUpdating = false;
           order.allowedStatuses = this.getAllowedStatuses(order);
 
-          this.showToast('تم تحديث حالة الطلب بنجاح', 'success');
+          if (order.status === 'OutForDelivery') {
+            this.showToast('تم تحديث الحالة وإرسال تنبيه للطيارين بنجاح 🛵', 'success');
+          } else {
+            this.showToast('تم تحديث حالة الطلب بنجاح', 'success');
+          }
 
           if (order.status === 'Delivered' || order.status === 'Cancelled') {
             this.orders = this.orders.filter(o => o.legId !== order.legId);

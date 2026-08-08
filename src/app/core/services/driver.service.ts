@@ -29,8 +29,10 @@ export class DriverService {
 
     // 1. تأسيس اتصال SignalR
     public startConnection(token: string): void {
+        const baseUrlWithoutApi = this.baseUrl.replace('/api/v1', '');
+        const hubUrl = `${baseUrlWithoutApi}/hubs/delivery`;
         this.hubConnection = new signalR.HubConnectionBuilder()
-            .withUrl(`${this.baseUrl}/hubs/delivery`, {
+            .withUrl(`${hubUrl}`, {
                 accessTokenFactory: () => token
             })
             .withAutomaticReconnect()

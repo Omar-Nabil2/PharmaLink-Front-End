@@ -5,8 +5,10 @@
       <h1 class="type-display-xl text-ink">ملفك الشخصي</h1>
       <p class="type-body-md text-body mt-2">
         <ng-container *ngIf="isAdminRole">إدارة بيانات حساب مدير النظام والصلاحيات الإدارية.</ng-container>
-        <ng-container *ngIf="!isAdminRole && isPatient">إدارة تفاصيلك الشخصية وعناوينك المحفوظة.</ng-container>
-        <ng-container *ngIf="!isAdminRole && !isPatient">إدارة تفاصيلك الشخصية والصيدليات التي تديرها.</ng-container>
+        <ng-container *ngIf="isPatientRole">إدارة تفاصيلك الشخصية وعناوينك المحفوظة.</ng-container>
+        <ng-container *ngIf="isPharmacyAdmin || (!isAdminRole && !isPatientRole && !isDriverRole)">إدارة تفاصيلك الشخصية
+          والصيدليات التي تديرها.</ng-container>
+        <ng-container *ngIf="isDriverRole">إدارة تفاصيلك الشخصية ومعلومات مركبة التوصيل الخاصة بك.</ng-container>
       </p>
     </div>
     <div class="flex items-center gap-3 self-start flex-wrap">
@@ -91,13 +93,18 @@
     <div class="card-surface border border-surface-pressed overflow-hidden !p-0">
       <div class="bg-canvas-soft px-6 py-4 flex items-center gap-4">
         <!-- Profile Picture Container -->
-        <div class="relative group cursor-pointer w-16 h-16 shrink-0 rounded-full overflow-hidden border border-surface-pressed" (click)="fileInput.click()">
-          <img *ngIf="patientData.profilePictureUrl" [src]="patientData.profilePictureUrl" class="w-full h-full object-cover" alt="Profile Picture">
-          <div *ngIf="!patientData.profilePictureUrl" class="bg-teal-100 text-teal-700 w-full h-full flex items-center justify-center font-bold">
+        <div
+          class="relative group cursor-pointer w-16 h-16 shrink-0 rounded-full overflow-hidden border border-surface-pressed"
+          (click)="fileInput.click()">
+          <img *ngIf="patientData.profilePictureUrl" [src]="patientData.profilePictureUrl"
+            class="w-full h-full object-cover" alt="Profile Picture">
+          <div *ngIf="!patientData.profilePictureUrl"
+            class="bg-teal-100 text-teal-700 w-full h-full flex items-center justify-center font-bold">
             <span class="text-2xl">{{ patientData.fullName?.charAt(0) }}</span>
           </div>
           <!-- Overlay on hover -->
-          <div class="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+          <div
+            class="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
             <i class="pi pi-camera text-white text-lg"></i>
           </div>
           <input type="file" #fileInput class="hidden" accept="image/*" (change)="onFileSelected($event)">
@@ -329,6 +336,51 @@
           <span
             class="type-body-sm-strong px-4 py-2 rounded-pill bg-canvas text-ink border border-surface-pressed self-start sm:self-center">
             {{ pharmacyAdminData.verificationStatus || 'قيد الانتظار' }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- 🛵 4. Delivery Driver Profile Layout -->
+  <div *ngIf="!isLoading && isDriverRole && driverData" class="space-y-6">
+    <div class="card-surface border border-surface-pressed overflow-hidden !p-0">
+      <div class="bg-canvas-soft px-6 py-4 flex items-center gap-3">
+        <div class="bg-canvas text-ink p-2 rounded-full w-10 h-10 flex items-center justify-center">
+          <i class="pi pi-car"></i>
+        </div>
+        <div>
+          <h2 class="type-display-sm">معلومات الطيار</h2>
+          <p class="type-body-sm text-body">تفاصيل الحساب ومركبة التوصيل</p>
+        </div>
+      </div>
+
+      <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <span class="block type-body-sm-strong text-body mb-1">الاسم الكامل</span>
+          <p class="type-body-md text-ink font-semibold">{{ driverData.fullName }}</p>
+        </div>
+
+        <div>
+          <span class="block type-body-sm-strong text-body mb-1">البريد الإلكتروني</span>
+          <p class="type-body-md text-ink">{{ driverData.email }}</p>
+        </div>
+
+        <div>
+          <span class="block type-body-sm-strong text-body mb-1">رقم الهاتف</span>
+          <p class="type-body-md text-ink">{{ driverData.phoneNumber || 'غير متوفر' }}</p>
+        </div>
+
+        <div>
+          <span class="block type-body-sm-strong text-body mb-1">بيانات المركبة</span>
+          <p class="type-body-md text-ink">{{ driverData.vehicleInfo || 'لم يتم التسجيل' }}</p>
+        </div>
+
+        <div>
+          <span class="block type-body-sm-strong text-body mb-1">إجمالي التوصيلات المكتملة</span>
+          <span
+            class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full type-body-sm bg-teal-50 text-teal-700 border border-teal-200 font-semibold mt-1">
+            <i class="pi pi-box text-xs"></i>
+            {{ driverData.totalCompletedJobs || 0 }} طلب
           </span>
         </div>
       </div>
