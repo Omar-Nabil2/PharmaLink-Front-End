@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  baseUrl: 'https://pharmalink.tryasp.net/api/v1',
+  baseUrl: 'https://localhost:5001/api/v1',
 };

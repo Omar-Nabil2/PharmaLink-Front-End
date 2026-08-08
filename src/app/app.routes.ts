@@ -15,13 +15,7 @@ export const routes: Routes = [
         component: HomeComponent,
 
       },
-      {
-        path: 'profile/edit',
-        loadComponent: () =>
-          import('./pages/profile/update-profile/update-profile.component').then(
-            (m) => m.UpdateProfileComponent,
-          ),
-      },
+
       {
         path: 'products',
         loadComponent: () =>
@@ -58,20 +52,7 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./pages/static/faq/faq.component').then((m) => m.FaqComponent),
       },
-      {
-        path: 'profile',
-        canActivate: [authGuard],
-        loadComponent: () =>
-          import('./pages/profile/profile.component').then((m) => m.ProfileComponent),
-      },
-      {
-        path: 'change-password',
-        canActivate: [authGuard],
-        loadComponent: () =>
-          import('./pages/auth/change-password/change-password.component').then(
-            (m) => m.ChangePasswordComponent,
-          ),
-      },
+
       {
         path: 'access-denied',
         loadComponent: () =>
@@ -243,6 +224,25 @@ export const routes: Routes = [
             (m) => m.NearbyPharmaciesComponent,
           ),
       },
+      {
+        path: 'profile',
+        loadComponent: () =>
+          import('./pages/profile/profile.component').then((m) => m.ProfileComponent),
+      },
+      {
+        path: 'profile/edit',
+        loadComponent: () =>
+          import('./pages/profile/update-profile/update-profile.component').then(
+            (m) => m.UpdateProfileComponent,
+          ),
+      },
+      {
+        path: 'change-password',
+        loadComponent: () =>
+          import('./pages/auth/change-password/change-password.component').then(
+            (m) => m.ChangePasswordComponent,
+          ),
+      },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
     ],
   },
@@ -306,6 +306,25 @@ export const routes: Routes = [
             (m) => m.PrescriptionQueue,
           ),
       },
+      {
+        path: 'profile',
+        loadComponent: () =>
+          import('./pages/profile/profile.component').then((m) => m.ProfileComponent),
+      },
+      {
+        path: 'profile/edit',
+        loadComponent: () =>
+          import('./pages/profile/update-profile/update-profile.component').then(
+            (m) => m.UpdateProfileComponent,
+          ),
+      },
+      {
+        path: 'change-password',
+        loadComponent: () =>
+          import('./pages/auth/change-password/change-password.component').then(
+            (m) => m.ChangePasswordComponent,
+          ),
+      },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
     ],
   },
@@ -361,6 +380,25 @@ export const routes: Routes = [
               (m) => m.AdminOrderDetailComponent,
             ),
         },
+        {
+          path: 'profile',
+          loadComponent: () =>
+            import('./pages/profile/profile.component').then((m) => m.ProfileComponent),
+        },
+        {
+          path: 'profile/edit',
+          loadComponent: () =>
+            import('./pages/profile/update-profile/update-profile.component').then(
+              (m) => m.UpdateProfileComponent,
+            ),
+        },
+        {
+          path: 'change-password',
+          loadComponent: () =>
+            import('./pages/auth/change-password/change-password.component').then(
+              (m) => m.ChangePasswordComponent,
+            ),
+        },
         { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
     ],
   },
@@ -388,6 +426,20 @@ export const routes: Routes = [
         path: 'profile',
         loadComponent: () =>
           import('./pages/supplier-profile/supplier-profile.component').then((m) => m.SupplierProfileComponent),
+      },
+      {
+        path: 'profile/edit',
+        loadComponent: () =>
+          import('./pages/profile/update-profile/update-profile.component').then(
+            (m) => m.UpdateProfileComponent,
+          ),
+      },
+      {
+        path: 'change-password',
+        loadComponent: () =>
+          import('./pages/auth/change-password/change-password.component').then(
+            (m) => m.ChangePasswordComponent,
+          ),
       },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
     ],
@@ -469,8 +521,25 @@ export const routes: Routes = [
             (m) => m.PharmacistsListComponent,
           ),
       },
-
-
+      {
+        path: 'profile',
+        loadComponent: () =>
+          import('./pages/profile/profile.component').then((m) => m.ProfileComponent),
+      },
+      {
+        path: 'profile/edit',
+        loadComponent: () =>
+          import('./pages/profile/update-profile/update-profile.component').then(
+            (m) => m.UpdateProfileComponent,
+          ),
+      },
+      {
+        path: 'change-password',
+        loadComponent: () =>
+          import('./pages/auth/change-password/change-password.component').then(
+            (m) => m.ChangePasswordComponent,
+          ),
+      },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
     ],
   },
@@ -556,7 +625,13 @@ export const routes: Routes = [
             (m) => m.UpdateProfileComponent,
           ),
       },
-
+      {
+        path: 'change-password',
+        loadComponent: () =>
+          import('./pages/auth/change-password/change-password.component').then(
+            (m) => m.ChangePasswordComponent,
+          ),
+      },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
     ],
   },

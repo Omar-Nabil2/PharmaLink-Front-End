@@ -61,7 +61,7 @@
                   <p class="text-xs text-gray-500 mb-0">تم تسجيل الدخول كـ</p>
                   <p class="text-sm font-bold text-gray-800 truncate m-0">{{ fullName }}</p>
                 </div>
-                <a routerLink="/profile" class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition cursor-pointer" (click)="profileMenuOpen = false">
+                <a routerLink="/patient/profile" class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition cursor-pointer" (click)="profileMenuOpen = false">
                   <i class="pi pi-user text-slate-400"></i>
                   الملف الشخصي
                 </a>
@@ -112,7 +112,7 @@
             <p class="text-xs text-gray-500 mb-1 px-2">الحساب الشخصي ({{ fullName }})</p>
           </div>
           
-          <a routerLink="/profile" (click)="menuOpen = false" class="px-4 py-3 flex items-center gap-3 text-body hover:bg-canvas-soft border border-transparent rounded-xl transition cursor-pointer">
+          <a routerLink="/patient/profile" (click)="menuOpen = false" class="px-4 py-3 flex items-center gap-3 text-body hover:bg-canvas-soft border border-transparent rounded-xl transition cursor-pointer">
             <div class="w-6 h-6 rounded-full overflow-hidden bg-slate-100 flex items-center justify-center shrink-0 border border-slate-200">
                <img *ngIf="profilePictureUrl" [src]="profilePictureUrl" alt="Profile" class="w-full h-full object-cover">
                <span *ngIf="!profilePictureUrl" class="text-teal-700 font-bold text-xs">{{ fullName.charAt(0) }}</span>
