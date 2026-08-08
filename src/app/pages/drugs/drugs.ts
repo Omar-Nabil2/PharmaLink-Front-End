@@ -69,7 +69,18 @@ export class DrugsComponent implements OnInit {
     this.searchInput$.pipe(debounceTime(400), distinctUntilChanged()).subscribe((term) => {
       this.searchTerm = term;
       this.pageNumber = 1;
-      this.loadDrugs();
+      
+      if (term.trim().length > 0) {
+        this.viewMode = 'products';
+        this.loadDrugs();
+      } else {
+        if (this.currentCategory && (!this.currentCategory.subCategories || this.currentCategory.subCategories.length === 0)) {
+          this.viewMode = 'products';
+          this.loadDrugs();
+        } else {
+          this.loadCategories();
+        }
+      }
     });
 
     const location = await this.getPatientLocation();

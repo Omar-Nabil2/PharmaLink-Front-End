@@ -3,6 +3,37 @@
     <h1 class="type-display-md text-ink">كتالوج الأدوية</h1>
     <p class="type-body-sm text-body">تصفح أقسام الأدوية، ابحث عن الدواء، وضيفه للكارت بسهولة.</p>
   </div>
+  <!-- Banner -->
+  <section class="mb-8 mt-4">
+    <div class="w-full rounded-[2rem] overflow-hidden shadow-sm relative group">
+      <a routerLink="/patient/drugs" class="block w-full">
+        <img src="/images/promo/Bigsave-web-ar--1-_1777390000.webp" alt="Promo Banner" class="w-full h-auto block group-hover:scale-[1.02] transition-transform duration-500">
+      </a>
+    </div>
+  </section>
+
+  <!-- Global Search -->
+  <div class="flex flex-col md:flex-row gap-4 items-center justify-between bg-white p-4 rounded-2xl border border-slate-100 shadow-sm mt-6 mb-6">
+    <div class="relative w-full md:w-[32rem] flex-shrink-0">
+      <i class="pi pi-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+      <input
+        type="text"
+        placeholder="ابحث باسم الدواء في جميع الأقسام..."
+        [ngModel]="searchTerm"
+        (ngModelChange)="onSearchChange($event)"
+        class="w-full pl-11 pr-4 py-3 rounded-xl bg-slate-50 border border-transparent text-slate-800 text-sm outline-none focus:border-primary focus:bg-white transition-colors"
+      />
+    </div>
+    <div class="w-full md:w-48" *ngIf="viewMode === 'products'">
+      <select 
+        [(ngModel)]="sortOption" 
+        (ngModelChange)="onSortChange()"
+        class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-transparent text-slate-800 text-sm outline-none focus:border-primary focus:bg-white transition-colors appearance-none cursor-pointer"
+      >
+        <option *ngFor="let opt of sortOptions" [value]="opt.value">{{ opt.label }}</option>
+      </select>
+    </div>
+  </div>
 
   <!-- Breadcrumbs -->
   <nav class="flex items-center gap-2 overflow-x-auto whitespace-nowrap text-sm text-slate-500 bg-slate-50 py-2 px-4 rounded-xl border border-slate-100">
@@ -49,27 +80,6 @@
 
   <!-- Products View -->
   <ng-container *ngIf="viewMode === 'products'">
-    <div class="flex flex-col md:flex-row gap-4 items-center justify-between bg-white p-4 rounded-2xl border border-slate-100 shadow-sm mt-6">
-      <div class="relative w-full md:w-96 flex-shrink-0">
-        <i class="pi pi-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-        <input
-          type="text"
-          placeholder="ابحث باسم الدواء..."
-          [ngModel]="searchTerm"
-          (ngModelChange)="onSearchChange($event)"
-          class="w-full pl-11 pr-4 py-2.5 rounded-xl bg-slate-50 border border-transparent text-slate-800 text-sm outline-none focus:border-primary focus:bg-white transition-colors"
-        />
-      </div>
-      <div class="w-full md:w-48">
-        <select 
-          [(ngModel)]="sortOption" 
-          (ngModelChange)="onSortChange()"
-          class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-transparent text-slate-800 text-sm outline-none focus:border-primary focus:bg-white transition-colors appearance-none cursor-pointer"
-        >
-          <option *ngFor="let opt of sortOptions" [value]="opt.value">{{ opt.label }}</option>
-        </select>
-      </div>
-    </div>
 
     <div *ngIf="isLoading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-6">
       <div *ngFor="let _ of [1, 2, 3, 4, 5, 6]" class="card-surface animate-pulse h-48"></div>
