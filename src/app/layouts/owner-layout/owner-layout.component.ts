@@ -57,7 +57,7 @@ export class OwnerLayoutComponent {
     { label: 'الصيادلة', icon: 'pi pi-users', routerLink: '/owner/pharmacists' },
     { label: 'المخزون', icon: 'pi pi-box', routerLink: '/owner/inventory' },
     { label: 'الطلبات', icon: 'pi pi-shopping-cart', routerLink: '/owner/orders' },
-    { label: 'الطلبات بتاعة المورد', icon: 'pi pi-shopping-cart', routerLink: '/owner/supplier-orders' },
+    { label: 'طلبات المورد', icon: 'pi pi-shopping-cart', routerLink: '/owner/supplier-orders' },
     { label: 'الفروع', icon: 'pi pi-sitemap', routerLink: '/owner/branches' },
     { label: 'الذكاء الاصطناعي', icon: 'pi pi-sparkles', routerLink: '/owner/ai-forecasting' },
     { label: 'بيانات الصيدلية', icon: 'pi pi-shop', routerLink: '/owner/pharmacy-profile' },
