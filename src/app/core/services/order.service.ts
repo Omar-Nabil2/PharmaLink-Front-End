@@ -53,4 +53,8 @@ export class OrderService {
       map(res => (res?.value !== undefined ? res.value : res))
     );
   }
+
+  cancelOrder(orderId: string): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/Orders/${orderId}/cancel`, {});
+  }
 }

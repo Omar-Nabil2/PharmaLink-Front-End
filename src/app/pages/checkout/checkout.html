@@ -253,41 +253,44 @@
     </div>
   </ng-template>
 
-  <div *ngIf="createdOrder" class="py-2 px-2 md:px-4" dir="rtl">
+  <div *ngIf="createdOrder && routingPlan" class="py-2 px-2 md:px-4" dir="rtl">
     
     <!-- Strategy / Distance Summary -->
-    <div class="bg-teal-50 border border-teal-100 rounded-xl p-4 mb-6 flex items-center justify-between text-teal-800 shadow-sm">
+    <div class="bg-teal-50 border border-teal-100 rounded-xl p-4 mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between text-teal-800 shadow-sm gap-2">
       <div class="flex items-center gap-3">
         <i class="pi pi-map-marker text-xl"></i>
-        <span class="font-medium text-sm">إجمالي المسافة المتوقعة: <strong class="font-bold">{{ createdOrder.totalDistanceKm | number:'1.1-2' }} كم</strong></span>
+        <span class="font-medium text-base">إجمالي المسافة: <strong class="font-bold text-lg">{{ routingPlan.totalDistanceKm | number:'1.1-2' }} كم</strong></span>
       </div>
-      <div *ngIf="createdOrder.isFullyFulfilled" class="bg-teal-600 text-white px-3 py-1 rounded-lg text-xs font-bold shadow-sm">
-        متوفر بالكامل
+      <div *ngIf="routingPlan.isFullyFulfilled" class="bg-teal-600 text-white px-3 py-1 rounded-lg text-sm font-bold shadow-sm">
+        أدويتك متوفرة بالكامل
+      </div>
+      <div *ngIf="!routingPlan.isFullyFulfilled" class="bg-amber-500 text-white px-3 py-1 rounded-lg text-sm font-bold shadow-sm">
+        متوفر جزئياً
       </div>
     </div>
 
     <!-- Fulfilled Items Grouped by Branch -->
-    <div *ngIf="createdOrder.fulfillmentGroups && createdOrder.fulfillmentGroups.length > 0" class="mb-6">
-      <h4 class="text-base font-bold text-slate-800 mb-3 flex items-center gap-2">
+    <div *ngIf="routingPlan.legs && routingPlan.legs.length > 0" class="mb-6">
+      <h4 class="text-lg font-bold text-slate-800 mb-3 flex items-center gap-2">
         <i class="pi pi-box text-teal-600"></i>
-        الأدوية المتوفرة ومصادرها
+        الأدوية التي سيتم توفيرها
       </h4>
-      <div class="flex flex-col gap-3">
-        <div *ngFor="let group of createdOrder.fulfillmentGroups" class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm relative overflow-hidden">
+      <div class="flex flex-col gap-4">
+        <div *ngFor="let leg of routingPlan.legs" class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm relative overflow-hidden">
           <div class="absolute right-0 top-0 bottom-0 w-1.5 bg-teal-500"></div>
-          <div class="flex justify-between items-start mb-3 border-b border-slate-100 pb-3">
+          <div class="flex justify-between items-start mb-4 border-b border-slate-100 pb-3">
             <div>
-              <div class="font-bold text-slate-800">{{ group.branchName || 'صيدلية قريبة' }}</div>
-              <div class="text-xs text-slate-500 mt-0.5">على بُعد <span class="text-teal-600 font-bold">{{ group.distanceKm | number:'1.1-2' }} كم</span></div>
+              <div class="font-bold text-slate-800 text-lg">{{ leg.branchName || 'صيدلية قريبة' }}</div>
+              <div class="text-sm text-slate-500 mt-0.5">على بُعد <span class="text-teal-600 font-bold text-base">{{ leg.distanceKm | number:'1.1-2' }} كم</span></div>
             </div>
-            <div class="font-black text-slate-700">{{ group.subtotal | number:'1.2-2' }} ج.م</div>
+            <div class="font-black text-slate-700 text-lg">{{ leg.legSubtotal | number:'1.2-2' }} ج.م</div>
           </div>
-          <div class="flex flex-col gap-2.5">
-            <div *ngFor="let item of group.items" class="flex justify-between text-sm items-center bg-slate-50 p-2 rounded-lg border border-slate-100">
-              <span class="text-slate-700 font-semibold">{{ item.drugNameAr || item.drugName }}</span>
-              <div class="flex items-center gap-3 text-xs">
+          <div class="flex flex-col gap-3">
+            <div *ngFor="let item of leg.items" class="flex justify-between text-base items-center bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+              <span class="text-slate-700 font-bold">{{ item.drugNameAr || item.drugName }}</span>
+              <div class="flex items-center gap-3 text-sm">
                 <span class="bg-white px-2 py-1 rounded shadow-sm font-bold text-slate-500 border border-slate-200">الكمية: {{ item.quantity }}</span>
-                <span class="font-bold text-slate-600">{{ item.lineTotal | number:'1.2-2' }} ج</span>
+                <span class="font-bold text-slate-600 text-base">{{ item.lineTotal | number:'1.2-2' }} ج</span>
               </div>
             </div>
           </div>
@@ -296,17 +299,17 @@
     </div>
 
     <!-- Unfulfillable Items -->
-    <div *ngIf="createdOrder.unavailableItems && createdOrder.unavailableItems.length > 0" class="mb-2">
-      <h4 class="text-base font-bold text-slate-800 mb-3 flex items-center gap-2">
+    <div *ngIf="routingPlan.unfulfillableItems && routingPlan.unfulfillableItems.length > 0" class="mb-2">
+      <h4 class="text-lg font-bold text-slate-800 mb-3 flex items-center gap-2">
         <i class="pi pi-exclamation-triangle text-amber-500"></i>
-        أدوية غير متوفرة حالياً
+        أدوية غير متوفرة
       </h4>
       <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 shadow-sm">
-        <p class="text-xs text-amber-800 mb-3 font-semibold leading-relaxed">نأسف، لم نتمكن من العثور على الفروع القريبة لتوفير هذه الأدوية. سيتم استثناؤها من الطلب ولن يتم محاسبتك عليها.</p>
+        <p class="text-sm text-amber-800 mb-3 font-semibold leading-relaxed">نأسف، لم نتمكن من العثور على الفروع القريبة لتوفير هذه الأدوية. سيتم استثناؤها ولن يتم محاسبتك عليها.</p>
         <div class="flex flex-wrap gap-2">
-          <div *ngFor="let missing of createdOrder.unavailableItems" class="bg-white border border-amber-200 px-3 py-1.5 rounded-lg text-xs font-bold text-amber-900 shadow-sm flex items-center gap-2">
+          <div *ngFor="let missing of routingPlan.unfulfillableItems" class="bg-white border border-amber-200 px-3 py-1.5 rounded-lg text-sm font-bold text-amber-900 shadow-sm flex items-center gap-2">
             {{ missing.drugNameAr || missing.drugName }}
-            <span class="bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded">الكمية: {{ missing.quantityNeeded }}</span>
+            <span class="bg-amber-100 text-amber-800 px-2 py-0.5 rounded">الكمية: {{ missing.quantityRequested }}</span>
           </div>
         </div>
       </div>
@@ -416,14 +419,14 @@
     <div *ngIf="!isPreviewing && routingPlan" class="flex flex-col sm:flex-row items-center gap-3 w-full border-t border-slate-100 pt-5 pb-3 px-4" dir="rtl">
       <button pButton label="تأكيد الطلب" icon="pi pi-check" 
               class="w-full sm:flex-1 p-button-success bg-teal-600 hover:bg-teal-700 text-white font-bold text-lg py-3 rounded-xl transition-all shadow-md border-none flex justify-center disabled:opacity-50 disabled:cursor-not-allowed" 
-              [disabled]="isSubmitting"
+              [disabled]="isSubmitting || isCancelling"
               (click)="submitOrder()">
         <span *ngIf="isSubmitting" class="animate-spin rounded-full h-4 w-4 border-b-2 border-white ml-2"></span>
       </button>
               
       <button pButton label="إلغاء الطلب" icon="pi pi-times" 
-              class="w-full sm:flex-1 p-button-outlined text-slate-600 border-slate-300 hover:bg-red-50 hover:text-red-600 hover:border-red-200 font-bold text-lg py-3 rounded-xl transition-all flex justify-center" 
-              [disabled]="isSubmitting"
+              class="w-full sm:flex-1 p-button-outlined text-slate-600 border-slate-300 hover:bg-red-50 hover:text-red-600 hover:border-red-200 font-bold text-lg py-3 rounded-xl transition-all flex justify-center disabled:opacity-50 disabled:cursor-not-allowed" 
+              [disabled]="isSubmitting || isCancelling"
               (click)="cancelOrder()"></button>
     </div>
   </ng-template>

@@ -36,6 +36,7 @@ export class CheckoutComponent implements OnInit {
 
   isLoading = true;
   isSubmitting = false;
+  isCancelling = false;
   error: string | null = null;
   createdOrder: OrderCreatedResponse | null = null;
 
@@ -199,63 +200,89 @@ export class CheckoutComponent implements OnInit {
     this.isPreviewing = true;
     this.routingPlan = null;
 
-    const request: OrderRoutingPreviewRequest = {
-      patientLocation: {
-        latitude: selectedAddress.latitude,
-        longitude: selectedAddress.longitude
-      },
-      cartItems: this.cart!.items.map(item => ({
-        drugId: item.drugId,
-        quantity: item.quantity,
-        drugName: item.drugBrandName,
-        drugNameAr: item.drugArabicName || item.drugBrandName
-      })),
-      fulfillmentMode: this.fulfillmentMode
-    };
-
-    this.orderService.previewRouting(request).subscribe({
-      next: (plan) => {
-        this.routingPlan = plan;
+    this.orderService.createOrder({
+      deliveryAddressId: this.selectedAddressId,
+      fulfillmentMode: this.fulfillmentMode,
+      temporaryPrescriptionId: this.temporaryPrescriptionId ?? undefined
+    }).subscribe({
+      next: (order: OrderCreatedResponse) => {
+        this.createdOrder = order;
+        
+        // Build routingPlan from createdOrder to display in the preview modal
+        this.routingPlan = {
+          strategy: order.strategy ?? '',
+          legs: order.fulfillmentGroups?.map(g => ({
+            pharmacyId: g.pharmacyId,
+            branchId: g.branchId,
+            branchName: g.branchName,
+            distanceKm: g.distanceKm,
+            items: g.items.map(i => ({
+              drugId: i.drugId,
+              drugName: i.drugName,
+              drugNameAr: i.drugNameAr,
+              quantity: i.quantity,
+              unitPrice: i.unitPrice,
+              lineTotal: i.lineTotal
+            })),
+            legSubtotal: g.subtotal
+          })) ?? [],
+          unfulfillableItems: order.unavailableItems?.map(u => ({
+            drugId: u.drugId,
+            drugName: u.drugName,
+            drugNameAr: u.drugNameAr,
+            quantityRequested: u.quantityAvailable === 0 ? u.quantityNeeded : u.quantityNeeded - u.quantityAvailable
+          })) ?? [],
+          fulfillmentLegCount: order.fulfillmentGroups?.length ?? 0,
+          totalDistanceKm: order.totalDistanceKm ?? 0,
+          isFullyFulfilled: order.isFullyFulfilled ?? false,
+          reasoning: ''
+        };
+        
         this.isPreviewing = false;
         this.cdr.detectChanges();
       },
-      error: (err) => {
+      error: (err: any) => {
         this.showPreviewModal = false;
         this.isPreviewing = false;
-        this.errorHandler.handleError(err, 'فشل إيجاد الفروع المناسبة');
+        this.errorHandler.handleError(err, 'فشل إنشاء الطلب');
         this.cdr.detectChanges();
       }
     });
   }
 
   submitOrder(): void {
-    this.isSubmitting = true;
-    this.orderService
-      .createOrder({
-        deliveryAddressId: this.selectedAddressId!,
-        fulfillmentMode: this.fulfillmentMode,
-        temporaryPrescriptionId: this.temporaryPrescriptionId ?? undefined
-      })
-      .subscribe({
-        next: (order: OrderCreatedResponse) => {
-          this.isSubmitting = false;
-          this.showPreviewModal = false;
-          this.createdOrder = order;
-          this.showSuccessModal = true;
-          this.cdr.detectChanges();
-        },
-        error: (err: any) => {
-          this.isSubmitting = false;
-          this.errorHandler.handleError(err, 'فشل تأكيد الطلب');
-          this.cdr.detectChanges();
-        },
-      });
+    // Order is already created, just show the success modal
+    this.showPreviewModal = false;
+    this.showSuccessModal = true;
   }
 
   cancelOrder(): void {
-    this.showPreviewModal = false;
-    this.routingPlan = null;
-    this.isPreviewing = false;
+    if (this.createdOrder && this.createdOrder.orderId) {
+      this.isCancelling = true;
+      this.orderService.cancelOrder(this.createdOrder.orderId).subscribe({
+        next: () => {
+          this.isCancelling = false;
+          this.showPreviewModal = false;
+          this.routingPlan = null;
+          this.isPreviewing = false;
+          this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تم إلغاء الطلب بنجاح.' });
+          this.router.navigate(['/patient/dashboard']);
+        },
+        error: (err: any) => {
+          this.isCancelling = false;
+          this.showPreviewModal = false;
+          this.routingPlan = null;
+          this.isPreviewing = false;
+          this.errorHandler.handleError(err, 'فشل إلغاء الطلب');
+          this.router.navigate(['/patient/orders']);
+        }
+      });
+    } else {
+      this.showPreviewModal = false;
+      this.routingPlan = null;
+      this.isPreviewing = false;
+      this.router.navigate(['/patient/dashboard']);
+    }
   }
 
   goToOrders(): void {
