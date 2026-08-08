@@ -48,8 +48,6 @@ export class DrugsComponent implements OnInit {
 
   addingDrugId: string | null = null;
 
-  private patientLatitude: number | null = null;
-  private patientLongitude: number | null = null;
 
   private readonly searchInput$ = new Subject<string>();
   
@@ -82,10 +80,6 @@ export class DrugsComponent implements OnInit {
         }
       }
     });
-
-    const location = await this.getPatientLocation();
-    this.patientLatitude = location?.latitude ?? null;
-    this.patientLongitude = location?.longitude ?? null;
   }
 
   @HostListener('window:popstate', ['$event'])
@@ -162,19 +156,6 @@ export class DrugsComponent implements OnInit {
     this.loadDrugs();
   }
 
-  private getPatientLocation(): Promise<{ latitude: number; longitude: number } | null> {
-    return new Promise((resolve) => {
-      if (!('geolocation' in navigator)) {
-        resolve(null);
-        return;
-      }
-      navigator.geolocation.getCurrentPosition(
-        (pos) => resolve({ latitude: pos.coords.latitude, longitude: pos.coords.longitude }),
-        () => resolve(null),
-        { timeout: 5000 },
-      );
-    });
-  }
 
   onSearchChange(value: string): void {
     this.searchInput$.next(value);
@@ -194,8 +175,6 @@ export class DrugsComponent implements OnInit {
         sortDirection,
         pageNumber: this.pageNumber,
         pageSize: this.pageSize,
-        latitude: this.patientLatitude ?? undefined,
-        longitude: this.patientLongitude ?? undefined,
       })
       .subscribe({
         next: (result: any) => {
