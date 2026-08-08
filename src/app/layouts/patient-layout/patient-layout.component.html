@@ -10,7 +10,7 @@
           </div>
         </a>
 
-        <nav class="hidden lg:flex items-center gap-1">
+        <nav class="hidden xl:flex items-center gap-1">
           <a *ngFor="let item of patientNavItems"
              [routerLink]="item.routerLink"
              routerLinkActive="bg-primary/10 text-primary"
@@ -38,7 +38,7 @@
             
             <a routerLink="/patient/prescriptions/upload" class="flex items-center gap-2 px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-full font-bold transition shadow-sm">
               <i class="pi pi-upload"></i>
-              <span class="hidden lg:inline text-sm">رفع روشتة</span>
+              <span class="hidden xl:inline text-sm">رفع روشتة</span>
             </a>
 
             <!-- Profile Dropdown -->
@@ -73,7 +73,7 @@
 
           <!-- Mobile Menu Button -->
           <button type="button"
-                  class="md:hidden w-10 h-10 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center hover:bg-slate-200 transition"
+                  class="xl:hidden w-10 h-10 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center hover:bg-slate-200 transition"
                   (click)="menuOpen = !menuOpen"
                   [attr.aria-expanded]="menuOpen"
                   aria-label="فتح القائمة">
@@ -82,7 +82,7 @@
         </div>
       </div>
 
-      <div *ngIf="menuOpen" class="md:hidden border-t border-surface-pressed py-4 space-y-3">
+      <div *ngIf="menuOpen" class="xl:hidden border-t border-surface-pressed py-4 space-y-3">
         <nav class="grid grid-cols-2 gap-2">
           <a *ngFor="let item of patientNavItems"
              [routerLink]="item.routerLink"
@@ -92,7 +92,7 @@
           </a>
         </nav>
 
-        <div class="grid grid-cols-1 gap-2 pt-2">
+        <div class="grid grid-cols-1 gap-2 pt-2 md:hidden">
           <a routerLink="/patient/prescriptions/upload" (click)="menuOpen = false" class="btn-primary w-full justify-center">رفع روشتة</a>
 
           <a routerLink="/patient/image-search" (click)="menuOpen = false" class="btn-subtle w-full justify-center">فحص صورة دواء</a>
