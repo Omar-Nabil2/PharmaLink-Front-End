@@ -27,6 +27,8 @@ export class DrugService {
 
     if (params.searchValue) httpParams = httpParams.set('searchValue', params.searchValue);
     if (params.categoryId) httpParams = httpParams.set('categoryId', params.categoryId.toString());
+    if (params.sortColumn) httpParams = httpParams.set('sortColumn', params.sortColumn);
+    if (params.sortDirection) httpParams = httpParams.set('sortDirection', params.sortDirection);
     if (params.latitude != null) httpParams = httpParams.set('latitude', String(params.latitude));
     if (params.longitude != null) httpParams = httpParams.set('longitude', String(params.longitude));
 
