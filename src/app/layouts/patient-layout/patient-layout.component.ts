@@ -100,4 +100,8 @@ export class PatientLayoutComponent implements OnInit {
     this.authService.logout();
     this.router.navigate(['/auth/login']);
   }
+
+  isAiAssistantPage(): boolean {
+    return this.router.url.includes('/patient/ai-assistant');
+  }
 }
