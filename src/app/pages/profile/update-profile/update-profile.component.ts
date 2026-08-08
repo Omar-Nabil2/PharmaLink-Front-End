@@ -1,5 +1,3 @@
-
-
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -51,6 +49,8 @@ export class UpdateProfileComponent implements OnInit {
             request$ = this.profileService.getPatientProfile();
         } else if (role === 'PharmacyAdmin') {
             request$ = this.profileService.getPharmacyAdminProfile();
+        } else if (role === 'Admin' || role === 'SystemAdmin') {
+            request$ = this.profileService.getSystemAdminProfile();
         } else if (role === 'Pharmacist') {
             request$ = this.profileService.getProfile();
         } else {
@@ -86,6 +86,7 @@ export class UpdateProfileComponent implements OnInit {
             }
         });
     }
+
     onSubmit(): void {
         if (this.updateForm.invalid) {
             this.updateForm.markAllAsTouched();
@@ -106,7 +107,7 @@ export class UpdateProfileComponent implements OnInit {
             });
 
             // توجيهه لصفحة البروفايل من غير ما نكلم الباك إند
-            this.router.navigate(['/profile']);
+            this.router.navigate([this.getProfileLink()]);
             return;
         }
 
@@ -121,10 +122,13 @@ export class UpdateProfileComponent implements OnInit {
         } else if (role === 'Pharmacist') {
             request$ = this.profileService.updateProfile(payload);
         } else if (role === 'PharmacyAdmin') {
-            request$ = this.profileService.updatePharmacyAdminProfile(payload); // ✅ التعديل هنا للأدمن
+            request$ = this.profileService.updatePharmacyAdminProfile(payload);
+        } else if (role === 'Admin' || role === 'SystemAdmin') {
+            request$ = this.profileService.updateSystemAdminProfile(payload);
         } else {
             request$ = this.profileService.updateProfile(payload);
         }
+
         request$.subscribe({
             next: () => {
                 this.isLoading = false;
@@ -135,7 +139,7 @@ export class UpdateProfileComponent implements OnInit {
                     life: 3000
                 });
 
-                this.router.navigate(['/profile']);
+                this.router.navigate([this.getProfileLink()]);
             },
             error: (err: unknown) => {
                 this.isLoading = false;
@@ -145,6 +149,14 @@ export class UpdateProfileComponent implements OnInit {
         });
     }
 
+    getProfileLink(): string {
+        const roleStr = typeof window !== 'undefined' ? localStorage.getItem('roleName')?.toLowerCase() : '';
+        if (roleStr === 'patient') return '/patient/profile';
+        if (roleStr === 'pharmacist') return '/pharmacist/profile';
+        if (roleStr === 'admin' || roleStr === 'systemadmin') return '/admin/profile';
+        if (roleStr === 'pharmacyadmin') return '/owner/profile';
+        if (roleStr === 'prescriptionreviewteam') return '/review-team/profile';
+        if (roleStr === 'supplier') return '/supplier/profile';
+        return '/profile';
+    }
 }
-
-

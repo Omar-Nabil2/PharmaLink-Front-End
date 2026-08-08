@@ -9,6 +9,8 @@ import {
   PatientOrder,
   PatientOrdersFilter,
   PatientOrdersResponse,
+  OrderRoutingPreviewRequest,
+  OrderRoutingPlan
 } from '../interfaces/order.interface';
 
 @Injectable({
@@ -44,5 +46,15 @@ export class OrderService {
     return this.http.get<any>(`${this.baseUrl}/Orders/${orderId}`).pipe(
       map(res => (res?.value !== undefined ? res.value : res))
     );
+  }
+
+  previewRouting(data: OrderRoutingPreviewRequest): Observable<OrderRoutingPlan> {
+    return this.http.post<any>(`${this.baseUrl}/order-routing/preview`, data).pipe(
+      map(res => (res?.value !== undefined ? res.value : res))
+    );
+  }
+
+  cancelOrder(orderId: string): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/Orders/${orderId}/cancel`, {});
   }
 }

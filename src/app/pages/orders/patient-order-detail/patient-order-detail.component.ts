@@ -48,7 +48,7 @@ export class PatientOrderDetailComponent implements OnInit, OnDestroy {
           this.order = {
             ...order,
             orderNumber: order.orderNumber || `ORD-${order.orderId.substring(0, 8).toUpperCase()}`,
-            createdAt: order.createdAt || new Date().toISOString()
+            createdAt: order.createdAt ? (order.createdAt.endsWith('Z') ? order.createdAt : order.createdAt + 'Z') : new Date().toISOString()
           };
           this.isLoading = false;
           this.cdr.detectChanges();

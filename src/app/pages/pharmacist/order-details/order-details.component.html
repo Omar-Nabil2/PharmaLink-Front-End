@@ -25,6 +25,12 @@
                         </span>
                     </div>
                     <div class="flex justify-between"><span class="text-gray-500">طريقة التوصيل:</span> <span class="font-medium">{{ order()?.fulfillmentMode }}</span></div>
+                    <div class="flex justify-between" *ngIf="order()?.hasPrescription">
+                        <span class="text-gray-500">الروشتة:</span>
+                        <button (click)="viewPrescription(order()?.prescriptionId!)" class="text-teal-600 hover:text-teal-700 font-bold flex items-center gap-1">
+                            <i class="pi pi-file-pdf"></i> عرض
+                        </button>
+                    </div>
                     <div class="flex justify-between"><span class="text-gray-500">الإجمالي:</span> <span class="font-medium text-blue-600">{{ order()?.totalAmount }} ج</span></div>
                 </div>
             </div>

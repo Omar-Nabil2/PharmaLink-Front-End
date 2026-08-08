@@ -1,18 +1,50 @@
 // Serialized as strings by the backend's JsonStringEnumConverter — send/expect the
 // name, not the numeric value (e.g. "Delivery", not 1).
 export type FulfillmentMode = 'Delivery' | 'Pickup';
-export type OrderStatus = 'Pending' | 'Processing' | 'Shipped' | 'Completed' | 'Cancelled';
+export type OrderStatus = 'Pending' | 'Processing' | 'Shipped' | 'Completed' | 'Cancelled' | 'ReadyForPickup' | 'OutForDelivery' | 'Delivered' | 'Active' | 'مكتمل' | string;
 
 export interface CreateOrderRequest {
     deliveryAddressId: string;
     fulfillmentMode: FulfillmentMode;
-    }
+    temporaryPrescriptionId?: string;
+}
+
+export interface OrderItemLine {
+    drugId: string;
+    drugName: string;
+    drugNameAr: string;
+    quantity: number;
+    unitPrice: number;
+    lineTotal: number;
+}
+
+export interface UnavailableItem {
+    drugId: string;
+    drugName: string;
+    drugNameAr: string;
+    quantityNeeded: number;
+    quantityAvailable: number;
+}
+
+export interface OrderFulfillmentGroup {
+    pharmacyId: string;
+    branchId: string;
+    branchName: string;
+    distanceKm: number;
+    subtotal: number;
+    items: OrderItemLine[];
+}
 
 export interface OrderCreatedResponse {
     orderId: string;
     status: OrderStatus;
     message: string;
-    }
+    strategy?: string;
+    isFullyFulfilled?: boolean;
+    totalDistanceKm?: number;
+    fulfillmentGroups?: OrderFulfillmentGroup[];
+    unavailableItems?: UnavailableItem[];
+}
 
 // ─── Patient Orders ───────────────────────────────────────────────────────────
 
@@ -76,6 +108,7 @@ export interface PatientOrder {
   summary: OrderSummary;
   fulfillmentLegs: FulfillmentLeg[];
   pendingAssignmentItems: PatientOrderItem[];
+  aiRoutingDescription?: string;
   // computed client-side (short order ref)
   orderNumber?: string;
   createdAt?: string;
@@ -100,4 +133,52 @@ export interface PatientOrdersFilter {
   sortDir?: string;
   pageNumber: number;
   pageSize: number;
+}
+
+// ─── Routing Preview ──────────────────────────────────────────────────────────
+
+export interface GeoLocation {
+  latitude: number;
+  longitude: number;
+}
+
+export interface OrderRoutingPreviewRequest {
+  patientLocation: GeoLocation;
+  cartItems: { drugId: string; quantity: number; drugName?: string; drugNameAr?: string }[];
+  fulfillmentMode: FulfillmentMode;
+}
+
+export interface MissingItem {
+  drugId: string;
+  drugName: string;
+  drugNameAr: string;
+  quantityRequested: number;
+}
+
+export interface FulfilledLineItem {
+  drugId: string;
+  drugName: string;
+  drugNameAr: string;
+  quantity: number;
+  unitPrice: number;
+  lineTotal: number;
+}
+
+export interface OrderFulfillmentLegPlan {
+  pharmacyId: string;
+  branchId: string;
+  branchName: string;
+  distanceKm: number;
+  items: FulfilledLineItem[];
+  legSubtotal: number;
+}
+
+export interface OrderRoutingPlan {
+  strategy: string;
+  legs: OrderFulfillmentLegPlan[];
+  unfulfillableItems: MissingItem[];
+  fulfillmentLegCount: number;
+  totalDistanceKm: number;
+  isFullyFulfilled: boolean;
+  reasoning: string;
 }

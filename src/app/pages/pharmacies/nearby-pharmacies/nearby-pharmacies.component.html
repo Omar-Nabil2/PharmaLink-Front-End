@@ -56,54 +56,71 @@
 
     <!-- ══ FILTERS BAR ════════════════════════════════════════════════════ -->
     @if (hasLocation() || isLocating()) {
-      <div class="filters-bar bg-white rounded-2xl shadow-md border border-slate-100 p-4 mb-6 flex flex-wrap gap-4 items-center">
-
-        <!-- Search -->
-        <div class="flex-1 min-w-[200px] relative">
-          <i class="pi pi-search absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none z-10"></i>
+      <div class="bg-white/90 backdrop-blur-xl rounded-2xl shadow-sm border border-slate-200 p-4 mb-6 flex flex-col md:flex-row gap-4 items-center justify-between">
+        
+        <!-- Left Side: Search -->
+        <div class="w-full md:flex-1 relative">
+          <i class="pi pi-search absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none z-10 text-lg"></i>
           <input pInputText
                  type="text"
                  placeholder="ابحث باسم الصيدلية أو الفرع..."
-                 class="w-full pr-10 rounded-xl border-slate-200"
+                 class="w-full h-12 !pr-12 !pl-4 rounded-xl border-transparent bg-slate-100/80 focus:bg-white focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 transition-all text-sm font-medium text-slate-700 placeholder:text-slate-400 shadow-inner"
                  [ngModel]="searchTerm"
                  (ngModelChange)="onSearch($event)" />
         </div>
 
-        <!-- Radius -->
-        <div class="flex items-center gap-2">
-          <label class="text-sm font-medium text-slate-500 whitespace-nowrap">نطاق البحث:</label>
-          <select class="rounded-xl border border-slate-200 text-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-400"
-                  [(ngModel)]="selectedRadius"
-                  (ngModelChange)="onRadiusChange()">
-            @for (opt of radiusOptions; track opt.value) {
-              <option [value]="opt.value">{{ opt.label }}</option>
-            }
-          </select>
-        </div>
+        <!-- Right Side: Filters -->
+        <div class="w-full md:w-auto flex flex-wrap items-center gap-3">
+          
+          <!-- Radius Dropdown -->
+          <div class="relative flex-1 sm:flex-none">
+            <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+              <i class="pi pi-compass text-sm"></i>
+            </div>
+            <select class="w-full sm:w-auto h-12 appearance-none rounded-xl border-transparent bg-slate-100/80 pr-9 pl-8 text-sm font-bold text-slate-700 focus:bg-white focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 transition-all cursor-pointer shadow-inner"
+                    [(ngModel)]="selectedRadius"
+                    (ngModelChange)="onRadiusChange()">
+              @for (opt of radiusOptions; track opt.value) {
+                <option [value]="opt.value">{{ opt.label }}</option>
+              }
+            </select>
+            <div class="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+              <i class="pi pi-chevron-down text-xs"></i>
+            </div>
+          </div>
 
-        <!-- Open Filter -->
-        <div class="flex items-center gap-2">
-          <label class="text-sm font-medium text-slate-500">الحالة:</label>
-          <div class="flex rounded-xl overflow-hidden border border-slate-200">
+          <!-- Open Filter (iOS style segmented control) -->
+          <div class="flex items-center bg-slate-100/80 p-1 rounded-xl h-12 shadow-inner">
             @for (opt of openFilterOptions; track $index) {
-              <button class="px-3 py-1.5 text-sm transition-colors"
+              <button class="px-4 py-2 text-sm font-bold rounded-lg transition-all duration-200 flex-1 sm:flex-none whitespace-nowrap"
                       [ngClass]="isOpenFilter === opt.value
-                        ? 'bg-teal-500 text-white font-medium'
-                        : 'bg-white text-slate-600 hover:bg-slate-50'"
+                        ? 'bg-white text-teal-700 shadow-sm'
+                        : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'"
                       (click)="isOpenFilter = opt.value; onOpenFilterChange()">
                 {{ opt.label }}
               </button>
             }
           </div>
-        </div>
 
-        <!-- Results count -->
-        @if (!isLoading() && hasLocation()) {
-          <div class="mr-auto text-sm text-slate-500">
-            <span class="font-semibold text-teal-600">{{ totalCount() }}</span> صيدلية
-          </div>
-        }
+          <!-- Results count -->
+          @if (!isLoading() && hasLocation()) {
+            <div class="hidden lg:flex items-center justify-center h-12 px-4 rounded-xl bg-teal-50 border border-teal-100 border-dashed">
+              <span class="text-sm font-bold text-teal-800">
+                <span class="text-lg mr-1">{{ totalCount() }}</span> صيدلية
+              </span>
+            </div>
+          }
+        </div>
       </div>
+      
+      <!-- Mobile Results Count (shows below filters on small screens) -->
+      @if (!isLoading() && hasLocation()) {
+        <div class="lg:hidden mb-6 flex justify-end px-2">
+          <span class="text-sm font-bold text-slate-600 bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200">
+            تم العثور على <span class="text-teal-600">{{ totalCount() }}</span> صيدلية
+          </span>
+        </div>
+      }
     }
 
     <!-- ══ SKELETON LOADERS ═══════════════════════════════════════════════ -->
@@ -170,73 +187,81 @@
     @if (!isLoading() && !isLocating() && pharmacies().length > 0) {
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
         @for (branch of pharmacies(); track trackByBranchId($index, branch)) {
-          <div class="pharmacy-card bg-white rounded-2xl shadow-sm border border-slate-100
-                      hover:shadow-lg hover:-translate-y-1 transition-all duration-200 overflow-hidden flex flex-col">
+          <div class="pharmacy-card bg-white rounded-2xl shadow-sm border border-slate-200
+                      hover:shadow-md hover:border-teal-300 hover:-translate-y-1 transition-all duration-300 overflow-hidden flex flex-col group">
 
             <!-- Card Top: Logo + Name + Open Badge -->
-            <div class="p-4 pb-3 flex items-start gap-3">
+            <div class="p-5 flex items-start gap-4">
               <!-- Logo -->
-              <div class="logo-wrapper flex-shrink-0 w-14 h-14 rounded-xl overflow-hidden border border-slate-100 bg-slate-50 flex items-center justify-center">
+              <div class="flex-shrink-0 w-16 h-16 rounded-2xl overflow-hidden border border-slate-100 bg-slate-50 flex items-center justify-center shadow-sm">
                 @if (branch.logoUrl) {
                   <img [src]="branch.logoUrl" [alt]="branch.pharmacyName"
-                       class="w-full h-full object-cover"
+                       class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                        (error)="$any($event.target).style.display='none'" />
                 } @else {
-                  <i class="pi pi-building text-2xl text-slate-300"></i>
+                  <i class="pi pi-building text-3xl text-slate-300"></i>
                 }
               </div>
 
               <!-- Name + Address -->
-              <div class="flex-1 min-w-0">
-                <h2 class="font-bold text-slate-800 text-sm leading-tight truncate" [title]="branch.pharmacyName">
+              <div class="flex-1 min-w-0 flex flex-col gap-0.5">
+                <h2 class="font-bold text-slate-800 text-base leading-tight truncate" [title]="branch.pharmacyName">
                   {{ branch.pharmacyName }}
                 </h2>
-                <p class="text-xs text-teal-600 font-medium truncate mt-0.5" [title]="branch.branchName">
+                <p class="text-sm text-teal-600 font-bold truncate" [title]="branch.branchName">
                   {{ branch.branchName }}
                 </p>
-                <p class="text-xs text-slate-500 truncate mt-0.5">
-                  {{ branch.addressLine }}, {{ branch.city }}
-                </p>
+                <div class="flex items-center gap-1.5 text-xs text-slate-500 mt-1">
+                  <i class="pi pi-map-marker text-slate-400"></i>
+                  <span class="truncate">{{ branch.city }}</span>
+                </div>
               </div>
             </div>
 
-            <!-- Badges Row -->
-            <div class="px-4 pb-3 flex flex-wrap gap-1.5">
+            <!-- Address line -->
+            <div class="px-5 pb-3">
+                <p class="text-sm text-slate-600 line-clamp-2 leading-relaxed">
+                  {{ branch.addressLine }}
+                </p>
+            </div>
 
+            <!-- Badges Row -->
+            <div class="px-5 py-3 bg-slate-50/70 border-y border-slate-100 flex flex-wrap gap-2 items-center">
+              
               <!-- Distance badge -->
-              <span class="distance-badge inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold"
+              <span class="inline-flex items-center justify-center px-3 py-1.5 rounded-lg text-sm font-bold shadow-sm"
                     [ngClass]="{
-                      'bg-emerald-100 text-emerald-700': branch.distanceKm <= 1,
-                      'bg-blue-100 text-blue-700': branch.distanceKm > 1 && branch.distanceKm <= 5,
-                      'bg-amber-100 text-amber-700': branch.distanceKm > 5 && branch.distanceKm <= 15,
-                      'bg-red-100 text-red-700': branch.distanceKm > 15
+                      'bg-emerald-100 text-emerald-800': branch.distanceKm <= 1,
+                      'bg-blue-100 text-blue-800': branch.distanceKm > 1 && branch.distanceKm <= 5,
+                      'bg-amber-100 text-amber-800': branch.distanceKm > 5 && branch.distanceKm <= 15,
+                      'bg-red-100 text-red-800': branch.distanceKm > 15
                     }">
-                <i class="pi pi-map-marker text-[10px]"></i>
+                <i class="pi pi-directions ml-1.5 text-xs opacity-70"></i>
                 {{ branch.distanceKm | number:'1.1-1' }} كم
               </span>
 
               <!-- Open / Closed -->
-              <span class="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold"
+              <span class="inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-bold shadow-sm"
                     [ngClass]="branch.isOpen
-                      ? 'bg-green-100 text-green-700'
-                      : 'bg-red-100 text-red-600'">
-                <span class="w-1.5 h-1.5 rounded-full"
-                      [ngClass]="branch.isOpen ? 'bg-green-500' : 'bg-red-400'"></span>
-                {{ branch.isOpen ? 'مفتوح' : 'مغلق' }}
+                      ? 'bg-green-100 text-green-800'
+                      : 'bg-red-100 text-red-800'">
+                <span class="w-2 h-2 rounded-full shadow-sm"
+                      [ngClass]="branch.isOpen ? 'bg-green-500' : 'bg-red-500'"></span>
+                {{ branch.isOpen ? 'مفتوح الآن' : 'مغلق' }}
               </span>
+            </div>
 
-              <!-- Delivery -->
-              @if (branch.supportsDelivery) {
-                <span class="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium bg-purple-100 text-purple-700">
-                  <i class="pi pi-truck text-[10px]"></i>
+            <!-- Services -->
+            <div class="px-5 py-3 flex items-center gap-2">
+               @if (branch.supportsDelivery) {
+                <span class="inline-flex items-center gap-1.5 text-xs font-bold text-slate-700 bg-white border border-slate-200 px-2.5 py-1 rounded-md shadow-sm">
+                  <i class="pi pi-truck text-purple-600"></i>
                   توصيل
                 </span>
               }
-
-              <!-- Pickup -->
               @if (branch.supportsPickup) {
-                <span class="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium bg-indigo-100 text-indigo-700">
-                  <i class="pi pi-shopping-bag text-[10px]"></i>
+                <span class="inline-flex items-center gap-1.5 text-xs font-bold text-slate-700 bg-white border border-slate-200 px-2.5 py-1 rounded-md shadow-sm">
+                  <i class="pi pi-shopping-bag text-indigo-600"></i>
                   استلام
                 </span>
               }
@@ -244,7 +269,7 @@
 
             <!-- Working Hours -->
             @if (branch.workingHours) {
-              <div class="px-4 pb-3 flex items-center gap-1.5 text-xs text-slate-500">
+              <div class="px-5 pb-3 flex items-center gap-2 text-xs text-slate-500 font-medium">
                 <i class="pi pi-clock text-slate-400"></i>
                 <span>{{ branch.workingHours }}</span>
               </div>
@@ -254,36 +279,24 @@
             <div class="flex-1"></div>
 
             <!-- Action Buttons -->
-            <div class="px-4 pb-4 pt-2 border-t border-slate-50 flex gap-2">
-
-              <!-- Call -->
+            <div class="p-4 border-t border-slate-100 bg-slate-50/50 flex gap-2">
               @if (branch.phoneNumber) {
                 <a [href]="'tel:' + branch.phoneNumber"
-                   class="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl bg-slate-100
-                          hover:bg-slate-200 text-slate-700 text-xs font-medium py-2 transition-colors">
-                  <i class="pi pi-phone text-sm"></i>
+                   class="flex-1 flex items-center justify-center gap-2 rounded-xl bg-white border border-slate-200
+                          hover:bg-slate-100 hover:text-teal-700 text-slate-700 text-sm font-bold h-11 transition-all shadow-sm">
+                  <i class="pi pi-phone"></i>
                   اتصال
                 </a>
               }
-
-              <!-- Maps / Navigate -->
-              <a [href]="getGoogleMapsUrl(branch)"
-                 target="_blank"
-                 rel="noopener noreferrer"
-                 class="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl bg-teal-50
-                        hover:bg-teal-100 text-teal-700 text-xs font-medium py-2 transition-colors">
-                <i class="pi pi-map text-sm"></i>
-                خرائط
-              </a>
 
               <!-- Navigate -->
               <a [href]="getNavigationUrl(branch)"
                  target="_blank"
                  rel="noopener noreferrer"
-                 class="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl bg-emerald-500
-                        hover:bg-emerald-600 text-white text-xs font-medium py-2 transition-colors">
-                <i class="pi pi-directions text-sm"></i>
-                اتجاهات
+                 class="flex-1 flex items-center justify-center gap-2 rounded-xl bg-teal-600 border border-teal-600
+                        hover:bg-teal-700 hover:border-teal-700 text-white text-sm font-bold h-11 transition-all shadow-sm">
+                <i class="pi pi-directions"></i>
+                الاتجاهات
               </a>
             </div>
           </div>

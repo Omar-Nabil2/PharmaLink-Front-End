@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   computed,
   inject,
   signal,
@@ -9,15 +10,22 @@ import { CommonModule } from '@angular/common';
 import {
   FormBuilder,
   FormGroup,
+  FormsModule,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { CardModule } from 'primeng/card';
 import { ChartModule } from 'primeng/chart';
 import { TableModule } from 'primeng/table';
 import { BadgeModule } from 'primeng/badge';
 import { TooltipModule } from 'primeng/tooltip';
+import { AutoCompleteModule } from 'primeng/autocomplete';
 import { PrescriptionAnalyticsRagService } from '@core/services/prescription-analytics-rag.service';
+import { SearchService } from '@core/services/search.service';
+import { PharmacyBranchSearchDTO } from '@pages/inventory/search.model';
 import {
   PrescriptionAnalyticsRagRequest,
   PrescriptionAnalyticsRagResponse,
@@ -31,18 +39,22 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
+    FormsModule,
     ReactiveFormsModule,
     CardModule,
     ChartModule,
     TableModule,
     BadgeModule,
     TooltipModule,
+    AutoCompleteModule,
   ],
   templateUrl: './prescription-analytics.component.html',
   styleUrl: './prescription-analytics.component.scss',
 })
 export class PrescriptionAnalyticsComponent {
   private readonly ragService = inject(PrescriptionAnalyticsRagService);
+  private readonly searchService = inject(SearchService);
+  private readonly destroyRef = inject(DestroyRef);
   private readonly fb = inject(FormBuilder);
 
   readonly isLoading = signal(false);
@@ -50,6 +62,11 @@ export class PrescriptionAnalyticsComponent {
   readonly errorMessage = signal('');
   readonly result = signal<PrescriptionAnalyticsRagResponse | null>(null);
   readonly showAdvanced = signal(false);
+
+  // ── Async Branch Lookup (mirrors Owner Dashboard / Inventory branch selector) ──
+  readonly branchFilterSuggestions = signal<PharmacyBranchSearchDTO[]>([]);
+  readonly selectedBranchFilter = signal<PharmacyBranchSearchDTO | null>(null);
+  private readonly branchFilterQuery$ = new Subject<string>();
 
   readonly form: FormGroup = this.fb.group({
     question: ['', [Validators.required, Validators.minLength(5)]],
@@ -59,6 +76,31 @@ export class PrescriptionAnalyticsComponent {
     startDate: [''],
     endDate: [''],
   });
+
+  constructor() {
+    this.branchFilterQuery$
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        switchMap((term) => this.searchService.searchBranches(term)),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((results) => this.branchFilterSuggestions.set(results ?? []));
+  }
+
+  onBranchFilterSearch(query: string): void {
+    this.branchFilterQuery$.next(query ?? '');
+  }
+
+  onBranchFilterSelected(branch: PharmacyBranchSearchDTO): void {
+    this.selectedBranchFilter.set(branch);
+    this.form.patchValue({ branchId: branch.branchId });
+  }
+
+  onBranchFilterCleared(): void {
+    this.selectedBranchFilter.set(null);
+    this.form.patchValue({ branchId: '' });
+  }
 
   // ── Computed chart data ──────────────────────────────────────────────────
 
@@ -151,9 +193,11 @@ export class PrescriptionAnalyticsComponent {
     }
 
     const raw = this.form.value;
+    const selectedBranch = this.selectedBranchFilter();
+
     const request: PrescriptionAnalyticsRagRequest = {
       question: raw.question.trim(),
-      branchId: raw.branchId?.trim() || null,
+      branchId: selectedBranch?.branchId || raw.branchId?.trim() || null,
       city: raw.city?.trim() || null,
       governorate: raw.governorate?.trim() || null,
       startDate: raw.startDate || null,
@@ -181,6 +225,7 @@ export class PrescriptionAnalyticsComponent {
 
   reset(): void {
     this.form.reset();
+    this.selectedBranchFilter.set(null);
     this.result.set(null);
     this.hasError.set(false);
   }

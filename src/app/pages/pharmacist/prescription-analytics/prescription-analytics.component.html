@@ -89,14 +89,53 @@
 
             <div class="field-group field-group--full">
               <label class="field-label" for="branchId">
-                <i class="pi pi-building"></i> معرّف الفرع (اختياري — للتحليل الخاص بفرعك)
+                <i class="pi pi-building"></i> الفرع (بحث مباشر بالاسم أو العنوان)
               </label>
-              <input id="branchId" type="text" formControlName="branchId"
-                class="field-input" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" />
-              <span class="field-hint">
-                <i class="pi pi-info-circle"></i>
-                اتركه فارغاً للبحث في بيانات السوق العامة
-              </span>
+              <div class="relative w-full">
+                <p-autocomplete
+                  [ngModel]="selectedBranchFilter()"
+                  [ngModelOptions]="{standalone: true}"
+                  (completeMethod)="onBranchFilterSearch($event.query)"
+                  (onSelect)="onBranchFilterSelected($event.value)"
+                  (onClear)="onBranchFilterCleared()"
+                  [suggestions]="branchFilterSuggestions()"
+                  optionLabel="branchName"
+                  [showClear]="true"
+                  [delay]="300"
+                  placeholder="ابحث عن فرع الصيدلية بالاسم أو العنوان..."
+                  styleClass="w-full rag-autocomplete"
+                  appendTo="body"
+                  emptyMessage="لا توجد فروع مطابقة"
+                >
+                  <ng-template let-branch #item>
+                    <div dir="rtl" class="branch-suggestion-item">
+                      <div class="branch-suggestion-item__main">
+                        <i class="pi pi-building"></i>
+                        <span class="branch-suggestion-item__name">{{ branch.branchName }}</span>
+                      </div>
+                      @if (branch.addressLine) {
+                        <span class="branch-suggestion-item__address">
+                          <i class="pi pi-map-marker"></i> {{ branch.addressLine }}
+                        </span>
+                      }
+                    </div>
+                  </ng-template>
+                </p-autocomplete>
+              </div>
+              @if (selectedBranchFilter(); as selectedBranch) {
+                <div class="selected-branch-badge">
+                  <i class="pi pi-check-circle"></i>
+                  <span>الفرع المحدد: <strong>{{ selectedBranch.branchName }}</strong></span>
+                  @if (selectedBranch.addressLine) {
+                    <span class="text-muted">({{ selectedBranch.addressLine }})</span>
+                  }
+                </div>
+              } @else {
+                <span class="field-hint">
+                  <i class="pi pi-info-circle"></i>
+                  اتركه فارغاً للبحث في بيانات السوق العامة لكل الفروع والمدن
+                </span>
+              }
             </div>
 
           </div>

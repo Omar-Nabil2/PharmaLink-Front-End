@@ -42,10 +42,3 @@
 .distance-badge {
   font-variant-numeric: tabular-nums;
 }
-
-.filters-bar {
-  position: sticky;
-  top: 0.5rem;
-  z-index: 20;
-  backdrop-filter: blur(8px);
-}

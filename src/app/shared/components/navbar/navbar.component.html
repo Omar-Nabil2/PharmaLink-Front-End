@@ -55,7 +55,7 @@
         </ng-container>
 
         <ng-container *ngIf="isLoggedIn">
-          <a routerLink="/profile" class="btn-subtle gap-2 !ps-1.5 !py-1">
+          <a [routerLink]="getProfileLink()" class="btn-subtle gap-2 !ps-1.5 !py-1">
             <div class="w-8 h-8 rounded-full overflow-hidden border border-surface-pressed shrink-0">
                <img *ngIf="profilePictureUrl" [src]="profilePictureUrl" alt="Profile" class="w-full h-full object-cover">
                <div *ngIf="!profilePictureUrl" class="w-full h-full flex items-center justify-center bg-teal-100 text-teal-700 font-bold">
@@ -92,7 +92,7 @@
           <a routerLink="/auth/register" (click)="menuOpen = false" class="btn-primary w-full">حساب جديد</a>
         </ng-container>
         <ng-container *ngIf="isLoggedIn">
-          <a routerLink="/profile" (click)="menuOpen = false" class="btn-subtle w-full justify-start gap-3">
+          <a [routerLink]="getProfileLink()" (click)="menuOpen = false" class="btn-subtle w-full justify-start gap-3">
             <div class="w-8 h-8 rounded-full overflow-hidden border border-surface-pressed shrink-0">
                <img *ngIf="profilePictureUrl" [src]="profilePictureUrl" alt="Profile" class="w-full h-full object-cover">
                <div *ngIf="!profilePictureUrl" class="w-full h-full flex items-center justify-center bg-teal-100 text-teal-700 font-bold">
@@ -101,7 +101,7 @@
             </div>
             <span>{{ fullName }}</span>
           </a>
-          <a routerLink="/change-password" (click)="menuOpen = false" class="btn-secondary w-full">تغيير كلمة المرور</a>
+          <a [routerLink]="getChangePasswordLink()" (click)="menuOpen = false" class="btn-secondary w-full">تغيير كلمة المرور</a>
           <button type="button" (click)="logout(); menuOpen = false" class="btn-primary w-full">تسجيل الخروج</button>
         </ng-container>
       </div>

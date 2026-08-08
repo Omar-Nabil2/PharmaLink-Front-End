@@ -60,6 +60,28 @@ export class NavbarComponent {
     return this.authService.getDashboardPath();
   }
 
+  getProfileLink(): string {
+    const roleStr = typeof window !== 'undefined' ? localStorage.getItem('roleName')?.toLowerCase() : '';
+    if (roleStr === 'patient') return '/patient/profile';
+    if (roleStr === 'pharmacist') return '/pharmacist/profile';
+    if (roleStr === 'admin' || roleStr === 'systemadmin') return '/admin/profile';
+    if (roleStr === 'pharmacyadmin') return '/owner/profile';
+    if (roleStr === 'prescriptionreviewteam') return '/review-team/profile';
+    if (roleStr === 'supplier') return '/supplier/profile';
+    return '/profile';
+  }
+
+  getChangePasswordLink(): string {
+    const roleStr = typeof window !== 'undefined' ? localStorage.getItem('roleName')?.toLowerCase() : '';
+    if (roleStr === 'patient') return '/patient/change-password';
+    if (roleStr === 'pharmacist') return '/pharmacist/change-password';
+    if (roleStr === 'admin' || roleStr === 'systemadmin') return '/admin/change-password';
+    if (roleStr === 'pharmacyadmin') return '/owner/change-password';
+    if (roleStr === 'prescriptionreviewteam') return '/review-team/change-password';
+    if (roleStr === 'supplier') return '/supplier/change-password';
+    return '/change-password';
+  }
+
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/auth/login']);

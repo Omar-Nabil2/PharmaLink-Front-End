@@ -665,6 +665,73 @@
   }
 }
 
+// ── Branch Autocomplete ───────────────────────────────────────────────────
+.branch-suggestion-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.35rem 0.5rem;
+
+  &__main {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--color-foreground);
+
+    i { color: var(--color-primary); font-size: 0.9rem; }
+  }
+
+  &__name { font-family: 'Tajawal', sans-serif; }
+
+  &__address {
+    font-size: 0.78rem;
+    color: var(--color-muted-foreground);
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding-right: 1.4rem;
+    i { font-size: 0.75rem; }
+  }
+}
+
+.selected-branch-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.9rem;
+  background: rgba(0, 118, 113, 0.08);
+  border: 1px solid rgba(0, 118, 113, 0.25);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  color: var(--color-primary);
+
+  i { font-size: 1rem; color: var(--color-primary); }
+
+  strong { color: var(--color-foreground); }
+}
+
+::ng-deep .rag-autocomplete {
+  width: 100%;
+
+  .p-autocomplete-input {
+    width: 100% !important;
+    border-radius: 8px !important;
+    padding: 0.6rem 0.9rem !important;
+    font-size: 0.9rem !important;
+    font-family: 'Tajawal', sans-serif !important;
+    border: 1px solid var(--color-border) !important;
+    background: var(--color-card) !important;
+    color: var(--color-foreground) !important;
+
+    &:focus {
+      border-color: var(--color-primary) !important;
+      box-shadow: 0 0 0 3px rgba(0, 118, 113, 0.15) !important;
+    }
+  }
+}
+
 // ── Responsive ─────────────────────────────────────────────────────────────
 @media (max-width: 640px) {
   .rag-page { padding: 1rem; }

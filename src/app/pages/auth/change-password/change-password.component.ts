@@ -134,7 +134,7 @@ export class ChangePasswordComponent implements OnInit {
           life: 4000,
         });
         this.changeForm.reset();
-        setTimeout(() => this.router.navigate(['/profile']), 1200);
+        setTimeout(() => this.router.navigate([this.getProfileLink()]), 1200);
       },
       error: (err: HttpErrorResponse) => {
         this.isLoading = false;
@@ -155,5 +155,16 @@ export class ChangePasswordComponent implements OnInit {
         this.errorHandler.handleError(err, 'فشل في تغيير كلمة المرور');
       },
     });
+  }
+
+  getProfileLink(): string {
+    const roleStr = typeof window !== 'undefined' ? localStorage.getItem('roleName')?.toLowerCase() : '';
+    if (roleStr === 'patient') return '/patient/profile';
+    if (roleStr === 'pharmacist') return '/pharmacist/profile';
+    if (roleStr === 'admin' || roleStr === 'systemadmin') return '/admin/profile';
+    if (roleStr === 'pharmacyadmin') return '/owner/profile';
+    if (roleStr === 'prescriptionreviewteam') return '/review-team/profile';
+    if (roleStr === 'supplier') return '/supplier/profile';
+    return '/profile';
   }
 }

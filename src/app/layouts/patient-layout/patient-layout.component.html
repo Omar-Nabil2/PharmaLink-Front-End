@@ -1,4 +1,4 @@
-<div class="h-screen overflow-y-auto bg-canvas-softer font-sans flex flex-col" dir="rtl">
+<div class="patient-theme min-h-screen bg-canvas-softer font-sans flex flex-col" dir="rtl">
   <header class="sticky top-0 z-50 bg-canvas/95 backdrop-blur border-b border-surface-pressed">
     <div class="w-full px-4 sm:px-6 lg:px-8">
       <div class="h-20 flex items-center justify-between gap-4">
@@ -10,7 +10,7 @@
           </div>
         </a>
 
-        <nav class="hidden lg:flex items-center gap-1">
+        <nav class="hidden xl:flex items-center gap-1">
           <a *ngFor="let item of patientNavItems"
              [routerLink]="item.routerLink"
              routerLinkActive="bg-primary/10 text-primary"
@@ -23,8 +23,11 @@
         <div class="flex items-center gap-2">
           
           <!-- Always Visible Cart -->
-          <a routerLink="/patient/cart" class="w-10 h-10 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center hover:bg-slate-200 transition" aria-label="السلة">
+          <a routerLink="/patient/cart" class="relative w-10 h-10 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center hover:bg-slate-200 transition" aria-label="السلة">
             <i class="pi pi-shopping-cart text-lg"></i>
+            <span *ngIf="(cartCount$ | async) as count" class="absolute -top-1 -right-1 flex items-center justify-center min-w-[20px] h-5 px-1 text-[10px] font-bold text-white bg-red-500 rounded-full border-2 border-white shadow-sm">
+              {{ count }}
+            </span>
           </a>
 
           <!-- Desktop Actions -->
@@ -35,7 +38,7 @@
             
             <a routerLink="/patient/prescriptions/upload" class="flex items-center gap-2 px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-full font-bold transition shadow-sm">
               <i class="pi pi-upload"></i>
-              <span class="hidden lg:inline text-sm">رفع روشتة</span>
+              <span class="hidden xl:inline text-sm">رفع روشتة</span>
             </a>
 
             <!-- Profile Dropdown -->
@@ -54,11 +57,8 @@
 
               <!-- Dropdown Menu -->
               <div *ngIf="profileMenuOpen" class="absolute left-0 top-full mt-2 w-48 bg-white border border-gray-100 rounded-xl shadow-xl py-2 z-50">
-                <div class="px-4 py-2 border-b border-gray-50 mb-1">
-                  <p class="text-xs text-gray-500 mb-0">تم تسجيل الدخول كـ</p>
-                  <p class="text-sm font-bold text-gray-800 truncate m-0">{{ fullName }}</p>
-                </div>
-                <a routerLink="/profile" class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition cursor-pointer" (click)="profileMenuOpen = false">
+
+                <a routerLink="/patient/profile" class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition cursor-pointer" (click)="profileMenuOpen = false">
                   <i class="pi pi-user text-slate-400"></i>
                   الملف الشخصي
                 </a>
@@ -73,7 +73,7 @@
 
           <!-- Mobile Menu Button -->
           <button type="button"
-                  class="md:hidden w-10 h-10 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center hover:bg-slate-200 transition"
+                  class="xl:hidden w-10 h-10 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center hover:bg-slate-200 transition"
                   (click)="menuOpen = !menuOpen"
                   [attr.aria-expanded]="menuOpen"
                   aria-label="فتح القائمة">
@@ -82,7 +82,7 @@
         </div>
       </div>
 
-      <div *ngIf="menuOpen" class="md:hidden border-t border-surface-pressed py-4 space-y-3">
+      <div *ngIf="menuOpen" class="xl:hidden border-t border-surface-pressed py-4 space-y-3">
         <nav class="grid grid-cols-2 gap-2">
           <a *ngFor="let item of patientNavItems"
              [routerLink]="item.routerLink"
@@ -92,19 +92,22 @@
           </a>
         </nav>
 
-        <div class="grid grid-cols-1 gap-2 pt-2">
+        <div class="grid grid-cols-1 gap-2 pt-2 md:hidden">
           <a routerLink="/patient/prescriptions/upload" (click)="menuOpen = false" class="btn-primary w-full justify-center">رفع روشتة</a>
 
           <a routerLink="/patient/image-search" (click)="menuOpen = false" class="btn-subtle w-full justify-center">فحص صورة دواء</a>
-          <a routerLink="/patient/cart" (click)="menuOpen = false" class="btn-subtle w-full justify-center">سلة المشتريات</a>
+          <a routerLink="/patient/cart" (click)="menuOpen = false" class="btn-subtle w-full justify-center relative">
+            سلة المشتريات
+            <span *ngIf="(cartCount$ | async) as count" class="absolute left-4 flex items-center justify-center min-w-[20px] h-5 px-1.5 text-[11px] font-bold text-white bg-red-500 rounded-full">
+              {{ count }}
+            </span>
+          </a>
           
           <div class="h-px bg-surface-pressed my-2 mx-1"></div>
           
-          <div class="px-2 pb-1">
-            <p class="text-xs text-gray-500 mb-1 px-2">الحساب الشخصي ({{ fullName }})</p>
-          </div>
+
           
-          <a routerLink="/profile" (click)="menuOpen = false" class="px-4 py-3 flex items-center gap-3 text-body hover:bg-canvas-soft border border-transparent rounded-xl transition cursor-pointer">
+          <a routerLink="/patient/profile" (click)="menuOpen = false" class="px-4 py-3 flex items-center gap-3 text-body hover:bg-canvas-soft border border-transparent rounded-xl transition cursor-pointer">
             <div class="w-6 h-6 rounded-full overflow-hidden bg-slate-100 flex items-center justify-center shrink-0 border border-slate-200">
                <img *ngIf="profilePictureUrl" [src]="profilePictureUrl" alt="Profile" class="w-full h-full object-cover">
                <span *ngIf="!profilePictureUrl" class="text-teal-700 font-bold text-xs">{{ fullName.charAt(0) }}</span>
@@ -120,14 +123,16 @@
     </div>
   </header>
 
-  <main class="flex-grow">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
-      <router-outlet></router-outlet>
+  <main class="flex-grow overflow-x-clip">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8 min-h-[calc(100vh-80px)]">
+      <div class="relative w-full" [@routeAnimations]="prepareRoute(outlet)">
+        <router-outlet #outlet="outlet"></router-outlet>
+      </div>
     </div>
   </main>
 
   <!-- Sticky AI Assistant Button -->
-  <a routerLink="/patient/ai-assistant" 
+  <a *ngIf="!isAiAssistantPage()" routerLink="/patient/ai-assistant" 
      class="fixed bottom-6 left-6 z-50 flex items-center justify-center w-14 h-14 bg-gradient-to-r from-teal-500 to-teal-700 text-white rounded-full shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
      title="المساعد الذكي">
     <svg class="w-7 h-7" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A2.5 2.5 0 0 0 5 15.5 2.5 2.5 0 0 0 7.5 18 2.5 2.5 0 0 0 10 15.5 2.5 2.5 0 0 0 7.5 13m9 0a2.5 2.5 0 0 0-2.5 2.5 2.5 2.5 0 0 0 2.5 2.5 2.5 2.5 0 0 0 2.5-2.5 2.5 2.5 0 0 0-2.5-2.5z"/></svg>
