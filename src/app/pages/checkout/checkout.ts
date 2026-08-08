@@ -2,6 +2,8 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { MessageService } from 'primeng/api';
+import { DialogModule } from 'primeng/dialog';
+import { ButtonModule } from 'primeng/button';
 import { forkJoin, of, catchError, map, switchMap, defaultIfEmpty, timeout } from 'rxjs';
 
 import { CartService } from '../../../app/core/services/cart.service';
@@ -12,7 +14,7 @@ import { ErrorHandlerService } from '../../../app/core/services/error-handler.se
 
 import { Cart, CartItem } from '../../../app/core/interfaces/cart.interface';
 import { AddressResponse } from '../../../app/core/interfaces/address.interface';
-import { FulfillmentMode, OrderCreatedResponse } from '../../../app/core/interfaces/order.interface';
+import { FulfillmentMode, OrderCreatedResponse, OrderRoutingPreviewRequest, OrderRoutingPlan } from '../../../app/core/interfaces/order.interface';
 
 import { PrescriptionUploaderComponent } from '../../../app/shared/components/prescription-uploader/prescription-uploader';
 
@@ -21,7 +23,7 @@ const DELIVERY_FEE = 15;
 @Component({
   selector: 'app-checkout',
   standalone: true,
-  imports: [CommonModule, RouterLink, PrescriptionUploaderComponent],
+  imports: [CommonModule, RouterLink, DialogModule, ButtonModule, PrescriptionUploaderComponent],
   templateUrl: './checkout.html',
   styleUrls: ['./checkout.scss'],
 })
@@ -39,6 +41,9 @@ export class CheckoutComponent implements OnInit {
 
   requiresPrescription = false;
   temporaryPrescriptionId: string | null = null;
+  showPreviewModal = false;
+  isPreviewing = false;
+  routingPlan: OrderRoutingPlan | null = null;
 
   constructor(
     private readonly cartService: CartService,
@@ -123,6 +128,10 @@ export class CheckoutComponent implements OnInit {
     this.selectedAddressId = addressId;
   }
 
+  setFulfillmentMode(mode: FulfillmentMode): void {
+    this.fulfillmentMode = mode;
+  }
+
   selectPaymentMethod(method: 'cod' | 'card'): void {
     if (method === 'card') {
       this.messageService.add({
@@ -167,6 +176,7 @@ export class CheckoutComponent implements OnInit {
   onPrescriptionUploaded(id: string): void {
     this.temporaryPrescriptionId = id || null;
   }
+  showSuccessModal = false;
 
   confirmOrder(): void {
     if (!this.selectedAddressId) {
@@ -182,22 +192,56 @@ export class CheckoutComponent implements OnInit {
       return;
     }
 
+    const selectedAddress = this.addresses.find(a => a.addressId === this.selectedAddressId);
+    if (!selectedAddress) return;
+
+    this.showPreviewModal = true;
+    this.isPreviewing = true;
+    this.routingPlan = null;
+
+    const request: OrderRoutingPreviewRequest = {
+      patientLocation: {
+        latitude: selectedAddress.latitude,
+        longitude: selectedAddress.longitude
+      },
+      cartItems: this.cart!.items.map(item => ({
+        drugId: item.drugId,
+        quantity: item.quantity,
+        drugName: item.drugBrandName,
+        drugNameAr: item.drugArabicName || item.drugBrandName
+      })),
+      fulfillmentMode: this.fulfillmentMode
+    };
+
+    this.orderService.previewRouting(request).subscribe({
+      next: (plan) => {
+        this.routingPlan = plan;
+        this.isPreviewing = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.showPreviewModal = false;
+        this.isPreviewing = false;
+        this.errorHandler.handleError(err, 'فشل إيجاد الفروع المناسبة');
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  submitOrder(): void {
     this.isSubmitting = true;
     this.orderService
       .createOrder({
-        deliveryAddressId: this.selectedAddressId,
+        deliveryAddressId: this.selectedAddressId!,
         fulfillmentMode: this.fulfillmentMode,
         temporaryPrescriptionId: this.temporaryPrescriptionId ?? undefined
       })
       .subscribe({
         next: (order: OrderCreatedResponse) => {
           this.isSubmitting = false;
+          this.showPreviewModal = false;
           this.createdOrder = order;
-          this.messageService.add({
-            severity: 'success',
-            summary: 'تم تأكيد الطلب',
-            detail: order.message || 'تم إنشاء طلبك بنجاح.',
-          });
+          this.showSuccessModal = true;
           this.cdr.detectChanges();
         },
         error: (err: any) => {
@@ -208,7 +252,19 @@ export class CheckoutComponent implements OnInit {
       });
   }
 
+  cancelOrder(): void {
+    this.showPreviewModal = false;
+    this.routingPlan = null;
+    this.isPreviewing = false;
+  }
+
+  goToOrders(): void {
+    this.showSuccessModal = false;
+    this.router.navigate(['/patient/orders']);
+  }
+
   goToDashboard(): void {
+    this.showSuccessModal = false;
     this.router.navigate(['/patient/dashboard']);
   }
 }
