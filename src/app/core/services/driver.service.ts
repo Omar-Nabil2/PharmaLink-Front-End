@@ -27,6 +27,34 @@ export class DriverService {
 
     constructor(private http: HttpClient) { }
 
+    // دالة بسيطة بفك تشفير الـ JWT وتطلع الـ userId
+    private getUserIdFromToken(): string | null {
+        const token = localStorage.getItem('accessToken') || localStorage.getItem('token');
+        if (!token) return null;
+
+        try {
+            const base64Url = token.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+
+            const payload = JSON.parse(jsonPayload);
+
+            // 👇 السر هنا: ضفنا UserID بنفس الحروف الكابيتال اللي طالعة عندك في الكونسول 👇
+            return payload.UserID ||
+                payload.userId ||
+                payload.sub ||
+                payload.nameid ||
+                payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'] ||
+                null;
+
+        } catch (e) {
+            console.error("خطأ في فك التوكن:", e);
+            return null;
+        }
+    }
+
     // 1. تأسيس اتصال SignalR
     public startConnection(token: string): void {
         const baseUrlWithoutApi = this.baseUrl.replace('/api/v1', '');
@@ -65,22 +93,26 @@ export class DriverService {
         });
     }
 
-    // 3. تتبع الموقع وإرساله عبر SignalR
-    private startLocationTracking(): void {
+    private startLocationTracking() {
         this.locationInterval = setInterval(() => {
-            if (navigator.geolocation) {
+            if (navigator.geolocation && this.hubConnection.state === signalR.HubConnectionState.Connected) {
                 navigator.geolocation.getCurrentPosition((position) => {
                     const lat = position.coords.latitude;
                     const lng = position.coords.longitude;
 
-                    if (this.hubConnection.state === signalR.HubConnectionState.Connected) {
-                        this.hubConnection.invoke('UpdateLocation', lng, lat)
-                            .catch(err => console.error(err));
+                    // هنا بننادي الدالة اللي بتطلع الـ ID من التوكن
+                    const userId = this.getUserIdFromToken();
+
+                    if (userId) {
+                        // بنبعت الـ userId اللي طلعناه من التوكن
+                        this.hubConnection.invoke('UpdateLocation', userId, lng, lat)
+                            .catch(err => console.error('Error sending location:', err));
+                    } else {
+                        console.warn("مش قادر أحدد الـ userId من التوكن!");
                     }
-                }, (error) => console.error('GPS Error:', error),
-                    { enableHighAccuracy: true });
+                });
             }
-        }, 5000); // كل 5 ثواني
+        }, 500000000000);
     }
 
     private stopLocationTracking(): void {
