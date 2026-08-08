@@ -11,6 +11,7 @@ import { AdminOrdersService } from '@core/services/admin-orders.service';
 import { AdminOrderDetailDTO } from '../admin-orders.model';
 
 import { FormsModule } from '@angular/forms';
+import { PrescriptionService } from '@core/services/prescription.service';
 
 @Component({
   selector: 'app-admin-order-detail',
@@ -34,6 +35,7 @@ export class AdminOrderDetailComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly adminOrdersService = inject(AdminOrdersService);
   private readonly messageService = inject(MessageService);
+  private readonly prescriptionService = inject(PrescriptionService);
 
   orderId = signal<string>('');
   order = signal<AdminOrderDetailDTO | null>(null);
@@ -72,7 +74,7 @@ export class AdminOrderDetailComponent implements OnInit {
         summary: 'خطأ',
         detail: 'رقم الطلب غير صحيح.',
       });
-      this.router.navigate(['/admin/orders']);
+      this.router.navigate(['../'], { relativeTo: this.route });
     }
   }
 
@@ -115,6 +117,23 @@ export class AdminOrderDetailComponent implements OnInit {
         });
         this.isSplitting.set(false);
       },
+    });
+  }
+
+  viewPrescription(id?: string): void {
+    if (!id) return;
+    this.prescriptionService.getPrescriptionFile(id).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        window.open(url, '_blank');
+      },
+      error: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'خطأ',
+          detail: 'فشل تحميل الروشتة.',
+        });
+      }
     });
   }
 
@@ -189,6 +208,70 @@ export class AdminOrderDetailComponent implements OnInit {
       });
   }
 
+  // ── Prescription Review ───────────────────────────────────────────────────
+  isReviewing = signal<boolean>(false);
+  showRejectModal = false;
+  rejectReason = '';
+
+  approvePrescription(): void {
+    this.isReviewing.set(true);
+    this.adminOrdersService.approvePrescription(this.orderId()).subscribe({
+      next: (res) => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'تم القبول',
+          detail: 'تم قبول الروشتة وإحالة الطلب بنجاح.',
+        });
+        this.isReviewing.set(false);
+        this.loadOrderDetails();
+      },
+      error: (err) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'خطأ',
+          detail: err.error?.detail || 'فشلت عملية قبول الروشتة.',
+        });
+        this.isReviewing.set(false);
+      }
+    });
+  }
+
+  openRejectModal(): void {
+    this.showRejectModal = true;
+    this.rejectReason = '';
+  }
+
+  closeRejectModal(): void {
+    this.showRejectModal = false;
+    this.rejectReason = '';
+  }
+
+  submitRejectPrescription(): void {
+    if (!this.rejectReason.trim()) return;
+    this.isReviewing.set(true);
+
+    this.adminOrdersService.rejectPrescription(this.orderId(), this.rejectReason).subscribe({
+      next: (res) => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'تم الرفض',
+          detail: 'تم رفض الروشتة بنجاح.',
+        });
+        this.isReviewing.set(false);
+        this.closeRejectModal();
+        this.loadOrderDetails();
+      },
+      error: (err) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'خطأ',
+          detail: err.error?.detail || 'فشلت عملية رفض الروشتة.',
+        });
+        this.isReviewing.set(false);
+      }
+    });
+  }
+
   // ── Helper status mappings ────────────────────────────────────────────────
   getOrderStatusLabel(s: any): string {
     if (s === null || s === undefined) return '—';
@@ -199,6 +282,8 @@ export class AdminOrderDetailComponent implements OnInit {
       '3': 'تم الشحن', Shipped: 'تم الشحن',
       '4': 'مكتمل', Completed: 'مكتمل',
       '5': 'ملغي', Cancelled: 'ملغي',
+      '6': 'مراجعة الروشتة', PendingPrescriptionReview: 'مراجعة الروشتة',
+      '7': 'روشتة مرفوضة', PrescriptionRejected: 'روشتة مرفوضة',
     };
     return map[str] ?? str;
   }
@@ -212,6 +297,8 @@ export class AdminOrderDetailComponent implements OnInit {
       '3': 'badge-shipped', Shipped: 'badge-shipped',
       '4': 'badge-completed', Completed: 'badge-completed',
       '5': 'badge-cancelled', Cancelled: 'badge-cancelled',
+      '6': 'badge-pending', PendingPrescriptionReview: 'badge-pending',
+      '7': 'badge-cancelled', PrescriptionRejected: 'badge-cancelled',
     };
     return `status-badge ${map[str] ?? 'badge-default'}`;
   }

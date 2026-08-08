@@ -14,6 +14,8 @@ export enum OrderStatus {
   Shipped = 3,
   Completed = 4,
   Cancelled = 5,
+  PendingPrescriptionReview = 6,
+  PrescriptionRejected = 7,
 }
 
 /**
@@ -188,6 +190,8 @@ export const ORDER_STATUS_PRESENTATION: Record<number, StatusPresentation> = {
   [OrderStatus.Shipped]: { label: 'جاري التوصيل', badgeClasses: 'bg-info/15 text-info' },
   [OrderStatus.Completed]: { label: 'مكتمل', badgeClasses: 'bg-accent/15 text-accent' },
   [OrderStatus.Cancelled]: { label: 'ملغى', badgeClasses: 'bg-destructive/15 text-destructive' },
+  [OrderStatus.PendingPrescriptionReview]: { label: 'مراجعة الروشتة', badgeClasses: 'bg-warning/20 text-warning-foreground' },
+  [OrderStatus.PrescriptionRejected]: { label: 'روشتة مرفوضة', badgeClasses: 'bg-destructive/15 text-destructive' },
 };
 
 const FALLBACK_STATUS: StatusPresentation = { label: '—', badgeClasses: 'bg-muted text-muted-foreground' };
@@ -198,6 +202,8 @@ const STRING_TO_ORDER_STATUS: Record<string, number> = {
   shipped: OrderStatus.Shipped,
   completed: OrderStatus.Completed,
   cancelled: OrderStatus.Cancelled,
+  pendingprescriptionreview: OrderStatus.PendingPrescriptionReview,
+  prescriptionrejected: OrderStatus.PrescriptionRejected,
 };
 
 export function getOrderStatusPresentation(status: OrderStatus | string | number): StatusPresentation {

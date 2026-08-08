@@ -6,6 +6,7 @@ export type OrderStatus = 'Pending' | 'Processing' | 'Shipped' | 'Completed' | '
 export interface CreateOrderRequest {
     deliveryAddressId: string;
     fulfillmentMode: FulfillmentMode;
+    temporaryPrescriptionId?: string;
 }
 
 export interface OrderItemLine {

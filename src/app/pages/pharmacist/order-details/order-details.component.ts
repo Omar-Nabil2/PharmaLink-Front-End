@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PrescriptionReviewService } from '../../../core/services/prescription-review.service';
 import { PharmacistOrderDetailsDto } from '../../../core/interfaces/prescription-review.interface';
+import { PrescriptionService } from '../../../core/services/prescription.service';
 
 // PrimeNG
 import { CardModule } from 'primeng/card';
@@ -18,7 +19,8 @@ import { TableModule } from 'primeng/table';
 export class OrderDetailsComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-  private prescriptionService = inject(PrescriptionReviewService);
+  private prescriptionReviewService = inject(PrescriptionReviewService);
+  private prescriptionService = inject(PrescriptionService);
 
   order = signal<PharmacistOrderDetailsDto | null>(null);
   loading = signal<boolean>(false);
@@ -35,7 +37,7 @@ export class OrderDetailsComponent implements OnInit {
 
   loadOrderDetails(id: string) {
     this.loading.set(true);
-    this.prescriptionService.getPharmacistOrderDetails(id).subscribe({
+    this.prescriptionReviewService.getPharmacistOrderDetails(id).subscribe({
       next: (res) => {
         this.order.set(res);
         this.loading.set(false);
@@ -44,6 +46,21 @@ export class OrderDetailsComponent implements OnInit {
         console.error('Error loading order details', err);
         this.error.set('حدث خطأ أثناء جلب تفاصيل الطلب.');
         this.loading.set(false);
+      }
+    });
+  }
+
+  viewPrescription(id: string) {
+    if (!id) return;
+    this.prescriptionService.getPrescriptionFile(id).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        window.open(url, '_blank');
+      },
+      error: () => {
+        console.error('Error downloading prescription');
+        // add toast if available, or simple alert
+        alert('فشل تحميل الروشتة.');
       }
     });
   }

@@ -7,9 +7,8 @@
   >
     <div>
       <div class="flex items-center gap-2 text-mute text-xs mb-1">
-        <a routerLink="/admin/orders" class="hover:underline text-[#0f9d76] font-semibold"
-          >جميع الطلبات</a
-        >
+        <a routerLink="../" class="hover:underline text-[#0f9d76] font-semibold"
+          >جميع الطلبات</a>
         <i class="pi pi-chevron-left text-xs"></i>
         <span>تفاصيل الطلب {{ ord.orderNumber }}</span>
       </div>
@@ -24,13 +23,35 @@
 
     <!-- Re-split & Back action buttons -->
     <div class="flex items-center gap-2">
-      <button class="btn-ghost" routerLink="/admin/orders">
+      <button class="btn-ghost" routerLink="../">
         <i class="pi pi-arrow-right"></i>
         <span>العودة للقائمة</span>
       </button>
+
+      <!-- Prescription Review Buttons (Visible only if status is 6) -->
+      <ng-container *ngIf="ord.orderStatus === 6">
+        <button
+          class="btn-primary bg-teal-600 hover:bg-teal-700"
+          [disabled]="isReviewing()"
+          (click)="approvePrescription()"
+        >
+          <i class="pi pi-check" [class.pi-spin]="isReviewing()"></i>
+          <span>قبول الروشتة</span>
+        </button>
+        <button
+          class="btn-primary bg-red-600 hover:bg-red-700"
+          [disabled]="isReviewing()"
+          (click)="openRejectModal()"
+        >
+          <i class="pi pi-times"></i>
+          <span>رفض الروشتة</span>
+        </button>
+      </ng-container>
+
       <button
+        *ngIf="ord.orderStatus !== 6"
         class="btn-primary"
-        [disabled]="isSplitting() || ord.orderStatus === 4 || ord.orderStatus === 5"
+        [disabled]="isSplitting() || ord.orderStatus === 4 || ord.orderStatus === 5 || ord.orderStatus === 7"
         (click)="onResplit()"
       >
         <i class="pi pi-refresh" [class.pi-spin]="isSplitting()"></i>
@@ -208,6 +229,12 @@
             <span class="text-mute">عنوان التوصيل</span>
             <span class="text-ink font-semibold leading-relaxed">{{ ord.deliveryAddress }}</span>
           </div>
+          <div class="flex justify-between py-2 border-b border-border text-sm" *ngIf="ord.hasPrescription">
+            <span class="text-mute">الروشتة الطبية</span>
+            <button (click)="viewPrescription(ord.prescriptionId)" class="text-teal-600 hover:text-teal-700 font-bold flex items-center gap-1">
+              <i class="pi pi-file-pdf"></i> عرض الروشتة
+            </button>
+          </div>
           <div class="flex justify-between pt-4 text-base font-bold">
             <span class="text-ink">المبلغ الإجمالي</span>
             <span class="text-[#0f9d76]">ج {{ ord.totalAmount | number: '1.2-2' }}</span>
@@ -280,6 +307,56 @@
         <span class="spinner" *ngIf="updatingLeg"></span>
         <i class="pi pi-check" *ngIf="!updatingLeg"></i>
         تأكيد التحديث
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Reject Prescription Modal -->
+<div class="modal-overlay" *ngIf="showRejectModal" (click)="closeRejectModal()">
+  <div class="modal-card modal-card-sm" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2 class="modal-title text-destructive">
+        <i class="pi pi-times-circle"></i>
+        رفض الروشتة الطبية
+      </h2>
+      <button class="modal-close" (click)="closeRejectModal()" [disabled]="isReviewing()">
+        <i class="pi pi-times"></i>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div class="field">
+        <label class="field-label" for="reject-reason">
+          سبب الرفض <span class="required-star">*</span>
+        </label>
+        <textarea
+          id="reject-reason"
+          class="field-textarea"
+          rows="3"
+          placeholder="أدخل سبب الرفض (مثال: روشتة غير واضحة، تاريخ منتهي، الخ)..."
+          [(ngModel)]="rejectReason"
+        >
+        </textarea>
+        <span class="field-error" *ngIf="!rejectReason.trim()">
+          <i class="pi pi-exclamation-circle"></i>
+          سبب الرفض مطلوب
+        </span>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-ghost" (click)="closeRejectModal()" [disabled]="isReviewing()">
+        إلغاء
+      </button>
+      <button
+        class="btn-primary bg-red-600 hover:bg-red-700"
+        (click)="submitRejectPrescription()"
+        [disabled]="isReviewing() || !rejectReason.trim()"
+      >
+        <span class="spinner" *ngIf="isReviewing()"></span>
+        <i class="pi pi-check" *ngIf="!isReviewing()"></i>
+        تأكيد الرفض
       </button>
     </div>
   </div>
