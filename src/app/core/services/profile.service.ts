@@ -14,6 +14,7 @@ import {
   SystemAdminProfile,
   UpdateSystemAdminProfileRequest
 } from '../interfaces/profile.interface';
+import { DriverProfile, UpdateDriverProfileRequest } from './driver-profile.service';
 
 @Injectable({
   providedIn: 'root',
@@ -42,8 +43,8 @@ export class ProfileService {
     return this.http.put<void>(`${this.localUrl}/patients/profile/picture`, formData);
   }
 
-  getPatientProfilePictureUrl(): Observable<{url: string}> {
-    return this.http.get<{url: string}>(`${this.localUrl}/patients/profile/picture`);
+  getPatientProfilePictureUrl(): Observable<{ url: string }> {
+    return this.http.get<{ url: string }>(`${this.localUrl}/patients/profile/picture`);
   }
 
   updateProfile(data: UpdatePharmacyProfileRequest): Observable<UpdatePharmacyProfileResponse> {
@@ -56,6 +57,14 @@ export class ProfileService {
 
   updatePharmacyAdminProfile(data: UpdatePharmacyAdminProfileDTO) {
     return this.http.put<any>(`${this.localUrl}/PharmacyAdminProfile`, data, { responseType: 'text' });
+  }
+
+  getDriverProfile(): Observable<DriverProfile> {
+    return this.http.get<DriverProfile>(this.localUrl + '/DriverProfile');
+  }
+
+  updateDriverProfile(data: UpdateDriverProfileRequest): Observable<any> {
+    return this.http.put<any>(this.localUrl + '/DriverProfile', data);
   }
 
   getSystemAdminProfile() {

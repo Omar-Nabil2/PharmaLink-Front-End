@@ -7,44 +7,28 @@
       </a>
 
       <div class="hidden lg:flex items-center gap-2">
-        <a
-          routerLink="/"
-          routerLinkActive="bg-primary/10 text-primary font-bold shadow-sm"
-          [routerLinkActiveOptions]="{ exact: true }"
-          aria-current="page"
-          class="inline-block type-body-md-strong text-body hover:text-ink hover:bg-surface-soft px-4 py-2 rounded-full transition-all duration-200"
-        >
+        <a routerLink="/" routerLinkActive="bg-primary/10 text-primary font-bold shadow-sm"
+          [routerLinkActiveOptions]="{ exact: true }" aria-current="page"
+          class="inline-block type-body-md-strong text-body hover:text-ink hover:bg-surface-soft px-4 py-2 rounded-full transition-all duration-200">
           الرئيسية
         </a>
-        <a
-          routerLink="/drugs"
-          routerLinkActive="bg-primary/10 text-primary font-bold shadow-sm"
-          class="inline-block type-body-md-strong text-body hover:text-ink hover:bg-surface-soft px-4 py-2 rounded-full transition-all duration-200"
-        >
+        <a routerLink="/drugs" routerLinkActive="bg-primary/10 text-primary font-bold shadow-sm"
+          class="inline-block type-body-md-strong text-body hover:text-ink hover:bg-surface-soft px-4 py-2 rounded-full transition-all duration-200">
           المنتجات
         </a>
-        <a
-          routerLink="/services"
-          routerLinkActive="bg-primary/10 text-primary font-bold shadow-sm"
-          class="inline-block type-body-md-strong text-body hover:text-ink hover:bg-surface-soft px-4 py-2 rounded-full transition-all duration-200"
-        >
+        <a routerLink="/services" routerLinkActive="bg-primary/10 text-primary font-bold shadow-sm"
+          class="inline-block type-body-md-strong text-body hover:text-ink hover:bg-surface-soft px-4 py-2 rounded-full transition-all duration-200">
           الخدمات
         </a>
-        <a
-          routerLink="/contact"
-          routerLinkActive="bg-primary/10 text-primary font-bold shadow-sm"
-          class="inline-block type-body-md-strong text-body hover:text-ink hover:bg-surface-soft px-4 py-2 rounded-full transition-all duration-200"
-        >
+        <a routerLink="/contact" routerLinkActive="bg-primary/10 text-primary font-bold shadow-sm"
+          class="inline-block type-body-md-strong text-body hover:text-ink hover:bg-surface-soft px-4 py-2 rounded-full transition-all duration-200">
           اتصل بنا
         </a>
         @if (isLoggedIn) {
-          <a
-            [routerLink]="dashboardPath"
-            routerLinkActive="bg-primary/10 text-primary font-bold shadow-sm"
-            class="inline-block type-body-md-strong text-body hover:text-ink hover:bg-surface-soft px-4 py-2 rounded-full transition-all duration-200"
-          >
-            لوحة التحكم
-          </a>
+        <a [routerLink]="dashboardPath" routerLinkActive="bg-primary/10 text-primary font-bold shadow-sm"
+          class="inline-block type-body-md-strong text-body hover:text-ink hover:bg-surface-soft px-4 py-2 rounded-full transition-all duration-200">
+          لوحة التحكم
+        </a>
         }
       </div>
 
@@ -55,12 +39,15 @@
         </ng-container>
 
         <ng-container *ngIf="isLoggedIn">
+          <!-- 👇 تم تعديل الرابط هنا للديسكتوب 👇 -->
+          <a [routerLink]="profilePath" class="btn-subtle gap-2 !ps-1.5 !py-1">
           <a [routerLink]="getProfileLink()" class="btn-subtle gap-2 !ps-1.5 !py-1">
             <div class="w-8 h-8 rounded-full overflow-hidden border border-surface-pressed shrink-0">
-               <img *ngIf="profilePictureUrl" [src]="profilePictureUrl" alt="Profile" class="w-full h-full object-cover">
-               <div *ngIf="!profilePictureUrl" class="w-full h-full flex items-center justify-center bg-teal-100 text-teal-700 font-bold">
-                 <span>{{ fullName.charAt(0) }}</span>
-               </div>
+              <img *ngIf="profilePictureUrl" [src]="profilePictureUrl" alt="Profile" class="w-full h-full object-cover">
+              <div *ngIf="!profilePictureUrl"
+                class="w-full h-full flex items-center justify-center bg-teal-100 text-teal-700 font-bold">
+                <span>{{ fullName.charAt(0) }}</span>
+              </div>
             </div>
             <span class="pe-1">{{ fullName }}</span>
           </a>
@@ -69,13 +56,9 @@
         </ng-container>
       </div>
 
-      <button
-        type="button"
+      <button type="button"
         class="md:hidden flex items-center justify-center w-10 h-10 rounded-full bg-canvas-soft text-ink"
-        (click)="menuOpen = !menuOpen"
-        [attr.aria-expanded]="menuOpen"
-        aria-label="Toggle menu"
-      >
+        (click)="menuOpen = !menuOpen" [attr.aria-expanded]="menuOpen" aria-label="Toggle menu">
         <i class="pi text-xl" [ngClass]="menuOpen ? 'pi-times' : 'pi-bars'"></i>
       </button>
     </div>
@@ -92,12 +75,15 @@
           <a routerLink="/auth/register" (click)="menuOpen = false" class="btn-primary w-full">حساب جديد</a>
         </ng-container>
         <ng-container *ngIf="isLoggedIn">
+          <!-- 👇 تم تعديل الرابط هنا للموبايل 👇 -->
+          <a [routerLink]="profilePath" (click)="menuOpen = false" class="btn-subtle w-full justify-start gap-3">
           <a [routerLink]="getProfileLink()" (click)="menuOpen = false" class="btn-subtle w-full justify-start gap-3">
             <div class="w-8 h-8 rounded-full overflow-hidden border border-surface-pressed shrink-0">
-               <img *ngIf="profilePictureUrl" [src]="profilePictureUrl" alt="Profile" class="w-full h-full object-cover">
-               <div *ngIf="!profilePictureUrl" class="w-full h-full flex items-center justify-center bg-teal-100 text-teal-700 font-bold">
-                 <span>{{ fullName.charAt(0) }}</span>
-               </div>
+              <img *ngIf="profilePictureUrl" [src]="profilePictureUrl" alt="Profile" class="w-full h-full object-cover">
+              <div *ngIf="!profilePictureUrl"
+                class="w-full h-full flex items-center justify-center bg-teal-100 text-teal-700 font-bold">
+                <span>{{ fullName.charAt(0) }}</span>
+              </div>
             </div>
             <span>{{ fullName }}</span>
           </a>

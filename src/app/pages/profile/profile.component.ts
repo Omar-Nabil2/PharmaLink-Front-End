@@ -1,12 +1,11 @@
-
-
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ProfileService } from '../../core/services/profile.service';
 import { environment } from '../../../environments/environment';
 import { ErrorHandlerService } from '../../core/services/error-handler.service';
-import { GetPharmacyProfileResponse, PatientProfile, SystemAdminProfile, GetPharmacyAdminProfile } from '../../core/interfaces/profile.interface';
+// افترض إني ضفت DriverProfile ضمن الـ Interfaces بتاعتك
+import { GetPharmacyProfileResponse, PatientProfile, SystemAdminProfile, GetPharmacyAdminProfile, DriverProfile } from '../../core/interfaces/profile.interface';
 
 @Component({
   selector: 'app-profile',
@@ -22,6 +21,8 @@ export class ProfileComponent implements OnInit {
   pharmacyData: GetPharmacyProfileResponse | null = null;
   adminData: SystemAdminProfile | null = null;
   pharmacyAdminData: GetPharmacyAdminProfile | null = null;
+  // 1. إضافة متغير يشيل بيانات الطيار
+  driverData: DriverProfile | null = null;
   isPharmacyAdmin = false;
 
   isLoading = true;
@@ -41,7 +42,6 @@ export class ProfileComponent implements OnInit {
     this.fetchProfile();
   }
 
-  // 🟢 فحص مرن للأدمن (يتجاهل المسافات وحالة الحروف)
   get isAdminRole(): boolean {
     if (!this.userRole) return false;
     const normalized = this.userRole.toLowerCase().replace(/\s+/g, '');
@@ -51,6 +51,12 @@ export class ProfileComponent implements OnInit {
   get isPatientRole(): boolean {
     if (!this.userRole) return false;
     return this.userRole.toLowerCase() === 'patient';
+  }
+
+  // 2. إضافة Getter لفحص إذا كان اليوزر طيار
+  get isDriverRole(): boolean {
+    if (!this.userRole) return false;
+    return this.userRole.toLowerCase() === 'deliverydriver';
   }
 
   get isPatient(): boolean {
@@ -69,8 +75,8 @@ export class ProfileComponent implements OnInit {
         next: (res) => {
           this.patientData = res;
           if (this.patientData?.profilePictureUrl) {
-             const fullUrl = this.serverUrl + this.patientData.profilePictureUrl;
-             localStorage.setItem('profilePictureUrl', fullUrl);
+            const fullUrl = this.serverUrl + this.patientData.profilePictureUrl;
+            localStorage.setItem('profilePictureUrl', fullUrl);
           }
           this.isLoading = false;
           this.cdr.detectChanges();
@@ -83,7 +89,6 @@ export class ProfileComponent implements OnInit {
           const rawData = res.value || res;
           const nameParts = (rawData.fullName || '').trim().split(' ');
 
-          // ضبط حقول الاسم
           this.adminData = {
             ...rawData,
             firstName: rawData.firstName || nameParts[0] || '',
@@ -111,7 +116,19 @@ export class ProfileComponent implements OnInit {
         },
       });
     }
+    // 3. إضافة شرط الطيار هنا
+    else if (this.isDriverRole) {
+      this.profileService.getDriverProfile().subscribe({
+        next: (data) => {
+          this.driverData = data;
+          this.isLoading = false;
+          this.cdr.detectChanges();
+        },
+        error: (err) => this.handleErr(err, 'فشل تحميل الملف الشخصي للطيار')
+      });
+    }
     else {
+      // الـ Default للصيدلي
       this.profileService.getProfile().subscribe({
         next: (data) => {
           this.pharmacyData = data;
@@ -162,6 +179,7 @@ export class ProfileComponent implements OnInit {
     const firstDefaultIndex = this.patientData.addresses.findIndex(a => a.isDefault);
     return index === firstDefaultIndex;
   }
+}
 
   getEditProfileLink(): string {
     const roleStr = typeof window !== 'undefined' ? localStorage.getItem('roleName')?.toLowerCase() : '';

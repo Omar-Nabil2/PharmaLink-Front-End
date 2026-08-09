@@ -19,9 +19,10 @@ export class UpdateProfileComponent implements OnInit {
     isFetching = true;
     isPatient = false;
     isPharmacyAdmin = false;
+    isDriver = false; // 👈 متغير جديد للطيار
 
-    // ضفنا المتغير ده عشان نحفظ فيه البيانات الأصلية
-    originalData: { fullName: string; phoneNumber: string } = { fullName: '', phoneNumber: '' };
+    // 👈 ضفنا vehicleInfo هنا
+    originalData: { fullName: string; phoneNumber: string; vehicleInfo?: string } = { fullName: '', phoneNumber: '' };
 
     constructor(
         private readonly fb: FormBuilder,
@@ -35,38 +36,49 @@ export class UpdateProfileComponent implements OnInit {
             fullName: ['', [Validators.required, Validators.minLength(3)]],
             phoneNumber: ['', [Validators.required, Validators.pattern(/^(?:\+20|0020|0)?1[0125][0-9]{8}$/)]],
             email: [{ value: '', disabled: true }],
-            legalName: [{ value: '', disabled: true }]
+            legalName: [{ value: '', disabled: true }],
+            vehicleInfo: [''] // 👈 حقل اختياري في البداية، هنخليه مطلوب لو هو طيار
         });
     }
 
     ngOnInit(): void {
         const role = typeof window !== 'undefined' ? localStorage.getItem('roleName') : null;
         this.isPharmacyAdmin = role === 'PharmacyAdmin';
+        this.isDriver = role === 'DeliveryDriver'; // 👈 تحديد إذا كان اليوزر طيار
+
+        // لو اليوزر طيار، نفعّل حقل الـ vehicleInfo ونخليه مطلوب
+        if (this.isDriver) {
+            this.updateForm.get('vehicleInfo')?.setValidators([Validators.required]);
+            this.updateForm.get('vehicleInfo')?.updateValueAndValidity();
+        }
 
         let request$: Observable<any>;
 
+        // 👈 تحديد مصدر الداتا بناءً على الـ Role
         if (role === 'Patient') {
             request$ = this.profileService.getPatientProfile();
         } else if (role === 'PharmacyAdmin') {
             request$ = this.profileService.getPharmacyAdminProfile();
+        } else if (role === 'DeliveryDriver') {
+            request$ = this.profileService.getDriverProfile(); // 👈 لازم تكون ضايف الدالة دي في ProfileService
         } else if (role === 'Admin' || role === 'SystemAdmin') {
             request$ = this.profileService.getSystemAdminProfile();
         } else if (role === 'Pharmacist') {
             request$ = this.profileService.getProfile();
         } else {
-            request$ = this.profileService.getProfile();
+            request$ = this.profileService.getProfile(); // للصيدلي والـ Admin
         }
 
         request$.subscribe({
             next: (data: any) => {
-                // ✅ إضافة ? بعد data لحماية الكود من الانهيار إذا كانت النتيجة null
                 const fetchedFullName = data?.fullName ?? data?.value?.fullName ?? '';
                 const fetchedPhoneNumber = data?.phoneNumber ?? data?.value?.phoneNumber ?? '';
+                const fetchedVehicleInfo = data?.vehicleInfo ?? data?.value?.vehicleInfo ?? ''; // 👈 جلب بيانات المركبة
 
-                // 1. حفظ البيانات الأصلية أول ما تيجي
                 this.originalData = {
                     fullName: fetchedFullName,
-                    phoneNumber: fetchedPhoneNumber
+                    phoneNumber: fetchedPhoneNumber,
+                    vehicleInfo: fetchedVehicleInfo
                 };
 
                 this.updateForm.patchValue({
@@ -74,6 +86,7 @@ export class UpdateProfileComponent implements OnInit {
                     phoneNumber: fetchedPhoneNumber,
                     email: data?.email ?? data?.value?.email,
                     legalName: data?.legalName ?? data?.value?.legalName,
+                    vehicleInfo: fetchedVehicleInfo // 👈 تعبئة الفورم
                 });
 
                 this.isFetching = false;
@@ -95,17 +108,21 @@ export class UpdateProfileComponent implements OnInit {
 
         const currentFullName = this.updateForm.get('fullName')?.value;
         const currentPhoneNumber = this.updateForm.get('phoneNumber')?.value;
+        const currentVehicleInfo = this.updateForm.get('vehicleInfo')?.value;
 
-        // 3. التحقق إذا كانت البيانات لم تتغير (المقارنة)
-        if (currentFullName === this.originalData.fullName && currentPhoneNumber === this.originalData.phoneNumber) {
-            // إظهار رسالة للمستخدم إنه معملش تعديلات
+        // 👈 مقارنة شاملة للبيانات
+        if (currentFullName === this.originalData.fullName &&
+            currentPhoneNumber === this.originalData.phoneNumber &&
+            (this.isDriver ? currentVehicleInfo === this.originalData.vehicleInfo : true)) {
+
             this.messageService.add({
-                severity: 'info', // لون أزرق أو تنبيه خفيف بدل الأخضر بتاع النجاح
+                severity: 'info',
                 summary: 'لا توجد تعديلات',
                 detail: 'لم تقم بإجراء أي تعديلات جديدة للحفظ.',
                 life: 3000
             });
 
+            this.router.navigate(['/profile']);
             // توجيهه لصفحة البروفايل من غير ما نكلم الباك إند
             this.router.navigate([this.getProfileLink()]);
             return;
@@ -113,16 +130,24 @@ export class UpdateProfileComponent implements OnInit {
 
         this.isLoading = true;
         const role = typeof window !== 'undefined' ? localStorage.getItem('roleName') : null;
+
+        // جلب البيانات من الفورم
         const payload = this.updateForm.getRawValue();
 
         let request$: Observable<any>;
 
+        // 👈 توجيه التحديث بناءً على الـ Role
         if (role === 'Patient') {
             request$ = this.profileService.updatePatientProfile(payload);
-        } else if (role === 'Pharmacist') {
-            request$ = this.profileService.updateProfile(payload);
         } else if (role === 'PharmacyAdmin') {
             request$ = this.profileService.updatePharmacyAdminProfile(payload);
+        } else if (role === 'DeliveryDriver') {
+            // نبعت الـ payload اللي بيحتوي على vehicleInfo
+            request$ = this.profileService.updateDriverProfile({
+                fullName: payload.fullName,
+                phoneNumber: payload.phoneNumber,
+                vehicleInfo: payload.vehicleInfo
+            });
         } else if (role === 'Admin' || role === 'SystemAdmin') {
             request$ = this.profileService.updateSystemAdminProfile(payload);
         } else {
@@ -130,7 +155,7 @@ export class UpdateProfileComponent implements OnInit {
         }
 
         request$.subscribe({
-            next: () => {
+            next: (res: any) => {
                 this.isLoading = false;
                 this.messageService.add({
                     severity: 'success',
@@ -139,6 +164,18 @@ export class UpdateProfileComponent implements OnInit {
                     life: 3000
                 });
 
+                // تحديث الاسم في الهيدر لو اتغير
+                const updatedName = res?.fullName || payload.fullName;
+                if (updatedName) {
+                    localStorage.setItem('fullName', updatedName);
+                }
+
+                // 👈 لو طيار يرجع للداشبورد بتاعته، غير كده يرجع للبروفايل العادي
+                if (this.isDriver) {
+                    this.router.navigate(['/driver/dashboard']);
+                } else {
+                    this.router.navigate(['/profile']);
+                }
                 this.router.navigate([this.getProfileLink()]);
             },
             error: (err: unknown) => {
@@ -148,6 +185,7 @@ export class UpdateProfileComponent implements OnInit {
             }
         });
     }
+}
 
     getProfileLink(): string {
         const roleStr = typeof window !== 'undefined' ? localStorage.getItem('roleName')?.toLowerCase() : '';

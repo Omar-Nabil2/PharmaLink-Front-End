@@ -5,6 +5,7 @@ export const AppRoles = {
   PrescriptionReviewTeam: 'PrescriptionReviewTeam',
   Admin: 'Admin',
   PharmacyAdmin: 'PharmacyAdmin',
+  DeliveryDriver: 'DeliveryDriver',
 } as const;
 
 export type AppRole = (typeof AppRoles)[keyof typeof AppRoles];

@@ -103,3 +103,13 @@ export interface UpdatePharmacyAdminProfileDTO {
     fullName: string;
     phoneNumber: string;
 }
+
+export interface DriverProfile {
+    driverId: string;
+    email: string;
+    fullName: string;
+    phoneNumber: string;
+    vehicleInfo: string;
+    status: number;
+    totalCompletedJobs: number;
+}

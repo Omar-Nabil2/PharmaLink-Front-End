@@ -1,0 +1,120 @@
+<!-- Toast Notifications -->
+<p-toast position="top-center"></p-toast>
+
+<div class="p-6 bg-slate-50 min-h-screen" dir="rtl">
+
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-8">
+        <div>
+            <h1 class="text-2xl font-bold text-[#00796b]">لوحة تحكم الطيار 🛵</h1>
+            <p class="text-slate-500">
+                @if (activeJob()) {
+                لديك طلب قيد التوصيل، قم بتسليمه في أسرع وقت.
+                } @else {
+                أنت متصل بالإنترنت ومستعد لتلقي الطلبات الجديدة.
+                }
+            </p>
+        </div>
+        <div>
+            <p-tag [severity]="activeJob() ? 'warn' : 'success'" [value]="activeJob() ? 'مشغول' : 'متاح'"
+                [rounded]="true" styleClass="text-sm px-4 py-1">
+            </p-tag>
+        </div>
+    </div>
+
+    <!-- 1. حالة الطيار مشغول (معه أوردر حالي) -->
+    <!-- 1. حالة الطيار مشغول (معه أوردر حالي) -->
+    @if (activeJob(); as job) {
+    <p-card styleClass="shadow-md border border-teal-500 rounded-xl overflow-hidden max-w-3xl mx-auto">
+        <ng-template pTemplate="header">
+            <div class="bg-teal-50 p-4 border-b border-teal-100 flex items-center gap-2">
+                <i class="pi pi-map-marker text-teal-600 text-xl"></i>
+                <h2 class="text-lg font-bold text-teal-800 m-0">بيانات التوصيل الحالية</h2>
+            </div>
+        </ng-template>
+
+        <div class="flex flex-col gap-6 p-2">
+            <div class="flex justify-between items-start">
+                <div class="text-slate-500 text-sm font-medium">استلام من الصيدلية</div>
+                <div class="font-bold text-slate-800 text-left text-lg">{{ job.pharmacyName }}</div>
+            </div>
+
+            <div class="flex justify-between items-start">
+                <div class="text-slate-500 text-sm font-medium">توصيل إلى العميل</div>
+                <div class="font-bold text-slate-800 w-2/3 text-left text-lg">{{ job.fullAddress }}</div>
+            </div>
+
+            <hr class="border-slate-100 my-2">
+
+            <div class="flex justify-between items-center bg-slate-50 p-4 rounded-lg">
+                <span class="text-slate-600 font-semibold text-lg">رسوم التوصيل المستحقة:</span>
+                <span class="text-2xl font-black text-[#00796b]">{{ job.deliveryFee }} ج.م</span>
+            </div>
+        </div>
+
+        <ng-template pTemplate="footer">
+            <div class="flex flex-col gap-3">
+                <!-- زرار خرائط جوجل الجديد -->
+                <p-button label="فتح موقع العميل في خرائط جوجل" icon="pi pi-map"
+                    styleClass="p-button-outlined p-button-info w-full" (onClick)="openGoogleMaps(job)">
+                </p-button>
+
+                <!-- زرار إنهاء الطلب -->
+                <p-button label="تم تسليم الطلب للعميل بنجاح" icon="pi pi-check-circle" styleClass="w-full"
+                    severity="success" [loading]="isLoading()" (onClick)="completeJob()">
+                </p-button>
+            </div>
+        </ng-template>
+    </p-card>
+    }
+    <!-- 2. حالة الطيار متاح (بانتظار طلبات) -->
+    @else {
+
+    <!-- Empty State -->
+    @if (availableJobs().length === 0) {
+    <div class="flex flex-col items-center justify-center py-24 opacity-60">
+        <i class="pi pi-wifi text-6xl text-slate-400 mb-4"
+            style="animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;"></i>
+        <h3 class="text-xl font-bold text-slate-500">جاري البحث عن طلبات قريبة في نطاقك...</h3>
+    </div>
+    }
+
+    <!-- كروت الطلبات المتاحة -->
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        @for (job of availableJobs(); track job.jobId) {
+        <p-card
+            styleClass="shadow-sm hover:shadow-md transition-shadow border border-slate-100 rounded-xl border-t-4 border-t-orange-500 relative overflow-hidden">
+
+            <div class="flex justify-between items-center mb-4">
+                <p-tag severity="warn" value="طلب جديد" [rounded]="true"></p-tag>
+
+                <!-- 👇 التعديل هنا 👇 -->
+                <span class="text-slate-500 font-mono text-sm bg-slate-100 px-2 py-1 rounded flex items-center gap-1">
+                    @if (job.isCalculatingDistance) {
+                    <i class="pi pi-spinner pi-spin text-[#00796b]"></i> جاري الحساب
+                    } @else {
+                    <i class="pi pi-compass"></i> {{ job.distanceKm }} كم
+                    }
+                </span>
+            </div>
+
+            <h3 class="text-lg font-bold text-slate-800 mb-2">من: {{ job.pharmacyName }}</h3>
+            <p class="text-slate-500 text-sm leading-relaxed mb-4 line-clamp-2">إلى: {{ job.fullAddress }}</p>
+
+            <div class="flex items-center justify-between mt-4 pt-4 border-t border-slate-100">
+                <div class="flex flex-col">
+                    <span class="text-xs text-slate-400">رسوم التوصيل</span>
+                    <span class="text-xl font-black text-slate-800">{{ job.deliveryFee }} <span
+                            class="text-sm">ج.م</span></span>
+                </div>
+
+                <p-button label="قبول" icon="pi pi-directions" (onClick)="acceptJob(job)" [loading]="isLoading()"
+                    styleClass="p-button-sm px-6">
+                </p-button>
+            </div>
+        </p-card>
+        }
+    </div>
+    }
+
+</div>
