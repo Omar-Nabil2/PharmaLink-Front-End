@@ -185,7 +185,7 @@ export class UpdateProfileComponent implements OnInit {
             }
         });
     }
-}
+
 
     getProfileLink(): string {
         const roleStr = typeof window !== 'undefined' ? localStorage.getItem('roleName')?.toLowerCase() : '';

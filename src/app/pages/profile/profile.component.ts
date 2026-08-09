@@ -179,7 +179,7 @@ export class ProfileComponent implements OnInit {
     const firstDefaultIndex = this.patientData.addresses.findIndex(a => a.isDefault);
     return index === firstDefaultIndex;
   }
-}
+
 
   getEditProfileLink(): string {
     const roleStr = typeof window !== 'undefined' ? localStorage.getItem('roleName')?.toLowerCase() : '';

@@ -72,6 +72,7 @@ export class NavbarComponent {
       default:
         return '/profile';
     }
+  }
   getProfileLink(): string {
     const roleStr = typeof window !== 'undefined' ? localStorage.getItem('roleName')?.toLowerCase() : '';
     if (roleStr === 'patient') return '/patient/profile';
