@@ -11,7 +11,7 @@
     </a>
     <ng-container *ngIf="drug">
       <i class="pi pi-angle-left text-xs text-slate-300"></i>
-      <span class="font-semibold text-slate-800">{{ drug.brandName }}</span>
+      <span class="type-body-sm-strong text-ink truncate">{{ drug.brandName }}</span>
     </ng-container>
   </nav>
 
@@ -62,58 +62,58 @@
           <p-tag *ngIf="drug.requiresPrescription" value="وصفة طبية مطلوبة" severity="warn" icon="pi pi-file-edit" styleClass="rounded-full px-4"></p-tag>
         </div>
 
-        <h1 class="text-3xl md:text-4xl lg:text-5xl font-black text-slate-800 leading-tight mb-2">
+        <h1 class="type-display-sm text-ink leading-tight mb-2 break-words">
           {{ drug.brandName }}
         </h1>
-        <h2 class="text-xl md:text-2xl font-bold text-slate-500 mb-6">
+        <h2 class="type-body-lg text-mute mb-6 break-words">
           {{ drug.arabicName }}
         </h2>
 
         <!-- Pricing -->
         <div class="bg-slate-50 rounded-2xl p-6 border border-slate-100 mb-8 flex items-center justify-between flex-wrap gap-4">
           <div class="flex flex-col">
-            <span class="text-sm text-slate-500 font-medium mb-1">السعر</span>
+            <span class="type-body-sm text-mute mb-1">السعر</span>
             <div class="flex items-baseline gap-3">
-              <span class="text-4xl font-black text-primary">{{ (drug.finalPrice || drug.price) | currency:'EGP' }}</span>
-              <span *ngIf="drug.discount > 0" class="text-lg text-slate-400 line-through font-medium">{{ drug.price | currency:'EGP' }}</span>
+              <span class="type-display-sm text-primary">{{ (drug.finalPrice || drug.price) | currency:'EGP' }}</span>
+              <span *ngIf="drug.discount > 0" class="type-body-md text-slate-400 line-through">{{ drug.price | currency:'EGP' }}</span>
             </div>
           </div>
           <button 
             (click)="addToCart()" 
             [disabled]="drug.availabilityStatus === 'OutOfStock' || addingToCart"
-            class="bg-primary hover:bg-primary-600 text-white font-bold py-4 px-8 rounded-xl flex items-center gap-3 transition-all hover:shadow-lg hover:shadow-primary/30 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none active:scale-95"
+            class="w-full sm:w-auto justify-center bg-primary hover:bg-primary-600 text-white font-bold py-3 px-6 rounded-xl flex items-center gap-2 transition-all hover:shadow-lg hover:shadow-primary/30 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none active:scale-95"
           >
             <i *ngIf="addingToCart" class="pi pi-spin pi-spinner"></i>
-            <i *ngIf="!addingToCart" class="pi pi-cart-plus text-xl"></i>
-            <span class="text-lg">{{ addingToCart ? 'جاري الإضافة...' : 'أضف للكارت' }}</span>
+            <i *ngIf="!addingToCart" class="pi pi-cart-plus text-lg"></i>
+            <span class="text-base">{{ addingToCart ? 'جاري الإضافة...' : 'أضف للكارت' }}</span>
           </button>
         </div>
 
         <!-- Quick Attributes Grid -->
         <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8">
           <div class="bg-white rounded-2xl p-4 border border-slate-100 flex flex-col gap-1">
-            <span class="text-xs text-slate-400 font-medium uppercase tracking-wider">الشكل الدوائي</span>
-            <span class="font-bold text-slate-700">{{ drug.form || 'غير محدد' }}</span>
+            <span class="type-caption text-mute uppercase tracking-wider">الشكل الدوائي</span>
+            <span class="type-body-sm-strong text-ink">{{ drug.form || 'غير محدد' }}</span>
           </div>
           <div class="bg-white rounded-2xl p-4 border border-slate-100 flex flex-col gap-1">
-            <span class="text-xs text-slate-400 font-medium uppercase tracking-wider">التركيز</span>
-            <span class="font-bold text-slate-700">{{ drug.strength || 'غير محدد' }}</span>
+            <span class="type-caption text-mute uppercase tracking-wider">التركيز</span>
+            <span class="type-body-sm-strong text-ink">{{ drug.strength || 'غير محدد' }}</span>
           </div>
           <div class="bg-white rounded-2xl p-4 border border-slate-100 flex flex-col gap-1">
-            <span class="text-xs text-slate-400 font-medium uppercase tracking-wider">الشركة المصنعة</span>
-            <span class="font-bold text-slate-700 truncate" [title]="drug.manufacturer">{{ drug.manufacturer || 'غير محدد' }}</span>
+            <span class="type-caption text-mute uppercase tracking-wider">الشركة المصنعة</span>
+            <span class="type-body-sm-strong text-ink truncate" [title]="drug.manufacturer">{{ drug.manufacturer || 'غير محدد' }}</span>
           </div>
           <div class="bg-white rounded-2xl p-4 border border-slate-100 flex flex-col gap-1">
-            <span class="text-xs text-slate-400 font-medium uppercase tracking-wider">الاسم العلمي</span>
-            <span class="font-bold text-slate-700 truncate" [title]="drug.genericName">{{ drug.genericName || 'غير محدد' }}</span>
+            <span class="type-caption text-mute uppercase tracking-wider">الاسم العلمي</span>
+            <span class="type-body-sm-strong text-ink truncate" [title]="drug.genericName">{{ drug.genericName || 'غير محدد' }}</span>
           </div>
           <div class="bg-white rounded-2xl p-4 border border-slate-100 flex flex-col gap-1">
-            <span class="text-xs text-slate-400 font-medium uppercase tracking-wider">التصنيف</span>
-            <span class="font-bold text-slate-700">{{ drug.drugClass || 'غير محدد' }}</span>
+            <span class="type-caption text-mute uppercase tracking-wider">التصنيف</span>
+            <span class="type-body-sm-strong text-ink">{{ drug.drugClass || 'غير محدد' }}</span>
           </div>
           <div class="bg-white rounded-2xl p-4 border border-slate-100 flex flex-col gap-1">
-            <span class="text-xs text-slate-400 font-medium uppercase tracking-wider">النوع</span>
-            <span class="font-bold text-slate-700">{{ drug.type || 'غير محدد' }}</span>
+            <span class="type-caption text-mute uppercase tracking-wider">النوع</span>
+            <span class="type-body-sm-strong text-ink">{{ drug.type || 'غير محدد' }}</span>
           </div>
         </div>
       </div>
@@ -164,13 +164,13 @@
         <div *ngIf="activeTab === 'desc'" class="space-y-6 animate-fade-in">
           <div *ngIf="drug.descriptionAr || drug.descriptionEn; else noDesc">
             <div *ngIf="drug.descriptionAr" class="space-y-2">
-              <h3 class="text-lg font-bold text-slate-800">الوصف (عربي)</h3>
-              <p class="text-slate-600 leading-relaxed">{{ drug.descriptionAr }}</p>
+              <h3 class="type-body-lg-strong text-ink">الوصف (عربي)</h3>
+              <p class="type-body-md text-body leading-relaxed">{{ drug.descriptionAr }}</p>
             </div>
             <hr *ngIf="drug.descriptionAr && drug.descriptionEn" class="border-slate-100 my-6">
             <div *ngIf="drug.descriptionEn" class="space-y-2" dir="ltr">
-              <h3 class="text-lg font-bold text-slate-800">Description (English)</h3>
-              <p class="text-slate-600 leading-relaxed">{{ drug.descriptionEn }}</p>
+              <h3 class="type-body-lg-strong text-ink">Description (English)</h3>
+              <p class="type-body-md text-body leading-relaxed">{{ drug.descriptionEn }}</p>
             </div>
           </div>
           <ng-template #noDesc>
@@ -182,20 +182,20 @@
         <div *ngIf="activeTab === 'meta'" class="space-y-6 animate-fade-in">
           <div class="grid md:grid-cols-2 gap-8">
             <div class="space-y-2">
-              <h3 class="text-lg font-bold text-slate-800">Meta Keywords (Arabic)</h3>
-              <p class="text-slate-600 leading-relaxed">{{ drug.metaKeywordsAr || 'N/A' }}</p>
+              <h3 class="type-body-lg-strong text-ink">Meta Keywords (Arabic)</h3>
+              <p class="type-body-md text-body leading-relaxed">{{ drug.metaKeywordsAr || 'N/A' }}</p>
             </div>
             <div class="space-y-2" dir="ltr">
-              <h3 class="text-lg font-bold text-slate-800">Meta Keywords (English)</h3>
-              <p class="text-slate-600 leading-relaxed">{{ drug.metaKeywordsEn || 'N/A' }}</p>
+              <h3 class="type-body-lg-strong text-ink">Meta Keywords (English)</h3>
+              <p class="type-body-md text-body leading-relaxed">{{ drug.metaKeywordsEn || 'N/A' }}</p>
             </div>
             <div class="space-y-2">
-              <h3 class="text-lg font-bold text-slate-800">Meta Description (Arabic)</h3>
-              <p class="text-slate-600 leading-relaxed">{{ drug.metaDescriptionAr || 'N/A' }}</p>
+              <h3 class="type-body-lg-strong text-ink">Meta Description (Arabic)</h3>
+              <p class="type-body-md text-body leading-relaxed">{{ drug.metaDescriptionAr || 'N/A' }}</p>
             </div>
             <div class="space-y-2" dir="ltr">
-              <h3 class="text-lg font-bold text-slate-800">Meta Description (English)</h3>
-              <p class="text-slate-600 leading-relaxed">{{ drug.metaDescriptionEn || 'N/A' }}</p>
+              <h3 class="type-body-lg-strong text-ink">Meta Description (English)</h3>
+              <p class="type-body-md text-body leading-relaxed">{{ drug.metaDescriptionEn || 'N/A' }}</p>
             </div>
           </div>
         </div>
@@ -204,20 +204,20 @@
         <div *ngIf="activeTab === 'extra'" class="space-y-6 animate-fade-in">
           <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <div class="space-y-1">
-              <p class="text-sm text-slate-400 font-medium">الرابط الفريد (Slug)</p>
-              <p class="font-semibold text-slate-700 break-all" dir="ltr">{{ drug.slug || 'N/A' }}</p>
+              <p class="type-caption text-mute">الرابط الفريد (Slug)</p>
+              <p class="type-body-sm-strong text-ink break-all" dir="ltr">{{ drug.slug || 'N/A' }}</p>
             </div>
             <div class="space-y-1">
-              <p class="text-sm text-slate-400 font-medium">نوع التدفق (Flow Type)</p>
-              <p class="font-semibold text-slate-700">{{ drug.flowType || 'N/A' }}</p>
+              <p class="type-caption text-mute">نوع التدفق (Flow Type)</p>
+              <p class="type-body-sm-strong text-ink">{{ drug.flowType || 'N/A' }}</p>
             </div>
             <div class="space-y-1">
-              <p class="text-sm text-slate-400 font-medium">العلامة التجارية (Brand Ar)</p>
-              <p class="font-semibold text-slate-700">{{ drug.brandAr || 'N/A' }}</p>
+              <p class="type-caption text-mute">العلامة التجارية (Brand Ar)</p>
+              <p class="type-body-sm-strong text-ink">{{ drug.brandAr || 'N/A' }}</p>
             </div>
             <div class="space-y-1">
-              <p class="text-sm text-slate-400 font-medium">العلامة التجارية (Brand En)</p>
-              <p class="font-semibold text-slate-700">{{ drug.brandEn || 'N/A' }}</p>
+              <p class="type-caption text-mute">العلامة التجارية (Brand En)</p>
+              <p class="type-body-sm-strong text-ink">{{ drug.brandEn || 'N/A' }}</p>
             </div>
           </div>
         </div>
