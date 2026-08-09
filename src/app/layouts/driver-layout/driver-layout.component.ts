@@ -6,10 +6,10 @@ import { SidebarComponent, SidebarItem } from '../../shared/components/sidebar/s
 import { FooterComponent } from '../../shared/components/footer/footer.component';
 
 @Component({
-    selector: 'app-driver-layout',
-    standalone: true,
-    imports: [CommonModule, RouterOutlet, NavbarComponent, SidebarComponent, FooterComponent],
-    template: `
+  selector: 'app-driver-layout',
+  standalone: true,
+  imports: [CommonModule, RouterOutlet, NavbarComponent, SidebarComponent, FooterComponent],
+  template: `
     <div class="flex flex-col h-screen overflow-hidden bg-canvas font-sans">
       <app-navbar class="flex-shrink-0 z-50 shadow-sm" />
 
@@ -27,9 +27,8 @@ import { FooterComponent } from '../../shared/components/footer/footer.component
   `
 })
 export class DriverLayoutComponent {
-    driverNavItems: SidebarItem[] = [
-        { label: 'الطلبات المتاحة', icon: 'pi pi-map-marker', routerLink: '/driver/dashboard' },
-        { label: 'سجل التوصيل', icon: 'pi pi-history', routerLink: '/driver/history' },
-        { label: 'المحفظة', icon: 'pi pi-wallet', routerLink: '/driver/wallet' }
-    ];
+  driverNavItems: SidebarItem[] = [
+    { label: 'الطلبات المتاحة', icon: 'pi pi-map-marker', routerLink: '/driver/dashboard' },
+    { label: 'سجل التوصيل', icon: 'pi pi-history', routerLink: '/driver/history' }
+  ];
 }

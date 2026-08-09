@@ -17,6 +17,15 @@ export interface DeliveryJobNotification {
     isCalculatingDistance?: boolean;
 }
 
+export interface DeliveryJobHistory {
+    jobId: string;
+    pharmacyName: string;
+    deliveryAddress: string;
+    deliveryFee: number;
+    completedAtUtc: string;
+    status: string;
+}
+
 @Injectable({
     providedIn: 'root'
 })
@@ -144,5 +153,13 @@ export class DriverService {
         }
 
         return this.http.get<DeliveryJobNotification[]>(`${this.baseUrl}/DeliveryDrivers/available-jobs`, { params });
+    }
+
+    getDriverHistory(pageNumber: number, pageSize: number) {
+        let params = new HttpParams()
+            .set('pageNumber', pageNumber.toString())
+            .set('pageSize', pageSize.toString());
+
+        return this.http.get<any>(`${this.baseUrl}/DeliveryDrivers/history`, { params });
     }
 }

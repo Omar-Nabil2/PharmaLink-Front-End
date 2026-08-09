@@ -1,0 +1,66 @@
+<div class="p-4 md:p-6 bg-slate-50 min-h-screen" dir="rtl">
+    <div class="mb-6 flex items-center gap-3">
+        <i class="pi pi-history text-2xl text-[#00796b]"></i>
+        <h1 class="text-2xl font-bold text-[#00796b] m-0">سجل التوصيل</h1>
+    </div>
+
+    <p-card styleClass="shadow-sm border border-slate-100 rounded-xl overflow-hidden">
+
+        <!-- رجعنا الأقواس لـ historyJobs() و totalRecords() بس سيبنا اللودر isLoading -->
+        <p-table [value]="historyJobs()" [lazy]="true" (onLazyLoad)="loadHistory($event)" [paginator]="true" [rows]="10"
+            [totalRecords]="totalRecords()" [loading]="isLoading" responsiveLayout="scroll" [rowHover]="true"
+            styleClass="p-datatable-striped">
+
+            <ng-template pTemplate="header">
+                <tr>
+                    <th class="text-slate-600">رقم الطلب</th>
+                    <th class="text-slate-600">الصيدلية</th>
+                    <th class="text-slate-600 hidden md:table-cell">العنوان</th>
+                    <th class="text-slate-600 text-center">المكسب</th>
+                    <th class="text-slate-600">وقت التسليم</th>
+                    <th class="text-slate-600 text-center">الحالة</th>
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-job>
+                <tr>
+                    <td class="font-mono text-sm text-slate-500">
+                        {{ job.jobId.substring(0, 8) | uppercase }}
+                    </td>
+                    <td class="font-bold text-slate-800">
+                        {{ job.pharmacyName }}
+                    </td>
+                    <td class="text-slate-600 hidden md:table-cell max-w-xs truncate" [title]="job.deliveryAddress">
+                        {{ job.deliveryAddress }}
+                    </td>
+                    <td class="text-center">
+                        <span class="font-black text-[#00796b] text-lg">{{ job.deliveryFee }}</span>
+                        <span class="text-xs text-slate-400 mr-1">ج.م</span>
+                    </td>
+                    <td class="text-sm text-slate-600">
+                        {{ job.completedAtUtc | date:'dd/MM/yyyy, hh:mm a' }}
+                    </td>
+                    <td class="text-center">
+                        <p-tag severity="success" value="مكتمل" [rounded]="true"></p-tag>
+                    </td>
+                </tr>
+            </ng-template>
+
+            <!-- Empty State -->
+            <ng-template pTemplate="emptymessage">
+                <!-- التعديل اللي هيمنع الرفة تماماً -->
+                @if (hasLoadedOnce() && historyJobs().length === 0) {
+                <tr>
+                    <td colspan="6" class="text-center py-16">
+                        <div class="flex flex-col items-center justify-center opacity-50">
+                            <i class="pi pi-inbox text-5xl text-slate-400 mb-4"></i>
+                            <span class="text-lg text-slate-500 font-semibold">لم تقم بتوصيل أي طلبات حتى الآن.</span>
+                        </div>
+                    </td>
+                </tr>
+                }
+            </ng-template>
+
+        </p-table>
+    </p-card>
+</div>
