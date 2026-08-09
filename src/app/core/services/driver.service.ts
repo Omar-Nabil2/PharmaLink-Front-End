@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, Subject } from 'rxjs';
 import * as signalR from '@microsoft/signalr';
 import { environment } from '@environments/environment';
@@ -10,6 +10,11 @@ export interface DeliveryJobNotification {
     fullAddress: string;
     deliveryFee: number;
     distanceKm: number;
+    longitude: number;
+    latitude: number;
+    pharmacyLatitude?: number;
+    pharmacyLongitude?: number;
+    isCalculatingDistance?: boolean;
 }
 
 @Injectable({
@@ -57,8 +62,9 @@ export class DriverService {
 
     // 1. تأسيس اتصال SignalR
     public startConnection(token: string): void {
+        const userId = this.getUserIdFromToken();
         const baseUrlWithoutApi = this.baseUrl.replace('/api/v1', '');
-        const hubUrl = `${baseUrlWithoutApi}/hubs/delivery`;
+        const hubUrl = `${baseUrlWithoutApi}/hubs/delivery?userId=${userId}`;
         this.hubConnection = new signalR.HubConnectionBuilder()
             .withUrl(`${hubUrl}`, {
                 accessTokenFactory: () => token
@@ -112,7 +118,7 @@ export class DriverService {
                     }
                 });
             }
-        }, 500000000000);
+        }, 1000 * 120);
     }
 
     private stopLocationTracking(): void {
@@ -123,10 +129,20 @@ export class DriverService {
 
     // 4. الـ REST APIs لقبول وإنهاء الطلب
     acceptJob(jobId: string): Observable<any> {
-        return this.http.post(`${this.baseUrl}/api/v1/DeliveryDrivers/jobs/${jobId}/accept`, {});
+        return this.http.post(`${this.baseUrl}/DeliveryDrivers/jobs/${jobId}/accept`, {});
     }
 
     completeJob(jobId: string): Observable<any> {
-        return this.http.post(`${this.baseUrl}/api/v1/DeliveryDrivers/jobs/${jobId}/complete`, {});
+        return this.http.post(`${this.baseUrl}/DeliveryDrivers/jobs/${jobId}/complete`, {});
+    }
+
+    getAvailableJobs(lat?: number | null, lng?: number | null) {
+        let params = new HttpParams();
+
+        if (lat != null && lng != null) {
+            params = params.set('lat', lat.toString()).set('lng', lng.toString());
+        }
+
+        return this.http.get<DeliveryJobNotification[]>(`${this.baseUrl}/DeliveryDrivers/available-jobs`, { params });
     }
 }

@@ -23,6 +23,7 @@
     </div>
 
     <!-- 1. حالة الطيار مشغول (معه أوردر حالي) -->
+    <!-- 1. حالة الطيار مشغول (معه أوردر حالي) -->
     @if (activeJob(); as job) {
     <p-card styleClass="shadow-md border border-teal-500 rounded-xl overflow-hidden max-w-3xl mx-auto">
         <ng-template pTemplate="header">
@@ -52,9 +53,17 @@
         </div>
 
         <ng-template pTemplate="footer">
-            <p-button label="تم تسليم الطلب للعميل بنجاح" icon="pi pi-check-circle" styleClass="w-full"
-                severity="success" [loading]="isLoading()" (onClick)="completeJob()">
-            </p-button>
+            <div class="flex flex-col gap-3">
+                <!-- زرار خرائط جوجل الجديد -->
+                <p-button label="فتح موقع العميل في خرائط جوجل" icon="pi pi-map"
+                    styleClass="p-button-outlined p-button-info w-full" (onClick)="openGoogleMaps(job)">
+                </p-button>
+
+                <!-- زرار إنهاء الطلب -->
+                <p-button label="تم تسليم الطلب للعميل بنجاح" icon="pi pi-check-circle" styleClass="w-full"
+                    severity="success" [loading]="isLoading()" (onClick)="completeJob()">
+                </p-button>
+            </div>
         </ng-template>
     </p-card>
     }
@@ -78,8 +87,14 @@
 
             <div class="flex justify-between items-center mb-4">
                 <p-tag severity="warn" value="طلب جديد" [rounded]="true"></p-tag>
+
+                <!-- 👇 التعديل هنا 👇 -->
                 <span class="text-slate-500 font-mono text-sm bg-slate-100 px-2 py-1 rounded flex items-center gap-1">
+                    @if (job.isCalculatingDistance) {
+                    <i class="pi pi-spinner pi-spin text-[#00796b]"></i> جاري الحساب
+                    } @else {
                     <i class="pi pi-compass"></i> {{ job.distanceKm }} كم
+                    }
                 </span>
             </div>
 
