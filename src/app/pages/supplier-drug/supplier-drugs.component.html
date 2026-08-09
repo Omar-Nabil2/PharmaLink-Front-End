@@ -11,7 +11,6 @@
             </div>
 
             <div class="flex items-center gap-3 w-full sm:w-auto">
-                <!-- مربع البحث -->
                 <div class="relative flex-1 sm:w-64">
                     <i class="pi pi-search absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"></i>
                     <input type="text" [value]="searchQuery()" (input)="onSearch($event)"
@@ -26,14 +25,23 @@
             </div>
         </div>
 
-        <!-- Table -->
-        <div class="bg-card rounded-xl border border-border overflow-hidden">
-            <p-table [value]="myDrugs()" [loading]="isLoading()" [lazy]="true" (onLazyLoad)="onPageChange($event)"
-                [paginator]="true" [rows]="pageSize()" [totalRecords]="totalRecords()"
-                [first]="(currentPage() - 1) * pageSize()" [rowsPerPageOptions]="[5, 10, 20]"
+        <!-- Table Container (Relative عشان اللودر يغطي الجدول بس) -->
+        <div class="bg-card rounded-xl border border-border overflow-hidden relative min-h-[200px]">
+
+            <!-- 🌟 شاشة التحميل اليدوية (مستحيل تعلق) 🌟 -->
+            @if (isLoading) {
+            <div class="absolute inset-0 z-50 flex items-center justify-center bg-background/50 backdrop-blur-[2px]">
+                <i class="pi pi-spin pi-spinner text-4xl text-primary"></i>
+            </div>
+            }
+
+            <!-- ❌ مسحنا [loading] من هنا نهائياً -->
+            <p-table [value]="myDrugs()" [lazy]="true" (onLazyLoad)="onLazyLoad($event)" dataKey="drugId"
+                [paginator]="true" [rows]="pageSize" [totalRecords]="totalRecords()"
+                [first]="(currentPage - 1) * pageSize" [rowsPerPageOptions]="[5, 10, 20]"
                 styleClass="w-full text-xs lg:text-base">
 
-                <ng-template #header>
+                <ng-template pTemplate="header">
                     <tr class="bg-muted/50">
                         <th class="text-right p-4 font-semibold text-muted-foreground">اسم الدواء (العلامة التجارية)
                         </th>
@@ -41,7 +49,7 @@
                     </tr>
                 </ng-template>
 
-                <ng-template #body let-drug>
+                <ng-template pTemplate="body" let-drug>
                     <tr class="border-t border-border hover:bg-muted/30 transition-colors">
                         <td class="p-4 font-medium">{{ drug.brandName }}</td>
                         <td class="p-4 text-center">
@@ -55,29 +63,31 @@
                     </tr>
                 </ng-template>
 
-                <ng-template #emptymessage>
+                <ng-template pTemplate="emptymessage">
+                    @if (hasLoadedOnce() && myDrugs().length === 0) {
                     <tr>
                         <td colspan="2" class="p-12 text-center text-muted-foreground">
                             <i class="pi pi-box text-3xl mb-3 block"></i>
                             لا توجد أدوية في قائمتك حالياً. اضغط على "إضافة دواء" للبدء.
                         </td>
                     </tr>
+                    }
                 </ng-template>
             </p-table>
         </div>
     </div>
 
     <!-- نافذة الإضافة -->
-    <p-dialog [(visible)]="showAddDialog" [modal]="true" header="إضافة دواء جديد للقائمة" [style]="{ width: '400px' }"
-        [draggable]="false" [resizable]="false" dir="rtl">
+    <p-dialog [visible]="showAddDialog()" (visibleChange)="showAddDialog.set($event)" [modal]="true"
+        header="إضافة دواء جديد للقائمة" [style]="{ width: '400px' }" [draggable]="false" [resizable]="false" dir="rtl">
         <div class="flex flex-col gap-2 py-4">
             <label class="text-sm font-semibold text-foreground">ابحث عن الدواء</label>
 
-            <p-autoComplete [(ngModel)]="selectedDrug" [suggestions]="searchedDrugs()"
-                (completeMethod)="searchAvailableDrugs($event)" field="brandName" optionLabel="brandName"
-                dataKey="drugId" [delay]="300" [minLength]="2" placeholder="اكتب اسم الدواء للبحث..."
-                emptyMessage="لم يتم العثور على أدوية" styleClass="w-full" [inputStyle]="{'width':'100%'}"
-                appendTo="body">
+            <p-autoComplete [ngModel]="selectedDrug()" (ngModelChange)="selectedDrug.set($event)"
+                [suggestions]="searchedDrugs()" (completeMethod)="searchAvailableDrugs($event)" field="brandName"
+                optionLabel="brandName" dataKey="drugId" [delay]="300" [minLength]="2"
+                placeholder="اكتب اسم الدواء للبحث..." emptyMessage="لم يتم العثور على أدوية" styleClass="w-full"
+                [inputStyle]="{'width':'100%'}" appendTo="body">
 
                 <ng-template let-drug pTemplate="item">
                     <div class="flex items-center gap-2">
