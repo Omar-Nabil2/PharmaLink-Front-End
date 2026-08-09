@@ -92,4 +92,12 @@ export class AdminOrdersService {
       { status, auditReason }
     );
   }
+
+  approvePrescription(orderId: string): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/AdminOrders/${orderId}/approve-prescription`, {});
+  }
+
+  rejectPrescription(orderId: string, reason: string): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/AdminOrders/${orderId}/reject-prescription`, { reason });
+  }
 }

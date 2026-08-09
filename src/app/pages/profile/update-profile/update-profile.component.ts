@@ -61,6 +61,10 @@ export class UpdateProfileComponent implements OnInit {
             request$ = this.profileService.getPharmacyAdminProfile();
         } else if (role === 'DeliveryDriver') {
             request$ = this.profileService.getDriverProfile(); // 👈 لازم تكون ضايف الدالة دي في ProfileService
+        } else if (role === 'Admin' || role === 'SystemAdmin') {
+            request$ = this.profileService.getSystemAdminProfile();
+        } else if (role === 'Pharmacist') {
+            request$ = this.profileService.getProfile();
         } else {
             request$ = this.profileService.getProfile(); // للصيدلي والـ Admin
         }
@@ -119,6 +123,8 @@ export class UpdateProfileComponent implements OnInit {
             });
 
             this.router.navigate(['/profile']);
+            // توجيهه لصفحة البروفايل من غير ما نكلم الباك إند
+            this.router.navigate([this.getProfileLink()]);
             return;
         }
 
@@ -142,6 +148,8 @@ export class UpdateProfileComponent implements OnInit {
                 phoneNumber: payload.phoneNumber,
                 vehicleInfo: payload.vehicleInfo
             });
+        } else if (role === 'Admin' || role === 'SystemAdmin') {
+            request$ = this.profileService.updateSystemAdminProfile(payload);
         } else {
             request$ = this.profileService.updateProfile(payload);
         }
@@ -168,6 +176,7 @@ export class UpdateProfileComponent implements OnInit {
                 } else {
                     this.router.navigate(['/profile']);
                 }
+                this.router.navigate([this.getProfileLink()]);
             },
             error: (err: unknown) => {
                 this.isLoading = false;
@@ -175,5 +184,17 @@ export class UpdateProfileComponent implements OnInit {
                 this.cdr.detectChanges();
             }
         });
+    }
+}
+
+    getProfileLink(): string {
+        const roleStr = typeof window !== 'undefined' ? localStorage.getItem('roleName')?.toLowerCase() : '';
+        if (roleStr === 'patient') return '/patient/profile';
+        if (roleStr === 'pharmacist') return '/pharmacist/profile';
+        if (roleStr === 'admin' || roleStr === 'systemadmin') return '/admin/profile';
+        if (roleStr === 'pharmacyadmin') return '/owner/profile';
+        if (roleStr === 'prescriptionreviewteam') return '/review-team/profile';
+        if (roleStr === 'supplier') return '/supplier/profile';
+        return '/profile';
     }
 }

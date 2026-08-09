@@ -39,20 +39,31 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         return handle401Error(authReq, next, authService, router, currentUrl);
       }
 
+      const roleStr = authService.userRole()?.toLowerCase() || '';
+      let basePath = '';
+      if (roleStr === 'patient') basePath = '/patient';
+      else if (roleStr === 'pharmacist') basePath = '/pharmacist';
+      else if (roleStr === 'admin' || roleStr === 'systemadmin') basePath = '/admin';
+      else if (roleStr === 'pharmacyadmin') basePath = '/owner';
+      else if (roleStr === 'prescriptionreviewteam') basePath = '/review-team';
+      else if (roleStr === 'supplier') basePath = '/supplier';
+
       switch (error.status) {
         case 403: {
-          if (currentUrl !== '/access-denied') {
-            router.navigate(['/access-denied']);
+          const target = basePath ? `${basePath}/access-denied` : '/access-denied';
+          if (currentUrl !== target) {
+            router.navigate([target]);
           }
           break;
         }
         case 404: {
           // Only for resource GETs — form/API mutations keep component-level handling
           const isGet = authReq.method.toUpperCase() === 'GET';
-          const alreadyOnNotFound = currentUrl === '/not-found';
+          const target = basePath ? `${basePath}/not-found` : '/not-found';
+          const alreadyOnNotFound = currentUrl === target || currentUrl === '/not-found';
           const isProfilePictureApi = authReq.url.includes('/profile/picture');
           if (isGet && !skipAuthApi && !alreadyOnNotFound && !isProfilePictureApi) {
-            router.navigate(['/not-found']);
+            router.navigate([target]);
           }
           break;
         }

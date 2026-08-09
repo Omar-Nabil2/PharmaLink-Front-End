@@ -18,6 +18,7 @@ export class CartComponent implements OnInit, OnDestroy {
   isLoading: boolean = true;
   error: string | null = null;
   private destroy$ = new Subject<void>();
+  private updateTimeouts: { [itemId: string]: any } = {};
 
   constructor(
     private cartService: CartService,
@@ -99,28 +100,39 @@ export class CartComponent implements OnInit, OnDestroy {
     const itemId = item.cartItemId || (item as any).id;
     if (!itemId) return;
 
-    item.loading = true;
+    // Optimistic UI update
+    item.quantity = quantity;
+    item.lineTotal = item.unitPriceSnapshot * quantity;
+    this.recalculateTotal();
     this.cdr.detectChanges();
 
-    this.cartService.updateCartItem(itemId, quantity).pipe(
-      takeUntil(this.destroy$)
-    ).subscribe({
-      next: () => {
-        this.ngZone.run(() => {
-          item.quantity = quantity;
-          item.lineTotal = item.unitPriceSnapshot * quantity;
-          item.loading = false;
-          this.recalculateTotal();
-          this.cdr.detectChanges();
-        });
-      },
-      error: () => {
-        this.ngZone.run(() => {
-          item.loading = false;
-          this.cdr.detectChanges();
-        });
-      }
-    });
+    // Clear previous timeout to debounce
+    if (this.updateTimeouts[itemId]) {
+      clearTimeout(this.updateTimeouts[itemId]);
+    }
+
+    this.updateTimeouts[itemId] = setTimeout(() => {
+      item.loading = true;
+      this.cdr.detectChanges();
+
+      this.cartService.updateCartItem(itemId, quantity).pipe(
+        takeUntil(this.destroy$)
+      ).subscribe({
+        next: () => {
+          this.ngZone.run(() => {
+            item.loading = false;
+            this.cdr.detectChanges();
+          });
+        },
+        error: () => {
+          this.ngZone.run(() => {
+            item.loading = false;
+            // Optionally revert the optimistic update here if needed
+            this.cdr.detectChanges();
+          });
+        }
+      });
+    }, 600);
   }
 
   removeItem(item: CartItem): void {

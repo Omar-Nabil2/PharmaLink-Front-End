@@ -10,7 +10,9 @@ import {
   PatientProfile,
   PatientProfileResponse,
   GetPharmacyAdminProfile,
-  UpdatePharmacyAdminProfileDTO
+  UpdatePharmacyAdminProfileDTO,
+  SystemAdminProfile,
+  UpdateSystemAdminProfileRequest
 } from '../interfaces/profile.interface';
 import { DriverProfile, UpdateDriverProfileRequest } from './driver-profile.service';
 
@@ -65,4 +67,11 @@ export class ProfileService {
     return this.http.put<any>(this.localUrl + '/DriverProfile', data);
   }
 
+  getSystemAdminProfile() {
+    return this.http.get<SystemAdminProfile>(`${this.localUrl}/admin/profile`);
+  }
+
+  updateSystemAdminProfile(data: UpdateSystemAdminProfileRequest) {
+    return this.http.put<SystemAdminProfile>(`${this.localUrl}/admin/profile`, data);
+  }
 }

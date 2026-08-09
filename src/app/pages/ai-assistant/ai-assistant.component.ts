@@ -22,14 +22,12 @@ import {
   InteractionCheckResult,
 } from '@core/interfaces/ai-assistant.interface';
 
-import { MedicineScannerComponent } from './medicine-scanner.component';
-
-type ActiveTab = 'chat' | 'agent' | 'rag' | 'scanner' | 'drug-info' | 'interactions';
+type ActiveTab = 'chat' | 'drug-info' | 'interactions';
 
 @Component({
   selector: 'app-ai-assistant',
   standalone: true,
-  imports: [CommonModule, FormsModule, AutoCompleteModule, MedicineScannerComponent],
+  imports: [CommonModule, FormsModule, AutoCompleteModule],
   templateUrl: './ai-assistant.component.html',
   styleUrl: './ai-assistant.component.scss',
 })
@@ -41,101 +39,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
   activeTab = signal<ActiveTab>('chat');
   isSidebarOpen = signal<boolean>(true);
 
-  // ── Agent Tab Signals ──────────────────────────────────────────────────────
-  agentQuery = '';
-  agentResponse = signal<any | null>(null);
-  isAgentLoading = signal(false);
 
-  // ── RAG Tab Signals ────────────────────────────────────────────────────────
-  ragTitle = '';
-  ragCategory = 'Leaflet';
-  selectedFile: File | null = null;
-  selectedFileName = '';
-  ragIngestSuccess = signal<string>('');
-
-  ragSearchQuery = '';
-  ragQueryResult = signal<any | null>(null);
-  isRagLoading = signal(false);
-
-  // ── Agentic AI Execute ─────────────────────────────────────────────────────
-  runAgent(): void {
-    const q = this.agentQuery.trim();
-    if (!q || this.isAgentLoading()) return;
-
-    this.isAgentLoading.set(true);
-    this.agentResponse.set(null);
-
-    this.service.agentChat(q).subscribe({
-      next: (res) => {
-        this.agentResponse.set(res);
-        this.isAgentLoading.set(false);
-      },
-      error: (err) => {
-        this.isAgentLoading.set(false);
-        this.agentResponse.set({
-          finalAnswer: 'بحثنا في كل الصيدليات حواليك ولقينا أفضل اختيار ليك.',
-          selectionReasoning: 'اخترنا الصيدليات دي لأنها الأقرب ليك وفيها كل الأدوية المطلوبة بسعر كويس.',
-          substitutionReasoning: 'لو اقترحنا بديل، ده لأنه نفس المادة الفعالة ونفس التأثير بالضبط.'
-        });
-      }
-    });
-  }
-
-  // ── RAG Operations ─────────────────────────────────────────────────────────
-  onFileSelected(event: any): void {
-    const file: File = event.target.files[0];
-    if (file) {
-      this.selectedFile = file;
-      this.selectedFileName = file.name;
-    }
-  }
-
-  ingestDoc(): void {
-    if (!this.ragTitle || !this.selectedFile) return;
-    
-    this.isRagLoading.set(true);
-    this.service.ingestRagFile(this.ragTitle, this.ragCategory, this.selectedFile).subscribe({
-      next: () => {
-        this.isRagLoading.set(false);
-        this.ragIngestSuccess.set('تم رفع الملف وحفظه بنجاح! تقدر تسأل عليه دلوقتي.');
-        this.ragTitle = '';
-        this.selectedFile = null;
-        this.selectedFileName = '';
-        setTimeout(() => this.ragIngestSuccess.set(''), 4000);
-      },
-      error: (err) => {
-        this.isRagLoading.set(false);
-        // Fallback for demo purposes if backend fails or OCR takes too long
-        this.ragIngestSuccess.set('تم رفع الملف بنجاح! تقدر تسأل عليه دلوقتي.');
-        this.ragTitle = '';
-        this.selectedFile = null;
-        this.selectedFileName = '';
-        setTimeout(() => this.ragIngestSuccess.set(''), 4000);
-      }
-    });
-  }
-
-  executeRagQuery(): void {
-    if (!this.ragSearchQuery || this.isRagLoading()) return;
-    this.isRagLoading.set(true);
-    this.ragQueryResult.set(null);
-
-    this.service.queryRag(this.ragSearchQuery).subscribe({
-      next: (res) => {
-        this.ragQueryResult.set(res);
-        this.isRagLoading.set(false);
-      },
-      error: () => {
-        this.isRagLoading.set(false);
-        this.ragQueryResult.set({
-          answer: 'النشرة المعتمدة بتقول إن الجرعة بتتاخد بعد الأكل كل ١٢ ساعة عشان متتعبش المعدة.',
-          sources: [
-            { documentTitle: 'نشرة مضاد حيوي', category: 'Leaflet', snippet: 'يحتوي الدواء على مادة فعالة سريعة الامتصاص...' }
-          ]
-        });
-      }
-    });
-  }
 
   setTab(tab: ActiveTab): void {
     this.activeTab.set(tab);

@@ -9,6 +9,7 @@ import { MessageService, TreeNode } from 'primeng/api';
 import { TagModule } from 'primeng/tag';
 import { TreeSelectModule } from 'primeng/treeselect';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { DrugService } from '../../core/services/drug.service';
 import { CartService } from '../../core/services/cart.service';
 import { CategoryService } from '../../core/services/category.service';
@@ -18,7 +19,7 @@ import { DrugDto, DrugCategory } from '../../core/interfaces/drug.interface';
 @Component({
   selector: 'app-drugs',
   standalone: true,
-  imports: [CommonModule, TagModule, TreeSelectModule, FormsModule],
+  imports: [CommonModule, TagModule, TreeSelectModule, FormsModule, RouterLink],
   templateUrl: './drugs.html',
 })
 export class DrugsComponent implements OnInit {
@@ -48,8 +49,6 @@ export class DrugsComponent implements OnInit {
 
   addingDrugId: string | null = null;
 
-  private patientLatitude: number | null = null;
-  private patientLongitude: number | null = null;
 
   private readonly searchInput$ = new Subject<string>();
   
@@ -69,12 +68,19 @@ export class DrugsComponent implements OnInit {
     this.searchInput$.pipe(debounceTime(400), distinctUntilChanged()).subscribe((term) => {
       this.searchTerm = term;
       this.pageNumber = 1;
-      this.loadDrugs();
+      
+      if (term.trim().length > 0) {
+        this.viewMode = 'products';
+        this.loadDrugs();
+      } else {
+        if (this.currentCategory && (!this.currentCategory.subCategories || this.currentCategory.subCategories.length === 0)) {
+          this.viewMode = 'products';
+          this.loadDrugs();
+        } else {
+          this.loadCategories();
+        }
+      }
     });
-
-    const location = await this.getPatientLocation();
-    this.patientLatitude = location?.latitude ?? null;
-    this.patientLongitude = location?.longitude ?? null;
   }
 
   @HostListener('window:popstate', ['$event'])
@@ -151,19 +157,6 @@ export class DrugsComponent implements OnInit {
     this.loadDrugs();
   }
 
-  private getPatientLocation(): Promise<{ latitude: number; longitude: number } | null> {
-    return new Promise((resolve) => {
-      if (!('geolocation' in navigator)) {
-        resolve(null);
-        return;
-      }
-      navigator.geolocation.getCurrentPosition(
-        (pos) => resolve({ latitude: pos.coords.latitude, longitude: pos.coords.longitude }),
-        () => resolve(null),
-        { timeout: 5000 },
-      );
-    });
-  }
 
   onSearchChange(value: string): void {
     this.searchInput$.next(value);
@@ -183,8 +176,6 @@ export class DrugsComponent implements OnInit {
         sortDirection,
         pageNumber: this.pageNumber,
         pageSize: this.pageSize,
-        latitude: this.patientLatitude ?? undefined,
-        longitude: this.patientLongitude ?? undefined,
       })
       .subscribe({
         next: (result: any) => {
@@ -237,7 +228,8 @@ export class DrugsComponent implements OnInit {
     this.loadDrugs();
   }
 
-  addToCart(drug: DrugDto): void {
+  addToCart(drug: DrugDto, event?: Event): void {
+    if (event) event.stopPropagation();
     if (drug.availabilityStatus === 'OutOfStock' || this.addingDrugId) return;
 
     this.addingDrugId = drug.drugId;

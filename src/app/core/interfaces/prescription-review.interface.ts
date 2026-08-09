@@ -168,4 +168,6 @@ export interface PharmacistOrderDetailsDto {
   items: OrderItemDto[];
   notes: string | null;
   assignedLeg: AssignedLegDto;
+  hasPrescription?: boolean;
+  prescriptionId?: string;
 }

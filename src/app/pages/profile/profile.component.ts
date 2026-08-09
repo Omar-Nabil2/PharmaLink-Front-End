@@ -84,7 +84,7 @@ export class ProfileComponent implements OnInit {
         error: (err) => this.handleErr(err, 'فشل تحميل الملف الشخصي للمريض')
       });
     } else if (this.isAdminRole) {
-      this.profileService.getPharmacyAdminProfile().subscribe({
+      this.profileService.getSystemAdminProfile().subscribe({
         next: (res: any) => {
           const rawData = res.value || res;
           const nameParts = (rawData.fullName || '').trim().split(' ');
@@ -180,3 +180,27 @@ export class ProfileComponent implements OnInit {
     return index === firstDefaultIndex;
   }
 }
+
+  getEditProfileLink(): string {
+    const roleStr = typeof window !== 'undefined' ? localStorage.getItem('roleName')?.toLowerCase() : '';
+    if (roleStr === 'patient') return '/patient/profile/edit';
+    if (roleStr === 'pharmacist') return '/pharmacist/profile/edit';
+    if (roleStr === 'admin' || roleStr === 'systemadmin') return '/admin/profile/edit';
+    if (roleStr === 'pharmacyadmin') return '/owner/profile/edit';
+    if (roleStr === 'prescriptionreviewteam') return '/review-team/profile/edit';
+    if (roleStr === 'supplier') return '/supplier/profile/edit';
+    return '/profile/edit';
+  }
+
+  getChangePasswordLink(): string {
+    const roleStr = typeof window !== 'undefined' ? localStorage.getItem('roleName')?.toLowerCase() : '';
+    if (roleStr === 'patient') return '/patient/change-password';
+    if (roleStr === 'pharmacist') return '/pharmacist/change-password';
+    if (roleStr === 'admin' || roleStr === 'systemadmin') return '/admin/change-password';
+    if (roleStr === 'pharmacyadmin') return '/owner/change-password';
+    if (roleStr === 'prescriptionreviewteam') return '/review-team/change-password';
+    if (roleStr === 'supplier') return '/supplier/change-password';
+    return '/change-password';
+  }
+}
+

@@ -9,6 +9,7 @@ export interface CartItem {
   // Extra UI field
   drugArabicName?: string;
   drugImageUrl?: string;
+  requiresPrescription: boolean;
   loading?: boolean;
 }
 
