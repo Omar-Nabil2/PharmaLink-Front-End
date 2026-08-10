@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
 import { ToastModule } from 'primeng/toast';
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -9,6 +10,16 @@ import { ToastModule } from 'primeng/toast';
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
-export class App {
+export class App implements OnInit {
   title = 'Pharma Link';
+
+  constructor(private router: Router) {}
+
+  ngOnInit() {
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe(() => {
+      document.body.scrollTo(0, 0);
+    });
+  }
 }

@@ -1,5 +1,5 @@
-<div class="min-h-screen bg-slate-50 font-sans" dir="rtl">
-  <app-navbar />
+<div class="h-screen overflow-y-scroll overflow-x-hidden bg-slate-50 font-sans" dir="rtl">
+  <app-navbar class="sticky top-0 z-50 block w-full bg-white shadow-sm" />
 
   <header class="border-b border-slate-200 bg-white">
     <div class="mx-auto flex max-w-7xl flex-col gap-5 px-5 py-6 md:flex-row md:items-center md:justify-between">
@@ -23,6 +23,8 @@
   </header>
 
   <main class="mx-auto max-w-7xl px-5 py-8">
-    <router-outlet />
+    <div class="relative w-full h-full" [@routeAnimations]="prepareRoute(outlet)">
+      <router-outlet #outlet="outlet"></router-outlet>
+    </div>
   </main>
 </div>
