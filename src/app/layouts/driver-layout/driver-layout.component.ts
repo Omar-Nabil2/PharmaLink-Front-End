@@ -4,6 +4,10 @@ import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } fro
 import { filter } from 'rxjs';
 import { AuthService } from '@core/services/auth.service';
 import { routeTransitionAnimations } from '../../shared/animations/route.animations';
+import { CommonModule } from '@angular/common';
+import { NavbarComponent } from '@shared/components/navbar/navbar.component';
+import { SidebarComponent } from '@shared/components/sidebar/sidebar.component';
+import { FooterComponent } from '@shared/components/footer/footer.component';
 
 export interface SidebarItem {
   label: string;
@@ -40,7 +44,7 @@ export class DriverLayoutComponent implements OnInit {
   prepareRoute(outlet: RouterOutlet) {
     return outlet && outlet.isActivated ? outlet.activatedRoute.snapshot.url.join('') : '';
   }
-  
+
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
 
@@ -73,7 +77,7 @@ export class DriverLayoutComponent implements OnInit {
     { label: 'سجل التوصيل', icon: 'pi pi-history', routerLink: '/driver/history' },
     { label: 'المحفظة', icon: 'pi pi-wallet', routerLink: '/driver/wallet' }
   ];
-  
+
   driverNavItems: SidebarItem[] = [
     { label: 'الطلبات المتاحة', icon: 'pi pi-map-marker', routerLink: '/driver/dashboard' },
     { label: 'سجل التوصيل', icon: 'pi pi-history', routerLink: '/driver/history' }
