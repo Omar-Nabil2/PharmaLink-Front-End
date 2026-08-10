@@ -21,19 +21,27 @@ import {
   DrugInteraction,
   InteractionCheckResult,
 } from '@core/interfaces/ai-assistant.interface';
+import { DatePipe } from '@angular/common';
+import { PrescriptionReviewService } from '@core/services/prescription-review.service';
+import { PrescriptionHistoryService } from '@core/services/prescription-history.service';
+import { PrescriptionHistoryAnswer, PrescriptionHistoryMedicine, PrescriptionHistorySource } from '@core/interfaces/prescription-history.interface';
 
-type ActiveTab = 'chat' | 'drug-info' | 'interactions';
+type ActiveTab = 'chat' | 'drug-info' | 'interactions' | 'history';
+
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-ai-assistant',
   standalone: true,
-  imports: [CommonModule, FormsModule, AutoCompleteModule],
+  imports: [CommonModule, FormsModule, AutoCompleteModule, DatePipe, RouterLink],
   templateUrl: './ai-assistant.component.html',
   styleUrl: './ai-assistant.component.scss',
 })
 export class AiAssistantComponent implements OnInit, OnDestroy {
   private readonly service = inject(AiAssistantService);
   private readonly searchService = inject(SearchService);
+  private readonly historyService = inject(PrescriptionHistoryService);
+  private readonly prescriptionService = inject(PrescriptionReviewService);
 
   // ── Tabs ──────────────────────────────────────────────────────────────────
   activeTab = signal<ActiveTab>('chat');
@@ -268,6 +276,80 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
   interactionError = signal('');
 
   interactionSuggestions = signal<MedicineSearchDTO[]>([]);
+
+  // ── History Tab (أرشيفي الذكي) ─────────────────────────────────────────────
+  readonly historySuggestions = ['أنا أخدت مسكن إيه قبل كده؟', 'هاتلي روشتة دكتور العظام.', 'اسم دكتور الجلدية اللي رحتله الصيف اللي فات إيه؟'];
+  historyQuestion = '';
+  historyResult = signal<PrescriptionHistoryAnswer | null>(null);
+  historyLoading = signal(false);
+  historyError = signal('');
+  historyNotice = signal('');
+  addingReviewId = signal<string | null>(null);
+  private readonly selectedMedicineIds = signal<Record<string, string[]>>({});
+
+  askHistory(): void {
+    const q = this.historyQuestion.trim();
+    if (!q || this.historyLoading()) return;
+    this.historyLoading.set(true); 
+    this.historyError.set(''); 
+    this.historyNotice.set(''); 
+    this.historyResult.set(null); 
+    this.selectedMedicineIds.set({});
+    this.historyService.ask(q).subscribe({
+      next: result => { this.historyResult.set(result); this.historyLoading.set(false); },
+      error: error => { this.historyError.set(error?.error?.message || 'تعذر البحث في أرشيف الروشتات الآن. حاول مرة أخرى.'); this.historyLoading.set(false); },
+    });
+  }
+
+  useHistorySuggestion(q: string): void { 
+    this.historyQuestion = q; 
+    this.askHistory(); 
+  }
+
+  onHistoryQuestionKeydown(event: KeyboardEvent): void { 
+    if (event.key === 'Enter' && !event.shiftKey) { 
+      event.preventDefault(); 
+      this.askHistory(); 
+    } 
+  }
+
+  toggleHistoryMedicine(source: PrescriptionHistorySource, medicine: PrescriptionHistoryMedicine): void {
+    if (!medicine.canBeAddedToCart) return;
+    const selected = new Set(this.selectedMedicineIds()[source.prescriptionId] || []);
+    selected.has(medicine.prescriptionReviewMedicineId) 
+      ? selected.delete(medicine.prescriptionReviewMedicineId) 
+      : selected.add(medicine.prescriptionReviewMedicineId);
+    this.selectedMedicineIds.set({ ...this.selectedMedicineIds(), [source.prescriptionId]: [...selected] });
+  }
+
+  isHistorySelected(source: PrescriptionHistorySource, medicine: PrescriptionHistoryMedicine): boolean { 
+    return (this.selectedMedicineIds()[source.prescriptionId] || []).includes(medicine.prescriptionReviewMedicineId); 
+  }
+
+  historySelectedCount(source: PrescriptionHistorySource): number { 
+    return (this.selectedMedicineIds()[source.prescriptionId] || []).length; 
+  }
+
+  addHistorySelectedToCart(source: PrescriptionHistorySource): void {
+    const selectedIds = this.selectedMedicineIds()[source.prescriptionId] || [];
+    if (!selectedIds.length || this.addingReviewId()) return;
+    this.addingReviewId.set(source.prescriptionId); 
+    this.historyNotice.set('');
+    this.prescriptionService.addSelectedMedicinesToCart(source.prescriptionId, selectedIds).subscribe({
+      next: () => { 
+        this.historyNotice.set('تمت إضافة الأدوية المختارة إلى السلة.'); 
+        this.selectedMedicineIds.set({ ...this.selectedMedicineIds(), [source.prescriptionId]: [] }); 
+        this.addingReviewId.set(null); 
+      },
+      error: error => { 
+        this.historyError.set(error?.error?.detail || error?.error?.message || 'تعذر إضافة الأدوية إلى السلة.'); 
+        this.addingReviewId.set(null); 
+      },
+    });
+  }
+
+  trackByPrescription = (_: number, item: PrescriptionHistorySource) => item.prescriptionId;
+  trackByMedicine = (_: number, item: PrescriptionHistoryMedicine) => item.prescriptionReviewMedicineId;
 
   ngOnInit(): void {}
 
