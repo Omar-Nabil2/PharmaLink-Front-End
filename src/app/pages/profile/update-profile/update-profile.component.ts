@@ -195,6 +195,7 @@ export class UpdateProfileComponent implements OnInit {
         if (roleStr === 'pharmacyadmin') return '/owner/profile';
         if (roleStr === 'prescriptionreviewteam') return '/review-team/profile';
         if (roleStr === 'supplier') return '/supplier/profile';
+        if (roleStr === 'deliverydriver') return '/driver/profile';
         return '/profile';
     }
 }
