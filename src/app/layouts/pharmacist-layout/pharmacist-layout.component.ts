@@ -55,6 +55,7 @@ export class pharmacistLayoutComponent implements OnInit {
   readonly navItems: SidebarItem[] = [
     { label: 'لوحة التحكم', icon: 'pi pi-home', routerLink: '/pharmacist/dashboard' },
     { label: 'طابور الروشتات', icon: 'pi pi-box', routerLink: '/pharmacist/prescription-queue' },
+    { label: 'تحليلات الروشتات', icon: 'pi pi-sparkles', routerLink: '/pharmacist/prescription-analytics' },
     { label: 'الطلبات المعينة', icon: 'pi pi-check-square', routerLink: '/pharmacist/assigned-orders' },
     { label: 'قائمة التجهيز', icon: 'pi pi-cog', routerLink: '/pharmacist/preparation-list' },
     { label: 'المخزون', icon: 'pi pi-box', routerLink: '/pharmacist/inventory' }

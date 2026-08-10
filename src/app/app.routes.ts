@@ -14,7 +14,6 @@ export const routes: Routes = [
       {
         path: '',
         component: HomeComponent,
-
       },
 
       {
@@ -50,8 +49,7 @@ export const routes: Routes = [
       },
       {
         path: 'faq',
-        loadComponent: () =>
-          import('./pages/static/faq/faq.component').then((m) => m.FaqComponent),
+        loadComponent: () => import('./pages/static/faq/faq.component').then((m) => m.FaqComponent),
       },
 
       {
@@ -128,15 +126,16 @@ export const routes: Routes = [
       },
       {
         path: 'drugs/:id',
-        loadComponent: () => import('./pages/drugs/drug-details/drug-details.component').then((m) => m.DrugDetailsComponent),
+        loadComponent: () =>
+          import('./pages/drugs/drug-details/drug-details.component').then(
+            (m) => m.DrugDetailsComponent,
+          ),
       },
       {
         path: 'ai-assistant',
         canActivate: [authGuard],
         loadComponent: () =>
-          import('./pages/ai-assistant/ai-assistant.component').then(
-            (m) => m.AiAssistantComponent,
-          ),
+          import('./pages/ai-assistant/ai-assistant.component').then((m) => m.AiAssistantComponent),
       },
       {
         path: 'prescriptions/upload',
@@ -148,9 +147,9 @@ export const routes: Routes = [
       {
         path: 'prescriptions',
         loadComponent: () =>
-          import(
-            './pages/patient-prescription-review.component/patient-prescription-review.component'
-          ).then((m) => m.PatientPrescriptionsListComponent),
+          import('./pages/patient-prescription-review.component/patient-prescription-review.component').then(
+            (m) => m.PatientPrescriptionsListComponent,
+          ),
       },
       {
         path: 'medical-inquiries',
@@ -162,9 +161,9 @@ export const routes: Routes = [
       {
         path: 'prescriptions/review/:id',
         loadComponent: () =>
-          import(
-            './pages/prescription-detail.component/prescription-detail.component'
-          ).then((m) => m.PatientPrescriptionDetailComponent),
+          import('./pages/prescription-detail.component/prescription-detail.component').then(
+            (m) => m.PatientPrescriptionDetailComponent,
+          ),
       },
       {
         path: 'image-search',
@@ -196,13 +195,11 @@ export const routes: Routes = [
       },
       {
         path: 'cart',
-        loadComponent: () =>
-          import('./pages/cart/cart.component').then((m) => m.CartComponent),
+        loadComponent: () => import('./pages/cart/cart.component').then((m) => m.CartComponent),
       },
       {
         path: 'checkout',
-        loadComponent: () =>
-          import('./pages/checkout/checkout').then((m) => m.CheckoutComponent),
+        loadComponent: () => import('./pages/checkout/checkout').then((m) => m.CheckoutComponent),
       },
       {
         path: 'orders',
@@ -246,16 +243,21 @@ export const routes: Routes = [
       },
       {
         path: 'not-found',
-        loadComponent: () => import('./pages/errors/not-found/not-found.component').then((m) => m.NotFoundComponent),
+        loadComponent: () =>
+          import('./pages/errors/not-found/not-found.component').then((m) => m.NotFoundComponent),
       },
       {
         path: 'access-denied',
-        loadComponent: () => import('./pages/errors/access-denied/access-denied.component').then((m) => m.AccessDeniedComponent),
+        loadComponent: () =>
+          import('./pages/errors/access-denied/access-denied.component').then(
+            (m) => m.AccessDeniedComponent,
+          ),
       },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
       {
         path: '**',
-        loadComponent: () => import('./pages/errors/not-found/not-found.component').then((m) => m.NotFoundComponent),
+        loadComponent: () =>
+          import('./pages/errors/not-found/not-found.component').then((m) => m.NotFoundComponent),
       },
     ],
   },
@@ -281,7 +283,7 @@ export const routes: Routes = [
         path: 'prescriptions/review/:id',
         loadComponent: () =>
           import('./pages/prescriptions/review-prescription/review-prescription.component').then(
-            (m) => m.ReviewPrescriptionComponent
+            (m) => m.ReviewPrescriptionComponent,
           ),
       },
       {
@@ -320,6 +322,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'prescription-analytics',
+        loadComponent: () =>
+          import('./pages/pharmacist/prescription-analytics/prescription-analytics.component').then(
+            (m) => m.PrescriptionAnalyticsComponent,
+          ),
+      },
+      {
         path: 'profile',
         loadComponent: () =>
           import('./pages/profile/profile.component').then((m) => m.ProfileComponent),
@@ -340,16 +349,21 @@ export const routes: Routes = [
       },
       {
         path: 'not-found',
-        loadComponent: () => import('./pages/errors/not-found/not-found.component').then((m) => m.NotFoundComponent),
+        loadComponent: () =>
+          import('./pages/errors/not-found/not-found.component').then((m) => m.NotFoundComponent),
       },
       {
         path: 'access-denied',
-        loadComponent: () => import('./pages/errors/access-denied/access-denied.component').then((m) => m.AccessDeniedComponent),
+        loadComponent: () =>
+          import('./pages/errors/access-denied/access-denied.component').then(
+            (m) => m.AccessDeniedComponent,
+          ),
       },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
       {
         path: '**',
-        loadComponent: () => import('./pages/errors/not-found/not-found.component').then((m) => m.NotFoundComponent),
+        loadComponent: () =>
+          import('./pages/errors/not-found/not-found.component').then((m) => m.NotFoundComponent),
       },
     ],
   },
@@ -426,16 +440,21 @@ export const routes: Routes = [
       },
       {
         path: 'not-found',
-        loadComponent: () => import('./pages/errors/not-found/not-found.component').then((m) => m.NotFoundComponent),
+        loadComponent: () =>
+          import('./pages/errors/not-found/not-found.component').then((m) => m.NotFoundComponent),
       },
       {
         path: 'access-denied',
-        loadComponent: () => import('./pages/errors/access-denied/access-denied.component').then((m) => m.AccessDeniedComponent),
+        loadComponent: () =>
+          import('./pages/errors/access-denied/access-denied.component').then(
+            (m) => m.AccessDeniedComponent,
+          ),
       },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
       {
         path: '**',
-        loadComponent: () => import('./pages/errors/not-found/not-found.component').then((m) => m.NotFoundComponent),
+        loadComponent: () =>
+          import('./pages/errors/not-found/not-found.component').then((m) => m.NotFoundComponent),
       },
     ],
   },
@@ -445,24 +464,35 @@ export const routes: Routes = [
     canActivate: [authGuard],
     data: { role: AppRoles.Supplier },
     loadComponent: () =>
-      import('./layouts/supplier-layout/supplier-layout.component').then((m) => m.SupplierLayoutComponent),
+      import('./layouts/supplier-layout/supplier-layout.component').then(
+        (m) => m.SupplierLayoutComponent,
+      ),
     children: [
       {
-        path: 'dashboard',
+        path: 'medical-inquiries',
         loadComponent: () =>
-          import('./pages/dashboard/supplier-dashboard/supplier-dashboard.component').then(
-            (m) => m.SupplierDashboardComponent,
+          import('./pages/review-team/medical-inquiries.component').then(
+            (m) => m.MedicalInquiriesComponent,
           ),
       },
       {
-        path: 'drugs',
+        path: 'orders',
         loadComponent: () =>
-          import('./pages/supplier-drug/supplier-drugs.component').then((m) => m.SupplierDrugsComponent),
+          import('./pages/orders/admin-orders/admin-orders.component').then(
+            (m) => m.AdminOrdersComponent,
+          ),
+      },
+      {
+        path: 'orders/:id',
+        loadComponent: () =>
+          import('./pages/orders/admin-order-detail/admin-order-detail.component').then(
+            (m) => m.AdminOrderDetailComponent,
+          ),
       },
       {
         path: 'profile',
         loadComponent: () =>
-          import('./pages/supplier-profile/supplier-profile.component').then((m) => m.SupplierProfileComponent),
+          import('./pages/profile/profile.component').then((m) => m.ProfileComponent),
       },
       {
         path: 'profile/edit',
@@ -480,16 +510,86 @@ export const routes: Routes = [
       },
       {
         path: 'not-found',
-        loadComponent: () => import('./pages/errors/not-found/not-found.component').then((m) => m.NotFoundComponent),
+        loadComponent: () =>
+          import('./pages/errors/not-found/not-found.component').then((m) => m.NotFoundComponent),
       },
       {
         path: 'access-denied',
-        loadComponent: () => import('./pages/errors/access-denied/access-denied.component').then((m) => m.AccessDeniedComponent),
+        loadComponent: () =>
+          import('./pages/errors/access-denied/access-denied.component').then(
+            (m) => m.AccessDeniedComponent,
+          ),
       },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
       {
         path: '**',
-        loadComponent: () => import('./pages/errors/not-found/not-found.component').then((m) => m.NotFoundComponent),
+        loadComponent: () =>
+          import('./pages/errors/not-found/not-found.component').then((m) => m.NotFoundComponent),
+      },
+    ],
+  },
+
+  {
+    path: 'supplier',
+    canActivate: [authGuard],
+    data: { role: AppRoles.Supplier },
+    loadComponent: () =>
+      import('./layouts/supplier-layout/supplier-layout.component').then(
+        (m) => m.SupplierLayoutComponent,
+      ),
+    children: [
+      {
+        path: 'dashboard',
+        loadComponent: () =>
+          import('./pages/dashboard/supplier-dashboard/supplier-dashboard.component').then(
+            (m) => m.SupplierDashboardComponent,
+          ),
+      },
+      {
+        path: 'drugs',
+        loadComponent: () =>
+          import('./pages/supplier-drug/supplier-drugs.component').then(
+            (m) => m.SupplierDrugsComponent,
+          ),
+      },
+      {
+        path: 'profile',
+        loadComponent: () =>
+          import('./pages/supplier-profile/supplier-profile.component').then(
+            (m) => m.SupplierProfileComponent,
+          ),
+      },
+      {
+        path: 'profile/edit',
+        loadComponent: () =>
+          import('./pages/profile/update-profile/update-profile.component').then(
+            (m) => m.UpdateProfileComponent,
+          ),
+      },
+      {
+        path: 'change-password',
+        loadComponent: () =>
+          import('./pages/auth/change-password/change-password.component').then(
+            (m) => m.ChangePasswordComponent,
+          ),
+      },
+      {
+        path: 'not-found',
+        loadComponent: () =>
+          import('./pages/errors/not-found/not-found.component').then((m) => m.NotFoundComponent),
+      },
+      {
+        path: 'access-denied',
+        loadComponent: () =>
+          import('./pages/errors/access-denied/access-denied.component').then(
+            (m) => m.AccessDeniedComponent,
+          ),
+      },
+      { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
+      {
+        path: '**',
+        loadComponent: () =>
+          import('./pages/errors/not-found/not-found.component').then((m) => m.NotFoundComponent),
       },
     ],
   },
@@ -571,6 +671,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'prescription-analytics',
+        loadComponent: () =>
+          import('./pages/pharmacist/prescription-analytics/prescription-analytics.component').then(
+            (m) => m.PrescriptionAnalyticsComponent,
+          ),
+      },
+      {
         path: 'profile',
         loadComponent: () =>
           import('./pages/profile/profile.component').then((m) => m.ProfileComponent),
@@ -591,16 +698,21 @@ export const routes: Routes = [
       },
       {
         path: 'not-found',
-        loadComponent: () => import('./pages/errors/not-found/not-found.component').then((m) => m.NotFoundComponent),
+        loadComponent: () =>
+          import('./pages/errors/not-found/not-found.component').then((m) => m.NotFoundComponent),
       },
       {
         path: 'access-denied',
-        loadComponent: () => import('./pages/errors/access-denied/access-denied.component').then((m) => m.AccessDeniedComponent),
+        loadComponent: () =>
+          import('./pages/errors/access-denied/access-denied.component').then(
+            (m) => m.AccessDeniedComponent,
+          ),
       },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
       {
         path: '**',
-        loadComponent: () => import('./pages/errors/not-found/not-found.component').then((m) => m.NotFoundComponent),
+        loadComponent: () =>
+          import('./pages/errors/not-found/not-found.component').then((m) => m.NotFoundComponent),
       },
     ],
   },
@@ -610,7 +722,9 @@ export const routes: Routes = [
     canActivate: [authGuard],
     data: { role: AppRoles.DeliveryDriver }, // تأكد إنك ضايف DeliveryDriver في AppRoles
     loadComponent: () =>
-      import('./layouts/driver-layout/driver-layout.component').then((m) => m.DriverLayoutComponent),
+      import('./layouts/driver-layout/driver-layout.component').then(
+        (m) => m.DriverLayoutComponent,
+      ),
     children: [
       {
         path: 'dashboard',
@@ -633,20 +747,25 @@ export const routes: Routes = [
       },
       {
         path: 'history',
-        component: DriverHistoryComponent
+        component: DriverHistoryComponent,
       },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
       {
         path: 'not-found',
-        loadComponent: () => import('./pages/errors/not-found/not-found.component').then((m) => m.NotFoundComponent),
+        loadComponent: () =>
+          import('./pages/errors/not-found/not-found.component').then((m) => m.NotFoundComponent),
       },
       {
         path: 'access-denied',
-        loadComponent: () => import('./pages/errors/access-denied/access-denied.component').then((m) => m.AccessDeniedComponent),
+        loadComponent: () =>
+          import('./pages/errors/access-denied/access-denied.component').then(
+            (m) => m.AccessDeniedComponent,
+          ),
       },
       {
         path: '**',
-        loadComponent: () => import('./pages/errors/not-found/not-found.component').then((m) => m.NotFoundComponent),
+        loadComponent: () =>
+          import('./pages/errors/not-found/not-found.component').then((m) => m.NotFoundComponent),
       },
     ],
   },
@@ -708,17 +827,13 @@ export const routes: Routes = [
       {
         path: 'drugs',
         loadComponent: () =>
-          import('./pages/admin/drugs/admin-drugs.component').then(
-            (m) => m.AdminDrugsComponent,
-          ),
+          import('./pages/admin/drugs/admin-drugs.component').then((m) => m.AdminDrugsComponent),
       },
 
       {
         path: 'users',
         loadComponent: () =>
-          import('./pages/admin/users/admin-users.component').then(
-            (m) => m.AdminUsersComponent,
-          ),
+          import('./pages/admin/users/admin-users.component').then((m) => m.AdminUsersComponent),
       },
       {
         path: 'profile',
@@ -741,16 +856,21 @@ export const routes: Routes = [
       },
       {
         path: 'not-found',
-        loadComponent: () => import('./pages/errors/not-found/not-found.component').then((m) => m.NotFoundComponent),
+        loadComponent: () =>
+          import('./pages/errors/not-found/not-found.component').then((m) => m.NotFoundComponent),
       },
       {
         path: 'access-denied',
-        loadComponent: () => import('./pages/errors/access-denied/access-denied.component').then((m) => m.AccessDeniedComponent),
+        loadComponent: () =>
+          import('./pages/errors/access-denied/access-denied.component').then(
+            (m) => m.AccessDeniedComponent,
+          ),
       },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
       {
         path: '**',
-        loadComponent: () => import('./pages/errors/not-found/not-found.component').then((m) => m.NotFoundComponent),
+        loadComponent: () =>
+          import('./pages/errors/not-found/not-found.component').then((m) => m.NotFoundComponent),
       },
     ],
   },
