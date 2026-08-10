@@ -14,7 +14,7 @@ import { POStatus, SupplierOrderDTO } from '../../../../app/core/interfaces/supp
     selector: 'app-supplier-dashboard',
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [CommonModule, DatePipe, FormsModule, CardModule, TableModule, ToastModule, SelectModule],
+    imports: [CommonModule, DecimalPipe, DatePipe, FormsModule, CardModule, TableModule, ToastModule, SelectModule],
     providers: [MessageService],
     templateUrl: './supplier-dashboard.component.html',
     styleUrl: './supplier-dashboard.component.scss' // حط فيها ستايل الـ Table بتاعك
