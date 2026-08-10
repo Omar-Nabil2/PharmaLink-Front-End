@@ -1,4 +1,4 @@
-<div dir="rtl" class="h-screen overflow-hidden flex bg-background text-foreground" style="font-family: var(--font-cairo)">
+<div dir="rtl" class="h-[100dvh] overflow-hidden flex bg-background text-foreground" style="font-family: var(--font-cairo)">
   <!-- ============================= SIDEBAR ============================= -->
   <aside class="bg-card border-l border-border transition-all duration-200 hidden md:flex flex-col shrink-0"
     [class.w-64]="!collapsed()" [class.w-20]="collapsed()">
@@ -160,7 +160,7 @@
 
     <!-- Routed content -->
     <div class="px-4 pt-4 md:px-6 md:pt-6 lg:px-8 lg:pt-8 min-h-[calc(100vh-64px)] flex flex-col">
-      <div class="relative w-full flex-1 pb-24 md:pb-12" [@routeAnimations]="prepareRoute(outlet)">
+      <div class="relative w-full flex-1" [@routeAnimations]="prepareRoute(outlet)">
         <router-outlet #outlet="outlet"></router-outlet>
       </div>
       <!-- Spacer equal to top padding to prevent collapse -->

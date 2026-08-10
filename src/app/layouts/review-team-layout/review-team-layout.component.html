@@ -1,4 +1,4 @@
-<div class="patient-theme h-screen overflow-y-scroll overflow-x-hidden bg-slate-50 flex flex-col" style="font-family: var(--font-text)" dir="rtl">
+<div class="patient-theme h-[100dvh] overflow-y-scroll overflow-x-hidden bg-slate-50 flex flex-col" style="font-family: var(--font-text)" dir="rtl">
   
   <!-- Global Click Outside Overlay for mobile menu and user menu -->
   <div *ngIf="menuOpen() || userMenuOpen()" class="fixed inset-0 z-40" (click)="menuOpen.set(false); userMenuOpen.set(false)"></div>
@@ -98,7 +98,7 @@
   <!-- Content -->
   <main class="flex-grow w-full">
     <div class="mx-auto max-w-7xl px-5 py-8 min-h-[calc(100vh-80px)]">
-      <div class="relative w-full pb-24 md:pb-12" [@routeAnimations]="prepareRoute(outlet)">
+      <div class="relative w-full" [@routeAnimations]="prepareRoute(outlet)">
         <router-outlet #outlet="outlet"></router-outlet>
       </div>
     </div>

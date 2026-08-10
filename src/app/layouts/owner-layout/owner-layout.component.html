@@ -1,4 +1,4 @@
-<div dir="rtl" class="h-screen overflow-hidden flex bg-background text-foreground" style="font-family: var(--font-cairo)">
+<div dir="rtl" class="h-[100dvh] overflow-hidden flex bg-background text-foreground" style="font-family: var(--font-cairo)">
   <!-- ============================= SIDEBAR ============================= -->
   <aside class="bg-card border-l border-border transition-all duration-200 hidden md:flex flex-col shrink-0"
     [class.w-64]="!collapsed()" [class.w-20]="collapsed()">
@@ -159,7 +159,7 @@
     </header>
 
     <!-- Routed content -->
-    <div class="relative w-full pb-24 md:pb-12" [@routeAnimations]="prepareRoute(outlet)">
+    <div class="relative w-full" [@routeAnimations]="prepareRoute(outlet)">
       <router-outlet #outlet="outlet"></router-outlet>
     </div>
   </div>
