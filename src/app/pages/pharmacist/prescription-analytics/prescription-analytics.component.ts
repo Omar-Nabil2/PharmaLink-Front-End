@@ -174,16 +174,29 @@ export class PrescriptionAnalyticsComponent {
   readonly categoriesChartOptions = {
     responsive: true,
     maintainAspectRatio: false,
+    layout: {
+      padding: {
+        top: 20,
+        bottom: 10,
+        left: 10,
+        right: 10,
+      },
+    },
     plugins: {
       legend: {
-        position: 'bottom',
+        position: 'bottom' as const,
         labels: {
           font: { family: 'Tajawal', size: 12 },
-          padding: 14,
+          padding: 16,
           usePointStyle: true,
+          pointStyle: 'circle',
         },
       },
       tooltip: {
+        padding: 10,
+        boxPadding: 6,
+        bodyFont: { family: 'Tajawal', size: 12 },
+        titleFont: { family: 'Tajawal', size: 12 },
         callbacks: {
           label: (ctx: any) => {
             const allCats = this.result()?.mostRequestedCategories ?? [];
@@ -195,7 +208,7 @@ export class PrescriptionAnalyticsComponent {
         },
       },
     },
-    cutout: '65%',
+    cutout: '62%',
   };
 
   // ── Actions ──────────────────────────────────────────────────────────────
