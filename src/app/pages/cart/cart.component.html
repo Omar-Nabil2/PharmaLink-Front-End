@@ -33,44 +33,47 @@
     
     <!-- Items List (Right side in RTL) -->
     <div class="w-full lg:w-2/3 flex flex-col gap-4">
-      <div *ngFor="let item of cart.items; trackBy: trackByItemId" class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm flex flex-col sm:flex-row items-center sm:justify-between gap-4 transition-opacity relative">
+      <div *ngFor="let item of cart.items; trackBy: trackByItemId" class="bg-white rounded-xl p-4 sm:p-5 border border-gray-100 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-opacity relative">
         <!-- Optional Loading Overlay -->
-        <div *ngIf="item.loading" class="absolute inset-0 bg-white/40 flex items-center justify-center z-10 rounded-xl pointer-events-none">
-          <div class="w-5 h-5 border-2 border-teal-600 border-t-transparent rounded-full animate-spin"></div>
+        <div *ngIf="item.loading" class="absolute inset-0 bg-white/50 flex items-center justify-center z-10 rounded-xl pointer-events-none backdrop-blur-[1px]">
+          <div class="w-6 h-6 border-2 border-teal-600 border-t-transparent rounded-full animate-spin"></div>
         </div>
         
         <!-- Drug Info -->
-        <div class="flex items-center gap-4 flex-1">
-          <div class="w-16 h-16 bg-teal-50 rounded-lg flex items-center justify-center text-teal-600 shrink-0 overflow-hidden border border-teal-100">
-            <img *ngIf="item.drugImageUrl" [src]="item.drugImageUrl" [alt]="item.drugBrandName" class="w-full h-full object-contain mix-blend-multiply" onerror="this.src='assets/images/placeholder-drug.png'">
+        <div class="flex items-start sm:items-center gap-3 sm:gap-4 flex-1 w-full">
+          <div class="w-16 h-16 sm:w-16 sm:h-16 bg-teal-50/50 rounded-lg flex items-center justify-center text-teal-600 shrink-0 overflow-hidden border border-teal-100">
+            <img *ngIf="item.drugImageUrl" [src]="item.drugImageUrl" [alt]="item.drugBrandName" class="w-full h-full object-contain mix-blend-multiply p-1" onerror="this.src='assets/images/placeholder-drug.png'">
             <!-- Pill Icon fallback -->
             <svg *ngIf="!item.drugImageUrl" class="w-8 h-8 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547l-2.46 2.46a2.62 2.62 0 103.705 3.705l2.46-2.46a2 2 0 00.548-1.022l.477-2.387a6 6 0 00-.517-3.86l-.159-.318a6 6 0 01-.517-3.86l.38-1.93a2 2 0 00-.547-1.806l-2.46-2.46a2.62 2.62 0 013.705-3.705l2.46 2.46a2 2 0 001.022.548l2.387.477a6 6 0 003.86-.517l.318-.159a6 6 0 013.86-.517l1.93.38a2 2 0 001.806.547l2.46 2.46a2.62 2.62 0 11-3.705 3.705l-2.46-2.46z"></path></svg>
           </div>
-          <div>
-            <h3 class="text-lg font-bold text-gray-800">{{ item.drugArabicName || item.drugBrandName }}</h3>
-            <p *ngIf="item.drugArabicName" class="text-xs text-gray-500 font-mono mt-0.5">{{ item.drugBrandName }} {{ item.drugGenericName ? '(' + item.drugGenericName + ')' : '' }}</p>
-            <p class="text-teal-600 font-medium text-sm mt-1">{{ item.unitPriceSnapshot | number:'1.2-2' }} ج</p>
+          <div class="flex-1 min-w-0">
+            <h3 class="text-base sm:text-lg font-bold text-gray-800 leading-tight">{{ item.drugArabicName || item.drugBrandName }}</h3>
+            <p *ngIf="item.drugArabicName" class="text-xs text-gray-500 mt-1 truncate" dir="ltr">{{ item.drugBrandName }} {{ item.drugGenericName ? '| ' + item.drugGenericName : '' }}</p>
+            <p class="text-teal-600 font-bold text-sm mt-1">{{ item.unitPriceSnapshot | number:'1.2-2' }} ج</p>
           </div>
         </div>
 
-        <!-- Quantity Controls -->
-        <div class="flex items-center border border-gray-200 rounded-full bg-white h-10 shrink-0 shadow-sm relative z-20">
-          <button (click)="decreaseQuantity(item)" [disabled]="item.quantity <= 1" class="w-10 h-full flex items-center justify-center text-gray-500 hover:text-teal-600 hover:bg-gray-50 rounded-r-full transition-colors disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-gray-500">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path></svg>
-          </button>
-          <span class="w-10 text-center font-semibold text-gray-800">{{ item.quantity }}</span>
-          <button (click)="increaseQuantity(item)" class="w-10 h-full flex items-center justify-center text-gray-500 hover:text-teal-600 hover:bg-gray-50 rounded-l-full transition-colors disabled:opacity-50">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-          </button>
-        </div>
+        <!-- Controls (Bottom on Mobile, Right on Desktop) -->
+        <div class="flex items-center justify-between sm:justify-end gap-4 w-full sm:w-auto border-t border-gray-100 sm:border-0 pt-3 sm:pt-0 mt-2 sm:mt-0">
+          <!-- Quantity Controls -->
+          <div class="flex items-center border border-gray-200 rounded-lg bg-gray-50 h-9 sm:h-10 shrink-0 shadow-sm relative z-20 overflow-hidden">
+            <button (click)="decreaseQuantity(item)" [disabled]="item.quantity <= 1" class="w-9 sm:w-10 h-full flex items-center justify-center text-gray-600 hover:text-teal-600 hover:bg-white border-l border-gray-200 transition-colors disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-gray-500">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path></svg>
+            </button>
+            <span class="w-10 sm:w-12 text-center font-bold text-gray-800 text-sm sm:text-base">{{ item.quantity }}</span>
+            <button (click)="increaseQuantity(item)" class="w-9 sm:w-10 h-full flex items-center justify-center text-gray-600 hover:text-teal-600 hover:bg-white border-r border-gray-200 transition-colors disabled:opacity-50">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+            </button>
+          </div>
 
-        <!-- Price and Remove (Left side in RTL) -->
-        <div class="flex flex-col items-end shrink-0 min-w-[80px]">
-          <span class="font-bold text-gray-800 text-lg">{{ item.lineTotal | number:'1.2-2' }} ج</span>
-          <button (click)="removeItem(item)" [disabled]="item.loading" class="text-red-500 hover:text-red-600 text-sm flex items-center gap-1 mt-1 font-medium transition-colors disabled:opacity-50">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-            حذف
-          </button>
+          <!-- Price and Remove -->
+          <div class="flex flex-col items-end shrink-0 min-w-[70px]">
+            <span class="font-black text-gray-900 text-base sm:text-lg">{{ item.lineTotal | number:'1.2-2' }} ج</span>
+            <button (click)="removeItem(item)" [disabled]="item.loading" class="text-red-500 hover:text-red-600 text-xs sm:text-sm flex items-center gap-1 mt-1 font-bold transition-colors disabled:opacity-50">
+              <i class="pi pi-trash text-xs sm:text-sm"></i>
+              حذف
+            </button>
+          </div>
         </div>
       </div>
     </div>

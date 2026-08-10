@@ -110,32 +110,23 @@
 
           <!-- Leg Items -->
           <div class="p-4 bg-white">
-            <div class="overflow-x-auto">
-              <table class="w-full text-right text-sm">
-                <thead>
-                  <tr class="text-gray-500 border-b border-gray-100">
-                    <th class="pb-2 font-medium w-1/2">الدواء</th>
-                    <th class="pb-2 font-medium text-center">الكمية</th>
-                    <th class="pb-2 font-medium text-left">السعر</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let item of leg.items; let last = last" [class.border-b]="!last" class="border-gray-50">
-                    <td class="py-3 flex items-center gap-3">
-                      <div class="w-10 h-10 bg-white border border-teal-100 rounded-lg flex items-center justify-center shrink-0 overflow-hidden">
-                        <img *ngIf="item.imageUrl" [src]="item.imageUrl" [alt]="item.drugName" class="w-full h-full object-contain mix-blend-multiply" onerror="this.src='assets/images/placeholder-drug.png'">
-                        <svg *ngIf="!item.imageUrl" class="w-5 h-5 text-teal-400 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547l-2.46 2.46a2.62 2.62 0 103.705 3.705l2.46-2.46a2 2 0 00.548-1.022l.477-2.387a6 6 0 00-.517-3.86l-.159-.318a6 6 0 01-.517-3.86l.38-1.93a2 2 0 00-.547-1.806l-2.46-2.46a2.62 2.62 0 013.705-3.705l2.46 2.46a2 2 0 001.022.548l2.387.477a6 6 0 003.86-.517l.318-.159a6 6 0 013.86-.517l1.93.38a2 2 0 001.806.547l2.46 2.46a2.62 2.62 0 11-3.705 3.705l-2.46-2.46z"></path></svg>
-                      </div>
-                      <div class="flex flex-col justify-center">
-                        <p class="font-bold text-gray-900 text-sm md:text-base leading-tight">{{ item.arabicName ? item.arabicName : item.drugName }}</p>
-                        <p *ngIf="item.arabicName && item.drugName" class="text-[11px] md:text-xs text-gray-500 mt-1 font-medium tracking-wide uppercase" dir="ltr" style="text-align: right;">{{ item.drugName }}</p>
-                      </div>
-                    </td>
-                    <td class="py-3 text-center text-gray-700 font-medium">{{ item.quantityNeeded }}</td>
-                    <td class="py-3 text-left font-semibold text-gray-800" dir="ltr">{{ item.unitPrice | number:'1.2-2' }} ج</td>
-                  </tr>
-                </tbody>
-              </table>
+            <div class="flex flex-col gap-3">
+              <div *ngFor="let item of leg.items" class="bg-gray-50/50 rounded-xl p-3 sm:p-4 border border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+                <div class="flex items-start sm:items-center gap-3 flex-1 min-w-0">
+                  <div class="w-12 h-12 bg-white border border-teal-100 rounded-lg flex items-center justify-center shrink-0 overflow-hidden p-1">
+                    <img *ngIf="item.imageUrl" [src]="item.imageUrl" [alt]="item.drugName" class="w-full h-full object-contain mix-blend-multiply" onerror="this.src='assets/images/placeholder-drug.png'">
+                    <svg *ngIf="!item.imageUrl" class="w-5 h-5 text-teal-400 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547l-2.46 2.46a2.62 2.62 0 103.705 3.705l2.46-2.46a2 2 0 00.548-1.022l.477-2.387a6 6 0 00-.517-3.86l-.159-.318a6 6 0 01-.517-3.86l.38-1.93a2 2 0 00-.547-1.806l-2.46-2.46a2.62 2.62 0 013.705-3.705l2.46 2.46a2 2 0 001.022.548l2.387.477a6 6 0 003.86-.517l.318-.159a6 6 0 013.86-.517l1.93.38a2 2 0 001.806.547l2.46 2.46a2.62 2.62 0 11-3.705 3.705l-2.46-2.46z"></path></svg>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <p class="font-bold text-gray-900 text-sm sm:text-base leading-tight">{{ item.arabicName ? item.arabicName : item.drugName }}</p>
+                    <p *ngIf="item.arabicName && item.drugName" class="text-[11px] text-gray-500 mt-0.5 font-medium tracking-wide uppercase truncate" dir="ltr" style="text-align: right;">{{ item.drugName }}</p>
+                  </div>
+                </div>
+                <div class="flex items-center justify-between sm:justify-end gap-4 w-full sm:w-auto border-t border-gray-100 sm:border-0 pt-2 sm:pt-0 mt-1 sm:mt-0">
+                  <span class="text-sm font-bold text-gray-700 bg-white px-3 py-1 rounded-lg border border-gray-200">الكمية: {{ item.quantityNeeded }}</span>
+                  <span class="font-bold text-teal-700 text-base shrink-0" dir="ltr">{{ item.unitPrice | number:'1.2-2' }} ج</span>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -151,36 +142,26 @@
       </h2>
       <div class="bg-red-50/50 border border-red-100 rounded-xl p-4 shadow-sm">
         <p class="text-sm text-red-600 mb-4 font-medium">هذه الأدوية لم يتم تخصيصها لصيدلية بعد وسيقوم النظام بتوفيرها في أقرب وقت.</p>
-        <div class="overflow-x-auto">
-          <table class="w-full text-right text-sm">
-            <thead>
-              <tr class="text-gray-500 border-b border-red-100/50">
-                <th class="pb-2 font-medium w-1/2">الدواء</th>
-                <th class="pb-2 font-medium text-center">الكمية</th>
-                <th class="pb-2 font-medium text-left">الحالة</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let item of order.pendingAssignmentItems; let last = last" [class.border-b]="!last" class="border-red-100/30">
-                <td class="py-3 flex items-center gap-3">
-                  <div class="w-10 h-10 bg-white border border-red-100 rounded-lg flex items-center justify-center shrink-0 overflow-hidden">
-                    <img *ngIf="item.imageUrl" [src]="item.imageUrl" [alt]="item.drugName" class="w-full h-full object-contain mix-blend-multiply" onerror="this.src='assets/images/placeholder-drug.png'">
-                    <svg *ngIf="!item.imageUrl" class="w-5 h-5 text-red-300 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547l-2.46 2.46a2.62 2.62 0 103.705 3.705l2.46-2.46a2 2 0 00.548-1.022l.477-2.387a6 6 0 00-.517-3.86l-.159-.318a6 6 0 01-.517-3.86l.38-1.93a2 2 0 00-.547-1.806l-2.46-2.46a2.62 2.62 0 013.705-3.705l2.46 2.46a2 2 0 001.022.548l2.387.477a6 6 0 003.86-.517l.318-.159a6 6 0 013.86-.517l1.93.38a2 2 0 001.806.547l2.46 2.46a2.62 2.62 0 11-3.705 3.705l-2.46-2.46z"></path></svg>
-                  </div>
-                  <div class="flex flex-col justify-center">
-                    <p class="font-bold text-gray-900 text-sm md:text-base leading-tight">{{ item.arabicName ? item.arabicName : item.drugName }}</p>
-                    <p *ngIf="item.arabicName && item.drugName" class="text-[11px] md:text-xs text-gray-500 mt-1 font-medium tracking-wide uppercase" dir="ltr" style="text-align: right;">{{ item.drugName }}</p>
-                  </div>
-                </td>
-                <td class="py-3 text-center text-gray-700 font-medium">{{ item.quantityNeeded }}</td>
-                <td class="py-3 text-left">
-                  <span class="text-xs px-2 py-1 bg-red-100 text-red-700 rounded-md font-medium">
-                    {{ getItemStatusText(item.itemStatus) }}
-                  </span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+        <div class="flex flex-col gap-3">
+          <div *ngFor="let item of order.pendingAssignmentItems" class="bg-white/50 rounded-xl p-3 sm:p-4 border border-red-100/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+            <div class="flex items-start sm:items-center gap-3 flex-1 min-w-0">
+              <div class="w-12 h-12 bg-white border border-red-100 rounded-lg flex items-center justify-center shrink-0 overflow-hidden p-1">
+                <img *ngIf="item.imageUrl" [src]="item.imageUrl" [alt]="item.drugName" class="w-full h-full object-contain mix-blend-multiply" onerror="this.src='assets/images/placeholder-drug.png'">
+                <svg *ngIf="!item.imageUrl" class="w-5 h-5 text-red-300 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547l-2.46 2.46a2.62 2.62 0 103.705 3.705l2.46-2.46a2 2 0 00.548-1.022l.477-2.387a6 6 0 00-.517-3.86l-.159-.318a6 6 0 01-.517-3.86l.38-1.93a2 2 0 00-.547-1.806l-2.46-2.46a2.62 2.62 0 013.705-3.705l2.46 2.46a2 2 0 001.022.548l2.387.477a6 6 0 003.86-.517l.318-.159a6 6 0 013.86-.517l1.93.38a2 2 0 001.806.547l2.46 2.46a2.62 2.62 0 11-3.705 3.705l-2.46-2.46z"></path></svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="font-bold text-gray-900 text-sm sm:text-base leading-tight">{{ item.arabicName ? item.arabicName : item.drugName }}</p>
+                <p *ngIf="item.arabicName && item.drugName" class="text-[11px] text-gray-500 mt-0.5 font-medium tracking-wide uppercase truncate" dir="ltr" style="text-align: right;">{{ item.drugName }}</p>
+              </div>
+            </div>
+            
+            <div class="flex items-center justify-between sm:justify-end gap-4 w-full sm:w-auto border-t border-red-100/30 sm:border-0 pt-2 sm:pt-0 mt-1 sm:mt-0">
+              <span class="text-sm font-bold text-gray-700 bg-red-50/50 px-3 py-1 rounded-lg border border-red-100/50">الكمية: {{ item.quantityNeeded }}</span>
+              <span class="text-xs px-2 py-1 bg-red-100 text-red-700 rounded-md font-medium shrink-0">
+                {{ getItemStatusText(item.itemStatus) }}
+              </span>
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -27,7 +27,6 @@ export class PatientLayoutComponent implements OnInit {
   cartCount$ = this.cartService.cartCount$;
 
   patientNavItems = [
-    { label: 'أرشيفي الذكي', routerLink: '/patient/prescription-history' },
     { label: 'الرئيسية', routerLink: '/patient/dashboard' },
     { label: 'الأدوية', routerLink: '/patient/drugs' },
 

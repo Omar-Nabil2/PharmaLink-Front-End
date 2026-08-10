@@ -1,4 +1,4 @@
-<div class="patient-theme h-screen overflow-y-scroll overflow-x-hidden bg-slate-50 flex flex-col" style="font-family: var(--font-text)" dir="rtl">
+<div class="patient-theme h-[100dvh] overflow-y-scroll overflow-x-hidden bg-slate-50 flex flex-col" style="font-family: var(--font-text)" dir="rtl">
   
   <!-- Global Click Outside Overlay for mobile menu and user menu -->
   <div *ngIf="menuOpen() || userMenuOpen()" class="fixed inset-0 z-40" (click)="menuOpen.set(false); userMenuOpen.set(false)"></div>
@@ -50,9 +50,14 @@
             <i class="pi pi-chevron-down text-xs text-slate-400"></i>
           </div>
 
-          @if (userMenuOpen()) {
+            <!-- Click Outside Overlay -->
+            <div class="fixed inset-0 z-40" (click)="userMenuOpen.set(false)" [class.hidden]="!userMenuOpen()"></div>
             <!-- Dropdown Menu -->
-            <div class="absolute left-0 mt-2 w-48 bg-white border border-slate-100 rounded-xl shadow-xl py-2 z-50">
+            <div class="absolute left-0 mt-2 w-48 bg-white border border-slate-100 rounded-xl shadow-xl py-2 z-50 transition-all duration-200 origin-top-left"
+                 [class.opacity-0]="!userMenuOpen()"
+                 [class.scale-95]="!userMenuOpen()"
+                 [class.pointer-events-none]="!userMenuOpen()"
+                 [class.-translate-y-2]="!userMenuOpen()">
               <a routerLink="/review-team/profile" (click)="toggleUserMenu()" class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition">
                 <i class="pi pi-user text-slate-400"></i>
                 الملف الشخصي
@@ -63,7 +68,6 @@
                 تسجيل الخروج
               </button>
             </div>
-          }
         </div>
 
         <!-- Mobile Menu Toggle -->
@@ -93,7 +97,7 @@
 
   <!-- Content -->
   <main class="flex-grow w-full">
-    <div class="mx-auto max-w-7xl px-5 py-8 min-h-[calc(100vh-80px)]">
+    <div class="mx-auto max-w-7xl px-5 py-8 min-h-[calc(100dvh-80px)]">
       <div class="relative w-full" [@routeAnimations]="prepareRoute(outlet)">
         <router-outlet #outlet="outlet"></router-outlet>
       </div>
