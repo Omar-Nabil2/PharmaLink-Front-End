@@ -96,7 +96,7 @@
            (click)="menuOpen = false"
            style="top: 80px;"></div>
 
-      <div class="xl:hidden absolute top-full left-0 right-0 h-[calc(100vh-80px)] bg-white/95 backdrop-blur-md z-50 overflow-hidden transition-all duration-300 ease-out origin-top flex flex-col"
+      <div class="xl:hidden absolute top-full left-0 right-0 h-[calc(100dvh-80px)] bg-white/95 backdrop-blur-md z-50 overflow-hidden transition-all duration-300 ease-out origin-top flex flex-col"
            [class.opacity-0]="!menuOpen"
            [class.scale-y-95]="!menuOpen"
            [class.-translate-y-4]="!menuOpen"
@@ -146,7 +146,7 @@
   </header>
 
   <main class="flex-grow overflow-x-clip">
-    <div class="container-app py-4 md:py-6 min-h-[calc(100vh-80px)]">
+    <div class="container-app py-4 md:py-6 min-h-[calc(100dvh-80px)]">
       <div class="relative w-full" [@routeAnimations]="prepareRoute(outlet)">
         <router-outlet #outlet="outlet"></router-outlet>
       </div>
