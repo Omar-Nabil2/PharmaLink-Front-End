@@ -25,25 +25,25 @@ export class CategoryService {
 
   getRootCategories(): Observable<DrugCategory[]> {
     return this.getAllCategories().pipe(
-      map(categories => categories.filter(c => !c.parentId))
+      map(categories => (categories || []).filter(c => !c.parentId))
     );
   }
 
   getSubcategories(parentId: number): Observable<DrugCategory[]> {
     return this.getAllCategories().pipe(
-      map(categories => categories.filter(c => c.parentId === parentId))
+      map(categories => (categories || []).filter(c => c.parentId === parentId))
     );
   }
 
   getCategoryById(id: number): Observable<DrugCategory | undefined> {
     return this.getAllCategories().pipe(
-      map(categories => categories.find(c => c.id === id))
+      map(categories => (categories || []).find(c => c.id === id))
     );
   }
 
   getCategoriesAsTree(): Observable<TreeNode[]> {
     return this.getAllCategories().pipe(
-      map(categories => this.buildTree(categories))
+      map(categories => this.buildTree(categories || []))
     );
   }
 
