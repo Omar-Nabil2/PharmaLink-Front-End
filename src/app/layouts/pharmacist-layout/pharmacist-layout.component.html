@@ -160,7 +160,7 @@
 
     <!-- Routed content -->
     <div class="p-4 md:p-6 lg:p-8 min-h-[calc(100vh-64px)]">
-      <div class="relative w-full" [@routeAnimations]="prepareRoute(outlet)">
+      <div class="relative w-full pb-24 md:pb-12" [@routeAnimations]="prepareRoute(outlet)">
         <router-outlet #outlet="outlet"></router-outlet>
       </div>
     </div>
