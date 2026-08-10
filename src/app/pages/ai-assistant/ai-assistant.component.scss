@@ -134,3 +134,7 @@
 .tab-content {
   animation: fadeInSoft 0.4s ease-out forwards;
 }
+
+textarea#history-question {
+  min-height: 76px;
+}

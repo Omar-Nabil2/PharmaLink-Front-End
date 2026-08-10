@@ -62,7 +62,6 @@ export class DrugsComponent implements OnInit {
   private readonly baseUrl = environment.baseUrl;
 
   async ngOnInit(): Promise<void> {
-    history.replaceState({ breadcrumbs: this.breadcrumbs, currentCategory: this.currentCategory, viewMode: this.viewMode }, '', window.location.href);
     this.loadCategories();
 
     this.searchInput$.pipe(debounceTime(400), distinctUntilChanged()).subscribe((term) => {
@@ -104,25 +103,39 @@ export class DrugsComponent implements OnInit {
   loadCategories(): void {
     this.isLoading = true;
     if (this.currentCategory) {
-      this.categoryService.getSubcategories(this.currentCategory.id).subscribe((cats) => {
-        this.displayedCategories = cats;
-        this.isLoading = false;
-        
-        if (cats.length === 0) {
-          // Leaf category -> Switch to products view
-          this.viewMode = 'products';
-          this.loadDrugs();
-        } else {
-          this.viewMode = 'categories';
+      this.categoryService.getSubcategories(this.currentCategory.id).subscribe({
+        next: (cats) => {
+          this.displayedCategories = cats;
+          this.isLoading = false;
+          
+          if (cats.length === 0) {
+            // Leaf category -> Switch to products view
+            this.viewMode = 'products';
+            this.loadDrugs();
+          } else {
+            this.viewMode = 'categories';
+          }
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          this.isLoading = false;
+          console.error(err);
+          this.cdr.detectChanges();
         }
-        this.cdr.detectChanges();
       });
     } else {
-      this.categoryService.getRootCategories().subscribe((cats) => {
-        this.displayedCategories = cats;
-        this.viewMode = 'categories';
-        this.isLoading = false;
-        this.cdr.detectChanges();
+      this.categoryService.getRootCategories().subscribe({
+        next: (cats) => {
+          this.displayedCategories = cats;
+          this.viewMode = 'categories';
+          this.isLoading = false;
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          this.isLoading = false;
+          console.error(err);
+          this.cdr.detectChanges();
+        }
       });
     }
   }
@@ -132,7 +145,6 @@ export class DrugsComponent implements OnInit {
     this.breadcrumbs = [...this.breadcrumbs, category];
     this.searchTerm = '';
     this.pageNumber = 1;
-    history.pushState({ breadcrumbs: this.breadcrumbs, currentCategory: this.currentCategory, viewMode: this.viewMode }, '', window.location.href);
     this.loadCategories();
   }
 
@@ -148,7 +160,6 @@ export class DrugsComponent implements OnInit {
     }
     this.searchTerm = '';
     this.pageNumber = 1;
-    history.pushState({ breadcrumbs: this.breadcrumbs, currentCategory: this.currentCategory, viewMode: this.viewMode }, '', window.location.href);
     this.loadCategories();
   }
 
