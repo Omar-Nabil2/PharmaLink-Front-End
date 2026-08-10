@@ -326,6 +326,8 @@ export const routes: Routes = [
           import('./pages/pharmacist/prescription-analytics/prescription-analytics.component').then(
             (m) => m.PrescriptionAnalyticsComponent,
           ),
+      },
+      {
         path: 'profile',
         loadComponent: () =>
           import('./pages/profile/profile.component').then((m) => m.ProfileComponent),
@@ -603,6 +605,8 @@ export const routes: Routes = [
           import('./pages/pharmacist/prescription-analytics/prescription-analytics.component').then(
             (m) => m.PrescriptionAnalyticsComponent,
           ),
+      },
+      {
         path: 'profile',
         loadComponent: () =>
           import('./pages/profile/profile.component').then((m) => m.ProfileComponent),
