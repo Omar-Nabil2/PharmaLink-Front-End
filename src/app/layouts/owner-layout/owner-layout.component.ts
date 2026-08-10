@@ -3,6 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
 import { AuthService } from '@core/services/auth.service';
+import { routeTransitionAnimations } from '../../shared/animations/route.animations';
 
 interface OwnerNavItem {
   label: string;
@@ -17,8 +18,12 @@ interface OwnerNavItem {
   imports: [RouterOutlet, RouterLink, RouterLinkActive],
   templateUrl: './owner-layout.component.html',
   styleUrl: './owner-layout.component.scss',
+  animations: [routeTransitionAnimations]
 })
 export class OwnerLayoutComponent {
+  prepareRoute(outlet: RouterOutlet) {
+    return outlet && outlet.isActivated ? outlet.activatedRoute.snapshot.url.join('') : '';
+  }
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
 

@@ -4,14 +4,14 @@
     [class.w-64]="!collapsed()" [class.w-20]="collapsed()">
     <!-- Brand -->
     <div class="h-16 flex items-center gap-2 px-6 border-b border-border">
-      <img _ngcontent-ng-c3795589771="" src="/logo.png" alt="Pharma Link" class="h-10 md:h-12 w-auto object-contain">
+      <img src="/logo.png" alt="Pharma Link" class="h-10 md:h-12 w-auto object-contain">
       @if (!collapsed()) {
       <span class="font-bold text-lg text-primary">فارما لينك</span>
       }
     </div>
 
     <!-- Navigation -->
-    <nav class="flex-1 p-4 space-y-1">
+    <nav class="flex-1 p-4 space-y-1 overflow-y-auto">
       @for (item of navItems; track item.routerLink) {
       <a [routerLink]="item.routerLink" routerLinkActive="bg-primary text-primary-foreground active"
         [routerLinkActiveOptions]="{ exact: true }"
@@ -24,7 +24,7 @@
       }
     </nav>
 
-    <!-- Owner card + collapse toggle -->
+    <!-- Admin card + collapse toggle -->
     <div class="p-4 border-t border-border">
       <div class="flex items-center gap-3">
           @if (!profilePictureUrl) {
@@ -68,7 +68,7 @@
       [class.translate-x-0]="isMobileSidebarOpen()" [class.translate-x-full]="!isMobileSidebarOpen()">
       <div class="h-16 flex items-center justify-between gap-2 px-6 border-b border-border">
         <div class="flex items-center gap-2">
-          <img _ngcontent-ng-c3795589771="" src="/logo.png" alt="Pharma Link"
+          <img src="/logo.png" alt="Pharma Link"
             class="h-10 md:h-12 w-auto object-contain">
           <span class="font-bold text-lg text-primary">فارما لينك</span>
         </div>
@@ -77,7 +77,7 @@
           <i class="pi pi-times"></i>
         </button>
       </div>
-      <nav class="flex-1 p-4 space-y-1">
+      <nav class="flex-1 p-4 space-y-1 overflow-y-auto">
         @for (item of navItems; track item.routerLink) {
         <a [routerLink]="item.routerLink" routerLinkActive="bg-primary text-primary-foreground active"
           [routerLinkActiveOptions]="{ exact: true }" (click)="closeMobileSidebar()"
@@ -91,7 +91,7 @@
   </div>
 
   <!-- ============================ CONTENT COLUMN ============================ -->
-  <div class="flex-1 flex flex-col min-w-0 overflow-y-scroll overflow-x-hidden">
+  <div class="flex-1 flex flex-col min-w-0 overflow-y-scroll overflow-x-hidden bg-canvas-softer">
     <!-- Sticky header -->
     <header
       class="w-full h-16 bg-card border-b border-border flex items-center justify-between shrink-0 sticky top-0 z-10">
@@ -103,7 +103,7 @@
             <i class="pi pi-bars"></i>
           </button>
           <h1 class="text-xl font-bold">مرحبا بك</h1>
-          <span class="text-[0.9375rem] text-muted-foreground hidden sm:block">/ مالك الصيدلية</span>
+          <span class="text-[0.9375rem] text-muted-foreground hidden sm:block">/ {{ roleLabel() }}</span>
         </div>
 
         <div class="flex items-center gap-4">
@@ -133,7 +133,7 @@
             <div class="fixed inset-0 z-10" (click)="userMenuOpen.set(false)"></div>
             <!-- Dropdown Menu -->
             <div class="absolute left-0 mt-2 w-48 bg-card border border-border rounded-lg shadow-lg py-1 z-20">
-              <a routerLink="/owner/profile" (click)="toggleUserMenu()"
+              <a routerLink="/driver/profile" (click)="toggleUserMenu()"
                 class="flex items-center gap-2 px-4 py-2 text-[0.9375rem] text-foreground hover:bg-muted">
                 <i class="pi pi-user text-sm"></i>
                 <span>الملف الشخصي</span>
@@ -157,8 +157,10 @@
     </header>
 
     <!-- Routed content -->
-    <div class="relative w-full" [@routeAnimations]="prepareRoute(outlet)">
-      <router-outlet #outlet="outlet"></router-outlet>
+    <div class="p-4 md:p-6 lg:p-8 min-h-[calc(100vh-64px)]">
+      <div class="relative w-full" [@routeAnimations]="prepareRoute(outlet)">
+        <router-outlet #outlet="outlet"></router-outlet>
+      </div>
     </div>
   </div>
 </div>
