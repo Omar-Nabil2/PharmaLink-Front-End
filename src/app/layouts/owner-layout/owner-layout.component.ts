@@ -5,10 +5,17 @@ import { filter } from 'rxjs';
 import { AuthService } from '@core/services/auth.service';
 import { routeTransitionAnimations } from '../../shared/animations/route.animations';
 
-interface OwnerNavItem {
+export interface OwnerSubNavItem {
   label: string;
   icon: string;
   routerLink: string;
+}
+
+export interface OwnerNavItem {
+  label: string;
+  icon: string;
+  routerLink?: string;
+  subItems?: OwnerSubNavItem[];
 }
 
 @Component({
@@ -32,6 +39,8 @@ export class OwnerLayoutComponent {
   readonly isMobileSidebarOpen = signal(false);
 
   readonly userMenuOpen = signal(false);
+
+  readonly isAiMenuExpanded = signal(true);
 
   readonly notificationCount = signal(3);
 
@@ -57,15 +66,25 @@ export class OwnerLayoutComponent {
       .subscribe(() => this.closeMobileSidebar());
   }
 
+  toggleAiMenu(): void {
+    this.isAiMenuExpanded.update((val) => !val);
+  }
+
   readonly navItems: OwnerNavItem[] = [
     { label: 'لوحة التحكم', icon: 'pi pi-th-large', routerLink: '/owner/dashboard' },
-    { label: 'تحليلات الروشتات', icon: 'pi pi-chart-bar', routerLink: '/owner/prescription-analytics' },
+    {
+      label: 'الذكاء الاصطناعي',
+      icon: 'pi pi-sparkles',
+      subItems: [
+        { label: 'تحليلات الروشتات', icon: 'pi pi-chart-bar', routerLink: '/owner/prescription-analytics' },
+        { label: 'التنبؤ بالمخزون', icon: 'pi pi-chart-line', routerLink: '/owner/ai-forecasting' }
+      ]
+    },
     { label: 'الصيادلة', icon: 'pi pi-users', routerLink: '/owner/pharmacists' },
     { label: 'المخزون', icon: 'pi pi-box', routerLink: '/owner/inventory' },
     { label: 'الطلبات', icon: 'pi pi-shopping-cart', routerLink: '/owner/orders' },
-    { label: 'طلبات المورد', icon: 'pi pi-shopping-cart', routerLink: '/owner/supplier-orders' },
+    { label: 'طلبات المورد', icon: 'pi pi-truck', routerLink: '/owner/supplier-orders' },
     { label: 'الفروع', icon: 'pi pi-sitemap', routerLink: '/owner/branches' },
-    { label: 'الذكاء الاصطناعي', icon: 'pi pi-sparkles', routerLink: '/owner/ai-forecasting' },
     { label: 'بيانات الصيدلية', icon: 'pi pi-shop', routerLink: '/owner/pharmacy-profile' },
   ];
 
