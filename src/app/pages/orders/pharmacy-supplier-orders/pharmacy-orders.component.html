@@ -8,126 +8,140 @@
             <div class="flex flex-col gap-1">
                 <div class="flex items-center gap-3">
                     <h1 class="text-base md:text-xl lg:text-2xl font-bold">سجل الطلبيات</h1>
-                    <span class="text-[10px] lg:text-xs font-medium text-muted-foreground hidden sm:block">/ طلبيات الموردين</span>
+                    <span class="text-[10px] lg:text-xs font-medium text-muted-foreground hidden sm:block">/ طلبيات
+                        الموردين</span>
                 </div>
             </div>
         </div>
 
         <!-- ── Toolbar: branch + filter + search ─────────────────── -->
         <div class="bg-card rounded-xl border border-border p-4 flex gap-3 flex-wrap items-center">
-            
+
             <!-- فلتر الفرع -->
             <div class="relative min-w-[12rem] flex-1 lg:flex-none lg:w-[300px]">
                 <p-autoComplete [ngModel]="selectedBranchFilter()" (onSelect)="onBranchSelected($event)"
                     (onClear)="onBranchCleared()" [suggestions]="branchFilterSuggestions()"
                     (completeMethod)="onBranchFilterSearch($event)" field="branchName" optionLabel="branchName"
-                    dataKey="branchId" placeholder="ابحث عن الفرع..."
-                    [minLength]="0" [delay]="0" emptyMessage="لا توجد نتائج"
-                    styleClass="w-full inv-autocomplete" inputStyleClass="w-full h-10 lg:h-12 text-xs lg:text-base" [showClear]="true" appendTo="body">
+                    dataKey="branchId" placeholder="ابحث عن الفرع..." [minLength]="0" [delay]="0"
+                    emptyMessage="لا توجد نتائج" styleClass="w-full inv-autocomplete"
+                    inputStyleClass="w-full h-10 lg:h-12 text-xs lg:text-base" [showClear]="true" appendTo="body">
                     <ng-template let-branch pTemplate="item">
                         <div dir="rtl" class="flex flex-col py-1">
-                            <span class="text-xs lg:text-base font-medium text-foreground">{{ branch.branchName }}</span>
+                            <span class="text-xs lg:text-base font-medium text-foreground">{{ branch.branchName
+                                }}</span>
                         </div>
                     </ng-template>
                 </p-autoComplete>
             </div>
 
             @if (selectedBranchId()) {
-                <!-- فلتر الحالة -->
-                <p-select [options]="statusOptions" [ngModel]="selectedStatus()" (onChange)="onStatusChange($event)"
-                    optionLabel="label" optionValue="value" placeholder="كل الحالات" styleClass="h-10 lg:h-12 min-w-[10rem] text-xs lg:text-base" appendTo="body">
-                </p-select>
+            <!-- فلتر الحالة -->
+            <p-select [options]="statusOptions" [ngModel]="selectedStatus()" (onChange)="onStatusChange($event)"
+                optionLabel="label" optionValue="value" placeholder="كل الحالات"
+                styleClass="h-10 lg:h-12 min-w-[10rem] text-xs lg:text-base" appendTo="body">
+            </p-select>
 
-                <!-- البحث النصي -->
-                <div class="relative flex-1 min-w-[15rem]">
-                    <i class="pi pi-search absolute right-3 top-1/2 -translate-y-1/2 text-[0.8125rem] text-muted-foreground"></i>
-                    <input type="text" [value]="searchQuery()" (input)="onSearchChange($event)"
-                        placeholder="بحث باسم الدواء..."
-                        class="w-full h-10 lg:h-12 rounded-lg border border-border bg-background pr-10 pl-4 text-xs lg:text-base text-foreground leading-normal outline-none transition-colors duration-200 focus:border-[#007671]" />
-                </div>
+            <!-- البحث النصي -->
+            <div class="relative flex-1 min-w-[15rem]">
+                <i
+                    class="pi pi-search absolute right-3 top-1/2 -translate-y-1/2 text-[0.8125rem] text-muted-foreground"></i>
+                <input type="text" [value]="searchQuery()" (input)="onSearchChange($event)"
+                    placeholder="بحث باسم الدواء..."
+                    class="w-full h-10 lg:h-12 rounded-lg border border-border bg-background pr-10 pl-4 text-xs lg:text-base text-foreground leading-normal outline-none transition-colors duration-200 focus:border-[#007671]" />
+            </div>
             }
         </div>
 
         <!-- ── Table container ──────────────────────────────────────── -->
         @if (selectedBranchId()) {
-            <div class="bg-card rounded-xl border border-border overflow-hidden">
-                <p-table [value]="filteredOrders()" [loading]="isLoading()" [paginator]="true" [rows]="10"
-                    styleClass="w-full text-xs lg:text-base" [tableStyle]="{ 'min-width': '60rem' }">
-                    <ng-template pTemplate="header">
-                        <tr class="bg-muted/50 border-b border-border">
-                            <th class="text-right p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground">اسم الدواء</th>
-                            <th class="text-center p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground">الكمية المطلوبة</th>
-                            <th class="text-center p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground">تاريخ الطلب</th>
-                            <th class="text-center p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground">الحالة</th>
-                            <th class="text-center p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground">الإجراءات</th>
-                        </tr>
-                    </ng-template>
+        <div class="bg-card rounded-xl border border-border overflow-hidden">
+            <p-table [value]="orders()" [loading]="isLoading()" [paginator]="true" [rows]="pageSize()" [lazy]="true"
+                (onLazyLoad)="onPageChange($event)" [totalRecords]="totalRecords()"
+                styleClass="w-full text-xs lg:text-base" [tableStyle]="{ 'min-width': '60rem' }">
+                <ng-template pTemplate="header">
+                    <tr class="bg-muted/50 border-b border-border">
+                        <th class="text-right p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground">اسم
+                            الدواء</th>
+                        <th class="text-center p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground">
+                            الكمية المطلوبة</th>
+                        <th class="text-center p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground">
+                            تاريخ الطلب</th>
+                        <th class="text-center p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground">
+                            الحالة</th>
+                        <th class="text-center p-4 text-xs lg:text-[0.9375rem] font-semibold text-muted-foreground">
+                            الإجراءات</th>
+                    </tr>
+                </ng-template>
 
-                    <ng-template pTemplate="body" let-order>
-                        <tr class="border-t border-border transition-colors duration-200 hover:bg-muted/30">
-                            <td class="p-4 font-medium text-foreground text-right">{{ order.drugName || 'غير متوفر' }}</td>
-                            <td class="p-4 text-center">
-                                <span class="inline-flex items-center justify-center bg-blue-50 text-blue-700 border border-blue-200 px-2.5 py-1 rounded-full text-xs lg:text-sm font-medium">
-                                    {{ order.orderedQuantity }} عبوة
+                <ng-template pTemplate="body" let-order>
+                    <tr class="border-t border-border transition-colors duration-200 hover:bg-muted/30">
+                        <td class="p-4 font-medium text-foreground text-right">{{ order.drugName || 'غير متوفر' }}</td>
+                        <td class="p-4 text-center">
+                            <span
+                                class="inline-flex items-center justify-center bg-blue-50 text-blue-700 border border-blue-200 px-2.5 py-1 rounded-full text-xs lg:text-sm font-medium">
+                                {{ order.orderedQuantity }} عبوة
+                            </span>
+                        </td>
+                        <td class="p-4 text-center text-muted-foreground text-xs lg:text-sm whitespace-nowrap">
+                            {{ order.createdAt | date:'dd/MM/yyyy - hh:mm a' }}
+                        </td>
+                        <td class="p-4 text-center">
+                            <p-tag [value]="translateStatus(order.status)"
+                                [severity]="getSeverity(order.status)"></p-tag>
+                        </td>
+                        <td class="p-4 text-center">
+                            <div class="flex items-center justify-center gap-1">
+                                @if (order.status === 'Shipped') {
+                                <button type="button" (click)="confirmReceive(order)"
+                                    class="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs lg:text-sm font-medium text-white transition-colors duration-200"
+                                    style="background-color: #007671"
+                                    onmouseover="this.style.backgroundColor='var(--color-green-hover)'"
+                                    onmouseout="this.style.backgroundColor='#007671'">
+                                    <i class="pi pi-check-circle"></i>
+                                    <span>استلام</span>
+                                </button>
+                                } @else if (order.status === 'Delivered') {
+                                <span
+                                    class="inline-flex items-center gap-1.5 text-green-600 text-xs lg:text-sm bg-green-50/50 border border-green-100 px-3 py-1.5 rounded-lg">
+                                    <i class="pi pi-check-circle"></i> تم الاستلام
                                 </span>
-                            </td>
-                            <td class="p-4 text-center text-muted-foreground text-xs lg:text-sm whitespace-nowrap">
-                                {{ order.createdAt | date:'dd/MM/yyyy - hh:mm a' }}
-                            </td>
-                            <td class="p-4 text-center">
-                                <p-tag [value]="translateStatus(order.status)" [severity]="getSeverity(order.status)"></p-tag>
-                            </td>
-                            <td class="p-4 text-center">
-                                <div class="flex items-center justify-center gap-1">
-                                    @if (order.status === 'Shipped') {
-                                        <button
-                                            type="button"
-                                            (click)="confirmReceive(order)"
-                                            class="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs lg:text-sm font-medium text-white transition-colors duration-200"
-                                            style="background-color: #007671"
-                                            onmouseover="this.style.backgroundColor='var(--color-green-hover)'"
-                                            onmouseout="this.style.backgroundColor='#007671'"
-                                        >
-                                            <i class="pi pi-check-circle"></i>
-                                            <span>استلام</span>
-                                        </button>
-                                    } @else if (order.status === 'Delivered') {
-                                        <span class="inline-flex items-center gap-1.5 text-green-600 text-xs lg:text-sm bg-green-50/50 border border-green-100 px-3 py-1.5 rounded-lg">
-                                            <i class="pi pi-check-circle"></i> تم الاستلام
-                                        </span>
-                                    } @else {
-                                        <span class="inline-flex items-center gap-1.5 text-muted-foreground text-xs lg:text-sm bg-muted/50 border border-border px-3 py-1.5 rounded-lg">
-                                            <i class="pi pi-clock text-xs"></i> قيد الانتظار
-                                        </span>
-                                    }
-                                </div>
-                            </td>
-                        </tr>
-                    </ng-template>
+                                } @else {
+                                <span
+                                    class="inline-flex items-center gap-1.5 text-muted-foreground text-xs lg:text-sm bg-muted/50 border border-border px-3 py-1.5 rounded-lg">
+                                    <i class="pi pi-clock text-xs"></i> قيد الانتظار
+                                </span>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
 
-                    <ng-template pTemplate="emptymessage">
-                        <tr>
-                            <td colspan="5" class="text-center p-12">
-                                <div class="flex flex-col items-center justify-center gap-3">
-                                    <div class="h-16 w-16 rounded-full bg-muted flex items-center justify-center mx-auto">
-                                        <i class="pi pi-inbox text-2xl text-muted-foreground"></i>
-                                    </div>
-                                    <p class="text-sm md:text-base lg:text-lg font-semibold text-foreground">لا توجد طلبات تطابق الفلتر الحالي.</p>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="5" class="text-center p-12">
+                            <div class="flex flex-col items-center justify-center gap-3">
+                                <div class="h-16 w-16 rounded-full bg-muted flex items-center justify-center mx-auto">
+                                    <i class="pi pi-inbox text-2xl text-muted-foreground"></i>
                                 </div>
-                            </td>
-                        </tr>
-                    </ng-template>
-                </p-table>
-            </div>
+                                <p class="text-sm md:text-base lg:text-lg font-semibold text-foreground">لا توجد طلبات
+                                    تطابق الفلتر الحالي.</p>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
         } @else {
-            <!-- Empty State قبل اختيار الفرع -->
-            <div class="bg-card rounded-xl border border-border p-12 flex flex-col items-center justify-center text-center gap-3">
-                <div class="h-16 w-16 rounded-full bg-muted flex items-center justify-center mx-auto">
-                    <i class="pi pi-building text-2xl text-muted-foreground"></i>
-                </div>
-                <p class="text-sm md:text-base lg:text-lg font-semibold text-foreground">لم يتم تحديد فرع</p>
-                <p class="text-xs lg:text-base text-muted-foreground">الرجاء اختيار فرع الصيدلية من القائمة أعلاه لعرض الطلبيات الخاصة به.</p>
+        <!-- Empty State قبل اختيار الفرع -->
+        <div
+            class="bg-card rounded-xl border border-border p-12 flex flex-col items-center justify-center text-center gap-3">
+            <div class="h-16 w-16 rounded-full bg-muted flex items-center justify-center mx-auto">
+                <i class="pi pi-building text-2xl text-muted-foreground"></i>
             </div>
+            <p class="text-sm md:text-base lg:text-lg font-semibold text-foreground">لم يتم تحديد فرع</p>
+            <p class="text-xs lg:text-base text-muted-foreground">الرجاء اختيار فرع الصيدلية من القائمة أعلاه لعرض
+                الطلبيات الخاصة به.</p>
+        </div>
         }
     </div>
 </main>

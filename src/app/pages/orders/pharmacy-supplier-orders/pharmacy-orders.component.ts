@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal, DestroyRef, computed } from '@angular/core';
+import { Component, OnInit, inject, signal, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ConfirmationService, MessageService } from 'primeng/api';
@@ -8,8 +8,8 @@ import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { AutoCompleteModule } from 'primeng/autocomplete';
-import { SelectModule } from 'primeng/select';// أضفنا ده للفلتر
-import { InputTextModule } from 'primeng/inputtext'; // أضفنا ده للبحث
+import { SelectModule } from 'primeng/select';
+import { InputTextModule } from 'primeng/inputtext';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -29,8 +29,8 @@ import { PharmacyBranchSearchDTO } from '@pages/inventory/search.model';
         ToastModule,
         ConfirmDialogModule,
         AutoCompleteModule,
-        SelectModule, // تم الإضافة
-        InputTextModule // تم الإضافة
+        SelectModule,
+        InputTextModule
     ],
     providers: [MessageService, ConfirmationService],
     templateUrl: './pharmacy-orders.component.html'
@@ -42,9 +42,14 @@ export class PharmacyOrdersComponent implements OnInit {
     private confirmationService = inject(ConfirmationService);
     private destroyRef = inject(DestroyRef);
 
-    // حالة الطلبيات الأساسية
+    // حالة الطلبيات الأساسية (بدون filteredOrders)
     orders = signal<any[]>([]);
     isLoading = signal<boolean>(false);
+
+    // متغيرات الـ Pagination (Server-side)
+    totalRecords = signal<number>(0);
+    currentPage = signal<number>(1);
+    pageSize = signal<number>(10);
 
     // متغيرات البحث عن الفرع 
     selectedBranchId = signal<string | undefined>(undefined);
@@ -52,33 +57,13 @@ export class PharmacyOrdersComponent implements OnInit {
     selectedBranchFilter = signal<PharmacyBranchSearchDTO | null>(null);
     private branchFilterQuery$ = new Subject<string>();
 
-    // متغيرات الفلتر والبحث داخل الجدول
+    // متغيرات الفلتر والبحث
     searchQuery = signal<string>('');
     selectedStatus = signal<string | null>(null);
-
-    // الداتا المفلترة اللي الجدول هيقرا منها (بتتحدث تلقائياً)
-    filteredOrders = computed(() => {
-        let currentOrders = this.orders();
-        const status = this.selectedStatus();
-        const query = this.searchQuery().toLowerCase().trim();
-
-        // فلترة بالحالة
-        if (status) {
-            currentOrders = currentOrders.filter(o => o.status === status);
-        }
-
-        // فلترة بالبحث النصي (في اسم الدواء)
-        if (query) {
-            currentOrders = currentOrders.filter(o =>
-                (o.drugName && o.drugName.toLowerCase().includes(query))
-            );
-        }
-
-        return currentOrders;
-    });
+    private searchSubject = new Subject<string>(); // للتحكم في توقيت البحث النصي
 
     statusOptions = [
-        { label: 'الكل', value: null }, // خيار لإلغاء الفلتر
+        { label: 'الكل', value: null },
         { label: 'في انتظار الموافقة', value: 'PendingPharmacyApproval' },
         { label: 'أرسلت للمورد', value: 'SentToSupplier' },
         { label: 'مقبولة من المورد', value: 'AcceptedBySupplier' },
@@ -89,6 +74,7 @@ export class PharmacyOrdersComponent implements OnInit {
     ];
 
     constructor() {
+        // إعداد البحث التلقائي للفروع
         this.branchFilterQuery$
             .pipe(
                 debounceTime(300),
@@ -97,6 +83,19 @@ export class PharmacyOrdersComponent implements OnInit {
                 takeUntilDestroyed(this.destroyRef)
             )
             .subscribe((results) => this.branchFilterSuggestions.set(results ?? []));
+
+        // إعداد البحث النصي باسم الدواء (Debounce لتحسين الأداء)
+        this.searchSubject
+            .pipe(
+                debounceTime(500), // الانتظار نصف ثانية بعد آخر حرف
+                distinctUntilChanged(),
+                takeUntilDestroyed(this.destroyRef)
+            )
+            .subscribe((query) => {
+                this.searchQuery.set(query);
+                this.currentPage.set(1); // الرجوع للصفحة الأولى عند البحث
+                this.loadOrders();
+            });
     }
 
     ngOnInit(): void { }
@@ -110,6 +109,7 @@ export class PharmacyOrdersComponent implements OnInit {
         if (branch && branch.branchId) {
             this.selectedBranchFilter.set(branch);
             this.selectedBranchId.set(branch.branchId);
+            this.currentPage.set(1); // تصفير الصفحة عند تغيير الفرع
             this.loadOrders();
         }
     }
@@ -118,8 +118,10 @@ export class PharmacyOrdersComponent implements OnInit {
         this.selectedBranchFilter.set(null);
         this.selectedBranchId.set(undefined);
         this.orders.set([]);
-        this.selectedStatus.set(null); // تصفير الفلاتر
+        this.totalRecords.set(0);
+        this.selectedStatus.set(null);
         this.searchQuery.set('');
+        this.currentPage.set(1);
     }
 
     loadOrders(): void {
@@ -127,9 +129,17 @@ export class PharmacyOrdersComponent implements OnInit {
         if (!branchId) return;
 
         this.isLoading.set(true);
-        this.poService.getBranchOrders(branchId).subscribe({
-            next: (data) => {
-                this.orders.set(data);
+        this.poService.getBranchOrders(
+            branchId,
+            this.currentPage(),
+            this.pageSize(),
+            this.searchQuery(),
+            this.selectedStatus() || undefined
+        ).subscribe({
+            next: (data: any) => {
+                // بناءً على تعديل الـ Backend، متوقع يرجع PagedResult
+                this.orders.set(data.items || []);
+                this.totalRecords.set(data.totalCount || 0);
                 this.isLoading.set(false);
             },
             error: () => {
@@ -139,14 +149,25 @@ export class PharmacyOrdersComponent implements OnInit {
         });
     }
 
-    // دوال التحديث للبحث والفلتر
+    // يتم استدعاؤها من جدول PrimeNG عند التبديل بين الصفحات
+    onPageChange(event: any) {
+        // event.first: ترتيب أول عنصر في الصفحة، event.rows: عدد العناصر
+        const page = Math.floor(event.first / event.rows) + 1;
+        this.currentPage.set(page);
+        this.pageSize.set(event.rows);
+        this.loadOrders();
+    }
+
     onSearchChange(event: Event) {
         const input = event.target as HTMLInputElement;
-        this.searchQuery.set(input.value);
+        // نمرر القيمة للـ Subject عشان يعملها Debounce قبل ما يبعت للسيرفر
+        this.searchSubject.next(input.value.trim().toLowerCase());
     }
 
     onStatusChange(event: any) {
         this.selectedStatus.set(event.value);
+        this.currentPage.set(1); // الرجوع للصفحة الأولى عند الفلترة بالحالة
+        this.loadOrders();
     }
 
     confirmReceive(order: any): void {
