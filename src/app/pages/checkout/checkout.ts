@@ -207,7 +207,9 @@ export class CheckoutComponent implements OnInit {
     }).subscribe({
       next: (order: OrderCreatedResponse) => {
         this.createdOrder = order;
-        
+        this.cartService.updateCartCount(0); // Update local cart icon immediately
+        this.cartService.getCart().subscribe({ error: () => {} }); // Sync with backend
+
         // Build routingPlan from createdOrder to display in the preview modal
         this.routingPlan = {
           strategy: order.strategy ?? '',

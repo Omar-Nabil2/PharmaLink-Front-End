@@ -45,8 +45,22 @@ export class PatientOrderDetailComponent implements OnInit, OnDestroy {
     ).subscribe({
       next: (order) => {
         this.ngZone.run(() => {
+          let availableTotal = 0;
+          if (order.fulfillmentLegs && order.fulfillmentLegs.length > 0) {
+            order.fulfillmentLegs.forEach(leg => {
+              if (leg.items && leg.items.length > 0) {
+                leg.items.forEach(item => {
+                  if (item.itemStatus !== 'Unavailable') {
+                    availableTotal += (item.unitPrice || 0) * (item.quantityNeeded || 0);
+                  }
+                });
+              }
+            });
+          }
+
           this.order = {
             ...order,
+            totalAmount: availableTotal > 0 ? availableTotal : (order.fulfillmentLegs?.length ? 0 : order.totalAmount),
             orderNumber: order.orderNumber || `ORD-${order.orderId.substring(0, 8).toUpperCase()}`,
             createdAt: order.createdAt ? (order.createdAt.endsWith('Z') ? order.createdAt : order.createdAt + 'Z') : new Date().toISOString()
           };

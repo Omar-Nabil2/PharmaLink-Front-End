@@ -61,11 +61,27 @@ export class PatientOrdersComponent implements OnInit, OnDestroy {
         let rawItems: PatientOrder[] = res.items || res || [];
 
         // 1. معالجة وتنسيق البيانات
-        let processedOrders = rawItems.map(order => ({
-          ...order,
-          orderNumber: order.orderNumber || `ORD-${order.orderId?.substring(0, 8).toUpperCase()}`,
-          createdAt: order.createdAt ? (order.createdAt.endsWith('Z') ? order.createdAt : order.createdAt + 'Z') : new Date().toISOString()
-        }));
+        let processedOrders = rawItems.map(order => {
+          let availableTotal = 0;
+          if (order.fulfillmentLegs && order.fulfillmentLegs.length > 0) {
+            order.fulfillmentLegs.forEach(leg => {
+              if (leg.items && leg.items.length > 0) {
+                leg.items.forEach(item => {
+                  if (item.itemStatus !== 'Unavailable') {
+                    availableTotal += (item.unitPrice || 0) * (item.quantityNeeded || 0);
+                  }
+                });
+              }
+            });
+          }
+
+          return {
+            ...order,
+            totalAmount: availableTotal > 0 ? availableTotal : (order.fulfillmentLegs?.length ? 0 : order.totalAmount),
+            orderNumber: order.orderNumber || `ORD-${order.orderId?.substring(0, 8).toUpperCase()}`,
+            createdAt: order.createdAt ? (order.createdAt.endsWith('Z') ? order.createdAt : order.createdAt + 'Z') : new Date().toISOString()
+          };
+        });
 
         // 2. فلترة بالسيرش (إذا الباك إند لم يفلترها)
         if (this.filter.search && this.filter.search.trim() !== '') {

@@ -21,7 +21,7 @@ export class NavbarComponent {
     private readonly router: Router,
     private readonly authService: AuthService,
     private readonly profileService: ProfileService
-  ) {}
+  ) { }
 
   ngOnInit() {
     if (this.isLoggedIn && !localStorage.getItem('profilePictureUrl')) {
@@ -32,14 +32,14 @@ export class NavbarComponent {
               localStorage.setItem('profilePictureUrl', res.url);
             }
           },
-          error: () => {}
+          error: () => { }
         });
       }
     }
   }
 
   @HostListener('window:storage')
-  onStorageChange(): void {}
+  onStorageChange(): void { }
 
   get isLoggedIn(): boolean {
     if (typeof window === 'undefined') return false;
@@ -60,6 +60,19 @@ export class NavbarComponent {
     return this.authService.getDashboardPath();
   }
 
+  get profilePath(): string {
+    const role = this.authService.getNormalizedRole();
+    switch (role) {
+      case AppRoles.DeliveryDriver:
+        return '/driver/profile';
+      case AppRoles.Admin:
+        return '/admin/profile';
+      case AppRoles.Pharmacist:
+        return '/pharmacist/profile';
+      default:
+        return '/profile';
+    }
+  }
   getProfileLink(): string {
     const roleStr = typeof window !== 'undefined' ? localStorage.getItem('roleName')?.toLowerCase() : '';
     if (roleStr === 'patient') return '/patient/profile';
@@ -68,6 +81,7 @@ export class NavbarComponent {
     if (roleStr === 'pharmacyadmin') return '/owner/profile';
     if (roleStr === 'prescriptionreviewteam') return '/review-team/profile';
     if (roleStr === 'supplier') return '/supplier/profile';
+    if (roleStr === 'deliverydriver') return '/driver/profile';
     return '/profile';
   }
 
@@ -79,6 +93,7 @@ export class NavbarComponent {
     if (roleStr === 'pharmacyadmin') return '/owner/change-password';
     if (roleStr === 'prescriptionreviewteam') return '/review-team/change-password';
     if (roleStr === 'supplier') return '/supplier/change-password';
+    if (roleStr === 'deliverydriver') return '/driver/change-password';
     return '/change-password';
   }
 

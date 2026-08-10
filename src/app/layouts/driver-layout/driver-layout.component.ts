@@ -1,45 +1,41 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal, OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
 import { AuthService } from '@core/services/auth.service';
 import { routeTransitionAnimations } from '../../shared/animations/route.animations';
+import { CommonModule } from '@angular/common';
 
-interface OwnerNavItem {
+export interface SidebarItem {
   label: string;
-  icon: string;
+  icon?: string;
   routerLink: string;
 }
 
 @Component({
-  selector: 'app-owner-layout',
+  selector: 'app-driver-layout',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive],
-  templateUrl: './owner-layout.component.html',
-  styleUrl: './owner-layout.component.scss',
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, CommonModule],
+  templateUrl: './driver-layout.component.html',
+  styleUrl: './driver-layout.component.scss',
   animations: [routeTransitionAnimations]
 })
-export class OwnerLayoutComponent {
+export class DriverLayoutComponent implements OnInit {
   prepareRoute(outlet: RouterOutlet) {
     return outlet && outlet.isActivated ? outlet.activatedRoute.snapshot.url.join('') : '';
   }
+  
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
 
   readonly collapsed = signal(false);
-
   readonly isMobileSidebarOpen = signal(false);
-
   readonly userMenuOpen = signal(false);
 
-  readonly notificationCount = signal(3);
-
-  readonly fullName = computed(() => this.authService.currentUser()?.fullName || 'مالك الصيدلية');
-
-  readonly roleLabel = signal('مالك صيدلية');
-
-  readonly avatarInitial = computed(() => this.fullName().charAt(0).toUpperCase() || 'م');
+  readonly fullName = computed(() => this.authService.currentUser()?.fullName || 'عامل التوصيل');
+  readonly roleLabel = signal('عامل توصيل');
+  readonly avatarInitial = computed(() => this.fullName().charAt(0).toUpperCase() || 'ع');
   profilePictureUrl: string | null = null;
 
   ngOnInit(): void {
@@ -57,16 +53,9 @@ export class OwnerLayoutComponent {
       .subscribe(() => this.closeMobileSidebar());
   }
 
-  readonly navItems: OwnerNavItem[] = [
-    { label: 'لوحة التحكم', icon: 'pi pi-th-large', routerLink: '/owner/dashboard' },
-    { label: 'تحليلات الروشتات', icon: 'pi pi-chart-bar', routerLink: '/owner/prescription-analytics' },
-    { label: 'الصيادلة', icon: 'pi pi-users', routerLink: '/owner/pharmacists' },
-    { label: 'المخزون', icon: 'pi pi-box', routerLink: '/owner/inventory' },
-    { label: 'الطلبات', icon: 'pi pi-shopping-cart', routerLink: '/owner/orders' },
-    { label: 'طلبات المورد', icon: 'pi pi-shopping-cart', routerLink: '/owner/supplier-orders' },
-    { label: 'الفروع', icon: 'pi pi-sitemap', routerLink: '/owner/branches' },
-    { label: 'الذكاء الاصطناعي', icon: 'pi pi-sparkles', routerLink: '/owner/ai-forecasting' },
-    { label: 'بيانات الصيدلية', icon: 'pi pi-shop', routerLink: '/owner/pharmacy-profile' },
+  readonly navItems: SidebarItem[] = [
+    { label: 'الطلبات المتاحة', icon: 'pi pi-map-marker', routerLink: '/driver/dashboard' },
+    { label: 'سجل التوصيل', icon: 'pi pi-history', routerLink: '/driver/history' }
   ];
 
   toggleCollapse(): void {

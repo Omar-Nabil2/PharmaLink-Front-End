@@ -4,6 +4,7 @@ import { HomeComponent } from './pages/home/home.component';
 import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
 import { authGuard } from './core/guards/auth.guard';
 import { AppRoles } from './core/enums/app-roles.constant';
+import { DriverHistoryComponent } from '@pages/driver-history/driver-history.component';
 
 export const routes: Routes = [
   {
@@ -468,6 +469,76 @@ export const routes: Routes = [
       ),
     children: [
       {
+        path: 'medical-inquiries',
+        loadComponent: () =>
+          import('./pages/review-team/medical-inquiries.component').then(
+            (m) => m.MedicalInquiriesComponent,
+          ),
+      },
+      {
+        path: 'orders',
+        loadComponent: () =>
+          import('./pages/orders/admin-orders/admin-orders.component').then(
+            (m) => m.AdminOrdersComponent,
+          ),
+      },
+      {
+        path: 'orders/:id',
+        loadComponent: () =>
+          import('./pages/orders/admin-order-detail/admin-order-detail.component').then(
+            (m) => m.AdminOrderDetailComponent,
+          ),
+      },
+      {
+        path: 'profile',
+        loadComponent: () =>
+          import('./pages/profile/profile.component').then((m) => m.ProfileComponent),
+      },
+      {
+        path: 'profile/edit',
+        loadComponent: () =>
+          import('./pages/profile/update-profile/update-profile.component').then(
+            (m) => m.UpdateProfileComponent,
+          ),
+      },
+      {
+        path: 'change-password',
+        loadComponent: () =>
+          import('./pages/auth/change-password/change-password.component').then(
+            (m) => m.ChangePasswordComponent,
+          ),
+      },
+      {
+        path: 'not-found',
+        loadComponent: () =>
+          import('./pages/errors/not-found/not-found.component').then((m) => m.NotFoundComponent),
+      },
+      {
+        path: 'access-denied',
+        loadComponent: () =>
+          import('./pages/errors/access-denied/access-denied.component').then(
+            (m) => m.AccessDeniedComponent,
+          ),
+      },
+      { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
+      {
+        path: '**',
+        loadComponent: () =>
+          import('./pages/errors/not-found/not-found.component').then((m) => m.NotFoundComponent),
+      },
+    ],
+  },
+
+  {
+    path: 'supplier',
+    canActivate: [authGuard],
+    data: { role: AppRoles.Supplier },
+    loadComponent: () =>
+      import('./layouts/supplier-layout/supplier-layout.component').then(
+        (m) => m.SupplierLayoutComponent,
+      ),
+    children: [
+      {
         path: 'dashboard',
         loadComponent: () =>
           import('./pages/dashboard/supplier-dashboard/supplier-dashboard.component').then(
@@ -638,6 +709,59 @@ export const routes: Routes = [
           ),
       },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
+      {
+        path: '**',
+        loadComponent: () =>
+          import('./pages/errors/not-found/not-found.component').then((m) => m.NotFoundComponent),
+      },
+    ],
+  },
+
+  {
+    path: 'driver',
+    canActivate: [authGuard],
+    data: { role: AppRoles.DeliveryDriver }, // تأكد إنك ضايف DeliveryDriver في AppRoles
+    loadComponent: () =>
+      import('./layouts/driver-layout/driver-layout.component').then(
+        (m) => m.DriverLayoutComponent,
+      ),
+    children: [
+      {
+        path: 'dashboard',
+        loadComponent: () =>
+          import('./pages/dashboard/driver-dashboard/driver-dashboard.component').then(
+            (m) => m.DriverDashboardComponent,
+          ),
+      },
+      {
+        path: 'profile',
+        loadComponent: () =>
+          import('./pages/profile/profile.component').then((m) => m.ProfileComponent),
+      },
+      {
+        path: 'profile/edit',
+        loadComponent: () =>
+          import('./pages/profile/update-profile/update-profile.component').then(
+            (m) => m.UpdateProfileComponent,
+          ),
+      },
+      {
+        path: 'history',
+        component: DriverHistoryComponent,
+      },
+      { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
+      {
+        path: 'not-found',
+        loadComponent: () =>
+          import('./pages/errors/not-found/not-found.component').then((m) => m.NotFoundComponent),
+      },
+      {
+        path: 'access-denied',
+        loadComponent: () =>
+          import('./pages/errors/access-denied/access-denied.component').then(
+            (m) => m.AccessDeniedComponent,
+          ),
+      },
       {
         path: '**',
         loadComponent: () =>

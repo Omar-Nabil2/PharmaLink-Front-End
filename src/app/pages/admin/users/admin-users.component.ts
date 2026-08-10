@@ -50,6 +50,7 @@ export class AdminUsersComponent implements OnInit {
     { label: 'مدير صيدلية', value: 'PharmacyAdmin' },
     { label: 'مدير نظام', value: 'Admin' },
     { label: 'مورد', value: 'Supplier' },
+    { label: 'طيار', value: 'DeliveryDriver' },
 
   ];
 
@@ -136,6 +137,7 @@ export class AdminUsersComponent implements OnInit {
       case 'PharmacyAdmin': return 'مدير صيدلية';
       case 'Admin': return 'مدير نظام';
       case 'Supplier': return 'مورد';
+      case 'DeliveryDriver': return 'طيار';
       default: return role;
     }
   }

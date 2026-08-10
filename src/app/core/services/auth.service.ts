@@ -67,6 +67,7 @@ export class AuthService {
     if (r === 'pharmacyadmin' || r === 'owner' || r === 'pharmacyowner')
       return AppRoles.PharmacyAdmin;
     if (r === 'patient') return AppRoles.Patient;
+    if (r === 'deliverydriver' || r === 'driver') return AppRoles.DeliveryDriver;
     return null;
   }
 
@@ -115,6 +116,8 @@ export class AuthService {
         return '/supplier/dashboard';
       case AppRoles.Patient:
         return '/patient/dashboard';
+      case AppRoles.DeliveryDriver:
+        return '/driver/dashboard';
       default:
         return '/';
     }
