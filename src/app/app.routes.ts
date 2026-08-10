@@ -4,6 +4,7 @@ import { HomeComponent } from './pages/home/home.component';
 import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
 import { authGuard } from './core/guards/auth.guard';
 import { AppRoles } from './core/enums/app-roles.constant';
+import { DriverHistoryComponent } from '@pages/driver-history/driver-history.component';
 
 export const routes: Routes = [
   {
@@ -150,6 +151,13 @@ export const routes: Routes = [
           import(
             './pages/patient-prescription-review.component/patient-prescription-review.component'
           ).then((m) => m.PatientPrescriptionsListComponent),
+      },
+      {
+        path: 'prescription-history',
+        loadComponent: () =>
+          import('./pages/prescription-history/prescription-history.component').then(
+            (m) => m.PrescriptionHistoryComponent,
+          ),
       },
       {
         path: 'medical-inquiries',
@@ -383,59 +391,59 @@ export const routes: Routes = [
             (m) => m.ReviewPrescriptionComponent,
           ),
       },
-        {
-          path: 'medical-inquiries',
-          loadComponent: () =>
-            import('./pages/review-team/medical-inquiries.component').then(
-              (m) => m.MedicalInquiriesComponent,
-            ),
-        },
-        {
-          path: 'orders',
-          loadComponent: () =>
-            import('./pages/orders/admin-orders/admin-orders.component').then(
-              (m) => m.AdminOrdersComponent,
-            ),
-        },
-        {
-          path: 'orders/:id',
-          loadComponent: () =>
-            import('./pages/orders/admin-order-detail/admin-order-detail.component').then(
-              (m) => m.AdminOrderDetailComponent,
-            ),
-        },
-        {
-          path: 'profile',
-          loadComponent: () =>
-            import('./pages/profile/profile.component').then((m) => m.ProfileComponent),
-        },
-        {
-          path: 'profile/edit',
-          loadComponent: () =>
-            import('./pages/profile/update-profile/update-profile.component').then(
-              (m) => m.UpdateProfileComponent,
-            ),
-        },
-        {
-          path: 'change-password',
-          loadComponent: () =>
-            import('./pages/auth/change-password/change-password.component').then(
-              (m) => m.ChangePasswordComponent,
-            ),
-        },
-        {
-          path: 'not-found',
-          loadComponent: () => import('./pages/errors/not-found/not-found.component').then((m) => m.NotFoundComponent),
-        },
-        {
-          path: 'access-denied',
-          loadComponent: () => import('./pages/errors/access-denied/access-denied.component').then((m) => m.AccessDeniedComponent),
-        },
-        { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
-        {
-          path: '**',
-          loadComponent: () => import('./pages/errors/not-found/not-found.component').then((m) => m.NotFoundComponent),
-        },
+      {
+        path: 'medical-inquiries',
+        loadComponent: () =>
+          import('./pages/review-team/medical-inquiries.component').then(
+            (m) => m.MedicalInquiriesComponent,
+          ),
+      },
+      {
+        path: 'orders',
+        loadComponent: () =>
+          import('./pages/orders/admin-orders/admin-orders.component').then(
+            (m) => m.AdminOrdersComponent,
+          ),
+      },
+      {
+        path: 'orders/:id',
+        loadComponent: () =>
+          import('./pages/orders/admin-order-detail/admin-order-detail.component').then(
+            (m) => m.AdminOrderDetailComponent,
+          ),
+      },
+      {
+        path: 'profile',
+        loadComponent: () =>
+          import('./pages/profile/profile.component').then((m) => m.ProfileComponent),
+      },
+      {
+        path: 'profile/edit',
+        loadComponent: () =>
+          import('./pages/profile/update-profile/update-profile.component').then(
+            (m) => m.UpdateProfileComponent,
+          ),
+      },
+      {
+        path: 'change-password',
+        loadComponent: () =>
+          import('./pages/auth/change-password/change-password.component').then(
+            (m) => m.ChangePasswordComponent,
+          ),
+      },
+      {
+        path: 'not-found',
+        loadComponent: () => import('./pages/errors/not-found/not-found.component').then((m) => m.NotFoundComponent),
+      },
+      {
+        path: 'access-denied',
+        loadComponent: () => import('./pages/errors/access-denied/access-denied.component').then((m) => m.AccessDeniedComponent),
+      },
+      { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
+      {
+        path: '**',
+        loadComponent: () => import('./pages/errors/not-found/not-found.component').then((m) => m.NotFoundComponent),
+      },
     ],
   },
 
@@ -629,6 +637,10 @@ export const routes: Routes = [
           import('./pages/profile/update-profile/update-profile.component').then(
             (m) => m.UpdateProfileComponent,
           ),
+      },
+      {
+        path: 'history',
+        component: DriverHistoryComponent
       },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
     ],

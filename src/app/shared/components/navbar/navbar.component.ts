@@ -81,6 +81,7 @@ export class NavbarComponent {
     if (roleStr === 'pharmacyadmin') return '/owner/profile';
     if (roleStr === 'prescriptionreviewteam') return '/review-team/profile';
     if (roleStr === 'supplier') return '/supplier/profile';
+    if (roleStr === 'deliverydriver') return '/driver/profile';
     return '/profile';
   }
 
@@ -92,6 +93,7 @@ export class NavbarComponent {
     if (roleStr === 'pharmacyadmin') return '/owner/change-password';
     if (roleStr === 'prescriptionreviewteam') return '/review-team/change-password';
     if (roleStr === 'supplier') return '/supplier/change-password';
+    if (roleStr === 'deliverydriver') return '/driver/change-password';
     return '/change-password';
   }
 

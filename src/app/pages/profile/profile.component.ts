@@ -189,6 +189,7 @@ export class ProfileComponent implements OnInit {
     if (roleStr === 'pharmacyadmin') return '/owner/profile/edit';
     if (roleStr === 'prescriptionreviewteam') return '/review-team/profile/edit';
     if (roleStr === 'supplier') return '/supplier/profile/edit';
+    if (roleStr === 'deliverydriver') return '/driver/profile/edit';
     return '/profile/edit';
   }
 
@@ -200,6 +201,7 @@ export class ProfileComponent implements OnInit {
     if (roleStr === 'pharmacyadmin') return '/owner/change-password';
     if (roleStr === 'prescriptionreviewteam') return '/review-team/change-password';
     if (roleStr === 'supplier') return '/supplier/change-password';
+    if (roleStr === 'deliverydriver') return '/driver/change-password';
     return '/change-password';
   }
 }
