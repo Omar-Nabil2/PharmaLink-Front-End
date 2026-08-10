@@ -54,6 +54,21 @@ export class SupplierDashboardComponent {
 
     readonly actionLoading = signal<Record<string, boolean>>({});
 
+    // 1. ضيف الـ Object ده كمتغير في الكلاس
+    readonly statusBadges: Record<string, { label: string, class: string }> = {
+        'SentToSupplier': { label: 'جديد (بانتظار ردك)', class: 'bg-warning/20 text-warning-foreground' },
+        'AcceptedBySupplier': { label: 'تم القبول', class: 'bg-info/20 text-info' },
+        'ProcessingBySupplier': { label: 'جاري التجهيز', class: 'bg-primary/20 text-primary' },
+        'Shipped': { label: 'تم الشحن', class: 'bg-accent/20 text-accent' },
+        'Delivered': { label: 'تم التوصيل', class: 'bg-muted text-muted-foreground' },
+        'RejectedBySupplier': { label: 'مرفوض', class: 'bg-destructive/20 text-destructive' }
+    };
+
+    // 2. عدّل الدالة عشان تقرأ من الـ Object الثابت
+    getStatusBadge(statusStr: string): { label: string, class: string } {
+        return this.statusBadges[statusStr] || { label: statusStr, class: 'bg-muted text-muted-foreground' };
+    }
+
     // ─── Actions ───
 
     acceptOrder(orderId: string): void {
@@ -97,18 +112,6 @@ export class SupplierDashboardComponent {
         this.setActionLoading(orderId, false);
     }
 
-    // لترجمة الحالة وعرض لون مختلف
-    getStatusBadge(statusStr: string): { label: string, class: string } {
-        switch (statusStr) {
-            case 'SentToSupplier': return { label: 'جديد (بانتظار ردك)', class: 'bg-warning/20 text-warning-foreground' };
-            case 'AcceptedBySupplier': return { label: 'تم القبول', class: 'bg-info/20 text-info' };
-            case 'ProcessingBySupplier': return { label: 'جاري التجهيز', class: 'bg-primary/20 text-primary' };
-            case 'Shipped': return { label: 'تم الشحن', class: 'bg-accent/20 text-accent' };
-            case 'Delivered': return { label: 'تم التوصيل', class: 'bg-muted text-muted-foreground' };
-            case 'RejectedBySupplier': return { label: 'مرفوض', class: 'bg-destructive/20 text-destructive' };
-            default: return { label: statusStr, class: 'bg-muted text-muted-foreground' };
-        }
-    }
 
     // لجعل الـ Enum متاح في الـ HTML
     get POStatus() { return POStatus; }
