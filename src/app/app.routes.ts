@@ -676,6 +676,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'change-password',
+        loadComponent: () =>
+          import('./pages/auth/change-password/change-password.component').then(
+            (m) => m.ChangePasswordComponent,
+          ),
+      },
+      {
         path: 'history',
         component: DriverHistoryComponent,
       },
