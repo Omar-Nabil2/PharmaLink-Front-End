@@ -1,4 +1,4 @@
-<div class="patient-theme h-screen overflow-x-hidden bg-canvas-softer font-sans flex flex-col" [class.overflow-y-hidden]="menuOpen" [class.overflow-y-scroll]="!menuOpen" dir="rtl">
+<div class="patient-theme h-[100dvh] overflow-x-hidden bg-canvas-softer font-sans flex flex-col" [class.overflow-y-hidden]="menuOpen" [class.overflow-y-scroll]="!menuOpen" dir="rtl">
   
   <!-- Global Click Outside Overlay (Covers the main content below the header) -->
   <div *ngIf="profileMenuOpen || menuOpen" class="fixed inset-0 z-40" (click)="profileMenuOpen = false; menuOpen = false"></div>
@@ -147,7 +147,7 @@
 
   <main class="flex-grow overflow-x-clip">
     <div class="container-app py-4 md:py-6 min-h-[calc(100vh-80px)]">
-      <div class="relative w-full pb-24 md:pb-12" [@routeAnimations]="prepareRoute(outlet)">
+      <div class="relative w-full" [@routeAnimations]="prepareRoute(outlet)">
         <router-outlet #outlet="outlet"></router-outlet>
       </div>
     </div>
