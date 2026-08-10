@@ -153,13 +153,16 @@ export class PrescriptionAnalyticsComponent {
   };
 
   readonly categoriesChartData = computed(() => {
-    const cats = this.result()?.mostRequestedCategories ?? [];
+    const allCats = this.result()?.mostRequestedCategories ?? [];
+    const activeCats = allCats.filter((c) => c.count > 0);
+    const cats = activeCats.length > 0 ? activeCats : allCats;
+
     return {
-      labels: cats.map((c) => c.categoryName),
+      labels: cats.map((c) => `${c.categoryName} (${c.percentage}%)`),
       datasets: [
         {
           data: cats.map((c) => c.count),
-          backgroundColor: cats.map((c) => c.colorHint),
+          backgroundColor: cats.map((c) => c.colorHint || '#007671'),
           hoverOffset: 8,
           borderWidth: 2,
           borderColor: '#ffffff',
@@ -174,7 +177,22 @@ export class PrescriptionAnalyticsComponent {
     plugins: {
       legend: {
         position: 'bottom',
-        labels: { font: { family: 'Tajawal', size: 12 }, padding: 16 },
+        labels: {
+          font: { family: 'Tajawal', size: 12 },
+          padding: 14,
+          usePointStyle: true,
+        },
+      },
+      tooltip: {
+        callbacks: {
+          label: (ctx: any) => {
+            const allCats = this.result()?.mostRequestedCategories ?? [];
+            const activeCats = allCats.filter((c) => c.count > 0);
+            const cats = activeCats.length > 0 ? activeCats : allCats;
+            const item = cats[ctx.dataIndex];
+            return item ? ` ${item.categoryName}: ${item.count} أصناف (${item.percentage}%)` : '';
+          },
+        },
       },
     },
     cutout: '65%',
