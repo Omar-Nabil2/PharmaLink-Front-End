@@ -19,7 +19,19 @@ export class App implements OnInit {
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe(() => {
-      document.body.scrollTo(0, 0);
+      // Use setTimeout to ensure the DOM is updated before we attempt to scroll
+      setTimeout(() => {
+        // Since we disabled body scrolling and moved it to layout containers,
+        // we need to find those containers and scroll them.
+        const scrollContainers = document.querySelectorAll('.overflow-y-scroll, .overflow-y-auto');
+        scrollContainers.forEach(container => {
+          container.scrollTo(0, 0);
+        });
+        
+        // Fallback
+        window.scrollTo(0, 0);
+        document.body.scrollTo(0, 0);
+      }, 10);
     });
   }
 }
