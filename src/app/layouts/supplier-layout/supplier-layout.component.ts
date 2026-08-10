@@ -3,6 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
 import { AuthService } from '@core/services/auth.service';
+import { routeTransitionAnimations } from '../../shared/animations/route.animations';
 
 interface SupplierNavItem {
     label: string;
@@ -17,8 +18,12 @@ interface SupplierNavItem {
     imports: [RouterOutlet, RouterLink, RouterLinkActive],
     templateUrl: './supplier-layout.component.html', // استخدم نفس الـ HTML بتاع الـ Owner مع تغيير النصوص
     styleUrl: './supplier-layout.component.scss',
+    animations: [routeTransitionAnimations]
 })
 export class SupplierLayoutComponent {
+    prepareRoute(outlet: RouterOutlet) {
+        return outlet && outlet.isActivated ? outlet.activatedRoute.snapshot.url.join('') : '';
+    }
     private readonly authService = inject(AuthService);
     private readonly router = inject(Router);
 
