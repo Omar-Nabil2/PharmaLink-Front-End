@@ -128,11 +128,14 @@
               <i class="pi pi-chevron-down text-xs text-muted-foreground"></i>
             </div>
 
-            @if (userMenuOpen()) {
             <!-- Click Outside Overlay -->
-            <div class="fixed inset-0 z-10" (click)="userMenuOpen.set(false)"></div>
+            <div class="fixed inset-0 z-10" (click)="userMenuOpen.set(false)" [class.hidden]="!userMenuOpen()"></div>
             <!-- Dropdown Menu -->
-            <div class="absolute left-0 mt-2 w-48 bg-card border border-border rounded-lg shadow-lg py-1 z-20">
+            <div class="absolute left-0 mt-2 w-48 bg-card border border-border rounded-lg shadow-lg py-1 z-20 transition-all duration-200 origin-top-left"
+                 [class.opacity-0]="!userMenuOpen()"
+                 [class.scale-95]="!userMenuOpen()"
+                 [class.pointer-events-none]="!userMenuOpen()"
+                 [class.-translate-y-2]="!userMenuOpen()">
               <a routerLink="/driver/profile" (click)="toggleUserMenu()"
                 class="flex items-center gap-2 px-4 py-2 text-[0.9375rem] text-foreground hover:bg-muted">
                 <i class="pi pi-user text-sm"></i>
@@ -144,7 +147,6 @@
                 <span>تسجيل الخروج</span>
               </button>
             </div>
-            }
           </div>
 
           <!-- Logout -->

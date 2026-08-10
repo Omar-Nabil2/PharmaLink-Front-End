@@ -50,9 +50,14 @@
             <i class="pi pi-chevron-down text-xs text-slate-400"></i>
           </div>
 
-          @if (userMenuOpen()) {
+            <!-- Click Outside Overlay -->
+            <div class="fixed inset-0 z-40" (click)="userMenuOpen.set(false)" [class.hidden]="!userMenuOpen()"></div>
             <!-- Dropdown Menu -->
-            <div class="absolute left-0 mt-2 w-48 bg-white border border-slate-100 rounded-xl shadow-xl py-2 z-50">
+            <div class="absolute left-0 mt-2 w-48 bg-white border border-slate-100 rounded-xl shadow-xl py-2 z-50 transition-all duration-200 origin-top-left"
+                 [class.opacity-0]="!userMenuOpen()"
+                 [class.scale-95]="!userMenuOpen()"
+                 [class.pointer-events-none]="!userMenuOpen()"
+                 [class.-translate-y-2]="!userMenuOpen()">
               <a routerLink="/review-team/profile" (click)="toggleUserMenu()" class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition">
                 <i class="pi pi-user text-slate-400"></i>
                 الملف الشخصي
@@ -63,7 +68,6 @@
                 تسجيل الخروج
               </button>
             </div>
-          }
         </div>
 
         <!-- Mobile Menu Toggle -->
