@@ -30,7 +30,7 @@
   <!-- الجدول -->
   <div class="overflow-hidden rounded-lg border border-gray-100">
     <p-table [value]="reviews" [lazy]="true" (onLazyLoad)="onLazyLoad($event)" [paginator]="true" [rows]="rows"
-      [first]="first" [totalRecords]="totalRecords" [loading]="loading" [rowsPerPageOptions]="[10, 20, 50]"
+      [first]="first" [totalRecords]="totalRecords" [rowsPerPageOptions]="[10, 20, 50]"
       dataKey="reviewId" styleClass="p-datatable-striped p-datatable-sm" responsiveLayout="scroll">
 
       <!-- الهيدر -->
@@ -100,7 +100,7 @@
           </td>
         </tr>
       </ng-template>
-
+      
       <!-- أيقونة التحميل -->
       <ng-template pTemplate="loadingicon">
         <i class="pi pi-spin pi-spinner text-teal-700" style="font-size: 1.75rem"></i>

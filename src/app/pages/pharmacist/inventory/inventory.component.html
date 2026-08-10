@@ -36,7 +36,7 @@
         <!-- الجدول -->
         <div class="overflow-hidden rounded-lg border border-gray-100">
             <p-table [value]="inventoryItems" [lazy]="true" (onLazyLoad)="onLazyLoad($event)" [paginator]="true"
-                [rows]="rows" [first]="first" [totalRecords]="totalRecords" [loading]="loading"
+                [rows]="rows" [first]="first" [totalRecords]="totalRecords"
                 [rowsPerPageOptions]="[10, 20, 50]" dataKey="inventoryId"
                 styleClass="p-datatable-striped p-datatable-sm" responsiveLayout="scroll">
 
@@ -95,11 +95,6 @@
                             لا توجد أدوية متطابقة مع بحثك أو الفلتر المختار.
                         </td>
                     </tr>
-                </ng-template>
-
-                <!-- أيقونة التحميل -->
-                <ng-template pTemplate="loadingicon">
-                    <i class="pi pi-spin pi-spinner text-teal-700" style="font-size: 1.75rem"></i>
                 </ng-template>
 
             </p-table>
