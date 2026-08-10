@@ -1,48 +1,57 @@
 <div class="h-screen flex bg-canvas overflow-hidden">
   <!-- Left brand panel -->
   <div
-    class="hidden lg:flex lg:w-1/2 lg:h-screen lg:sticky lg:top-0 bg-ink text-on-dark p-10 xl:p-12 flex-col justify-between">
-    <a routerLink="/" class="flex items-center gap-3">
+    class="hidden lg:flex lg:w-1/2 lg:h-screen lg:sticky lg:top-0 bg-gradient-to-br from-teal-700 via-teal-800 to-teal-950 p-10 xl:p-12 flex-col justify-between relative overflow-hidden">
+    
+    <!-- Decorative Background Shapes -->
+    <div class="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-teal-500/20 rounded-full blur-[100px] pointer-events-none"></div>
+    <div class="absolute bottom-[-10%] left-[-10%] w-[60%] h-[60%] bg-teal-900/40 rounded-full blur-[120px] pointer-events-none"></div>
+
+    <a routerLink="/" class="flex items-center gap-3 relative z-10">
       <img
         src="/small_logo.png"
         alt="Pharma Link"
-        class="h-9 w-auto object-contain brightness-0 invert"
+        class="h-9 w-auto object-contain brightness-0 invert drop-shadow-md"
       />
-      <span class="type-display-sm text-on-dark">فارما لينك</span>
+      <span class="type-display-sm text-white font-bold tracking-tight">فارما لينك</span>
     </a>
 
-    <div class="max-w-lg space-y-6 my-auto" dir="rtl">
-      <h1 class="type-display-xl text-on-dark">
-        شبكة صيدلياتك، بكل بساطة.
-      </h1>
-      <p class="type-body-lg text-mute">
-        قم بإدارة الوصفات الطبية، تحقق من الحسابات، وابقَ على تواصل مع المرضى — كل ذلك في مكان واحد آمن.
-      </p>
+    <div class="max-w-lg space-y-8 my-auto relative z-10" dir="rtl">
+      <div class="space-y-4">
+        <h1 class="text-4xl xl:text-5xl font-black text-white leading-tight drop-shadow-sm">
+          شبكة صيدلياتك،<br/>بكل بساطة.
+        </h1>
+        <p class="text-lg text-teal-100/90 leading-relaxed max-w-md">
+          قم بإدارة الوصفات الطبية، تحقق من الحسابات، وابقَ على تواصل مع المرضى — كل ذلك في مكان واحد آمن.
+        </p>
+      </div>
 
-      <div class="space-y-3 pt-2">
-        <div class="flex gap-4 p-4 rounded-xl bg-black-elevated">
-          <div class="flex items-center justify-center w-10 h-10 rounded-full bg-canvas-soft/10 shrink-0">
-            <i class="pi pi-shield text-on-dark"></i>
+      <div class="space-y-4 pt-4">
+        <!-- Feature 1 (Glassmorphism) -->
+        <div class="flex gap-4 p-5 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 shadow-xl shadow-black/10 hover:bg-white/15 transition-colors duration-300">
+          <div class="flex items-center justify-center w-12 h-12 rounded-full bg-white/20 shrink-0 text-white shadow-inner">
+            <i class="pi pi-shield text-xl"></i>
           </div>
           <div>
-            <h3 class="type-body-md-strong text-on-dark">تحقق آمن</h3>
-            <p class="type-body-sm text-mute mt-1">فحص الهوية والوصفات الطبية مدمج في كل خطوة.</p>
+            <h3 class="text-lg font-bold text-white">تحقق آمن</h3>
+            <p class="text-sm text-teal-100/80 mt-1 leading-snug">فحص الهوية والوصفات الطبية مدمج في كل خطوة.</p>
           </div>
         </div>
 
-        <div class="flex gap-4 p-4 rounded-xl bg-black-elevated">
-          <div class="flex items-center justify-center w-10 h-10 rounded-full bg-canvas-soft/10 shrink-0">
-            <i class="pi pi-bolt text-on-dark"></i>
+        <!-- Feature 2 (Glassmorphism) -->
+        <div class="flex gap-4 p-5 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 shadow-xl shadow-black/10 hover:bg-white/15 transition-colors duration-300">
+          <div class="flex items-center justify-center w-12 h-12 rounded-full bg-white/20 shrink-0 text-white shadow-inner">
+            <i class="pi pi-bolt text-xl"></i>
           </div>
           <div>
-            <h3 class="type-body-md-strong text-on-dark">إعداد سريع للحساب</h3>
-            <p class="type-body-sm text-mute mt-1">التحقق بخطوة واحدة يدخلك لبوابتك في دقائق معدودة.</p>
+            <h3 class="text-lg font-bold text-white">إعداد سريع للحساب</h3>
+            <p class="text-sm text-teal-100/80 mt-1 leading-snug">التحقق بخطوة واحدة يدخلك لبوابتك في دقائق معدودة.</p>
           </div>
         </div>
       </div>
     </div>
 
-    <p class="type-caption text-mute text-center" dir="ltr">&copy; 2026 فارما لينك. جميع الحقوق محفوظة.</p>
+    <p class="text-xs text-teal-200/60 text-center relative z-10" dir="ltr">&copy; 2026 فارما لينك. جميع الحقوق محفوظة.</p>
   </div>
 
   <!-- Form side -->

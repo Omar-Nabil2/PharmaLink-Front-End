@@ -55,8 +55,7 @@ export class DriverLayoutComponent implements OnInit {
 
   readonly navItems: SidebarItem[] = [
     { label: 'الطلبات المتاحة', icon: 'pi pi-map-marker', routerLink: '/driver/dashboard' },
-    { label: 'سجل التوصيل', icon: 'pi pi-history', routerLink: '/driver/history' },
-    { label: 'المحفظة', icon: 'pi pi-wallet', routerLink: '/driver/wallet' }
+    { label: 'سجل التوصيل', icon: 'pi pi-history', routerLink: '/driver/history' }
   ];
 
   toggleCollapse(): void {

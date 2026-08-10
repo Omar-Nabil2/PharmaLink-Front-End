@@ -636,6 +636,18 @@ export const routes: Routes = [
         component: DriverHistoryComponent
       },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
+      {
+        path: 'not-found',
+        loadComponent: () => import('./pages/errors/not-found/not-found.component').then((m) => m.NotFoundComponent),
+      },
+      {
+        path: 'access-denied',
+        loadComponent: () => import('./pages/errors/access-denied/access-denied.component').then((m) => m.AccessDeniedComponent),
+      },
+      {
+        path: '**',
+        loadComponent: () => import('./pages/errors/not-found/not-found.component').then((m) => m.NotFoundComponent),
+      },
     ],
   },
 
