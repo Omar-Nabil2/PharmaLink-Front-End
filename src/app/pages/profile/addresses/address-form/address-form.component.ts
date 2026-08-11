@@ -4,6 +4,7 @@ import { RouterLink, Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { PatientAddressesService } from '../../../../core/services/patient-addresses.service';
 import { ErrorHandlerService } from '../../../../core/services/error-handler.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-address-form',
@@ -144,7 +145,7 @@ export class AddressFormComponent implements OnInit {
           latitude: position.coords.latitude,
           longitude: position.coords.longitude
         });
-        alert('تم تحديد موقعك بنجاح!');
+        Swal.fire('نجاح', 'تم تحديد موقعك بنجاح!', 'success');
       },
       (error) => {
         let errorMsg = 'تعذر الحصول على الموقع';

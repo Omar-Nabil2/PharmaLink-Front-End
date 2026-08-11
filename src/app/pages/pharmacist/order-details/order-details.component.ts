@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { PrescriptionReviewService } from '../../../core/services/prescription-review.service';
 import { PharmacistOrderDetailsDto } from '../../../core/interfaces/prescription-review.interface';
 import { PrescriptionService } from '../../../core/services/prescription.service';
+import Swal from 'sweetalert2';
 
 // PrimeNG
 import { CardModule } from 'primeng/card';
@@ -60,7 +61,7 @@ export class OrderDetailsComponent implements OnInit {
       error: () => {
         console.error('Error downloading prescription');
         // add toast if available, or simple alert
-        alert('فشل تحميل الروشتة.');
+        Swal.fire('خطأ', 'فشل تحميل الروشتة.', 'error');
       }
     });
   }
