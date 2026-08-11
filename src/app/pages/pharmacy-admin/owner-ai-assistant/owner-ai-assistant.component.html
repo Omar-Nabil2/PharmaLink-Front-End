@@ -1,0 +1,74 @@
+<div class="flex flex-row w-full h-[calc(100vh-4rem)] bg-background relative overflow-hidden text-foreground" dir="rtl" style="font-family: var(--font-cairo)">
+
+  <!-- SUB-SIDEBAR (Owner AI Hub Sidebar) -->
+  <div class="bg-card border-l border-border flex flex-col pt-4 shrink-0 shadow-sm z-20 transition-all duration-300 relative"
+       [ngClass]="isSidebarOpen() ? 'w-72 px-4' : 'w-[64px] sm:w-[84px] px-1 sm:px-2 items-center'">
+    
+    <!-- Header & Toggle -->
+    <div class="flex items-center justify-between mb-6 mt-1 w-full" [ngClass]="!isSidebarOpen() ? 'flex-col gap-4' : 'px-2'">
+      <div class="flex items-center gap-3 overflow-hidden" *ngIf="isSidebarOpen()">
+        <div class="w-11 h-11 shrink-0 rounded-xl bg-[#007671]/10 text-[#007671] flex items-center justify-center shadow-sm">
+          <i class="pi pi-sparkles text-xl"></i>
+        </div>
+        <div class="whitespace-nowrap">
+          <h2 class="text-base font-bold text-foreground m-0">المساعد الذكي</h2>
+          <p class="text-xs text-muted-foreground mt-0.5 mb-0">مالك الصيدلية</p>
+        </div>
+      </div>
+      
+      <!-- Collapse Button -->
+      <button class="text-muted-foreground hover:text-foreground cursor-pointer p-2 rounded-lg hover:bg-muted transition-colors shrink-0" 
+              (click)="toggleSidebar()" [title]="isSidebarOpen() ? 'طي القائمة' : 'توسيع القائمة'">
+        <i class="pi text-lg" [ngClass]="isSidebarOpen() ? 'pi-angle-right' : 'pi-angle-left'"></i>
+      </button>
+    </div>
+
+    <!-- Navigation Tab Buttons -->
+    <div class="flex flex-col gap-2 w-full flex-1 overflow-y-auto custom-scrollbar">
+      
+      <!-- Prescription Analytics RAG Tab Button -->
+      <button class="w-full text-right py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer flex items-center overflow-hidden shrink-0"
+              [ngClass]="[
+                activeTab() === 'prescription-analytics' ? 'bg-[#007671] text-white shadow-md' : 'text-foreground hover:bg-muted',
+                isSidebarOpen() ? 'px-4 gap-3' : 'px-0 justify-center'
+              ]"
+              (click)="setTab('prescription-analytics')" title="تحليلات الروشتات والسوق">
+        <i class="pi pi-chart-bar text-lg shrink-0"></i>
+        <span *ngIf="isSidebarOpen()" class="whitespace-nowrap font-bold">تحليلات الروشتات والسوق</span>
+      </button>
+
+      <!-- AI Inventory Forecasting Tab Button -->
+      <button class="w-full text-right py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer flex items-center overflow-hidden shrink-0"
+              [ngClass]="[
+                activeTab() === 'ai-forecasting' ? 'bg-[#007671] text-white shadow-md' : 'text-foreground hover:bg-muted',
+                isSidebarOpen() ? 'px-4 gap-3' : 'px-0 justify-center'
+              ]"
+              (click)="setTab('ai-forecasting')" title="التنبؤ بالمخزون والطلب">
+        <i class="pi pi-sparkles text-lg shrink-0"></i>
+        <span *ngIf="isSidebarOpen()" class="whitespace-nowrap font-bold">التنبؤ بالمخزون والطلب</span>
+      </button>
+
+    </div>
+
+    <!-- Footer info badge -->
+    <div *ngIf="isSidebarOpen()" class="p-3 mb-3 border-t border-border rounded-xl bg-muted/40 text-xs text-muted-foreground flex items-center gap-2">
+      <i class="pi pi-shield text-[#007671] text-sm"></i>
+      <span>تحليلات مدعومة بنماذج الذكاء الاصطناعي 2.0</span>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT AREA -->
+  <div class="flex-1 bg-background flex flex-col h-full overflow-y-auto relative z-10 custom-scrollbar">
+    
+    <!-- RAG Prescription Analytics View -->
+    <div *ngIf="activeTab() === 'prescription-analytics'" class="w-full h-full">
+      <app-prescription-analytics></app-prescription-analytics>
+    </div>
+
+    <!-- AI Demand Forecasting View -->
+    <div *ngIf="activeTab() === 'ai-forecasting'" class="w-full h-full">
+      <app-ai-forecasting></app-ai-forecasting>
+    </div>
+
+  </div>
+</div>

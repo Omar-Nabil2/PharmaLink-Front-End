@@ -12,15 +12,50 @@
 
     <!-- Navigation -->
     <nav class="flex-1 p-4 space-y-1">
-      @for (item of navItems; track item.routerLink) {
-      <a [routerLink]="item.routerLink" routerLinkActive="bg-primary text-primary-foreground active"
-        [routerLinkActiveOptions]="{ exact: true }"
-        class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[0.9375rem] font-medium transition text-foreground [&:not(.active)]:hover:bg-muted">
-        <i [class]="item.icon + ' text-lg shrink-0'"></i>
-        @if (!collapsed()) {
-        <span>{{ item.label }}</span>
+      @for (item of navItems; track item.label) {
+        @if (item.subItems) {
+          <div class="space-y-1">
+            <button type="button" (click)="toggleAiMenu()"
+              class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-[0.9375rem] font-medium transition text-foreground hover:bg-muted cursor-pointer"
+              [class.bg-primary/10]="isAiMenuExpanded() && !collapsed()"
+              [class.text-primary]="isAiMenuExpanded() && !collapsed()">
+              <div class="flex items-center gap-3">
+                <i [class]="item.icon + ' text-lg shrink-0 text-primary'"></i>
+                @if (!collapsed()) {
+                  <span>{{ item.label }}</span>
+                }
+              </div>
+              @if (!collapsed()) {
+                <i class="pi text-xs transition-transform duration-200"
+                   [class.pi-chevron-down]="isAiMenuExpanded()"
+                   [class.pi-chevron-left]="!isAiMenuExpanded()"></i>
+              }
+            </button>
+
+            @if (isAiMenuExpanded() && !collapsed()) {
+              <div class="pr-5 space-y-1 transition-all duration-200">
+                @for (sub of item.subItems; track sub.routerLink) {
+                  <a [routerLink]="sub.routerLink"
+                     routerLinkActive="bg-primary text-primary-foreground active font-bold"
+                     [routerLinkActiveOptions]="{ exact: true }"
+                     class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs md:text-[0.875rem] font-medium transition text-foreground [&:not(.active)]:hover:bg-muted">
+                    <i [class]="sub.icon + ' text-base shrink-0'"></i>
+                    <span>{{ sub.label }}</span>
+                  </a>
+                }
+              </div>
+            }
+          </div>
+        } @else {
+          <a [routerLink]="item.routerLink!" routerLinkActive="bg-primary text-primary-foreground active"
+            [routerLinkActiveOptions]="{ exact: true }"
+            class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[0.9375rem] font-medium transition text-foreground [&:not(.active)]:hover:bg-muted">
+            <i [class]="item.icon + ' text-lg shrink-0'"></i>
+            @if (!collapsed()) {
+              <span>{{ item.label }}</span>
+            }
+          </a>
         }
-      </a>
       }
     </nav>
 
@@ -78,13 +113,45 @@
         </button>
       </div>
       <nav class="flex-1 p-4 space-y-1">
-        @for (item of navItems; track item.routerLink) {
-        <a [routerLink]="item.routerLink" routerLinkActive="bg-primary text-primary-foreground active"
-          [routerLinkActiveOptions]="{ exact: true }" (click)="closeMobileSidebar()"
-          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[0.9375rem] font-medium transition text-foreground [&:not(.active)]:hover:bg-muted">
-          <i [class]="item.icon + ' text-lg shrink-0'"></i>
-          <span>{{ item.label }}</span>
-        </a>
+        @for (item of navItems; track item.label) {
+          @if (item.subItems) {
+            <div class="space-y-1">
+              <button type="button" (click)="toggleAiMenu()"
+                class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-[0.9375rem] font-medium transition text-foreground hover:bg-muted cursor-pointer"
+                [class.bg-primary/10]="isAiMenuExpanded()"
+                [class.text-primary]="isAiMenuExpanded()">
+                <div class="flex items-center gap-3">
+                  <i [class]="item.icon + ' text-lg shrink-0 text-primary'"></i>
+                  <span>{{ item.label }}</span>
+                </div>
+                <i class="pi text-xs transition-transform duration-200"
+                   [class.pi-chevron-down]="isAiMenuExpanded()"
+                   [class.pi-chevron-left]="!isAiMenuExpanded()"></i>
+              </button>
+
+              @if (isAiMenuExpanded()) {
+                <div class="pr-5 space-y-1 transition-all duration-200">
+                  @for (sub of item.subItems; track sub.routerLink) {
+                    <a [routerLink]="sub.routerLink"
+                       routerLinkActive="bg-primary text-primary-foreground active font-bold"
+                       [routerLinkActiveOptions]="{ exact: true }"
+                       (click)="closeMobileSidebar()"
+                       class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs md:text-[0.875rem] font-medium transition text-foreground [&:not(.active)]:hover:bg-muted">
+                      <i [class]="sub.icon + ' text-base shrink-0'"></i>
+                      <span>{{ sub.label }}</span>
+                    </a>
+                  }
+                </div>
+              }
+            </div>
+          } @else {
+            <a [routerLink]="item.routerLink!" routerLinkActive="bg-primary text-primary-foreground active"
+              [routerLinkActiveOptions]="{ exact: true }" (click)="closeMobileSidebar()"
+              class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[0.9375rem] font-medium transition text-foreground [&:not(.active)]:hover:bg-muted">
+              <i [class]="item.icon + ' text-lg shrink-0'"></i>
+              <span>{{ item.label }}</span>
+            </a>
+          }
         }
       </nav>
     </aside>

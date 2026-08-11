@@ -144,7 +144,7 @@
 
       <!-- Actions -->
       <div class="query-panel__actions">
-        <button type="submit" class="btn-primary btn-large query-btn" [disabled]="isLoading()">
+        <button type="submit" class="btn-primary query-btn" [disabled]="isLoading()">
           @if (isLoading()) {
             <i class="pi pi-spin pi-spinner"></i> جارٍ التحليل...
           } @else {
@@ -230,7 +230,7 @@
       <div class="kpi-row">
         <div class="kpi-card kpi-card--primary">
           <div class="kpi-card__icon"><i class="pi pi-file-check"></i></div>
-          <div>
+          <div class="kpi-card__content">
             <p class="kpi-card__value">{{ result()!.totalPrescriptionsAnalyzed }}</p>
             <p class="kpi-card__label">إجمالي الروشتات المحللة</p>
           </div>
@@ -239,14 +239,16 @@
         @if (result()!.topPrescribedDrugs.length > 0) {
           <div class="kpi-card kpi-card--accent">
             <div class="kpi-card__icon"><i class="pi pi-star-fill"></i></div>
-            <div>
-              <p class="kpi-card__value">{{ result()!.topPrescribedDrugs[0].medicineName }}</p>
+            <div class="kpi-card__content">
+              <p class="kpi-card__value" [title]="result()!.topPrescribedDrugs[0].medicineName">
+                {{ result()!.topPrescribedDrugs[0].medicineName }}
+              </p>
               <p class="kpi-card__label">الدواء الأكثر طلباً</p>
             </div>
           </div>
           <div class="kpi-card kpi-card--info">
             <div class="kpi-card__icon"><i class="pi pi-percentage"></i></div>
-            <div>
+            <div class="kpi-card__content">
               <p class="kpi-card__value">{{ result()!.topPrescribedDrugs[0].percentage }}%</p>
               <p class="kpi-card__label">نسبة أكثر دواء في الروشتات</p>
             </div>
@@ -256,7 +258,7 @@
         @if (result()!.shortageWarnings.length > 0) {
           <div class="kpi-card kpi-card--warning">
             <div class="kpi-card__icon"><i class="pi pi-exclamation-triangle"></i></div>
-            <div>
+            <div class="kpi-card__content">
               <p class="kpi-card__value">{{ result()!.shortageWarnings.length }}</p>
               <p class="kpi-card__label">تحذيرات نقص مخزون</p>
             </div>
@@ -299,7 +301,7 @@
                 type="bar"
                 [data]="drugsChartData()"
                 [options]="drugsChartOptions"
-                height="260px"
+                height="280px"
               />
             </div>
           </div>
@@ -315,7 +317,7 @@
                   type="doughnut"
                   [data]="categoriesChartData()"
                   [options]="categoriesChartOptions"
-                  height="260px"
+                  height="290px"
                 />
               </div>
             </div>
