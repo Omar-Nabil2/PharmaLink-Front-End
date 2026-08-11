@@ -28,6 +28,7 @@ export class AssignedOrders {
 
   loadOrders(pageNumber: number = 1, pageSize: number = 10) {
     this.loading.set(true);
+    this.orders.set([]);
     this.fulfillmentService.getAssignedOrders(pageNumber, pageSize).subscribe({
       next: (res) => {
         if (res.isSuccess) {

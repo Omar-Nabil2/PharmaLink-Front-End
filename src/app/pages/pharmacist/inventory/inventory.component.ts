@@ -74,6 +74,7 @@ export class InventoryComponent {
 
   loadData() {
     this.loading = true;
+    this.inventoryItems = [];
     const params: GetPharmacyInventoryParamRequest = {
       pageNumber: this.currentPage,
       pageSize: this.rows,

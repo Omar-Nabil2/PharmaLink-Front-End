@@ -200,11 +200,17 @@
 
       <ng-template pTemplate="emptymessage">
         <tr>
-          <td colspan="6" class="text-center py-10 text-slate-500 text-sm">
+          <td colspan="6" class="text-center py-12 text-slate-500 text-sm">
             @if (isLoading()) {
-              جاري تحميل الأدوية...
+              <div class="flex flex-col items-center justify-center">
+                <i class="pi pi-spin pi-spinner text-3xl text-[#007671] mb-3"></i>
+                <p>جاري التحميل...</p>
+              </div>
             } @else {
-              لا توجد أدوية تطابق معايير البحث.
+              <div class="flex flex-col items-center justify-center">
+                <i class="pi pi-box text-4xl mb-3 text-slate-300"></i>
+                <p>لا توجد أدوية تطابق معايير البحث.</p>
+              </div>
             }
           </td>
         </tr>

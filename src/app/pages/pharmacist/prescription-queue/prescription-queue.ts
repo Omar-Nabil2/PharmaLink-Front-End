@@ -61,6 +61,7 @@ export class PrescriptionQueue implements OnInit, OnDestroy {
         .pipe(
           switchMap(() => {
             this.loading = true;
+            this.reviews = [];
             this.cd.markForCheck();
 
             const query: PrescriptionReviewQueryDto = {

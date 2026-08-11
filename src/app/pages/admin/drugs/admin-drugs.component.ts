@@ -94,6 +94,7 @@ export class AdminDrugsComponent implements OnInit {
 
   loadDrugs(): void {
     this.isLoading.set(true);
+    this.drugs.set([]);
 
     const filters: DrugSearchRequest = {
       searchValue: this.searchValue().trim() || undefined,
