@@ -47,7 +47,18 @@ export class AddressListComponent implements OnInit {
     });
   }
 
-  deleteAddress(id: string): void {
+  deleteAddress(address: PatientAddress): void {
+    if (address.isDefault) {
+      Swal.fire({
+        title: 'تنبيه',
+        text: 'this is the default address you can\'t delete or make it not Default . make another one default',
+        icon: 'error',
+        confirmButtonColor: '#0f766e',
+        confirmButtonText: 'حسناً'
+      });
+      return;
+    }
+
     Swal.fire({
       title: 'تأكيد',
       text: 'هل أنت متأكد من حذف هذا العنوان؟',
@@ -59,7 +70,7 @@ export class AddressListComponent implements OnInit {
       cancelButtonText: 'إلغاء'
     }).then((result) => {
       if (result.isConfirmed) {
-        this.addressesService.deleteAddress(id).subscribe({
+        this.addressesService.deleteAddress(address.addressId).subscribe({
           next: () => {
             this.successMessage = 'تم حذف العنوان بنجاح';
             this.loadAddresses();

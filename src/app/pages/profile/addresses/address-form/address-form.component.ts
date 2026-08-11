@@ -18,6 +18,7 @@ export class AddressFormComponent implements OnInit {
   addressId: string | null = null;
   isLoading = false;
   isSubmitting = false;
+  isFirstAddress = false;
   
   // Egyptian Governorates list (for example)
   governorates = [
@@ -56,6 +57,15 @@ export class AddressFormComponent implements OnInit {
     if (this.addressId) {
       this.isEditMode = true;
       this.loadAddressData(this.addressId);
+    } else {
+      this.addressesService.getMyAddresses().subscribe({
+        next: (addresses) => {
+          if (!addresses || addresses.length === 0) {
+            this.isFirstAddress = true;
+            this.addressForm.patchValue({ isDefault: true });
+          }
+        }
+      });
     }
   }
 
