@@ -67,6 +67,10 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
           }
           break;
         }
+        case 500: {
+          router.navigate(['/server-error']);
+          break;
+        }
         default:
           break;
       }
