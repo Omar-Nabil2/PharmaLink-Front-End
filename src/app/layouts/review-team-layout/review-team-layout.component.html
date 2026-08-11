@@ -21,7 +21,8 @@
         @for (item of navItems; track item.routerLink) {
           <a
             [routerLink]="item.routerLink"
-            routerLinkActive="bg-teal-50 text-teal-700 active-nav-link"
+            routerLinkActive="!bg-teal-50 !text-teal-700 active-nav-link"
+            [routerLinkActiveOptions]="{exact: true}"
             class="px-4 py-2 rounded-full text-sm font-bold text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition [&.active-nav-link]:text-teal-700"
           >
             {{ item.label }}
@@ -96,7 +97,8 @@
           @for (item of navItems; track item.routerLink) {
             <a
               [routerLink]="item.routerLink"
-              routerLinkActive="bg-teal-50 text-teal-700 border-teal-200"
+              routerLinkActive="!bg-teal-50 !text-teal-700 !border-teal-200"
+              [routerLinkActiveOptions]="{exact: true}"
               (click)="menuOpen.set(false)"
               class="px-3 py-4 rounded-xl bg-white border border-slate-200 text-sm font-bold text-slate-800 text-center flex items-center justify-center transition-colors hover:bg-slate-50"
             >

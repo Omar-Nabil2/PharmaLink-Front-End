@@ -105,6 +105,8 @@
           <nav class="grid grid-cols-2 gap-3 shrink-0">
             <a *ngFor="let item of patientNavItems"
                [routerLink]="item.routerLink"
+               routerLinkActive="!bg-teal-50 !text-teal-700 !border-teal-200"
+               [routerLinkActiveOptions]="{exact: true}"
                (click)="menuOpen = false"
                class="px-3 py-4 rounded-xl bg-white border border-surface-pressed text-sm font-bold text-body text-center flex items-center justify-center transition-colors hover:bg-slate-50">
               {{ item.label }}
