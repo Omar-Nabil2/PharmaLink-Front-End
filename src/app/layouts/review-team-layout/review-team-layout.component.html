@@ -78,20 +78,51 @@
 
     </div>
 
-    <!-- Mobile Navigation -->
-    <div *ngIf="menuOpen()" class="lg:hidden border-t border-slate-200 bg-white py-4 px-4 absolute w-full left-0 shadow-md z-50">
-      <nav class="flex flex-col gap-2">
-        @for (item of navItems; track item.routerLink) {
-          <a
-            [routerLink]="item.routerLink"
-            routerLinkActive="bg-teal-50 text-teal-700 border-teal-200"
-            (click)="menuOpen.set(false)"
-            class="rounded-xl border border-slate-100 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-700 transition"
-          >
-            {{ item.label }}
+    <!-- Click Outside Overlay for Mobile Menu -->
+    <div class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40 transition-opacity duration-300 lg:hidden" 
+         [class.opacity-0]="!menuOpen()"
+         [class.pointer-events-none]="!menuOpen()"
+         (click)="menuOpen.set(false)"
+         style="top: 64px;"></div>
+
+    <!-- Mobile Navigation Drawer -->
+    <div class="lg:hidden absolute top-full left-0 right-0 h-[calc(100dvh-64px)] bg-white/95 backdrop-blur-md z-50 overflow-hidden transition-all duration-300 ease-out origin-top flex flex-col"
+         [class.opacity-0]="!menuOpen()"
+         [class.scale-y-95]="!menuOpen()"
+         [class.-translate-y-4]="!menuOpen()"
+         [class.pointer-events-none]="!menuOpen()">
+      <div class="p-4 sm:p-6 h-full flex flex-col overflow-y-auto pb-8">
+        <nav class="flex flex-col gap-3 shrink-0">
+          @for (item of navItems; track item.routerLink) {
+            <a
+              [routerLink]="item.routerLink"
+              routerLinkActive="bg-teal-50 text-teal-700 border-teal-200"
+              (click)="menuOpen.set(false)"
+              class="px-3 py-4 rounded-xl bg-white border border-slate-200 text-sm font-bold text-slate-800 text-center flex items-center justify-center transition-colors hover:bg-slate-50"
+            >
+              {{ item.label }}
+            </a>
+          }
+        </nav>
+
+        <div class="flex flex-col gap-2 shrink-0 mt-auto pt-6">
+          <div class="h-px bg-slate-200 my-2 mx-2"></div>
+          <a routerLink="/review-team/profile" (click)="menuOpen.set(false)" class="px-4 py-3 flex items-center gap-4 text-slate-800 hover:bg-slate-50 border border-transparent rounded-xl transition cursor-pointer font-bold">
+            <div class="w-9 h-9 rounded-full overflow-hidden bg-teal-100 text-teal-700 flex items-center justify-center shrink-0 border border-slate-200">
+               @if (profilePictureUrl) {
+                 <img [src]="profilePictureUrl" alt="Profile" class="w-full h-full object-cover">
+               } @else {
+                 <span class="font-bold text-sm">{{ avatarInitial() }}</span>
+               }
+            </div>
+            الملف الشخصي
           </a>
-        }
-      </nav>
+          <button (click)="logout()" class="w-full text-right px-4 py-3 flex items-center gap-4 text-red-600 hover:bg-red-50 border border-transparent rounded-xl transition cursor-pointer font-bold">
+            <i class="pi pi-sign-out text-lg text-red-500"></i>
+            تسجيل الخروج
+          </button>
+        </div>
+      </div>
     </div>
   </header>
 
