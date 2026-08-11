@@ -6,27 +6,27 @@
         <span class="type-display-sm hidden sm:inline">فارما لينك</span>
       </a>
 
-      <div class="hidden lg:flex items-center gap-2">
-        <a routerLink="/" routerLinkActive="bg-primary/10 text-primary font-bold shadow-sm"
+      <div class="hidden lg:flex items-center gap-1">
+        <a routerLink="/" routerLinkActive="!bg-primary/10 !text-primary"
           [routerLinkActiveOptions]="{ exact: true }" aria-current="page"
-          class="inline-block type-body-md-strong text-body hover:text-ink hover:bg-surface-soft px-4 py-2 rounded-full transition-all duration-200">
+          class="px-4 py-2 rounded-full text-base font-bold text-body hover:bg-primary/5 hover:text-primary transition">
           الرئيسية
         </a>
-        <a routerLink="/drugs" routerLinkActive="bg-primary/10 text-primary font-bold shadow-sm"
-          class="inline-block type-body-md-strong text-body hover:text-ink hover:bg-surface-soft px-4 py-2 rounded-full transition-all duration-200">
+        <a routerLink="/drugs" routerLinkActive="!bg-primary/10 !text-primary"
+          class="px-4 py-2 rounded-full text-base font-bold text-body hover:bg-primary/5 hover:text-primary transition">
           المنتجات
         </a>
-        <a routerLink="/services" routerLinkActive="bg-primary/10 text-primary font-bold shadow-sm"
-          class="inline-block type-body-md-strong text-body hover:text-ink hover:bg-surface-soft px-4 py-2 rounded-full transition-all duration-200">
+        <a routerLink="/services" routerLinkActive="!bg-primary/10 !text-primary"
+          class="px-4 py-2 rounded-full text-base font-bold text-body hover:bg-primary/5 hover:text-primary transition">
           الخدمات
         </a>
-        <a routerLink="/contact" routerLinkActive="bg-primary/10 text-primary font-bold shadow-sm"
-          class="inline-block type-body-md-strong text-body hover:text-ink hover:bg-surface-soft px-4 py-2 rounded-full transition-all duration-200">
+        <a routerLink="/contact" routerLinkActive="!bg-primary/10 !text-primary"
+          class="px-4 py-2 rounded-full text-base font-bold text-body hover:bg-primary/5 hover:text-primary transition">
           اتصل بنا
         </a>
         @if (isLoggedIn) {
-        <a [routerLink]="dashboardPath" routerLinkActive="bg-primary/10 text-primary font-bold shadow-sm"
-          class="inline-block type-body-md-strong text-body hover:text-ink hover:bg-surface-soft px-4 py-2 rounded-full transition-all duration-200">
+        <a [routerLink]="dashboardPath" routerLinkActive="!bg-primary/10 !text-primary"
+          class="px-4 py-2 rounded-full text-base font-bold text-body hover:bg-primary/5 hover:text-primary transition">
           لوحة التحكم
         </a>
         }

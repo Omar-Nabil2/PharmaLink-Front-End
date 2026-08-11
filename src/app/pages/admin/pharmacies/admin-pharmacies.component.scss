@@ -165,6 +165,7 @@ $shadow-dialog: 0 20px 60px rgba(0, 0, 0, 0.18);
   display: flex;
   flex-direction: column;
   gap: 0.875rem;
+  min-width: 0;
   animation: pulse 1.4s ease-in-out infinite;
 }
 
@@ -224,6 +225,7 @@ $shadow-dialog: 0 20px 60px rgba(0, 0, 0, 0.18);
   flex-direction: column;
   box-shadow: $shadow-card;
   transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s;
+  min-width: 0;
 
   &:hover {
     box-shadow: $shadow-hover;
