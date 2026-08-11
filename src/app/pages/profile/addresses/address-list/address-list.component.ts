@@ -48,16 +48,7 @@ export class AddressListComponent implements OnInit {
   }
 
   deleteAddress(address: PatientAddress): void {
-    if (address.isDefault) {
-      Swal.fire({
-        title: 'تنبيه',
-        text: 'this is the default address you can\'t delete or make it not Default . make another one default',
-        icon: 'error',
-        confirmButtonColor: '#0f766e',
-        confirmButtonText: 'حسناً'
-      });
-      return;
-    }
+    if (address.isDefault) return;
 
     Swal.fire({
       title: 'تأكيد',
