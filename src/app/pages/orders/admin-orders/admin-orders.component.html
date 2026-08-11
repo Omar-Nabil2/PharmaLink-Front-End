@@ -159,35 +159,41 @@
       
       <ng-template pTemplate="header">
         <tr>
-          <th class="bg-muted/50 text-muted-foreground type-body-sm-strong font-semibold border-b border-border py-4 px-6 text-right">الرقم</th>
-          <th class="bg-muted/50 text-muted-foreground type-body-sm-strong font-semibold border-b border-border py-4 px-6 text-right">المريض</th>
-          <th class="bg-muted/50 text-muted-foreground type-body-sm-strong font-semibold border-b border-border py-4 px-6 text-right">الصيدلية</th>
-          <th class="bg-muted/50 text-muted-foreground type-body-sm-strong font-semibold border-b border-border py-4 px-6 text-right">الأدوية</th>
-          <th class="bg-muted/50 text-muted-foreground type-body-sm-strong font-semibold border-b border-border py-4 px-6 text-right">الإجمالي</th>
-          <th class="bg-muted/50 text-muted-foreground type-body-sm-strong font-semibold border-b border-border py-4 px-6 text-right">الحالة</th>
-          <th class="bg-muted/50 text-muted-foreground type-body-sm-strong font-semibold border-b border-border py-4 px-6 text-right">التاريخ</th>
-          <th class="bg-muted/50 text-muted-foreground type-body-sm-strong font-semibold border-b border-border py-4 px-6 text-center">الإجراء</th>
+          <th class="bg-muted/50 text-muted-foreground type-body-sm-strong font-semibold border-b border-border py-4 px-6 text-right whitespace-nowrap">الرقم</th>
+          <th class="bg-muted/50 text-muted-foreground type-body-sm-strong font-semibold border-b border-border py-4 px-6 text-right whitespace-nowrap">المريض</th>
+          <th class="bg-muted/50 text-muted-foreground type-body-sm-strong font-semibold border-b border-border py-4 px-6 text-right whitespace-nowrap">الصيدلية</th>
+          <th class="bg-muted/50 text-muted-foreground type-body-sm-strong font-semibold border-b border-border py-4 px-6 text-right whitespace-nowrap">الأدوية</th>
+          <th class="bg-muted/50 text-muted-foreground type-body-sm-strong font-semibold border-b border-border py-4 px-6 text-right whitespace-nowrap">الإجمالي</th>
+          <th class="bg-muted/50 text-muted-foreground type-body-sm-strong font-semibold border-b border-border py-4 px-6 text-right whitespace-nowrap">الحالة</th>
+          <th class="bg-muted/50 text-muted-foreground type-body-sm-strong font-semibold border-b border-border py-4 px-6 text-right whitespace-nowrap">التاريخ</th>
+          <th class="bg-muted/50 text-muted-foreground type-body-sm-strong font-semibold border-b border-border py-4 px-6 text-center whitespace-nowrap">الإجراء</th>
         </tr>
       </ng-template>
 
       <ng-template pTemplate="body" let-order>
         <tr class="border-b border-border transition-colors duration-200 hover:bg-muted/30">
-          <td class="py-4 px-6 text-mute font-mono text-sm font-bold">{{ order.orderNumber }}</td>
-          <td class="py-4 px-6 text-ink type-body-sm-strong">{{ order.patientName }}</td>
-          <td class="py-4 px-6 text-ink type-body-sm">{{ order.primaryPharmacyName }}</td>
-          <td class="py-4 px-6 text-mute type-body-sm truncate max-w-xs" [title]="order.medicineNames.join(', ')">
+          <td class="py-4 px-6 text-mute font-mono text-sm font-bold whitespace-nowrap">{{ order.orderNumber }}</td>
+          <td class="py-4 px-6 text-ink type-body-sm-strong whitespace-nowrap">{{ order.patientName }}</td>
+          <td class="py-4 px-6 text-ink type-body-sm whitespace-nowrap">{{ order.primaryPharmacyName }}</td>
+          <td class="py-4 px-6 text-mute type-body-sm truncate max-w-xs whitespace-nowrap" [title]="order.medicineNames.join(', ')">
             {{ order.medicineNames.join(', ') }}
           </td>
-          <td class="py-4 px-6 text-ink type-body-sm-strong font-bold">ج {{ order.totalAmount | number:'1.2-2' }}</td>
-          <td class="py-4 px-6">
-            <p-tag 
-              [value]="order.orderStatus | statusTranslate:'OrderStatus'" 
-              [severity]="getStatusSeverity(order.orderStatus)"
-              styleClass="text-xs font-semibold px-3 py-1 rounded-full"
-            />
+          <td class="py-4 px-6 text-ink type-body-sm-strong font-bold whitespace-nowrap">ج {{ order.totalAmount | number:'1.2-2' }}</td>
+          <td class="py-4 px-6 whitespace-nowrap">
+            <span 
+              class="inline-flex items-center justify-center px-3 py-1.5 rounded-full text-xs font-bold text-white whitespace-nowrap min-w-[70px] bg-slate-400"
+              [ngClass]="{
+                '!bg-amber-500': order.orderStatus == 1 || $any(order.orderStatus) === 'Pending' || order.orderStatus == 6 || $any(order.orderStatus) === 'PendingReview',
+                '!bg-blue-600': order.orderStatus == 2 || $any(order.orderStatus) === 'Processing',
+                '!bg-cyan-500': order.orderStatus == 3 || $any(order.orderStatus) === 'Shipped',
+                '!bg-emerald-600': order.orderStatus == 4 || $any(order.orderStatus) === 'Completed',
+                '!bg-red-500': order.orderStatus == 5 || $any(order.orderStatus) === 'Cancelled'
+              }">
+              {{ order.orderStatus | statusTranslate:'OrderStatus' }}
+            </span>
           </td>
-          <td class="py-4 px-6 text-mute type-body-sm">{{ order.createdAt | date:'yyyy-MM-dd' }}</td>
-          <td class="py-4 px-6 text-center">
+          <td class="py-4 px-6 text-mute type-body-sm whitespace-nowrap">{{ order.createdAt | date:'yyyy-MM-dd' }}</td>
+          <td class="py-4 px-6 text-center whitespace-nowrap">
             <a 
               [routerLink]="['./', order.orderId]" 
               title="عرض التفاصيل"
@@ -200,11 +206,17 @@
 
       <ng-template pTemplate="emptymessage">
         <tr>
-          <td colspan="8" class="text-center py-8 text-mute type-body-md">
+          <td colspan="8" class="text-center py-12 text-slate-500 text-sm font-medium">
             @if (isLoading()) {
-              جاري تحميل الطلبات...
+              <div class="flex flex-col items-center justify-center">
+                <i class="pi pi-spin pi-spinner text-3xl text-[#007671] mb-3"></i>
+                <p>جاري التحميل...</p>
+              </div>
             } @else {
-              لا توجد طلبات تطابق معايير البحث.
+              <div class="flex flex-col items-center justify-center">
+                <i class="pi pi-box text-4xl mb-3 text-slate-300"></i>
+                <p>لا توجد طلبات تطابق معايير البحث.</p>
+              </div>
             }
           </td>
         </tr>

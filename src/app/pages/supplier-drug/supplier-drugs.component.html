@@ -28,12 +28,6 @@
         <!-- Table Container (Relative عشان اللودر يغطي الجدول بس) -->
         <div class="bg-card rounded-xl border border-border overflow-hidden relative min-h-[200px]">
 
-            <!-- 🌟 شاشة التحميل اليدوية (مستحيل تعلق) 🌟 -->
-            @if (isLoading) {
-            <div class="absolute inset-0 z-50 flex items-center justify-center bg-background/50 backdrop-blur-[2px]">
-                <i class="pi pi-spin pi-spinner text-4xl text-primary"></i>
-            </div>
-            }
 
             <!-- ❌ مسحنا [loading] من هنا نهائياً -->
             <p-table [value]="myDrugs()" [lazy]="true" (onLazyLoad)="onLazyLoad($event)" dataKey="drugId"
@@ -53,7 +47,7 @@
                     <tr class="border-t border-border hover:bg-muted/30 transition-colors">
                         <td class="p-4 font-medium">{{ drug.brandName }}</td>
                         <td class="p-4 text-center">
-                            <button type="button" (click)="removeDrug(drug.drugId)"
+                            <button type="button" (click)="confirmRemoveDrug(drug)"
                                 [disabled]="deletingIds()[drug.drugId]"
                                 class="h-8 w-8 rounded-lg text-destructive hover:bg-destructive/10 flex items-center justify-center mx-auto transition-colors">
                                 <i class="pi"
@@ -64,13 +58,22 @@
                 </ng-template>
 
                 <ng-template pTemplate="emptymessage">
-                    @if (hasLoadedOnce() && myDrugs().length === 0) {
-                    <tr>
-                        <td colspan="2" class="p-12 text-center text-muted-foreground">
-                            <i class="pi pi-box text-3xl mb-3 block"></i>
-                            لا توجد أدوية في قائمتك حالياً. اضغط على "إضافة دواء" للبدء.
-                        </td>
-                    </tr>
+                    @if (isLoading) {
+                        <tr>
+                            <td colspan="2">
+                                <div class="flex flex-col items-center justify-center text-center p-16">
+                                    <i class="pi pi-spin pi-spinner text-4xl text-[#007671] mb-4"></i>
+                                    <h3 class="text-lg font-bold text-foreground">جاري تحميل الأدوية...</h3>
+                                </div>
+                            </td>
+                        </tr>
+                    } @else if (hasLoadedOnce() && myDrugs().length === 0) {
+                        <tr>
+                            <td colspan="2" class="p-12 text-center text-muted-foreground bg-muted/10">
+                                <i class="pi pi-box text-3xl mb-3 block"></i>
+                                لا توجد أدوية في قائمتك حالياً. اضغط على "إضافة دواء" للبدء.
+                            </td>
+                        </tr>
                     }
                 </ng-template>
             </p-table>
@@ -116,4 +119,7 @@
             </div>
         </ng-template>
     </p-dialog>
+
+    <!-- نافذة التأكيد -->
+    <p-confirmDialog [style]="{ width: '450px' }" dir="rtl"></p-confirmDialog>
 </main>

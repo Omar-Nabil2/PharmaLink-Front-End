@@ -1,67 +1,95 @@
+<div class="card bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-100" dir="rtl">
 
-<div class="card bg-white p-6 rounded-xl shadow-sm border border-gray-100" dir="rtl">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+        <div>
+            <h2 class="text-xl font-bold text-[#00796b] flex items-center gap-2">
+                <i class="pi pi-list text-xl"></i>
+                الطلبات المعينة
+            </h2>
+            <p class="text-slate-500 text-sm mt-1">قائمة بالطلبات المخصصة للتجهيز والمراجعة.</p>
+        </div>
+        <div class="flex w-full md:w-auto">
+            <p-button label="تحديث القائمة" icon="pi pi-refresh" severity="secondary" [outlined]="true"
+                (onClick)="loadOrders()" styleClass="w-full md:w-auto" class="w-full md:w-auto"></p-button>
+        </div>
+    </div>
 
-    <p-table
-        [value]="orders()"
-        [paginator]="true"
-        [rows]="10"
-        [totalRecords]="totalRecords()"
-        styleClass="p-datatable-striped p-datatable-sm"
-        responsiveLayout="scroll">
+    <div class="overflow-hidden rounded-lg border border-gray-100">
+        <p-table
+            [value]="orders()"
+            [paginator]="true"
+            [rows]="10"
+            [totalRecords]="totalRecords()"
+            styleClass="p-datatable-striped"
+            responsiveLayout="scroll">
 
-        <ng-template pTemplate="header">
-            <tr class="bg-gray-50 border-b border-gray-200">
-                <th class="py-4 text-right text-sm font-semibold text-gray-600">رقم الطلب</th>
-                <th class="py-4 text-right text-sm font-semibold text-gray-600">المريض</th>
-                <th class="py-4 text-right text-sm font-semibold text-gray-600">الأدوية</th>
-                <th class="py-4 text-center text-sm font-semibold text-gray-600">الإجمالي</th>
-                <th class="py-4 text-center text-sm font-semibold text-gray-600">الحالة</th>
-                <th class="py-4 text-left text-sm font-semibold text-gray-600">التاريخ</th>
-            </tr>
-        </ng-template>
+            <ng-template pTemplate="header">
+                <tr class="bg-gray-50 border-b border-gray-200">
+                    <th class="py-4 px-4 text-right text-sm font-semibold text-gray-600 whitespace-nowrap">رقم الطلب</th>
+                    <th class="py-4 px-4 text-right text-sm font-semibold text-gray-600 whitespace-nowrap">المريض</th>
+                    <th class="py-4 px-4 text-right text-sm font-semibold text-gray-600 whitespace-nowrap">الأدوية</th>
+                    <th class="py-4 px-4 text-center text-sm font-semibold text-gray-600 whitespace-nowrap">الإجمالي</th>
+                    <th class="py-4 px-4 text-center text-sm font-semibold text-gray-600 whitespace-nowrap">الحالة</th>
+                    <th class="py-4 px-4 text-left text-sm font-semibold text-gray-600 whitespace-nowrap">التاريخ</th>
+                </tr>
+            </ng-template>
 
-        <ng-template pTemplate="body" let-order>
-            <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer" (click)="viewOrderDetails(order.orderId)">
-                <td class="py-4 text-gray-700 text-sm font-medium">
-                    {{ order.orderNumber }}
-                </td>
+            <ng-template pTemplate="body" let-order>
+                <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer" (click)="viewOrderDetails(order.orderId)">
+                    <td class="py-5 px-4 text-gray-700 text-sm font-medium whitespace-nowrap">
+                        <span class="font-mono uppercase text-xs bg-gray-100 px-2 py-1 rounded text-gray-600">
+                            {{ order.orderNumber | slice:0:8 }}
+                        </span>
+                    </td>
 
-                <td class="py-4 text-gray-800 text-sm font-semibold">
-                    {{ order.patientName }}
-                </td>
+                    <td class="py-5 px-4 text-gray-800 text-sm font-semibold whitespace-nowrap">
+                        {{ order.patientName }}
+                    </td>
 
-                <td class="py-4 text-gray-600 text-sm max-w-xs truncate" [title]="order.drugsSummary">
-                    @if (order.drugsSummary) {
-                        {{ order.drugsSummary }}
-                    } @else {
-                        <span class="text-gray-400 italic">لا يوجد أدوية</span>
-                    }
-                </td>
+                    <td class="py-5 px-4 text-gray-600 text-sm max-w-xs truncate whitespace-nowrap" [title]="order.drugsSummary">
+                        @if (order.drugsSummary) {
+                            {{ order.drugsSummary }}
+                        } @else {
+                            <span class="text-gray-400 italic">لا يوجد أدوية</span>
+                        }
+                    </td>
 
-                <td class="py-4 text-center text-gray-800 text-sm font-bold">
-                    {{ order.totalAmount }} ج
-                </td>
+                    <td class="py-5 px-4 text-center text-gray-800 text-sm font-bold whitespace-nowrap">
+                        {{ order.totalAmount }} ج
+                    </td>
 
-                <td class="py-4 text-center">
-                    <span class="px-4 py-1.5 rounded-full text-xs font-bold transition-all"
-                          [ngClass]="getStatusInfo(order.status).badgeClass">
-                        {{ getStatusInfo(order.status).label }}
-                    </span>
-                </td>
+                    <td class="py-5 px-4 text-center whitespace-nowrap">
+                        <span class="px-4 py-1.5 rounded-full text-xs font-bold transition-all border"
+                              [ngClass]="getStatusInfo(order.status).badgeClass">
+                            {{ getStatusInfo(order.status).label }}
+                        </span>
+                    </td>
 
-                <td class="py-4 text-left text-gray-500 text-sm">
-                    {{ order.date | date:'yyyy-MM-dd' }}
-                </td>
-            </tr>
-        </ng-template>
+                    <td class="py-5 px-4 text-left text-gray-500 text-sm whitespace-nowrap">
+                        {{ order.date | date:'yyyy-MM-dd' }}
+                    </td>
+                </tr>
+            </ng-template>
 
-        <ng-template pTemplate="emptymessage">
-            <tr>
-                <td colspan="6" class="text-center py-8 text-gray-500 font-medium">
-                    لا توجد طلبات متاحة في الوقت الحالي.
-                </td>
-            </tr>
-        </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="6" class="text-center py-12 text-gray-500 font-medium">
+                        @if (loading()) {
+                            <div class="flex flex-col items-center justify-center">
+                                <i class="pi pi-spin pi-spinner text-3xl text-[#007671] mb-3"></i>
+                                <p>جاري التحميل...</p>
+                            </div>
+                        } @else {
+                            <div class="flex flex-col items-center justify-center">
+                                <i class="pi pi-box text-4xl mb-3 text-slate-300"></i>
+                                <p>لا توجد طلبات متاحة في الوقت الحالي.</p>
+                            </div>
+                        }
+                    </td>
+                </tr>
+            </ng-template>
 
-    </p-table>
+        </p-table>
+    </div>
 </div>

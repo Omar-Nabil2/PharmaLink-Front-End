@@ -147,19 +147,25 @@
                     </tr>
                 </ng-template>
 
-                <!-- ── Empty State ── -->
-                <ng-template #emptymessage>
+                <!-- ── Empty / Loading State ── -->
+                <ng-template pTemplate="emptymessage">
                     <tr>
                         <td colspan="7">
-                            <div class="flex flex-col items-center justify-center text-center p-16 bg-muted/10">
-                                <div
-                                    class="bg-background w-20 h-20 rounded-full flex items-center justify-center shadow-sm border border-border mb-4">
-                                    <i class="pi pi-inbox text-3xl text-muted-foreground"></i>
+                            @if (isLoading()) {
+                                <div class="flex flex-col items-center justify-center text-center p-16">
+                                    <i class="pi pi-spin pi-spinner text-4xl text-[#007671] mb-4"></i>
+                                    <h3 class="text-lg font-bold text-foreground">جاري تحميل الطلبات...</h3>
                                 </div>
-                                <h3 class="text-lg font-bold text-foreground mb-1">لا توجد طلبات لعرضها حالياً</h3>
-                                <p class="text-sm text-muted-foreground">لم يتم استلام أي طلبات مطابقة للفلتر المحدد.
-                                </p>
-                            </div>
+                            } @else {
+                                <div class="flex flex-col items-center justify-center text-center p-16 bg-muted/10">
+                                    <div
+                                        class="bg-background w-20 h-20 rounded-full flex items-center justify-center shadow-sm border border-border mb-4">
+                                        <i class="pi pi-inbox text-3xl text-muted-foreground"></i>
+                                    </div>
+                                    <h3 class="text-lg font-bold text-foreground mb-1">لا توجد طلبات لعرضها حالياً</h3>
+                                    <p class="text-sm text-muted-foreground">لم يتم استلام أي طلبات مطابقة للفلتر المحدد.</p>
+                                </div>
+                            }
                         </td>
                     </tr>
                 </ng-template>

@@ -239,6 +239,32 @@ export class ReviewPrescriptionComponent implements OnInit {
         return this.prescriptionData?.status !== 'PendingReview';
     }
 
+    getStatusArabicLabel(status: string | undefined): string {
+        if (!status) return 'جاري التحميل...';
+        switch (status) {
+            case 'PendingReview': return 'قيد المراجعة';
+            case 'Approved': return 'موافق عليها';
+            case 'Rejected': return 'مرفوضة';
+            case 'OrderCreated': return 'تم إنشاء الطلب';
+            default: return status;
+        }
+    }
+
+    getStatusClasses(status: string | undefined): string {
+        switch (status) {
+            case 'PendingReview':
+                return 'bg-amber-100 text-amber-700 border-amber-200';
+            case 'Approved':
+                return 'bg-emerald-100 text-emerald-700 border-emerald-200';
+            case 'Rejected':
+                return 'bg-red-100 text-red-700 border-red-200';
+            case 'OrderCreated':
+                return 'bg-blue-100 text-blue-700 border-blue-200';
+            default:
+                return 'bg-slate-100 text-slate-700 border-slate-200';
+        }
+    }
+
     get afterReviewPath(): string {
         return this.authService.getNormalizedRole() === AppRoles.PrescriptionReviewTeam
             ? '/review-team/prescriptions'

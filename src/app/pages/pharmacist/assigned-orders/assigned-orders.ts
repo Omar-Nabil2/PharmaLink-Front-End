@@ -28,6 +28,7 @@ export class AssignedOrders {
 
   loadOrders(pageNumber: number = 1, pageSize: number = 10) {
     this.loading.set(true);
+    this.orders.set([]);
     this.fulfillmentService.getAssignedOrders(pageNumber, pageSize).subscribe({
       next: (res) => {
         if (res.isSuccess) {
@@ -45,15 +46,16 @@ export class AssignedOrders {
 
   getStatusInfo(status: string): { label: string; badgeClass: string } {
     const statusMap: Record<string, { label: string; badgeClass: string }> = {
-      'Assigned': { label: 'معين', badgeClass: 'bg-gray-100 text-gray-600' },
-      'Preparing': { label: 'قيد المراجعة', badgeClass: 'bg-orange-100 text-orange-600' },
-      'ReadyForPickup': { label: 'جاهز للاستلام', badgeClass: 'bg-blue-100 text-blue-600' },
-      'OutForDelivery': { label: 'قيد التوصيل', badgeClass: 'bg-cyan-100 text-cyan-600' },
-      'Delivered': { label: 'تم التسليم', badgeClass: 'bg-green-100 text-green-600' },
-      'Cancelled': { label: 'ملغي', badgeClass: 'bg-red-100 text-red-600' }
+      'Assigned': { label: 'معين', badgeClass: 'bg-slate-100 text-slate-700 border-slate-200' },
+      'Preparing': { label: 'قيد المراجعة', badgeClass: 'bg-amber-100 text-amber-700 border-amber-200' },
+      'ReadyForPickup': { label: 'جاهز للاستلام', badgeClass: 'bg-blue-100 text-blue-700 border-blue-200' },
+      'OutForDelivery': { label: 'قيد التوصيل', badgeClass: 'bg-cyan-100 text-cyan-700 border-cyan-200' },
+      'Delivered': { label: 'تم التسليم', badgeClass: 'bg-emerald-100 text-emerald-700 border-emerald-200' },
+      'Cancelled': { label: 'ملغي', badgeClass: 'bg-rose-100 text-rose-700 border-rose-200' },
+      'OrderCreated': { label: 'تم إنشاء الطلب', badgeClass: 'bg-indigo-100 text-indigo-700 border-indigo-200' }
     };
 
-    return statusMap[status] || { label: 'غير معروف', badgeClass: 'bg-gray-100 text-gray-600' };
+    return statusMap[status] || { label: 'غير معروف', badgeClass: 'bg-gray-100 text-gray-600 border-gray-200' };
   }
 
   viewOrderDetails(orderId: string) {

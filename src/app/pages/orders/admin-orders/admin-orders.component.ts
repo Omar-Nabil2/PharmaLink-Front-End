@@ -58,6 +58,7 @@ export class AdminOrdersComponent implements OnInit {
 
   loadOrders(): void {
     this.isLoading.set(true);
+    this.orders.set([]);
 
     const filter: AdminOrdersFilter = {
       search: this.searchQuery().trim() || undefined,

@@ -88,7 +88,7 @@
   </div>
 
   <!-- Drug Catalog Data Table -->
-  <div class="bg-white border border-slate-200/80 rounded-2xl overflow-hidden shadow-sm">
+  <div class="bg-background border border-border rounded-2xl overflow-hidden shadow-sm">
     <p-table 
       [value]="drugs()" 
       [lazy]="true" 
@@ -101,27 +101,27 @@
       styleClass="p-datatable-responsive">
       
       <ng-template pTemplate="header">
-        <tr class="bg-slate-50 border-b border-slate-200">
-          <th class="py-4 px-6 text-right text-slate-700 font-bold text-sm cursor-pointer" (click)="onSortChange('BrandName')">
+        <tr class="bg-muted/50 border-b border-border">
+          <th class="py-4 px-6 text-right text-muted-foreground font-semibold text-sm cursor-pointer whitespace-nowrap" (click)="onSortChange('BrandName')">
             <span>اسم الدواء</span>
-            <i class="pi pi-sort text-xs text-slate-400 mr-1"></i>
+            <i class="pi pi-sort text-[10px] ml-1"></i>
           </th>
-          <th class="py-4 px-6 text-right text-slate-700 font-bold text-sm">التصنيف</th>
-          <th class="py-4 px-6 text-right text-slate-700 font-bold text-sm cursor-pointer" (click)="onSortChange('Price')">
+          <th class="py-4 px-6 text-right text-muted-foreground font-semibold text-sm whitespace-nowrap">التصنيف</th>
+          <th class="py-4 px-6 text-right text-muted-foreground font-semibold text-sm cursor-pointer whitespace-nowrap" (click)="onSortChange('Price')">
             <span>السعر</span>
-            <i class="pi pi-sort text-xs text-slate-400 mr-1"></i>
+            <i class="pi pi-sort text-[10px] ml-1"></i>
           </th>
-          <th class="py-4 px-6 text-right text-slate-700 font-bold text-sm">الحالة</th>
-          <th class="py-4 px-6 text-right text-slate-700 font-bold text-sm">تاريخ الإضافة</th>
-          <th class="py-4 px-6 text-center text-slate-700 font-bold text-sm">إجراءات</th>
+          <th class="py-4 px-6 text-right text-muted-foreground font-semibold text-sm whitespace-nowrap">الحالة</th>
+          <th class="py-4 px-6 text-right text-muted-foreground font-semibold text-sm whitespace-nowrap">تاريخ الإضافة</th>
+          <th class="py-4 px-6 text-center text-muted-foreground font-semibold text-sm whitespace-nowrap">إجراءات</th>
         </tr>
       </ng-template>
 
       <ng-template pTemplate="body" let-drug>
-        <tr class="border-b border-slate-100 hover:bg-slate-50/70 transition-colors">
+        <tr class="border-b border-border hover:bg-muted/30 transition-colors duration-200">
           <!-- Drug Image & Name -->
           <td class="py-4 px-6 flex items-center gap-3">
-            <div class="w-12 h-12 rounded-lg border border-slate-100 bg-white overflow-hidden flex-shrink-0 flex items-center justify-center">
+            <div class="w-12 h-12 rounded-lg border border-border bg-white overflow-hidden flex-shrink-0 flex items-center justify-center">
               <img 
                 [src]="drug.imageUrl || 'assets/images/placeholder-drug.png'" 
                 [alt]="drug.brandName" 
@@ -129,43 +129,46 @@
                 onerror="this.src='assets/images/placeholder-drug.png'"
               >
             </div>
-            <div>
-              <div class="font-bold text-slate-800 text-base mb-0.5 flex items-center gap-2">
+            <div class="whitespace-nowrap">
+              <div class="font-semibold text-foreground text-sm mb-0.5 flex items-center gap-2">
                 <span>{{ drug.arabicName || drug.brandName }}</span>
-                <p-tag *ngIf="drug.type" [value]="drug.type" severity="info" styleClass="text-[10px] px-2 py-0.5" />
+                <span *ngIf="drug.type" class="inline-flex items-center justify-center px-2 py-0.5 rounded text-[11px] font-medium bg-blue-50 text-blue-600 border border-blue-100 whitespace-nowrap">
+                  {{ drug.type }}
+                </span>
               </div>
-              <div class="text-xs text-slate-400 font-mono">{{ drug.brandName }} {{ drug.strength }}</div>
+              <div class="text-xs text-muted-foreground font-mono">{{ drug.brandName }} {{ drug.strength }}</div>
             </div>
           </td>
 
           <!-- Category Badge -->
-          <td class="py-4 px-6">
-            <p-tag 
-              [value]="getCategoryLabel(drug.category)" 
-              [severity]="getCategorySeverity(drug.category)"
-              styleClass="text-xs font-semibold px-3 py-1 rounded-full"
-            />
+          <td class="py-4 px-6 whitespace-nowrap">
+            <span class="inline-flex items-center justify-center px-3 py-1 rounded-md text-xs font-medium bg-slate-100 text-slate-600 border border-slate-200/60 shadow-sm">
+              {{ getCategoryLabel(drug.category) }}
+            </span>
           </td>
 
           <!-- Price -->
-          <td class="py-4 px-6 font-bold text-slate-800 text-sm">
+          <td class="py-4 px-6 font-semibold text-foreground text-sm whitespace-nowrap">
             <div class="flex flex-col">
               <span>ج {{ (drug.finalPrice || drug.price) | number:'1.2-2' }}</span>
-              <span *ngIf="drug.discount && drug.discount > 0" class="text-xs text-slate-400 line-through font-normal">ج {{ drug.price | number:'1.2-2' }}</span>
+              <span *ngIf="drug.discount && drug.discount > 0" class="text-xs text-muted-foreground line-through font-normal">ج {{ drug.price | number:'1.2-2' }}</span>
             </div>
           </td>
 
           <!-- Status Badge -->
           <td class="py-4 px-6">
-            <p-tag 
-              [value]="getStatusLabel(drug)" 
-              [severity]="getStatusSeverity(drug)"
-              styleClass="text-xs font-semibold px-3 py-1 rounded-full"
-            />
+            <span 
+              class="inline-flex items-center justify-center px-3 py-1.5 rounded-full text-xs font-bold text-white whitespace-nowrap min-w-[70px] bg-slate-400"
+              [ngClass]="{
+                '!bg-emerald-600': drug.isActive === true || $any(drug.isActive) === 'true',
+                '!bg-red-500': drug.isActive === false || $any(drug.isActive) === 'false'
+              }">
+              {{ getStatusLabel(drug) }}
+            </span>
           </td>
 
           <!-- Created Date / ID -->
-          <td class="py-4 px-6 text-slate-500 text-sm font-mono">
+          <td class="py-4 px-6 text-muted-foreground text-sm whitespace-nowrap font-mono">
             2024-01-10
           </td>
 
@@ -174,21 +177,21 @@
             <div class="flex items-center justify-center gap-2">
               <button 
                 type="button" 
-                class="action-btn text-blue-600 hover:bg-blue-50" 
+                class="w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 text-blue-600 hover:bg-blue-100 hover:scale-110 active:scale-95" 
                 (click)="openDetailsDialog(drug)"
                 title="عرض التفاصيل">
                 <i class="pi pi-eye text-sm"></i>
               </button>
               <button 
                 type="button" 
-                class="action-btn text-emerald-600 hover:bg-emerald-50" 
+                class="w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 text-emerald-600 hover:bg-emerald-100 hover:scale-110 active:scale-95" 
                 (click)="openEditDialog(drug)"
                 title="تعديل">
                 <i class="pi pi-pencil text-sm"></i>
               </button>
               <button 
                 type="button" 
-                class="action-btn text-rose-600 hover:bg-rose-50" 
+                class="w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 text-rose-600 hover:bg-rose-100 hover:scale-110 active:scale-95" 
                 (click)="openDeleteDialog(drug)"
                 title="حذف">
                 <i class="pi pi-trash text-sm"></i>
@@ -200,11 +203,17 @@
 
       <ng-template pTemplate="emptymessage">
         <tr>
-          <td colspan="6" class="text-center py-10 text-slate-500 text-sm">
+          <td colspan="6" class="text-center py-12 text-slate-500 text-sm">
             @if (isLoading()) {
-              جاري تحميل الأدوية...
+              <div class="flex flex-col items-center justify-center">
+                <i class="pi pi-spin pi-spinner text-3xl text-[#007671] mb-3"></i>
+                <p>جاري التحميل...</p>
+              </div>
             } @else {
-              لا توجد أدوية تطابق معايير البحث.
+              <div class="flex flex-col items-center justify-center">
+                <i class="pi pi-box text-4xl mb-3 text-slate-300"></i>
+                <p>لا توجد أدوية تطابق معايير البحث.</p>
+              </div>
             }
           </td>
         </tr>

@@ -369,6 +369,16 @@
     font-family: var(--font-text);
   }
 
+  @media (max-width: 767px) {
+    .p-toast {
+      width: 90% !important;
+      left: 5% !important;
+      right: 5% !important;
+      transform: none !important;
+      margin: 0 auto;
+    }
+  }
+
   .p-toast .p-toast-message {
     border-radius: var(--radius-xl);
     box-shadow: var(--shadow-level-2);
