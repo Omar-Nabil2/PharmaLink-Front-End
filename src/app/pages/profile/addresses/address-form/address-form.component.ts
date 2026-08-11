@@ -46,7 +46,7 @@ export class AddressFormComponent implements OnInit {
       floorNumber: [null],
       apartmentNumber: [null],
       additionalInstructions: [null],
-      isDefault: [false],
+      isDefault: [true],
       latitude: [0],
       longitude: [0]
     });
