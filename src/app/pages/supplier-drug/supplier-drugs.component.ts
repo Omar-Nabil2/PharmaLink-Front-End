@@ -4,7 +4,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { TableModule, TableLazyLoadEvent } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
-import { MessageService } from 'primeng/api';
+import { MessageService, ConfirmationService } from 'primeng/api';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DialogModule } from 'primeng/dialog';
 import { SelectModule } from 'primeng/select';
 import { AutoCompleteModule } from 'primeng/autocomplete';
@@ -16,14 +17,15 @@ import { AvailableDrugDTO, SupplierDrugDTO } from '../../core/interfaces/supplie
     selector: 'app-supplier-drugs',
     standalone: true,
     // ❌ مسحنا الـ OnPush عشان نتفادى أي صراع مع الشاشة
-    imports: [CommonModule, FormsModule, TableModule, ToastModule, DialogModule, SelectModule, AutoCompleteModule],
-    providers: [MessageService],
+    imports: [CommonModule, FormsModule, TableModule, ToastModule, DialogModule, SelectModule, AutoCompleteModule, ConfirmDialogModule],
+    providers: [MessageService, ConfirmationService],
     templateUrl: './supplier-drugs.component.html',
     styleUrls: ['./supplier-drugs.component.scss']
 })
 export class SupplierDrugsComponent {
     private readonly featuresService = inject(SupplierFeaturesService);
     private readonly messageService = inject(MessageService);
+    private readonly confirmationService = inject(ConfirmationService);
 
     myDrugs = signal<SupplierDrugDTO[]>([]);
     totalRecords = signal<number>(0);
@@ -139,6 +141,20 @@ export class SupplierDrugsComponent {
             error: (err) => {
                 this.messageService.add({ severity: 'error', summary: 'خطأ', detail: err.error?.message || 'فشل إضافة الدواء' });
                 this.isAdding.set(false);
+            }
+        });
+    }
+
+    confirmRemoveDrug(drug: SupplierDrugDTO): void {
+        this.confirmationService.confirm({
+            message: `هل أنت متأكد من إزالة "${drug.brandName}" من قائمة أدويتك؟`,
+            header: 'تأكيد الإزالة',
+            icon: 'pi pi-exclamation-triangle text-red-500',
+            acceptLabel: 'نعم، إزالة',
+            rejectLabel: 'إلغاء',
+            acceptButtonStyleClass: 'p-button-danger',
+            accept: () => {
+                this.removeDrug(drug.drugId);
             }
         });
     }

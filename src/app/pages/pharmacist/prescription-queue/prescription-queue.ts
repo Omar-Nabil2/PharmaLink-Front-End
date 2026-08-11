@@ -124,7 +124,8 @@ export class PrescriptionQueue implements OnInit, OnDestroy {
     const labels: Record<string, string> = {
       'PendingReview': 'قيد المراجعة',
       'Approved': 'موافق عليها',
-      'Rejected': 'مرفوضة'
+      'Rejected': 'مرفوضة',
+      'OrderCreated': 'تم إنشاء الطلب'
     };
     return labels[status] || status;
   }
@@ -133,7 +134,8 @@ export class PrescriptionQueue implements OnInit, OnDestroy {
     const classes: Record<string, string> = {
       'PendingReview': 'bg-amber-100 text-amber-700',
       'Approved': 'bg-emerald-100 text-emerald-700',
-      'Rejected': 'bg-rose-100 text-rose-700'
+      'Rejected': 'bg-rose-100 text-rose-700',
+      'OrderCreated': 'bg-blue-100 text-blue-700'
     };
     return classes[status] || 'bg-gray-100 text-gray-700';
   }

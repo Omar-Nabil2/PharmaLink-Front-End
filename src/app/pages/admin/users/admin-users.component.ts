@@ -182,7 +182,7 @@ export class AdminUsersComponent implements OnInit {
   }
 
   toggleStatus(user: AdminUserDto) {
-    const isCurrentlyActive = user.status === UserStatus.Active;
+    const isCurrentlyActive = user.status == UserStatus.Active || String(user.status) === 'Active' || String(user.status) === '1';
     const newStatus = isCurrentlyActive ? UserStatus.Inactive : UserStatus.Active;
     const actionText = isCurrentlyActive ? 'إلغاء تنشيط' : 'تنشيط';
 

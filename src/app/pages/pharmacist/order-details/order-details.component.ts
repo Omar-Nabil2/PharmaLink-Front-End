@@ -77,7 +77,8 @@ export class OrderDetailsComponent implements OnInit {
       'OutForDelivery': { label: 'جاري التوصيل', badgeClass: 'bg-cyan-100 text-cyan-600' },
       'Delivered': { label: 'تم التسليم', badgeClass: 'bg-green-100 text-green-600' },
       'Cancelled': { label: 'ملغي', badgeClass: 'bg-red-100 text-red-600' },
-      'Completed': { label: 'مكتمل', badgeClass: 'bg-green-100 text-green-600' }
+      'Completed': { label: 'مكتمل', badgeClass: 'bg-green-100 text-green-600' },
+      'OrderCreated': { label: 'تم إنشاء الطلب', badgeClass: 'bg-blue-100 text-blue-700' }
     };
     return statusMap[status] || { label: 'غير معروف', badgeClass: 'bg-gray-100 text-gray-600' };
   }

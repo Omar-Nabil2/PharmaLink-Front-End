@@ -1,6 +1,13 @@
-<div class="orders-detail-page space-y-6" dir="rtl" *ngIf="order() as ord">
+<div class="orders-detail-page space-y-6" dir="rtl">
   <p-toast />
 
+  <!-- Loading State -->
+  <div *ngIf="isLoading()" class="flex flex-col items-center justify-center py-32 space-y-4">
+    <i class="pi pi-spin pi-spinner text-5xl text-slate-400"></i>
+    <p class="text-slate-500 font-medium text-lg">جاري تحميل تفاصيل الطلب...</p>
+  </div>
+
+  <ng-container *ngIf="!isLoading() && order() as ord">
   <!-- Breadcrumbs & Title -->
   <div
     class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-surface-pressed pb-4"
@@ -73,12 +80,11 @@
           <table class="w-full text-right border-collapse text-sm">
             <thead>
               <tr class="bg-muted/50 border-b border-border">
-                <th class="py-3 px-4 text-muted-foreground font-semibold">الدواء</th>
-                <th class="py-3 px-4 text-muted-foreground font-semibold">التركيز / الشكل</th>
-                <th class="py-3 px-4 text-muted-foreground font-semibold text-center">الكمية</th>
-                <th class="py-3 px-4 text-muted-foreground font-semibold text-left">سعر الوحدة</th>
-                <th class="py-3 px-4 text-muted-foreground font-semibold text-left">الإجمالي</th>
-                <th class="py-3 px-4 text-muted-foreground font-semibold">الحالة</th>
+                <th class="py-3 px-4 text-muted-foreground font-semibold whitespace-nowrap">الدواء</th>
+                <th class="py-3 px-4 text-muted-foreground font-semibold text-center whitespace-nowrap">الكمية</th>
+                <th class="py-3 px-4 text-muted-foreground font-semibold text-left whitespace-nowrap">سعر الوحدة</th>
+                <th class="py-3 px-4 text-muted-foreground font-semibold text-left whitespace-nowrap">الإجمالي</th>
+                <th class="py-3 px-4 text-muted-foreground font-semibold whitespace-nowrap">الحالة</th>
               </tr>
             </thead>
             <tbody>
@@ -86,23 +92,20 @@
                 *ngFor="let item of ord.items"
                 class="border-b border-border hover:bg-muted/30 transition-colors duration-200"
               >
-                <td class="py-3 px-4">
+                <td class="py-3 px-4 whitespace-nowrap">
                   <div class="font-bold text-ink">{{ item.drugName }}</div>
                   <div class="text-xs text-mute" *ngIf="item.genericName">
                     {{ item.genericName }}
                   </div>
                 </td>
-                <td class="py-3 px-4 text-mute text-xs">
-                  {{ item.strength }} - {{ item.dosageForm }}
-                </td>
-                <td class="py-3 px-4 text-center text-ink font-bold">{{ item.quantityNeeded }}</td>
-                <td class="py-3 px-4 text-left text-ink">
+                <td class="py-3 px-4 text-center text-ink font-bold whitespace-nowrap">{{ item.quantityNeeded }}</td>
+                <td class="py-3 px-4 text-left text-ink whitespace-nowrap">
                   ج {{ item.unitPrice | number: '1.2-2' }}
                 </td>
-                <td class="py-3 px-4 text-left text-[#0f9d76] font-bold">
+                <td class="py-3 px-4 text-left text-[#0f9d76] font-bold whitespace-nowrap">
                   ج {{ item.lineTotal | number: '1.2-2' }}
                 </td>
-                <td class="py-3 px-4">
+                <td class="py-3 px-4 whitespace-nowrap">
                   <span [class]="getItemStatusClass(item.itemStatus)">
                     <span class="status-dot"></span>
                     {{ getItemStatusLabel(item.itemStatus) }}
@@ -255,8 +258,8 @@
       </div>
     </div>
   </div>
+  </ng-container>
 </div>
-
 <div class="modal-overlay" *ngIf="showUpdateLegModal" (click)="closeUpdateLegModal()">
   <div class="modal-card modal-card-sm" (click)="$event.stopPropagation()">
     <div class="modal-header">

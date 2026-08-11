@@ -278,7 +278,7 @@ export class AdminOrderDetailComponent implements OnInit {
     const str = String(s).trim();
     const map: Record<string, string> = {
       '1': 'قيد الانتظار', Pending: 'قيد الانتظار',
-      '2': 'قيد المعالجة', Processing: 'قيد المعالجة',
+      '2': 'جاري التجهيز', Processing: 'جاري التجهيز',
       '3': 'تم الشحن', Shipped: 'تم الشحن',
       '4': 'مكتمل', Completed: 'مكتمل',
       '5': 'ملغي', Cancelled: 'ملغي',
