@@ -55,7 +55,8 @@
         <!-- ── Table container ──────────────────────────────────────── -->
         @if (selectedBranchId()) {
         <div class="bg-card rounded-xl border border-border overflow-hidden">
-            <p-table [value]="orders()" [loading]="isLoading()" [paginator]="true" [rows]="pageSize()" [lazy]="true"
+            <div class="w-full overflow-x-auto rounded-lg">
+                <p-table [value]="orders()" [loading]="isLoading()" [paginator]="true" [rows]="pageSize()" [lazy]="true"
                 (onLazyLoad)="onPageChange($event)" [totalRecords]="totalRecords()"
                 styleClass="w-full text-xs lg:text-base" [tableStyle]="{ 'min-width': '60rem' }">
                 <ng-template pTemplate="header">
@@ -130,6 +131,7 @@
                     </tr>
                 </ng-template>
             </p-table>
+            </div>
         </div>
         } @else {
         <!-- Empty State قبل اختيار الفرع -->

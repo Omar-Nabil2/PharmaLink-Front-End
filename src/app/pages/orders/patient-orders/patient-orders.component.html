@@ -1,4 +1,4 @@
-<div class="orders-page min-h-screen pb-12" dir="rtl">
+<div class="orders-page min-h-screen pb-32 overflow-x-hidden" dir="rtl">
   
   <!-- ══ PAGE HEADER & SEARCH ═══════════════════════════════════════════ -->
   <div class="bg-gradient-to-l from-teal-700 to-emerald-600 pb-16 pt-8 px-4 rounded-b-[40px] shadow-lg mb-8">
@@ -19,7 +19,7 @@
           [(ngModel)]="filter.search" 
           (keyup.enter)="onSearch()"
           placeholder="ابحث برقم الطلب..." 
-          class="w-full h-14 pr-12 pl-14 rounded-2xl border-none bg-white/95 focus:bg-white focus:ring-4 focus:ring-emerald-500/30 transition-all text-slate-700 font-bold placeholder:text-slate-400 shadow-inner"
+          class="w-full h-14 pr-12 pl-16 rounded-2xl border-none bg-white/95 focus:bg-white focus:ring-4 focus:ring-emerald-500/30 transition-all text-slate-700 font-bold placeholder:text-slate-400 shadow-inner"
         />
         <button (click)="onSearch()" class="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-teal-600 hover:bg-teal-700 text-white rounded-xl flex items-center justify-center transition-colors shadow-md">
           <i class="pi pi-arrow-left"></i>
@@ -144,9 +144,9 @@
         <div class="bg-white p-6 pt-4 rounded-b-[28px] flex flex-col gap-4 shrink-0">
           
           <!-- Items Summary -->
-          <div class="flex items-start gap-2 mb-2 bg-slate-50/50 p-3 rounded-xl border border-slate-50">
+          <div class="flex items-start gap-2 mb-2 bg-slate-50/50 p-3 rounded-xl border border-slate-50 w-full overflow-hidden">
             <i class="pi pi-box text-slate-400 mt-0.5 shrink-0"></i>
-            <span class="text-slate-500 text-xs font-bold leading-relaxed line-clamp-2">{{ getMedicinesSummary(order) }}</span>
+            <span class="text-slate-500 text-xs font-bold leading-relaxed line-clamp-2 text-right break-words" dir="auto">{{ getMedicinesSummary(order) }}</span>
           </div>
 
           <div class="flex flex-wrap justify-between items-end gap-4">

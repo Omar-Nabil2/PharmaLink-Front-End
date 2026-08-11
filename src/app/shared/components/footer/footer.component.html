@@ -1,61 +1,77 @@
-<footer class="bg-footer text-on-dark">
-  <div class="container-app py-8">
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+<footer class="bg-teal-800 text-white">
+  <div class="container mx-auto px-5 py-12 md:py-16">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-10">
+      <!-- Brand & About -->
       <div>
-        <div class="flex items-center gap-2 mb-4">
-          <img src="/small_logo.png" alt="Pharma Link" class="h-10 w-auto object-contain brightness-0 invert" />
-          <span class="type-body-md-strong text-on-dark">فارما لينك</span>
+        <div class="flex items-center gap-3 mb-6">
+          <img src="/small_logo.png" alt="Pharma Link" class="h-12 w-auto object-contain brightness-0 invert" />
+          <span class="text-2xl font-bold text-white">فارما لينك</span>
         </div>
-        <p class="type-body-sm text-mute mb-6 max-w-xs">
-          ربط الصيدليات بالمرضى والموردين — بموثوقية وأمان وبساطة.
+        <p class="text-sm text-teal-100 mb-8 max-w-xs leading-relaxed">
+          ربط الصيدليات بالمرضى والموردين — بموثوقية وأمان وبساطة لتسهيل الرعاية الصحية للجميع.
         </p>
         <div class="flex gap-3">
-          <a href="#" class="w-10 h-10 rounded-full bg-black-elevated flex items-center justify-center hover:bg-hairline-mid transition-colors" aria-label="Facebook">
+          <a href="#" class="w-10 h-10 rounded-full bg-teal-700/50 flex items-center justify-center hover:bg-teal-600 transition-colors text-white" aria-label="Facebook">
             <i class="pi pi-facebook"></i>
           </a>
-          <a href="#" class="w-10 h-10 rounded-full bg-black-elevated flex items-center justify-center hover:bg-hairline-mid transition-colors" aria-label="Twitter">
+          <a href="#" class="w-10 h-10 rounded-full bg-teal-700/50 flex items-center justify-center hover:bg-teal-600 transition-colors text-white" aria-label="Twitter">
             <i class="pi pi-twitter"></i>
           </a>
-          <a href="#" class="w-10 h-10 rounded-full bg-black-elevated flex items-center justify-center hover:bg-hairline-mid transition-colors" aria-label="LinkedIn">
+          <a href="#" class="w-10 h-10 rounded-full bg-teal-700/50 flex items-center justify-center hover:bg-teal-600 transition-colors text-white" aria-label="LinkedIn">
             <i class="pi pi-linkedin"></i>
           </a>
         </div>
       </div>
 
+      <!-- Company Links -->
       <div>
-        <h3 class="type-body-md-strong text-on-dark mb-4">الشركة</h3>
-        <ul class="space-y-3">
-          <li><a routerLink="/" class="type-body-sm text-mute hover:text-on-dark transition-colors">الرئيسية</a></li>
-          <li><a routerLink="/services" class="type-body-sm text-mute hover:text-on-dark transition-colors">الخدمات</a></li>
-          <li><a routerLink="/products" class="type-body-sm text-mute hover:text-on-dark transition-colors">المنتجات</a></li>
-          <li><a routerLink="/contact" class="type-body-sm text-mute hover:text-on-dark transition-colors">اتصل بنا</a></li>
+        <h3 class="text-lg font-bold text-white mb-6 relative inline-block">
+          الشركة
+          <span class="absolute -bottom-2 right-0 w-8 h-1 bg-teal-400 rounded-full"></span>
+        </h3>
+        <ul class="space-y-4">
+          <li><a routerLink="/" class="text-sm text-teal-100 hover:text-white transition-colors flex items-center gap-2"><i class="pi pi-angle-left text-xs text-teal-400"></i> الرئيسية</a></li>
+          <li><a routerLink="/services" class="text-sm text-teal-100 hover:text-white transition-colors flex items-center gap-2"><i class="pi pi-angle-left text-xs text-teal-400"></i> الخدمات</a></li>
+          <li><a routerLink="/products" class="text-sm text-teal-100 hover:text-white transition-colors flex items-center gap-2"><i class="pi pi-angle-left text-xs text-teal-400"></i> المنتجات</a></li>
+          <li><a routerLink="/contact" class="text-sm text-teal-100 hover:text-white transition-colors flex items-center gap-2"><i class="pi pi-angle-left text-xs text-teal-400"></i> اتصل بنا</a></li>
         </ul>
       </div>
 
+      <!-- Support Links -->
       <div>
-        <h3 class="type-body-md-strong text-on-dark mb-4">الدعم</h3>
-        <ul class="space-y-3">
-          <li><a routerLink="/faq" class="type-body-sm text-mute hover:text-on-dark transition-colors">مركز المساعدة</a></li>
-          <li><a routerLink="/terms" class="type-body-sm text-mute hover:text-on-dark transition-colors">شروط الخدمة</a></li>
-          <li><a routerLink="/privacy" class="type-body-sm text-mute hover:text-on-dark transition-colors">سياسة الخصوصية</a></li>
-          <li><a routerLink="/faq" class="type-body-sm text-mute hover:text-on-dark transition-colors">الأسئلة الشائعة</a></li>
+        <h3 class="text-lg font-bold text-white mb-6 relative inline-block">
+          الدعم
+          <span class="absolute -bottom-2 right-0 w-8 h-1 bg-teal-400 rounded-full"></span>
+        </h3>
+        <ul class="space-y-4">
+          <li><a routerLink="/faq" class="text-sm text-teal-100 hover:text-white transition-colors flex items-center gap-2"><i class="pi pi-angle-left text-xs text-teal-400"></i> مركز المساعدة</a></li>
+          <li><a routerLink="/terms" class="text-sm text-teal-100 hover:text-white transition-colors flex items-center gap-2"><i class="pi pi-angle-left text-xs text-teal-400"></i> شروط الخدمة</a></li>
+          <li><a routerLink="/privacy" class="text-sm text-teal-100 hover:text-white transition-colors flex items-center gap-2"><i class="pi pi-angle-left text-xs text-teal-400"></i> سياسة الخصوصية</a></li>
+          <li><a routerLink="/faq" class="text-sm text-teal-100 hover:text-white transition-colors flex items-center gap-2"><i class="pi pi-angle-left text-xs text-teal-400"></i> الأسئلة الشائعة</a></li>
         </ul>
       </div>
 
+      <!-- Call to Action -->
       <div>
-        <h3 class="type-body-md-strong text-on-dark mb-4">ابدأ الآن</h3>
-        <p class="type-body-sm text-mute mb-4">
-          أنشئ حساباً وأدر الوصفات الطبية في مكان واحد.
+        <h3 class="text-lg font-bold text-white mb-6 relative inline-block">
+          ابدأ الآن
+          <span class="absolute -bottom-2 right-0 w-8 h-1 bg-teal-400 rounded-full"></span>
+        </h3>
+        <p class="text-sm text-teal-100 mb-6 leading-relaxed">
+          أنشئ حساباً اليوم وابدأ في إدارة الوصفات الطبية الخاصة بك في مكان واحد بكل سهولة.
         </p>
-        <a routerLink="/auth/register" class="btn-secondary inline-flex">حساب جديد</a>
+        <a routerLink="/auth/register" class="bg-white text-teal-800 hover:bg-teal-50 px-6 py-3 rounded-xl font-bold transition-colors inline-flex items-center justify-center shadow-lg hover:shadow-xl w-full sm:w-auto">
+          إنشاء حساب جديد
+        </a>
       </div>
     </div>
 
-    <div class="mt-8 pt-6 border-t border-hairline-mid flex flex-col md:flex-row justify-between items-center gap-4">
-      <p class="type-caption text-mute">&copy; {{ currentYear }} فارما لينك. جميع الحقوق محفوظة.</p>
+    <!-- Footer Bottom -->
+    <div class="mt-12 pt-8 border-t border-teal-700 flex flex-col md:flex-row justify-between items-center gap-4">
+      <p class="text-sm text-teal-200 text-center md:text-right">&copy; {{ currentYear }} فارما لينك. جميع الحقوق محفوظة.</p>
       <div class="flex gap-6">
-        <a href="#" class="type-caption text-mute hover:text-on-dark transition-colors">العربية</a>
-        <a href="#" class="type-caption text-mute hover:text-on-dark transition-colors">الدعم</a>
+        <a href="#" class="text-sm text-teal-200 hover:text-white transition-colors">العربية</a>
+        <a href="#" class="text-sm text-teal-200 hover:text-white transition-colors">الدعم</a>
       </div>
     </div>
   </div>

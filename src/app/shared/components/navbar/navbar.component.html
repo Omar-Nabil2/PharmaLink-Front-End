@@ -63,35 +63,50 @@
     </div>
 
     <!-- Click Outside Overlay for Mobile Menu -->
-    <div *ngIf="menuOpen" class="fixed inset-0 bg-transparent z-40" (click)="menuOpen = false"></div>
+    <div class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40 transition-opacity duration-300 md:hidden" 
+         [class.opacity-0]="!menuOpen"
+         [class.pointer-events-none]="!menuOpen"
+         (click)="menuOpen = false"
+         style="top: 73px;"></div>
 
-    <div *ngIf="menuOpen" class="md:hidden pb-6 space-y-4 border-t border-surface-pressed pt-4 relative z-50 bg-header">
-      <a routerLink="/" (click)="menuOpen = false" class="block type-body-md-strong py-2">الرئيسية</a>
-      <a routerLink="/drugs" (click)="menuOpen = false" class="block type-body-md-strong py-2">المنتجات</a>
-      <a routerLink="/services" (click)="menuOpen = false" class="block type-body-md-strong py-2">الخدمات</a>
-      <a routerLink="/contact" (click)="menuOpen = false" class="block type-body-md-strong py-2">اتصل بنا</a>
+    <div class="md:hidden absolute top-full left-0 right-0 h-[calc(100dvh-73px)] bg-white/95 backdrop-blur-md z-50 overflow-hidden transition-all duration-300 ease-out origin-top flex flex-col shadow-xl"
+         [class.opacity-0]="!menuOpen"
+         [class.scale-y-95]="!menuOpen"
+         [class.-translate-y-4]="!menuOpen"
+         [class.pointer-events-none]="!menuOpen">
+      
+      <div class="p-4 sm:p-6 h-full flex flex-col justify-between overflow-y-auto custom-scrollbar pb-8">
+        <nav class="flex flex-col gap-3 shrink-0">
+          <a routerLink="/" routerLinkActive="!bg-teal-50 !text-teal-700 !border-teal-200" [routerLinkActiveOptions]="{exact: true}" (click)="menuOpen = false" class="px-4 py-4 rounded-xl bg-white border border-surface-pressed text-sm font-bold text-body text-right transition-colors hover:bg-slate-50">الرئيسية</a>
+          <a routerLink="/drugs" routerLinkActive="!bg-teal-50 !text-teal-700 !border-teal-200" (click)="menuOpen = false" class="px-4 py-4 rounded-xl bg-white border border-surface-pressed text-sm font-bold text-body text-right transition-colors hover:bg-slate-50">المنتجات</a>
+          <a routerLink="/services" routerLinkActive="!bg-teal-50 !text-teal-700 !border-teal-200" (click)="menuOpen = false" class="px-4 py-4 rounded-xl bg-white border border-surface-pressed text-sm font-bold text-body text-right transition-colors hover:bg-slate-50">الخدمات</a>
+          <a routerLink="/contact" routerLinkActive="!bg-teal-50 !text-teal-700 !border-teal-200" (click)="menuOpen = false" class="px-4 py-4 rounded-xl bg-white border border-surface-pressed text-sm font-bold text-body text-right transition-colors hover:bg-slate-50">اتصل بنا</a>
+          <a *ngIf="isLoggedIn" [routerLink]="dashboardPath" routerLinkActive="!bg-teal-50 !text-teal-700 !border-teal-200" (click)="menuOpen = false" class="px-4 py-4 rounded-xl bg-white border border-surface-pressed text-sm font-bold text-body text-right transition-colors hover:bg-slate-50">لوحة التحكم</a>
+        </nav>
 
-      <div class="flex flex-col gap-3 pt-2">
-        <ng-container *ngIf="!isLoggedIn">
-          <a routerLink="/auth/login" (click)="menuOpen = false" class="btn-secondary w-full">تسجيل الدخول</a>
-          <a routerLink="/auth/register" (click)="menuOpen = false" class="btn-primary w-full">حساب جديد</a>
-        </ng-container>
-        <ng-container *ngIf="isLoggedIn">
-          <!-- 👇 تم مسح الوسم القديم المفتوح للموبايل 👇 -->
-          <a [routerLink]="getProfileLink()" (click)="menuOpen = false" class="btn-subtle w-full justify-start gap-3">
-            <div class="w-8 h-8 rounded-full overflow-hidden border border-surface-pressed shrink-0">
-              <img *ngIf="profilePictureUrl" [src]="profilePictureUrl" alt="Profile" class="w-full h-full object-cover">
-              <div *ngIf="!profilePictureUrl"
-                class="w-full h-full flex items-center justify-center bg-teal-100 text-teal-700 font-bold">
-                <span>{{ fullName.charAt(0) }}</span>
-              </div>
-            </div>
-            <span>{{ fullName }}</span>
-          </a>
-          <a [routerLink]="getChangePasswordLink()" (click)="menuOpen = false" class="btn-secondary w-full">تغيير كلمة
-            المرور</a>
-          <button type="button" (click)="logout(); menuOpen = false" class="btn-primary w-full">تسجيل الخروج</button>
-        </ng-container>
+        <div class="hidden md:block flex-1"></div>
+
+        <div class="flex flex-col justify-between flex-1 pt-6">
+          <div class="flex flex-col gap-3 shrink-0 mt-auto">
+            <ng-container *ngIf="!isLoggedIn">
+              <a routerLink="/auth/login" (click)="menuOpen = false" class="btn-secondary w-full justify-center py-3.5 text-[0.9375rem]">تسجيل الدخول</a>
+              <a routerLink="/auth/register" (click)="menuOpen = false" class="btn-primary w-full justify-center py-3.5 text-[0.9375rem]">حساب جديد</a>
+            </ng-container>
+            <ng-container *ngIf="isLoggedIn">
+              <a [routerLink]="getProfileLink()" (click)="menuOpen = false" class="btn-subtle w-full justify-start gap-3 py-3.5">
+                <div class="w-8 h-8 rounded-full overflow-hidden border border-surface-pressed shrink-0">
+                  <img *ngIf="profilePictureUrl" [src]="profilePictureUrl" alt="Profile" class="w-full h-full object-cover">
+                  <div *ngIf="!profilePictureUrl" class="w-full h-full flex items-center justify-center bg-teal-100 text-teal-700 font-bold">
+                    <span>{{ fullName.charAt(0) }}</span>
+                  </div>
+                </div>
+                <span class="font-bold">{{ fullName }}</span>
+              </a>
+              <a [routerLink]="getChangePasswordLink()" (click)="menuOpen = false" class="btn-secondary w-full justify-center py-3.5 text-[0.9375rem]">تغيير كلمة المرور</a>
+              <button type="button" (click)="logout(); menuOpen = false" class="btn-primary w-full justify-center py-3.5 text-[0.9375rem]">تسجيل الخروج</button>
+            </ng-container>
+          </div>
+        </div>
       </div>
     </div>
   </div>

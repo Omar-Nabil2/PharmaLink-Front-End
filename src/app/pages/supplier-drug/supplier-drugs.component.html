@@ -30,6 +30,7 @@
 
 
             <!-- ❌ مسحنا [loading] من هنا نهائياً -->
+            <div class="w-full overflow-x-auto rounded-lg">
             <p-table [value]="myDrugs()" [lazy]="true" (onLazyLoad)="onLazyLoad($event)" dataKey="drugId"
                 [paginator]="true" [rows]="pageSize" [totalRecords]="totalRecords()"
                 [first]="(currentPage - 1) * pageSize" [rowsPerPageOptions]="[5, 10, 20]"
@@ -77,6 +78,7 @@
                     }
                 </ng-template>
             </p-table>
+            </div>
         </div>
     </div>
 

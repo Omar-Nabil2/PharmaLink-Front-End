@@ -21,8 +21,12 @@ export interface SidebarItem {
   animations: [routeTransitionAnimations]
 })
 export class AdminLayoutComponent implements OnInit {
+  private lastState = '';
   prepareRoute(outlet: RouterOutlet) {
-    return outlet && outlet.isActivated ? outlet.activatedRoute.snapshot.url.join('') : '';
+    if (outlet && outlet.isActivated) {
+      this.lastState = outlet.activatedRoute.snapshot.url.join('');
+    }
+    return this.lastState;
   }
   
   private readonly authService = inject(AuthService);

@@ -1,14 +1,14 @@
-<div class="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8" dir="rtl">
-  <div class="max-w-4xl mx-auto space-y-8">
+<div class="min-h-screen bg-slate-50 pt-6 pb-16 md:pt-8" dir="rtl">
+  <div class="container-app space-y-12">
     
     <!-- Hero Header -->
-    <div class="bg-gradient-to-r from-emerald-700 via-teal-800 to-slate-900 rounded-3xl p-8 md:p-12 text-white shadow-xl relative overflow-hidden text-center space-y-4">
-      <div class="inline-flex items-center gap-2 px-3 py-1 bg-white/10 backdrop-blur-md rounded-full text-xs font-semibold text-emerald-200 mx-auto">
+    <div class="bg-gradient-to-r from-teal-700 via-teal-800 to-slate-900 rounded-[2.5rem] p-10 md:p-14 text-white shadow-xl shadow-teal-900/10 relative overflow-hidden text-center space-y-6">
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-white/10 backdrop-blur-md rounded-full text-sm font-semibold text-teal-100 mx-auto">
         <i class="pi pi-question-circle"></i>
         <span>مركز الدعم والمساعدة</span>
       </div>
       <h1 class="text-3xl md:text-5xl font-black tracking-tight">الأسئلة الشائعة ومركز المساعدة</h1>
-      <p class="text-emerald-100 text-sm md:text-base max-w-xl mx-auto">
+      <p class="text-teal-100 text-base md:text-lg max-w-xl mx-auto leading-relaxed">
         إليك إجابات لأبرز الأسئلة المتكررة حول استخدام منصة فارما لينك وطلب الدواء وتتبع الوصفات الطبية.
       </p>
     </div>
@@ -18,10 +18,10 @@
       <button 
         type="button" 
         (click)="setCategory('all')" 
-        class="px-5 py-2.5 rounded-xl text-xs font-bold transition-all border"
-        [class.bg-emerald-600]="activeCategory() === 'all'"
+        class="px-6 py-3 rounded-xl text-sm font-bold transition-all border shadow-sm"
+        [class.bg-teal-600]="activeCategory() === 'all'"
         [class.text-white]="activeCategory() === 'all'"
-        [class.border-emerald-600]="activeCategory() === 'all'"
+        [class.border-teal-600]="activeCategory() === 'all'"
         [class.bg-white]="activeCategory() !== 'all'"
         [class.text-slate-600]="activeCategory() !== 'all'"
         [class.border-slate-200]="activeCategory() !== 'all'">
@@ -31,10 +31,10 @@
       <button 
         type="button" 
         (click)="setCategory('orders')" 
-        class="px-5 py-2.5 rounded-xl text-xs font-bold transition-all border"
-        [class.bg-emerald-600]="activeCategory() === 'orders'"
+        class="px-6 py-3 rounded-xl text-sm font-bold transition-all border shadow-sm"
+        [class.bg-teal-600]="activeCategory() === 'orders'"
         [class.text-white]="activeCategory() === 'orders'"
-        [class.border-emerald-600]="activeCategory() === 'orders'"
+        [class.border-teal-600]="activeCategory() === 'orders'"
         [class.bg-white]="activeCategory() !== 'orders'"
         [class.text-slate-600]="activeCategory() !== 'orders'"
         [class.border-slate-200]="activeCategory() !== 'orders'">
@@ -44,10 +44,10 @@
       <button 
         type="button" 
         (click)="setCategory('pharmacies')" 
-        class="px-5 py-2.5 rounded-xl text-xs font-bold transition-all border"
-        [class.bg-emerald-600]="activeCategory() === 'pharmacies'"
+        class="px-6 py-3 rounded-xl text-sm font-bold transition-all border shadow-sm"
+        [class.bg-teal-600]="activeCategory() === 'pharmacies'"
         [class.text-white]="activeCategory() === 'pharmacies'"
-        [class.border-emerald-600]="activeCategory() === 'pharmacies'"
+        [class.border-teal-600]="activeCategory() === 'pharmacies'"
         [class.bg-white]="activeCategory() !== 'pharmacies'"
         [class.text-slate-600]="activeCategory() !== 'pharmacies'"
         [class.border-slate-200]="activeCategory() !== 'pharmacies'">
@@ -57,10 +57,10 @@
       <button 
         type="button" 
         (click)="setCategory('account')" 
-        class="px-5 py-2.5 rounded-xl text-xs font-bold transition-all border"
-        [class.bg-emerald-600]="activeCategory() === 'account'"
+        class="px-6 py-3 rounded-xl text-sm font-bold transition-all border shadow-sm"
+        [class.bg-teal-600]="activeCategory() === 'account'"
         [class.text-white]="activeCategory() === 'account'"
-        [class.border-emerald-600]="activeCategory() === 'account'"
+        [class.border-teal-600]="activeCategory() === 'account'"
         [class.bg-white]="activeCategory() !== 'account'"
         [class.text-slate-600]="activeCategory() !== 'account'"
         [class.border-slate-200]="activeCategory() !== 'account'">
@@ -71,17 +71,19 @@
     <!-- Accordion Items -->
     <div class="space-y-4">
       @for (faq of filteredFaqs; track faq.id) {
-        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden transition-all">
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden transition-all hover:border-teal-300">
           <button 
             type="button" 
             (click)="toggleFaq(faq.id)" 
-            class="w-full p-5 text-right font-bold text-slate-800 hover:bg-slate-50 transition-colors flex items-center justify-between gap-4 text-base">
+            class="w-full p-6 text-right font-bold text-slate-800 hover:bg-slate-50 transition-colors flex items-center justify-between gap-4 text-lg">
             <span>{{ faq.question }}</span>
-            <i class="pi" [class.pi-chevron-down]="!faq.isOpen" [class.pi-chevron-up]="faq.isOpen" class="text-emerald-600"></i>
+            <div class="w-8 h-8 rounded-full bg-teal-50 flex items-center justify-center shrink-0 transition-transform duration-300" [class.rotate-180]="faq.isOpen">
+              <i class="pi pi-chevron-down text-teal-600 text-sm"></i>
+            </div>
           </button>
 
           @if (faq.isOpen) {
-            <div class="p-5 pt-0 text-sm text-slate-600 border-t border-slate-100 bg-slate-50/50 leading-relaxed">
+            <div class="p-6 pt-0 text-base text-slate-600 border-t border-slate-100 bg-slate-50/30 leading-relaxed">
               {{ faq.answer }}
             </div>
           }
@@ -90,14 +92,13 @@
     </div>
 
     <!-- Help Banner -->
-    <div class="bg-white rounded-3xl p-8 border border-slate-200 text-center space-y-4 shadow-sm">
-      <h3 class="text-lg font-bold text-slate-800">لم تجد إجابة لسؤالك؟</h3>
-      <p class="text-xs text-slate-500 max-w-md mx-auto">فريق الدعم في فارما لينك جاهز للمساعدة على مدار الساعة.</p>
-      <a routerLink="/contact" class="inline-flex items-center gap-2 px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-sm transition-colors shadow-md">
-        <i class="pi pi-envelope"></i>
+    <div class="bg-white rounded-3xl p-10 border border-slate-200 text-center space-y-5 shadow-sm">
+      <h3 class="text-2xl font-bold text-slate-800">لم تجد إجابة لسؤالك؟</h3>
+      <p class="text-base text-slate-500 max-w-md mx-auto">فريق الدعم في فارما لينك جاهز للمساعدة على مدار الساعة لتلبية كافة احتياجاتك.</p>
+      <a routerLink="/contact" class="inline-flex items-center gap-2 px-8 py-4 bg-teal-600 hover:bg-teal-700 text-white rounded-xl font-bold text-base transition-colors shadow-lg hover:shadow-teal-600/30 mt-2">
+        <i class="pi pi-envelope text-lg"></i>
         <span>تواصل معنا الآن</span>
       </a>
     </div>
-
   </div>
 </div>

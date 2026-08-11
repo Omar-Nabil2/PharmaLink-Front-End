@@ -1,7 +1,7 @@
-<div class="flex flex-col h-[100dvh] overflow-y-scroll overflow-x-hidden bg-canvas font-sans">
+<div class="w-full flex flex-col h-[100dvh] overflow-y-scroll overflow-x-hidden bg-canvas font-sans">
   <app-navbar class="sticky top-0 z-50 block w-full" />
 
-  <main class="flex-grow relative" [@routeAnimations]="prepareRoute(outlet)">
+  <main class="flex-grow relative w-full" [@routeAnimations]="prepareRoute(outlet)">
     <router-outlet #outlet="outlet"></router-outlet>
   </main>
 

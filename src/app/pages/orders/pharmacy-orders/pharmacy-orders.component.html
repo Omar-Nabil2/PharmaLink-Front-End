@@ -133,7 +133,8 @@
           <p class="text-xs lg:text-base text-muted-foreground">جرّب تغيير كلمة البحث أو تصفية الحالة.</p>
         </div>
       } @else {
-        <p-table
+        <div class="w-full overflow-x-auto rounded-lg">
+          <p-table
           [value]="orders()"
           [lazy]="true"
           [paginator]="true"
@@ -220,6 +221,7 @@
             </tr>
           </ng-template>
         </p-table>
+        </div>
 
 
       }

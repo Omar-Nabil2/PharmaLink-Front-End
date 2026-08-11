@@ -1,85 +1,71 @@
-<section class="bg-canvas">
-  <div class="container-app py-10 md:py-14">
-    <div class="grid lg:grid-cols-2 gap-10 lg:gap-16 items-start">
-      <div class="space-y-4">
-        <h1 class="type-display-xxl">اتصل بنا</h1>
-        <p class="type-body-lg text-body max-w-md">
-          هل لديك أسئلة حول الحسابات، الصيدليات، أو الطلبات؟ أرسل رسالة وسيقوم فريقنا بمساعدتك.
-        </p>
+<section class="bg-slate-50 min-h-screen pt-6 pb-16 md:pt-8 md:pb-24">
+  <div class="container-app">
+    <div class="grid lg:grid-cols-2 gap-12 lg:gap-20 items-start max-w-6xl mx-auto">
+      <!-- Contact Info Section -->
+      <div class="space-y-8">
+        <div>
+          <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight mb-6">اتصل بنا</h1>
+          <p class="text-lg text-slate-600 leading-relaxed max-w-md">
+            هل لديك أسئلة حول الحسابات، الصيدليات، أو الطلبات؟ أرسل رسالة وسيقوم فريقنا بمساعدتك في أسرع وقت.
+          </p>
+        </div>
 
-        <div class="space-y-4 pt-4">
-          <div class="flex items-start gap-3">
-            <div class="w-10 h-10 rounded-full bg-canvas-soft flex items-center justify-center shrink-0">
-              <i class="pi pi-envelope"></i>
+        <div class="space-y-6 pt-6">
+          <div class="flex items-start gap-4 p-6 bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow group">
+            <div class="w-12 h-12 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center shrink-0 group-hover:bg-teal-600 group-hover:text-white transition-colors duration-300">
+              <i class="pi pi-envelope text-xl"></i>
             </div>
             <div>
-              <p class="type-body-md-strong">البريد الإلكتروني</p>
-              <p class="type-body-sm text-body">support@pharmalink.app</p>
+              <p class="font-bold text-slate-800 text-lg mb-1">البريد الإلكتروني</p>
+              <p class="text-slate-500">support@pharmalink.app</p>
             </div>
           </div>
-          <div class="flex items-start gap-3">
-            <div class="w-10 h-10 rounded-full bg-canvas-soft flex items-center justify-center shrink-0">
-              <i class="pi pi-phone"></i>
+          
+          <div class="flex items-start gap-4 p-6 bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow group">
+            <div class="w-12 h-12 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center shrink-0 group-hover:bg-teal-600 group-hover:text-white transition-colors duration-300">
+              <i class="pi pi-phone text-xl"></i>
             </div>
             <div>
-              <p class="type-body-md-strong">الهاتف</p>
-              <p class="type-body-sm text-body">+20 100 000 0000</p>
+              <p class="font-bold text-slate-800 text-lg mb-1">الهاتف</p>
+              <p class="text-slate-500" dir="ltr">+20 123 456 7890</p>
+            </div>
+          </div>
+          
+          <div class="flex items-start gap-4 p-6 bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow group">
+            <div class="w-12 h-12 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center shrink-0 group-hover:bg-teal-600 group-hover:text-white transition-colors duration-300">
+              <i class="pi pi-map-marker text-xl"></i>
+            </div>
+            <div>
+              <p class="font-bold text-slate-800 text-lg mb-1">المقر الرئيسي</p>
+              <p class="text-slate-500">القاهرة، جمهورية مصر العربية</p>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="card-elevated space-y-5">
-        <h2 class="type-display-md">أرسل رسالة</h2>
-        <form [formGroup]="contactForm" (ngSubmit)="onSubmit()" class="space-y-4">
+      <!-- Contact Form -->
+      <div class="bg-white rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100 p-8 md:p-10 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-teal-50 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
+        <form class="space-y-6 relative z-10" [formGroup]="contactForm" (ngSubmit)="onSubmit()">
           <div>
-            <label for="name" class="field-label">الاسم الكامل</label>
-            <input
-              id="name"
-              type="text"
-              formControlName="name"
-              class="field-input"
-              [ngClass]="{ 'is-invalid': f['name'].touched && f['name'].invalid }"
-              placeholder="اسمك"
-            />
-            <div *ngIf="f['name'].touched && f['name'].invalid" class="field-error">
-              يرجى إدخال اسمك.
-            </div>
+            <label for="name" class="block text-sm font-bold text-slate-700 mb-2">الاسم بالكامل</label>
+            <input type="text" id="name" formControlName="name" placeholder="أدخل اسمك" class="w-full px-4 py-3.5 rounded-xl bg-slate-50 border-2 border-slate-100 text-slate-800 text-sm outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 transition-all hover:border-slate-200">
           </div>
 
           <div>
-            <label for="email" class="field-label">البريد الإلكتروني</label>
-            <input
-              id="email"
-              type="email"
-              formControlName="email"
-              class="field-input"
-              [ngClass]="{ 'is-invalid': f['email'].touched && f['email'].invalid }"
-              placeholder="name@example.com"
-            />
-            <div *ngIf="f['email'].touched && f['email'].invalid" class="field-error">
-              يرجى إدخال بريد إلكتروني صحيح.
-            </div>
+            <label for="email" class="block text-sm font-bold text-slate-700 mb-2">البريد الإلكتروني</label>
+            <input type="email" id="email" formControlName="email" placeholder="example@domain.com" class="w-full px-4 py-3.5 rounded-xl bg-slate-50 border-2 border-slate-100 text-slate-800 text-sm outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 transition-all hover:border-slate-200 text-left" dir="ltr">
           </div>
 
           <div>
-            <label for="message" class="field-label">الرسالة</label>
-            <textarea
-              id="message"
-              formControlName="message"
-              rows="5"
-              class="field-input resize-y min-h-[120px]"
-              [ngClass]="{ 'is-invalid': f['message'].touched && f['message'].invalid }"
-              placeholder="كيف يمكننا مساعدتك؟"
-            ></textarea>
-            <div *ngIf="f['message'].touched && f['message'].invalid" class="field-error">
-              يجب أن تكون الرسالة 10 أحرف على الأقل.
-            </div>
+            <label for="message" class="block text-sm font-bold text-slate-700 mb-2">الرسالة</label>
+            <textarea id="message" formControlName="message" rows="5" placeholder="اكتب رسالتك أو استفسارك هنا..." class="w-full px-4 py-3.5 rounded-xl bg-slate-50 border-2 border-slate-100 text-slate-800 text-sm outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 transition-all hover:border-slate-200 resize-none"></textarea>
           </div>
 
-          <button type="submit" class="btn-large" [disabled]="isSending || contactForm.invalid">
+          <button type="submit" [disabled]="contactForm.invalid || isSending" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-4 rounded-xl transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-lg">
             <i *ngIf="isSending" class="pi pi-spin pi-spinner"></i>
-            <span>{{ isSending ? 'جاري الإرسال...' : 'إرسال الرسالة' }}</span>
+            <span *ngIf="!isSending">إرسال الرسالة</span>
+            <i *ngIf="!isSending" class="pi pi-send text-sm rotate-180"></i>
           </button>
         </form>
       </div>

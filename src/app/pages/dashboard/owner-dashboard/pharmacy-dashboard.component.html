@@ -198,7 +198,8 @@
           <h3 class="text-sm md:text-base lg:text-lg font-semibold">آخر الطلبات</h3>
         </div>
 
-        <p-table
+        <div class="w-full overflow-x-auto rounded-lg">
+          <p-table
           [value]="recentOrders()"
           styleClass="w-full text-xs lg:text-base"
           [tableStyle]="{ 'min-width': '48rem' }"
@@ -253,6 +254,7 @@
             </tr>
           </ng-template>
         </p-table>
+        </div>
       </div>
     }
   </div>

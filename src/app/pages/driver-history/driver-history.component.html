@@ -7,6 +7,7 @@
     <p-card styleClass="shadow-sm border border-slate-100 rounded-xl overflow-hidden">
 
         <!-- رجعنا الأقواس لـ historyJobs() و totalRecords() بس سيبنا اللودر isLoading -->
+        <div class="w-full overflow-x-auto rounded-lg">
         <p-table [value]="historyJobs()" [lazy]="true" (onLazyLoad)="loadHistory($event)" [paginator]="true" [rows]="10"
             [totalRecords]="totalRecords()" [loading]="isLoading" responsiveLayout="scroll" [rowHover]="true"
             styleClass="p-datatable-striped">
@@ -62,5 +63,6 @@
             </ng-template>
 
         </p-table>
+        </div>
     </p-card>
 </div>

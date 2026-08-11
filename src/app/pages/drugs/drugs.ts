@@ -13,6 +13,8 @@ import { RouterLink } from '@angular/router';
 import { DrugService } from '../../core/services/drug.service';
 import { CartService } from '../../core/services/cart.service';
 import { CategoryService } from '../../core/services/category.service';
+import { AuthService } from '../../core/services/auth.service';
+import { Router, ActivatedRoute } from '@angular/router';
 import { ErrorHandlerService } from '../../core/services/error-handler.service';
 import { DrugDto, DrugCategory } from '../../core/interfaces/drug.interface';
 
@@ -23,6 +25,7 @@ import { DrugDto, DrugCategory } from '../../core/interfaces/drug.interface';
   templateUrl: './drugs.html',
 })
 export class DrugsComponent implements OnInit {
+  isPatientLayout = false;
   viewMode: 'categories' | 'products' = 'categories';
   displayedCategories: DrugCategory[] = [];
   currentCategory: DrugCategory | null = null;
@@ -58,10 +61,14 @@ export class DrugsComponent implements OnInit {
   private readonly cartService = inject(CartService);
   private readonly errorHandlerService = inject(ErrorHandlerService);
   private readonly messageService = inject(MessageService);
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   private readonly http = inject(HttpClient);
   private readonly baseUrl = environment.baseUrl;
 
   async ngOnInit(): Promise<void> {
+    this.isPatientLayout = this.router.url.includes('/patient/');
     this.loadCategories();
 
     this.searchInput$.pipe(debounceTime(400), distinctUntilChanged()).subscribe((term) => {
@@ -239,8 +246,22 @@ export class DrugsComponent implements OnInit {
     this.loadDrugs();
   }
 
+  onCardClick(drug: DrugDto, event?: Event): void {
+    if (event) event.stopPropagation();
+    if (!this.authService.isLoggedIn()) {
+      this.router.navigate(['/auth/login'], { queryParams: { returnUrl: this.router.url } });
+      return;
+    }
+    this.router.navigate([drug.drugId], { relativeTo: this.route });
+  }
+
   addToCart(drug: DrugDto, event?: Event): void {
     if (event) event.stopPropagation();
+    if (!this.authService.isLoggedIn()) {
+      this.router.navigate(['/auth/login'], { queryParams: { returnUrl: this.router.url } });
+      return;
+    }
+    
     if (drug.availabilityStatus === 'OutOfStock' || this.addingDrugId) return;
 
     this.addingDrugId = drug.drugId;

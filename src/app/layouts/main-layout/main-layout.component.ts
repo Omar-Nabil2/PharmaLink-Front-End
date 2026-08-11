@@ -13,7 +13,11 @@ import { routeTransitionAnimations } from '../../shared/animations/route.animati
   animations: [routeTransitionAnimations]
 })
 export class MainLayoutComponent {
+  private lastState = '';
   prepareRoute(outlet: RouterOutlet) {
-    return outlet && outlet.isActivated ? outlet.activatedRoute.snapshot.url.join('') : '';
+    if (outlet && outlet.isActivated) {
+      this.lastState = outlet.activatedRoute.snapshot.url.join('');
+    }
+    return this.lastState;
   }
 }

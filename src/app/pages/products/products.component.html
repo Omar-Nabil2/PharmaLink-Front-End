@@ -1,44 +1,64 @@
-<section class="bg-canvas">
-  <div class="container-app py-10 md:py-14 space-y-10">
-    <div class="max-w-2xl space-y-4">
-      <h1 class="type-display-xxl">المنتجات</h1>
-      <p class="type-body-lg text-body">
-        تصفح الأدوية والمستلزمات الصيدلانية من شركاء موثوقين — أسعار واضحة ومخزون موثوق.
+<section class="bg-slate-50 min-h-screen pt-6 pb-16 md:pt-8 md:pb-24">
+  <div class="container-app">
+    <div class="max-w-3xl mx-auto text-center space-y-6 mb-16">
+      <h1 class="text-4xl md:text-5xl font-extrabold text-teal-900 tracking-tight">المنتجات</h1>
+      <p class="text-lg text-slate-600 leading-relaxed">
+        تصفح الأدوية والمستلزمات الصيدلانية من شركاء موثوقين — أسعار واضحة وتوفر مضمون.
       </p>
     </div>
 
-    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      <div class="card-surface border border-surface-pressed space-y-3">
-        <div class="aspect-[4/3] bg-canvas-soft rounded-xl flex items-center justify-center">
-          <i class="pi pi-box text-3xl text-ink"></i>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      <!-- Product Category 1 -->
+      <div class="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 group text-center">
+        <div class="w-24 h-24 mx-auto bg-teal-50 rounded-[2rem] flex items-center justify-center mb-6 group-hover:bg-teal-600 group-hover:rotate-6 transition-all duration-500">
+          <i class="pi pi-box text-4xl text-teal-600 group-hover:text-white transition-colors duration-300"></i>
         </div>
-        <h2 class="type-display-sm">الأدوية الموصوفة</h2>
-        <p class="type-body-sm text-body">اطلب الوصفات الطبية المعتمدة وتتبع تنفيذها من الفروع القريبة.</p>
+        <h2 class="text-2xl font-bold text-slate-800 mb-4">الأدوية الموصوفة</h2>
+        <p class="text-sm text-slate-600 leading-relaxed">
+          اطلب الوصفات الطبية المعتمدة وتتبع تنفيذها واستلامها من الفروع القريبة بكل سهولة وأمان.
+        </p>
       </div>
 
-      <div class="card-surface border border-surface-pressed space-y-3">
-        <div class="aspect-[4/3] bg-canvas-soft rounded-xl flex items-center justify-center">
-          <i class="pi pi-heart text-3xl text-ink"></i>
+      <!-- Product Category 2 -->
+      <div class="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 group text-center">
+        <div class="w-24 h-24 mx-auto bg-teal-50 rounded-[2rem] flex items-center justify-center mb-6 group-hover:bg-teal-600 group-hover:-rotate-6 transition-all duration-500">
+          <i class="pi pi-heart text-4xl text-teal-600 group-hover:text-white transition-colors duration-300"></i>
         </div>
-        <h2 class="type-display-sm">الأدوية التي لا تستلزم وصفة</h2>
-        <p class="type-body-sm text-body">منتجات الصحة اليومية من الصيدليات الشريكة، جاهزة متى احتجت إليها.</p>
+        <h2 class="text-2xl font-bold text-slate-800 mb-4">أدوية بدون وصفة</h2>
+        <p class="text-sm text-slate-600 leading-relaxed">
+          منتجات الصحة اليومية والمكملات من الصيدليات الشريكة، متوفرة وجاهزة متى احتجت إليها.
+        </p>
       </div>
 
-      <div class="card-surface border border-surface-pressed space-y-3 sm:col-span-2 lg:col-span-1">
-        <div class="aspect-[4/3] bg-canvas-soft rounded-xl flex items-center justify-center">
-          <i class="pi pi-shopping-bag text-3xl text-ink"></i>
+      <!-- Product Category 3 -->
+      <div class="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 group text-center sm:col-span-2 lg:col-span-1">
+        <div class="w-24 h-24 mx-auto bg-teal-50 rounded-[2rem] flex items-center justify-center mb-6 group-hover:bg-teal-600 group-hover:rotate-6 transition-all duration-500">
+          <i class="pi pi-shopping-bag text-4xl text-teal-600 group-hover:text-white transition-colors duration-300"></i>
         </div>
-        <h2 class="type-display-sm">باقات الرعاية</h2>
-        <p class="type-body-sm text-body">مجموعات مختارة للرعاية المنزلية، الأمراض المزمنة، واحتياجات الأسرة.</p>
+        <h2 class="text-2xl font-bold text-slate-800 mb-4">باقات الرعاية</h2>
+        <p class="text-sm text-slate-600 leading-relaxed">
+          مجموعات مختارة بعناية للرعاية المنزلية، إدارة الأمراض المزمنة، وتلبية كافة احتياجات الأسرة.
+        </p>
       </div>
     </div>
 
-    <div class="bg-ink text-on-dark rounded-xl p-6 md:p-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
-      <div class="space-y-2">
-        <h2 class="type-display-md text-on-dark">هل أنت مستعد للطلب؟</h2>
-        <p class="type-body-md text-mute">قم بإنشاء حساب لتبدأ في التصفح وتقديم الطلبات.</p>
+    <!-- CTA Section -->
+    <div class="mt-20 bg-teal-900 rounded-[2.5rem] p-10 md:p-14 flex flex-col md:flex-row md:items-center justify-between gap-8 relative overflow-hidden shadow-2xl">
+      <!-- Decorative background -->
+      <div class="absolute top-0 right-0 w-64 h-64 bg-teal-800 rounded-full blur-3xl opacity-50 -translate-y-1/2 translate-x-1/3"></div>
+      <div class="absolute bottom-0 left-0 w-64 h-64 bg-teal-800 rounded-full blur-3xl opacity-50 translate-y-1/2 -translate-x-1/3"></div>
+      
+      <div class="space-y-4 relative z-10 max-w-xl">
+        <h2 class="text-3xl md:text-4xl font-bold text-white">هل أنت مستعد للطلب؟</h2>
+        <p class="text-teal-100 text-lg leading-relaxed">
+          قم بإنشاء حسابك الآن لتبدأ في استكشاف المنتجات وتقديم الطلبات للصيدليات المعتمدة.
+        </p>
       </div>
-      <a routerLink="/auth/register" class="btn-secondary self-start">ابدأ الآن</a>
+      <div class="relative z-10 shrink-0">
+        <a routerLink="/auth/register" class="inline-flex bg-white text-teal-900 hover:bg-teal-50 px-8 py-4 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl hover:-translate-y-1 w-full sm:w-auto justify-center text-lg">
+          ابدأ الآن مجاناً
+        </a>
+      </div>
     </div>
   </div>
 </section>

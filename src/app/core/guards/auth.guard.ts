@@ -46,3 +46,15 @@ export const authGuard: CanActivateFn = (route: ActivatedRouteSnapshot, state: R
   const redirectPath = authService.getDashboardPath();
   return router.createUrlTree([redirectPath]);
 };
+
+export const guestGuard: CanActivateFn = (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
+  const router = inject(Router);
+  const authService = inject(AuthService);
+
+  if (authService.isLoggedIn()) {
+    const redirectPath = authService.getDashboardPath();
+    return router.createUrlTree([redirectPath]);
+  }
+  
+  return true;
+};

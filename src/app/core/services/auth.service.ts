@@ -1,5 +1,6 @@
 import { computed, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 
 import {
@@ -22,7 +23,10 @@ export class AuthService {
 
   private currentUserSignal = signal<UserAuthData | null>(this.loadUserFromStorage());
 
-  constructor(private readonly http: HttpClient) { }
+  constructor(
+    private readonly http: HttpClient,
+    private readonly router: Router
+  ) { }
 
   currentUser = computed(() => this.currentUserSignal());
   isLoggedIn = computed(() => this.currentUserSignal() !== null);
@@ -98,6 +102,7 @@ export class AuthService {
   private clearSession() {
     localStorage.clear();
     this.currentUserSignal.set(null);
+    this.router.navigate(['/']);
   }
 
   getDashboardPath(): string {

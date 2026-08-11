@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 import { MainLayoutComponent } from './layouts/main-layout/main-layout.component';
 import { HomeComponent } from './pages/home/home.component';
 import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
-import { authGuard } from './core/guards/auth.guard';
+import { authGuard, guestGuard } from './core/guards/auth.guard';
 import { AppRoles } from './core/enums/app-roles.constant';
 import { DriverHistoryComponent } from '@pages/driver-history/driver-history.component';
 
@@ -13,6 +13,7 @@ export const routes: Routes = [
     children: [
       {
         path: '',
+        canActivate: [guestGuard],
         component: HomeComponent,
       },
 
@@ -71,6 +72,7 @@ export const routes: Routes = [
   {
     path: 'auth',
     component: AuthLayoutComponent,
+    canActivate: [guestGuard],
     children: [
       {
         path: 'register',
