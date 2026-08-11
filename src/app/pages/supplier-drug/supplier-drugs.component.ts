@@ -4,6 +4,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { TableModule, TableLazyLoadEvent } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
+import Swal from 'sweetalert2';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DialogModule } from 'primeng/dialog';
@@ -146,14 +147,17 @@ export class SupplierDrugsComponent {
     }
 
     confirmRemoveDrug(drug: SupplierDrugDTO): void {
-        this.confirmationService.confirm({
-            message: `هل أنت متأكد من إزالة "${drug.brandName}" من قائمة أدويتك؟`,
-            header: 'تأكيد الإزالة',
-            icon: 'pi pi-exclamation-triangle text-red-500',
-            acceptLabel: 'نعم، إزالة',
-            rejectLabel: 'إلغاء',
-            acceptButtonStyleClass: 'p-button-danger',
-            accept: () => {
+        Swal.fire({
+            title: 'تأكيد الإزالة',
+            text: `هل أنت متأكد من إزالة "${drug.brandName}" من قائمة أدويتك؟`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'نعم، إزالة',
+            cancelButtonText: 'إلغاء'
+        }).then((result) => {
+            if (result.isConfirmed) {
                 this.removeDrug(drug.drugId);
             }
         });

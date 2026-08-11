@@ -5,6 +5,7 @@ import { MessageService, ConfirmationService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DialogModule } from 'primeng/dialog';
+import Swal from 'sweetalert2';
 
 import { AdminUsersService } from './admin-users.service';
 import { AdminUserDto, AdminUserFilterDto, UserStatus, PaginatedList } from './admin-users.model';
@@ -186,14 +187,17 @@ export class AdminUsersComponent implements OnInit {
     const newStatus = isCurrentlyActive ? UserStatus.Inactive : UserStatus.Active;
     const actionText = isCurrentlyActive ? 'إلغاء تنشيط' : 'تنشيط';
 
-    this.confirmationService.confirm({
-      message: `هل أنت متأكد أنك تريد ${actionText} حساب "${user.fullName}"؟`,
-      header: 'تأكيد تغيير حالة الحساب',
-      icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'نعم، قم بالتأكيد',
-      rejectLabel: 'إلغاء',
-      acceptButtonStyleClass: isCurrentlyActive ? 'p-button-danger' : 'p-button-success',
-      accept: () => {
+    Swal.fire({
+      title: 'تأكيد تغيير حالة الحساب',
+      text: `هل أنت متأكد أنك تريد ${actionText} حساب "${user.fullName}"؟`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: isCurrentlyActive ? '#d33' : '#28a745',
+      cancelButtonColor: '#6c757d',
+      confirmButtonText: 'نعم، قم بالتأكيد',
+      cancelButtonText: 'إلغاء'
+    }).then((result) => {
+      if (result.isConfirmed) {
         this.usersService.updateUserStatus(user.id, { status: newStatus }).subscribe({
           next: () => {
             this.messageService.add({ severity: 'success', summary: 'نجاح', detail: `تم ${actionText} الحساب بنجاح` });

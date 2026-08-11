@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { PatientAddressesService } from '../../../../core/services/patient-addresses.service';
 import { PatientAddress } from '../../../../core/interfaces/profile.interface';
 import { ErrorHandlerService } from '../../../../core/services/error-handler.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-address-list',
@@ -47,16 +48,27 @@ export class AddressListComponent implements OnInit {
   }
 
   deleteAddress(id: string): void {
-    if (!confirm('هل أنت متأكد من حذف هذا العنوان؟')) return;
-
-    this.addressesService.deleteAddress(id).subscribe({
-      next: () => {
-        this.successMessage = 'تم حذف العنوان بنجاح';
-        this.loadAddresses();
-        setTimeout(() => this.successMessage = '', 3000);
-      },
-      error: (err) => {
-        this.errorHandler.handleError(err, 'فشل حذف العنوان');
+    Swal.fire({
+      title: 'تأكيد',
+      text: 'هل أنت متأكد من حذف هذا العنوان؟',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#6c757d',
+      confirmButtonText: 'نعم، احذف',
+      cancelButtonText: 'إلغاء'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.addressesService.deleteAddress(id).subscribe({
+          next: () => {
+            this.successMessage = 'تم حذف العنوان بنجاح';
+            this.loadAddresses();
+            setTimeout(() => this.successMessage = '', 3000);
+          },
+          error: (err) => {
+            this.errorHandler.handleError(err, 'فشل حذف العنوان');
+          }
+        });
       }
     });
   }

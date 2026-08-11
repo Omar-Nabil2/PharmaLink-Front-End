@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
+import Swal from 'sweetalert2';
 import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
@@ -171,14 +172,17 @@ export class PharmacyOrdersComponent implements OnInit {
     }
 
     confirmReceive(order: any): void {
-        this.confirmationService.confirm({
-            message: `هل أنت متأكد من استلام طلبية "${order.drugName || 'هذا الدواء'}" وتحديث المخزون؟`,
-            header: 'تأكيد الاستلام',
-            icon: 'pi pi-check-circle',
-            acceptLabel: 'نعم، استلمت الشحنة',
-            rejectLabel: 'إلغاء',
-            acceptButtonStyleClass: 'p-button-success',
-            accept: () => {
+        Swal.fire({
+            title: 'تأكيد الاستلام',
+            text: `هل أنت متأكد من استلام طلبية "${order.drugName || 'هذا الدواء'}" وتحديث المخزون؟`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#28a745',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'نعم، استلمت الشحنة',
+            cancelButtonText: 'إلغاء'
+        }).then((result) => {
+            if (result.isConfirmed) {
                 this.processReceiving(order.id);
             }
         });
