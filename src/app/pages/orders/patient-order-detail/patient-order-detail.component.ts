@@ -4,11 +4,12 @@ import { RouterModule, ActivatedRoute } from '@angular/router';
 import { Subject, takeUntil, finalize } from 'rxjs';
 import { OrderService } from '../../../core/services/order.service';
 import { PatientOrder } from '../../../core/interfaces/order.interface';
+import { StatusTranslatePipe } from '@shared/pipes/status-translate.pipe';
 
 @Component({
   selector: 'app-patient-order-detail',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, StatusTranslatePipe],
   templateUrl: './patient-order-detail.component.html',
   styleUrls: ['./patient-order-detail.component.scss']
 })
