@@ -151,13 +151,50 @@ export class AddressFormComponent implements OnInit {
     }
 
     navigator.geolocation.getCurrentPosition(
-      (position) => {
+      async (position) => {
+        // Set coordinates
         this.addressForm.patchValue({
           latitude: position.coords.latitude,
           longitude: position.coords.longitude
         });
+
+        try {
+          const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${position.coords.latitude}&lon=${position.coords.longitude}&accept-language=ar`);
+          if (res.ok) {
+            const data = await res.json();
+            if (data && data.address) {
+              const currentValues = this.addressForm.value;
+
+              const governorate = data.address.state || data.address.region || data.address.county || '';
+              const city = data.address.city || data.address.town || data.address.village || data.address.suburb || '';
+              const addressLine = data.display_name || '';
+
+              const patchData: any = {};
+              
+              if (!currentValues.governorate && governorate) {
+                // In your dropdown, you might need to map to exact strings or just set it
+                patchData.governorate = governorate;
+              }
+              
+              if (!currentValues.city && city) {
+                patchData.city = city;
+              }
+
+              if (!currentValues.addressLine && addressLine) {
+                patchData.addressLine = addressLine;
+              }
+
+              if (Object.keys(patchData).length > 0) {
+                this.addressForm.patchValue(patchData);
+              }
+            }
+          }
+        } catch (err) {
+          console.error('Reverse geocoding failed', err);
+        }
+
         this.cdr.detectChanges();
-        Swal.fire('نجاح', 'تم تحديد موقعك بنجاح!', 'success');
+        Swal.fire('نجاح', 'تم تحديد موقعك وجلب العنوان (إن وجد) بنجاح!', 'success');
       },
       (error) => {
         let errorMsg = 'تعذر الحصول على الموقع';
