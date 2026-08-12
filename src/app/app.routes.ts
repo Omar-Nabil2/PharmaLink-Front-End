@@ -216,6 +216,27 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'reminders',
+        loadComponent: () =>
+          import('./pages/patient/reminders/reminders').then(
+            (m) => m.Reminders,
+          ),
+      },
+      {
+        path: 'prescriptions/recurring',
+        loadComponent: () =>
+          import('./pages/patient/recurring-list/recurring-list').then(
+            (m) => m.RecurringList,
+          ),
+      },
+      {
+        path: 'prescriptions/recurring/new',
+        loadComponent: () =>
+          import('./pages/patient/create-recurring/create-recurring').then(
+            (m) => m.CreateRecurring,
+          ),
+      },
+      {
         path: 'orders/:id',
         loadComponent: () =>
           import('./pages/orders/patient-order-detail/patient-order-detail.component').then(
