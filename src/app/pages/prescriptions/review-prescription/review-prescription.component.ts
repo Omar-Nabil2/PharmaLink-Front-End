@@ -236,7 +236,7 @@ export class ReviewPrescriptionComponent implements OnInit {
 
     onImageError(event: Event): void {
         const imgElement = event.target as HTMLImageElement;
-        imgElement.src = 'https://placehold.co/600x400/eeeeee/31343c?font=cairo&text=%D8%B9%D9%81%D9%88%D8%A7%D9%8B%D8%8C+%D8%A7%D9%84%D8%B5%D9%88%D8%B1%D8%A9+%D8%BA%D9%8A%D8%B1+%D9%85%D9%88%D8%AC%D9%88%D8%AF%D8%A9';
+        imgElement.src = 'https://placehold.co/600x400/eeeeee/31343c?text=Image+Blocked+or+Not+Found';
     }
 
     get isReadOnly(): boolean {
