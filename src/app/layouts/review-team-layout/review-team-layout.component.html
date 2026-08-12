@@ -34,14 +34,14 @@
         <!-- User dropdown -->
         <div class="relative">
           <div (click)="toggleUserMenu()" class="flex items-center gap-2 cursor-pointer hover:bg-slate-100 rounded-full px-2 py-1.5 transition border border-transparent hover:border-slate-200">
-            @if (!profilePictureUrl) {
+            @if (!profilePictureUrl()) {
               <div class="h-9 w-9 rounded-full bg-teal-100 text-teal-700 border border-slate-200 flex items-center justify-center font-bold shrink-0">
                 {{ avatarInitial() }}
               </div>
             }
-            @if (profilePictureUrl) {
+            @if (profilePictureUrl()) {
               <div class="h-9 w-9 rounded-full overflow-hidden border border-teal-200">
-                <img [src]="profilePictureUrl" alt="Profile" class="w-full h-full object-cover">
+                <img [src]="profilePictureUrl()" alt="Profile" class="w-full h-full object-cover">
               </div>
             }
             <div class="hidden sm:block">
@@ -114,8 +114,8 @@
           <div class="h-px bg-slate-200 my-2 mx-2"></div>
           <a routerLink="/review-team/profile" (click)="menuOpen.set(false)" class="px-4 py-3 flex items-center gap-4 text-slate-800 hover:bg-slate-50 border border-transparent rounded-xl transition cursor-pointer font-bold">
             <div class="w-9 h-9 rounded-full overflow-hidden bg-teal-100 text-teal-700 flex items-center justify-center shrink-0 border border-slate-200">
-               @if (profilePictureUrl) {
-                 <img [src]="profilePictureUrl" alt="Profile" class="w-full h-full object-cover">
+               @if (profilePictureUrl()) {
+                 <img [src]="profilePictureUrl()" alt="Profile" class="w-full h-full object-cover">
                } @else {
                  <span class="font-bold text-sm">{{ avatarInitial() }}</span>
                }
