@@ -1,7 +1,7 @@
 <div class="patient-theme w-full h-[100dvh] overflow-x-hidden bg-canvas-softer font-sans flex flex-col" [class.overflow-y-hidden]="menuOpen" [class.overflow-y-scroll]="!menuOpen" dir="rtl">
   
   <!-- Global Click Outside Overlay (Covers the main content below the header) -->
-  <div *ngIf="profileMenuOpen || menuOpen" class="fixed inset-0 z-40" (click)="profileMenuOpen = false; menuOpen = false"></div>
+  <div *ngIf="profileMenuOpen || menuOpen || alarmMenuOpen" class="fixed inset-0 z-40" (click)="profileMenuOpen = false; menuOpen = false; alarmMenuOpen = false"></div>
 
   <header class="sticky top-0 z-50 bg-canvas/95 backdrop-blur border-b border-surface-pressed">
     <div class="w-full px-4 sm:px-6 lg:px-8">
@@ -40,15 +40,32 @@
               <i class="pi pi-camera text-lg"></i>
             </a>
             
-            <a routerLink="/patient/reminders" class="flex items-center gap-2 px-3 py-2 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 rounded-xl font-bold transition shadow-sm" aria-label="مواعيد الأدوية">
-              <i class="pi pi-clock"></i>
-              <span class="hidden xl:inline text-sm">منبه الأدوية</span>
-            </a>
+            <!-- Alarm Dropdown -->
+            <div class="relative">
+              <button (click)="toggleAlarmMenu()" class="w-10 h-10 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center hover:bg-amber-100 transition border border-amber-200 cursor-pointer" aria-label="المنبه والروشتات الدورية">
+                <i class="pi pi-bell text-lg"></i>
+              </button>
 
-            <a routerLink="/patient/prescriptions/recurring" class="flex items-center gap-2 px-3 py-2 bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 rounded-xl font-bold transition shadow-sm" aria-label="الروشتات الدورية">
-              <i class="pi pi-sync"></i>
-              <span class="hidden xl:inline text-sm">الروشتات الدورية</span>
-            </a>
+              <!-- Dropdown Menu -->
+              <div class="absolute left-0 top-full mt-2 w-52 bg-white border border-gray-100 rounded-xl shadow-xl py-2 z-50 transition-all duration-200 origin-top-left"
+                   [class.opacity-0]="!alarmMenuOpen"
+                   [class.scale-95]="!alarmMenuOpen"
+                   [class.pointer-events-none]="!alarmMenuOpen"
+                   [class.-translate-y-2]="!alarmMenuOpen">
+                <a routerLink="/patient/reminders" class="flex items-center gap-3 px-4 py-2.5 text-sm font-bold text-slate-700 hover:bg-slate-50 transition cursor-pointer" (click)="alarmMenuOpen = false">
+                  <div class="w-8 h-8 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+                    <i class="pi pi-clock"></i>
+                  </div>
+                  منبه الأدوية
+                </a>
+                <a routerLink="/patient/prescriptions/recurring" class="flex items-center gap-3 px-4 py-2.5 text-sm font-bold text-slate-700 hover:bg-slate-50 transition cursor-pointer" (click)="alarmMenuOpen = false">
+                  <div class="w-8 h-8 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
+                    <i class="pi pi-sync"></i>
+                  </div>
+                  الروشتات الدورية
+                </a>
+              </div>
+            </div>
             
             <a routerLink="/patient/prescriptions/upload" class="flex items-center gap-2 px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-full font-bold transition shadow-sm">
               <i class="pi pi-upload"></i>
