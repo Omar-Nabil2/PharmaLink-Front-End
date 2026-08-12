@@ -82,7 +82,7 @@ export class PrescriptionQueue implements OnInit, OnDestroy {
         .subscribe({
           next: (res) => {
             this.reviews = res.items;
-            this.totalRecords = res.totalPages * this.rows;
+            this.totalRecords = res.totalCount;
             this.cd.markForCheck();
           },
           error: (err) => {
