@@ -8,9 +8,9 @@ import { ChangeDetectorRef } from '@angular/core';
 import { AuthService } from '../../../core/services/auth.service';
 import { AppRoles } from '../../../core/enums/app-roles.constant';
 import { AutoCompleteModule } from 'primeng/autocomplete';
-// 👇 1. استدعاء الموديول والسيرفيس الخاصة بالـ Toast
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
     selector: 'app-review-prescription',
@@ -36,8 +36,8 @@ export class ReviewPrescriptionComponent implements OnInit {
         private readonly reviewService: PrescriptionReviewService,
         private readonly cdr: ChangeDetectorRef,
         private readonly authService: AuthService,
-        // 👇 4. حقن السيرفيس في الكونسراكتور
-        private readonly messageService: MessageService
+        private readonly messageService: MessageService,
+        private readonly http: HttpClient
     ) {
         this.reviewForm = this.fb.group({
             notes: [''],
@@ -67,6 +67,22 @@ export class ReviewPrescriptionComponent implements OnInit {
                         const prefix = data.imageUrl.startsWith('/') ? '' : '/';
                         data.imageUrl = 'https://pharmalink.tryasp.net' + prefix + data.imageUrl;
                     }
+                    
+                    this.http.get(data.imageUrl, { responseType: 'blob' }).subscribe({
+                        next: (blob) => {
+                            const reader = new FileReader();
+                            reader.onload = (e) => {
+                                if (this.prescriptionData) {
+                                    this.prescriptionData.imageUrl = e.target?.result as string;
+                                    this.cdr.detectChanges();
+                                }
+                            };
+                            reader.readAsDataURL(blob);
+                        },
+                        error: (err) => {
+                            console.error('Failed to load prescription image blob:', err);
+                        }
+                    });
                 }
 
                 this.prescriptionData = data;
