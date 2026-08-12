@@ -40,6 +40,16 @@
               <i class="pi pi-camera text-lg"></i>
             </a>
             
+            <a routerLink="/patient/reminders" class="flex items-center gap-2 px-3 py-2 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 rounded-xl font-bold transition shadow-sm" aria-label="مواعيد الأدوية">
+              <i class="pi pi-clock"></i>
+              <span class="hidden xl:inline text-sm">منبه الأدوية</span>
+            </a>
+
+            <a routerLink="/patient/prescriptions/recurring" class="flex items-center gap-2 px-3 py-2 bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 rounded-xl font-bold transition shadow-sm" aria-label="الروشتات الدورية">
+              <i class="pi pi-sync"></i>
+              <span class="hidden xl:inline text-sm">الروشتات الدورية</span>
+            </a>
+            
             <a routerLink="/patient/prescriptions/upload" class="flex items-center gap-2 px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-full font-bold transition shadow-sm">
               <i class="pi pi-upload"></i>
               <span class="hidden xl:inline text-sm">رفع روشتة</span>
@@ -118,6 +128,18 @@
           <div class="flex flex-col justify-between flex-1 md:hidden pt-6">
             <div class="flex flex-col gap-4 shrink-0">
               <a routerLink="/patient/prescriptions/upload" (click)="menuOpen = false" class="btn-primary w-full justify-center py-3.5 text-[0.9375rem]">رفع روشتة</a>
+              
+              <div class="grid grid-cols-2 gap-3">
+                <a routerLink="/patient/reminders" (click)="menuOpen = false" class="flex flex-col items-center justify-center gap-2 p-3 bg-amber-50 border border-amber-200 text-amber-700 rounded-xl font-bold transition">
+                  <i class="pi pi-clock text-xl"></i>
+                  <span class="text-xs">منبه الأدوية</span>
+                </a>
+                <a routerLink="/patient/prescriptions/recurring" (click)="menuOpen = false" class="flex flex-col items-center justify-center gap-2 p-3 bg-purple-50 border border-purple-200 text-purple-700 rounded-xl font-bold transition">
+                  <i class="pi pi-sync text-xl"></i>
+                  <span class="text-xs">روشتة دورية</span>
+                </a>
+              </div>
+
               <a routerLink="/patient/image-search" (click)="menuOpen = false" class="btn-subtle w-full justify-center py-3.5 text-[0.9375rem]">فحص صورة دواء</a>
               <a routerLink="/patient/cart" (click)="menuOpen = false" class="btn-subtle w-full justify-center relative py-3.5 text-[0.9375rem]">
                 سلة المشتريات

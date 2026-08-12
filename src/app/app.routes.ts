@@ -834,6 +834,22 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'reminders',
+        loadComponent: () =>
+          import('./pages/patient/reminders/reminders').then((m) => m.Reminders),
+      },
+      {
+        path: 'prescriptions/recurring',
+        loadComponent: () =>
+          import('./pages/patient/recurring-list/recurring-list').then((m) => m.RecurringList),
+      },
+      {
+        path: 'prescriptions/recurring/new',
+        loadComponent: () =>
+          import('./pages/patient/create-recurring/create-recurring').then((m) => m.CreateRecurring),
+      },
+
+      {
         path: 'not-found',
         loadComponent: () =>
           import('./pages/errors/not-found/not-found.component').then((m) => m.NotFoundComponent),
