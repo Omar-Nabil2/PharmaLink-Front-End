@@ -90,6 +90,8 @@ export class ReviewPrescriptionComponent implements OnInit {
                     
                     this.prescriptionImageUrl = data.imageUrl;
                 }
+                
+                this.cdr.detectChanges();
             },
             error: (err) => {
                 console.error('Error loading prescription:', err);
