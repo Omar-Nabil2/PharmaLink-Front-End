@@ -371,11 +371,11 @@
                     <tr>
                       <td>
                         <div class="drug-name">{{ item.drugName }}</div>
-                        @if (item.genericName) {
-                          <div class="drug-generic">{{ item.genericName }}</div>
+                        @if (item.arabicName) {
+                          <div class="drug-generic">{{ item.arabicName }}</div>
                         }
                       </td>
-                      <td>{{ item.strength }}</td>
+                      <td>{{ item.dosageForm }}</td>
                       <td>{{ item.dosageForm }}</td>
                       <td class="text-center">{{ item.quantityNeeded }}</td>
                       <td>ج {{ item.unitPrice | number:'1.2-2' }}</td>

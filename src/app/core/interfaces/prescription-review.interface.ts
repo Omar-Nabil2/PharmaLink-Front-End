@@ -4,6 +4,8 @@ export interface MedicineDto {
     name?: string;                  // للحفاظ على التوافق مع الكود القديم
     originalMedicineName?: string;
     genericName?: string;
+    brandName?: string;
+    arabicName?: string;
     strength?: string;
     dosageForm?: string;
     dose?: string;
@@ -141,7 +143,6 @@ export interface OrderItemDto {
   arabicName?: string;
   imageUrl: string;
   quantity: number;
-  strength: string;
   dosageForm: string;
 }
 

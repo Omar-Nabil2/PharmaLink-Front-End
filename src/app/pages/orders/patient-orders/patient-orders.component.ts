@@ -219,7 +219,7 @@ export class PatientOrdersComponent implements OnInit, OnDestroy {
       order.fulfillmentLegs.forEach(leg => {
         if (leg.items) {
           leg.items.forEach(item => {
-            summary.push(`${item.drugName || item.genericName} × ${item.quantityNeeded}`);
+            summary.push(`${item.drugName || item.arabicName} × ${item.quantityNeeded}`);
           });
         }
       });
@@ -228,7 +228,7 @@ export class PatientOrdersComponent implements OnInit, OnDestroy {
     // الأدوية التي لا تزال قيد الانتظار (لم تخصص بعد)
     if (order.pendingAssignmentItems && order.pendingAssignmentItems.length > 0) {
       order.pendingAssignmentItems.forEach(item => {
-        summary.push(`${item.drugName || item.genericName} × ${item.quantityNeeded}`);
+        summary.push(`${item.drugName || item.arabicName} × ${item.quantityNeeded}`);
       });
     }
 

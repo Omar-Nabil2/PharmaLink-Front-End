@@ -71,12 +71,13 @@ export class AdminDrugsComponent implements OnInit {
   // Form Fields
   formArabicName = signal<string>('');
   formBrandName = signal<string>('');
-  formGenericName = signal<string>('');
-  formStrength = signal<string>('500mg');
+  formMetaDescAr = signal<string>('');
+  formMetaDescEn = signal<string>('');
+  formMetaKeyAr = signal<string>('');
+  formMetaKeyEn = signal<string>('');
   formForm = signal<string>('ORAL.SOLID');
   formPrice = signal<number>(10.0);
   formManufacturer = signal<string>('Pharma');
-  formDrugClass = signal<string>('General');
   formCategory = signal<number | undefined>(undefined);
   formCategoryNode = signal<TreeNode | null>(null);
   formRequiresPrescription = signal<boolean>(false);
@@ -184,12 +185,13 @@ export class AdminDrugsComponent implements OnInit {
     this.selectedDrug.set(null);
     this.formArabicName.set('');
     this.formBrandName.set('');
-    this.formGenericName.set('');
-    this.formStrength.set('500mg');
+    this.formMetaDescAr.set('');
+    this.formMetaDescEn.set('');
+    this.formMetaKeyAr.set('');
+    this.formMetaKeyEn.set('');
     this.formForm.set('ORAL.SOLID');
     this.formPrice.set(10.0);
     this.formManufacturer.set('Pharma');
-    this.formDrugClass.set('General');
     this.formCategory.set(undefined);
     this.formCategoryNode.set(null);
     this.formRequiresPrescription.set(false);
@@ -202,12 +204,13 @@ export class AdminDrugsComponent implements OnInit {
     this.selectedDrug.set(drug);
     this.formArabicName.set(drug.arabicName ?? '');
     this.formBrandName.set(drug.brandName ?? '');
-    this.formGenericName.set(drug.genericName ?? '');
-    this.formStrength.set(drug.strength ?? '');
+    this.formMetaDescAr.set(drug.metaDescriptionAr ?? '');
+    this.formMetaDescEn.set(drug.metaDescriptionEn ?? '');
+    this.formMetaKeyAr.set(drug.metaKeywordsAr ?? '');
+    this.formMetaKeyEn.set(drug.metaKeywordsEn ?? '');
     this.formForm.set(drug.form ?? '');
     this.formPrice.set(drug.price ?? 0);
     this.formManufacturer.set(drug.manufacturer ?? '');
-    this.formDrugClass.set(drug.drugClass ?? '');
     this.formCategory.set(drug.categoryId ?? undefined);
     this.formCategoryNode.set(drug.categoryId ? this.findNodeById(this.categoryTree(), drug.categoryId) : null);
     this.formRequiresPrescription.set(drug.requiresPrescription ?? false);
@@ -226,7 +229,7 @@ export class AdminDrugsComponent implements OnInit {
   }
 
   saveDrug(): void {
-    if (!this.formArabicName().trim() || !this.formBrandName().trim() || !this.formGenericName().trim()) {
+    if (!this.formArabicName().trim() || !this.formBrandName().trim()) {
       this.messageService.add({
         severity: 'warn',
         summary: 'تنبيه',
@@ -239,12 +242,13 @@ export class AdminDrugsComponent implements OnInit {
       const dto: UpdateDrugDto = {
         arabicName: this.formArabicName().trim(),
         brandName: this.formBrandName().trim(),
-        genericName: this.formGenericName().trim(),
-        strength: this.formStrength().trim(),
+        metaDescriptionAr: this.formMetaDescAr().trim(),
+        metaDescriptionEn: this.formMetaDescEn().trim(),
+        metaKeywordsAr: this.formMetaKeyAr().trim(),
+        metaKeywordsEn: this.formMetaKeyEn().trim(),
         form: this.formForm().trim(),
         price: this.formPrice(),
         manufacturer: this.formManufacturer().trim(),
-        drugClass: this.formDrugClass().trim(),
         categoryId: this.formCategory(),
         requiresPrescription: this.formRequiresPrescription(),
         isActive: this.formIsActive(),
@@ -272,12 +276,13 @@ export class AdminDrugsComponent implements OnInit {
       const dto: CreateDrugDto = {
         arabicName: this.formArabicName().trim(),
         brandName: this.formBrandName().trim(),
-        genericName: this.formGenericName().trim(),
-        strength: this.formStrength().trim(),
+        metaDescriptionAr: this.formMetaDescAr().trim(),
+        metaDescriptionEn: this.formMetaDescEn().trim(),
+        metaKeywordsAr: this.formMetaKeyAr().trim(),
+        metaKeywordsEn: this.formMetaKeyEn().trim(),
         form: this.formForm().trim(),
         price: this.formPrice(),
         manufacturer: this.formManufacturer().trim(),
-        drugClass: this.formDrugClass().trim(),
         categoryId: this.formCategory(),
         requiresPrescription: this.formRequiresPrescription(),
       };

@@ -26,8 +26,7 @@ export interface AdminOrderItemDTO {
   orderItemId: string;
   drugId: string;
   drugName: string;
-  genericName?: string;
-  strength: string;
+  arabicName?: string;
   dosageForm: string;
   quantityNeeded: number;
   unitPrice: number;

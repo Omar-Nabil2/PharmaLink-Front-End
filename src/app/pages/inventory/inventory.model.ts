@@ -42,7 +42,6 @@ export interface GetPharmacyInventoryDTO {
 
 /** Detailed single-item response (`PharmacyInventoryDto`). */
 export interface PharmacyInventoryDto extends GetPharmacyInventoryDTO {
-  genericName: string;
   availableQuantity: number;
   lastSyncedAt: string | null;
   /** Concurrency token (Base64 of the SQL rowversion byte array). */

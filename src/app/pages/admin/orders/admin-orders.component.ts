@@ -47,8 +47,7 @@ interface AdminOrderDetail {
 interface AdminOrderItem {
   orderItemId: string;
   drugName: string;
-  genericName?: string;
-  strength: string;
+  arabicName?: string;
   dosageForm: string;
   quantityNeeded: number;
   unitPrice: number;

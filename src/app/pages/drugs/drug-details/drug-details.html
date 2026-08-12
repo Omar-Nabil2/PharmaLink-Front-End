@@ -96,20 +96,16 @@
             <span class="type-body-sm-strong text-ink">{{ drug.form || 'غير محدد' }}</span>
           </div>
           <div class="bg-white rounded-2xl p-4 border border-slate-100 flex flex-col gap-1">
-            <span class="type-caption text-mute uppercase tracking-wider">التركيز</span>
-            <span class="type-body-sm-strong text-ink">{{ drug.strength || 'غير محدد' }}</span>
-          </div>
-          <div class="bg-white rounded-2xl p-4 border border-slate-100 flex flex-col gap-1">
             <span class="type-caption text-mute uppercase tracking-wider">الشركة المصنعة</span>
             <span class="type-body-sm-strong text-ink truncate" [title]="drug.manufacturer">{{ drug.manufacturer || 'غير محدد' }}</span>
           </div>
           <div class="bg-white rounded-2xl p-4 border border-slate-100 flex flex-col gap-1">
-            <span class="type-caption text-mute uppercase tracking-wider">الاسم العلمي</span>
-            <span class="type-body-sm-strong text-ink truncate" [title]="drug.genericName">{{ drug.genericName || 'غير محدد' }}</span>
+            <span class="type-caption text-mute uppercase tracking-wider">العلامة التجارية (Ar)</span>
+            <span class="type-body-sm-strong text-ink">{{ drug.brandAr || 'غير محدد' }}</span>
           </div>
           <div class="bg-white rounded-2xl p-4 border border-slate-100 flex flex-col gap-1">
-            <span class="type-caption text-mute uppercase tracking-wider">التصنيف</span>
-            <span class="type-body-sm-strong text-ink">{{ drug.drugClass || 'غير محدد' }}</span>
+            <span class="type-caption text-mute uppercase tracking-wider">العلامة التجارية (En)</span>
+            <span class="type-body-sm-strong text-ink">{{ drug.brandEn || 'غير محدد' }}</span>
           </div>
           <div class="bg-white rounded-2xl p-4 border border-slate-100 flex flex-col gap-1">
             <span class="type-caption text-mute uppercase tracking-wider">النوع</span>
@@ -162,15 +158,15 @@
       <div class="p-8">
         <!-- Description Tab -->
         <div *ngIf="activeTab === 'desc'" class="space-y-6 animate-fade-in">
-          <div *ngIf="drug.descriptionAr || drug.descriptionEn; else noDesc">
-            <div *ngIf="drug.descriptionAr" class="space-y-2">
+          <div *ngIf="drug.metaDescriptionAr || drug.metaDescriptionEn; else noDesc">
+            <div *ngIf="drug.metaDescriptionAr" class="space-y-2">
               <h3 class="type-body-lg-strong text-ink">الوصف (عربي)</h3>
-              <p class="type-body-md text-body leading-relaxed">{{ drug.descriptionAr }}</p>
+              <p class="type-body-md text-body leading-relaxed">{{ drug.metaDescriptionAr }}</p>
             </div>
-            <hr *ngIf="drug.descriptionAr && drug.descriptionEn" class="border-slate-100 my-6">
-            <div *ngIf="drug.descriptionEn" class="space-y-2" dir="ltr">
+            <hr *ngIf="drug.metaDescriptionAr && drug.metaDescriptionEn" class="border-slate-100 my-6">
+            <div *ngIf="drug.metaDescriptionEn" class="space-y-2" dir="ltr">
               <h3 class="type-body-lg-strong text-ink">Description (English)</h3>
-              <p class="type-body-md text-body leading-relaxed">{{ drug.descriptionEn }}</p>
+              <p class="type-body-md text-body leading-relaxed">{{ drug.metaDescriptionEn }}</p>
             </div>
           </div>
           <ng-template #noDesc>

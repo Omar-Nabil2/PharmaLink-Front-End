@@ -52,12 +52,11 @@ export interface PatientOrderItem {
   orderItemId: string;
   drugId: string;
   drugName: string;
-  genericName?: string;
   arabicName?: string;
+  brandName?: string;
   imageUrl?: string;
   quantityNeeded: number;
   itemStatus: string;
-  strength: string;
   dosageForm: string;
   unitPrice: number;
 }

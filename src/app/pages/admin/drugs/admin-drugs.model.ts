@@ -33,26 +33,18 @@ export interface DrugLandingPageDto {
 
 export interface DrugDto {
   drugId: string;
-  genericName: string;
   brandName: string;
   imageUrl?: string;
-  drugBankId?: string;
-  rxNormCui?: string;
-  ndcCode?: string;
-  strength: string;
   form: string;
   price: number;
   manufacturer: string;
   arabicName: string;
-  drugClass: string;
   requiresPrescription: boolean;
   isActive: boolean;
   
   finalPrice: number;
   discount: number;
   costPrice: number;
-  descriptionEn: string;
-  descriptionAr: string;
   slug: string;
   brandEn: string;
   brandAr: string;
@@ -66,19 +58,12 @@ export interface DrugDto {
   metaKeywordsAr: string;
   metaDescriptionEn: string;
   metaDescriptionAr: string;
-  sortingKeywordEn: string;
-  sortingKeywordAr: string;
-  bundleTagEn: string;
-  bundleTagAr: string;
-  couponDescriptionEn: string;
-  couponDescriptionAr: string;
   inStock: boolean;
   outOfStock: boolean;
   lowStock: boolean;
   maxQuantity: number;
   quantity: number;
   purchaseCount: number;
-  gameballPoints?: number;
   chefaaId?: number;
 
   categoryId?: number;
@@ -90,22 +75,17 @@ export interface DrugDto {
 }
 
 export interface CreateDrugDto {
-  genericName: string;
   brandName: string;
   arabicName: string;
-  strength: string;
   form: string;
   price: number;
   manufacturer: string;
-  drugClass: string;
   categoryId?: number;
   requiresPrescription: boolean;
   
   finalPrice?: number;
   discount?: number;
   costPrice?: number;
-  descriptionEn?: string;
-  descriptionAr?: string;
   slug?: string;
   brandEn?: string;
   brandAr?: string;
@@ -119,19 +99,12 @@ export interface CreateDrugDto {
   metaKeywordsAr?: string;
   metaDescriptionEn?: string;
   metaDescriptionAr?: string;
-  sortingKeywordEn?: string;
-  sortingKeywordAr?: string;
-  bundleTagEn?: string;
-  bundleTagAr?: string;
-  couponDescriptionEn?: string;
-  couponDescriptionAr?: string;
   inStock?: boolean;
   outOfStock?: boolean;
   lowStock?: boolean;
   maxQuantity?: number;
   quantity?: number;
   purchaseCount?: number;
-  gameballPoints?: number;
   chefaaId?: number;
 }
 

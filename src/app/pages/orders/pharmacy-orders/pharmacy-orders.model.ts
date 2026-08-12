@@ -103,8 +103,6 @@ export interface PharmacyOrderItemDTO {
   drugName: string;
   brandName?: string;
   arabicName?: string;
-  genericName: string;
-  strength: string;
   form: string;
   quantity: number;
   unitPrice: number;
