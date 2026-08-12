@@ -75,7 +75,7 @@ export class ProfileComponent implements OnInit {
         next: (res) => {
           this.patientData = res;
           if (this.patientData?.profilePictureUrl) {
-            const fullUrl = this.serverUrl + this.patientData.profilePictureUrl;
+            const fullUrl = this.patientData.profilePictureUrl.startsWith('http') ? this.patientData.profilePictureUrl : this.serverUrl + this.patientData.profilePictureUrl;
             localStorage.setItem('profilePictureUrl', fullUrl);
           }
           this.isLoading = false;
@@ -156,7 +156,7 @@ export class ProfileComponent implements OnInit {
             next: (res) => {
               if (res.url && this.patientData) {
                 this.patientData.profilePictureUrl = res.url;
-                const fullUrl = this.serverUrl + res.url;
+                const fullUrl = res.url.startsWith('http') ? res.url : this.serverUrl + res.url;
                 localStorage.setItem('profilePictureUrl', fullUrl);
               }
               this.isLoading = false;
