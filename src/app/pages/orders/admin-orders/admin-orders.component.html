@@ -163,7 +163,6 @@
           <th class="bg-muted/50 text-muted-foreground type-body-sm-strong font-semibold border-b border-border py-4 px-6 text-right whitespace-nowrap">الرقم</th>
           <th class="bg-muted/50 text-muted-foreground type-body-sm-strong font-semibold border-b border-border py-4 px-6 text-right whitespace-nowrap">المريض</th>
           <th class="bg-muted/50 text-muted-foreground type-body-sm-strong font-semibold border-b border-border py-4 px-6 text-right whitespace-nowrap">الصيدلية</th>
-          <th class="bg-muted/50 text-muted-foreground type-body-sm-strong font-semibold border-b border-border py-4 px-6 text-right whitespace-nowrap">الأدوية</th>
           <th class="bg-muted/50 text-muted-foreground type-body-sm-strong font-semibold border-b border-border py-4 px-6 text-right whitespace-nowrap">الإجمالي</th>
           <th class="bg-muted/50 text-muted-foreground type-body-sm-strong font-semibold border-b border-border py-4 px-6 text-right whitespace-nowrap">الحالة</th>
           <th class="bg-muted/50 text-muted-foreground type-body-sm-strong font-semibold border-b border-border py-4 px-6 text-right whitespace-nowrap">التاريخ</th>
@@ -176,9 +175,6 @@
           <td class="py-4 px-6 text-mute font-mono text-sm font-bold whitespace-nowrap">{{ order.orderNumber }}</td>
           <td class="py-4 px-6 text-ink type-body-sm-strong whitespace-nowrap">{{ order.patientName }}</td>
           <td class="py-4 px-6 text-ink type-body-sm whitespace-nowrap">{{ order.primaryPharmacyName }}</td>
-          <td class="py-4 px-6 text-mute type-body-sm truncate max-w-xs whitespace-nowrap" [title]="order.medicineNames.join(', ')">
-            {{ order.medicineNames.join(', ') }}
-          </td>
           <td class="py-4 px-6 text-ink type-body-sm-strong font-bold whitespace-nowrap">ج {{ order.totalAmount | number:'1.2-2' }}</td>
           <td class="py-4 px-6 whitespace-nowrap">
             <span 
@@ -207,7 +203,7 @@
 
       <ng-template pTemplate="emptymessage">
         <tr>
-          <td colspan="8" class="text-center py-12 text-slate-500 text-sm font-medium">
+          <td colspan="7" class="text-center py-12 text-slate-500 text-sm font-medium">
             @if (isLoading()) {
               <div class="flex flex-col items-center justify-center">
                 <i class="pi pi-spin pi-spinner text-3xl text-[#007671] mb-3"></i>

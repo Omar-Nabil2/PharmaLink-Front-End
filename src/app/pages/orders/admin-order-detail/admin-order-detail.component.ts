@@ -95,7 +95,7 @@ export class AdminOrderDetailComponent implements OnInit, OnDestroy {
     this.adminOrdersService.getOrderDetails(this.orderId()).subscribe({
       next: (res) => {
         this.order.set(res);
-        if (res.hasPrescription && res.prescriptionId) {
+        if (res.prescriptionId) {
           this.prescriptionService.getPrescriptionFile(res.prescriptionId).subscribe({
             next: (blob) => {
               const reader = new FileReader();
