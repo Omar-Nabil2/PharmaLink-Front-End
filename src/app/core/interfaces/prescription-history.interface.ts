@@ -15,6 +15,7 @@ export interface PrescriptionHistorySource {
   doctorName?: string | null;
   specialty?: string | null;
   clinicOrHospital?: string | null;
+  imageError?: boolean;
   visitDate: string;
   diagnosisNotes?: string | null;
   imageUrl: string;

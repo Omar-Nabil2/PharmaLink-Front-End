@@ -1,458 +1,3531 @@
-<div class="flex flex-row w-full h-full bg-white relative overflow-hidden" dir="rtl">
+<div
+  class="flex flex-row w-full h-full min-h-0 bg-white relative overflow-hidden"
+  dir="rtl"
+>
 
-  <!-- SIDEBAR -->
-  <div class="bg-slate-50 border-l border-gray-200 flex flex-col pt-4 shrink-0 shadow-sm z-20 transition-all duration-300 relative"
-       [ngClass]="isSidebarOpen() ? 'w-72 px-4' : 'w-[64px] sm:w-[84px] px-1 sm:px-2 items-center'">
-    
-    <!-- Header & Toggle -->
-    <div class="flex items-center justify-between mb-8 mt-2 w-full" [ngClass]="!isSidebarOpen() ? 'flex-col gap-4' : 'px-2'">
-      <div class="flex items-center gap-3 overflow-hidden" *ngIf="isSidebarOpen()">
-        <div class="w-12 h-12 shrink-0 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center shadow-sm">
-          <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23-.693L5 14.5m14.8.8l1.402 1.402c1 1 .03 2.798-1.442 2.798H4.24c-1.47 0-2.441-1.798-1.442-2.798L4.2 15.3" />
+  <!-- ========================================================= -->
+  <!-- SIDEBAR / MOBILE BOTTOM NAVIGATION -->
+  <!-- ========================================================= -->
+
+  <div
+    class="
+      bg-slate-50
+      border-l border-gray-200
+      flex flex-col
+      pt-4
+      shrink-0
+      shadow-sm
+      z-30
+      transition-all
+      duration-300
+      relative
+
+      w-[64px]
+      sm:w-[84px]
+      lg:w-72
+      px-1
+      sm:px-2
+      lg:px-4
+
+      max-lg:fixed
+      max-lg:bottom-0
+      max-lg:left-0
+      max-lg:right-0
+      max-lg:w-full
+      max-lg:h-[68px]
+      max-lg:min-h-[68px]
+      max-lg:p-1
+      max-lg:flex-row
+      max-lg:items-center
+      max-lg:justify-center
+      max-lg:border-l-0
+      max-lg:border-t
+    "
+    [ngClass]="
+      isSidebarOpen()
+        ? 'lg:w-72 lg:px-4'
+        : 'lg:w-[84px] lg:px-2'
+    "
+  >
+
+    <!-- Sidebar Header - Desktop Only -->
+    <div
+      class="
+        flex items-center justify-between
+        mb-8
+        mt-2
+        w-full
+        max-lg:hidden
+      "
+      [ngClass]="!isSidebarOpen() ? 'flex-col gap-4' : 'px-2'"
+    >
+
+      <div
+        class="flex items-center gap-3 overflow-hidden"
+        *ngIf="isSidebarOpen()"
+      >
+        <div
+          class="
+            w-12 h-12
+            shrink-0
+            rounded-xl
+            bg-teal-50
+            text-teal-600
+            flex items-center justify-center
+            shadow-sm
+          "
+        >
+          <svg
+            class="w-6 h-6"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l1.402 1.402c1 1 .03 2.798-1.442 2.798H4.24c-1.47 0-2.441-1.798-1.442-2.798L4.2 15.3"
+            />
           </svg>
         </div>
+
         <div class="whitespace-nowrap">
-          <h1 class="text-base font-bold text-gray-800 m-0">المساعد الذكي</h1>
-          <p class="text-xs text-gray-500 mt-1 mb-0">لفارما لينك</p>
+          <h1 class="text-base font-bold text-gray-800 m-0">
+            المساعد الذكي
+          </h1>
+
+          <p class="text-xs text-gray-500 mt-1 mb-0">
+            لفارما لينك
+          </p>
         </div>
       </div>
-      
+
       <!-- Collapse Button -->
-      <button class="text-gray-500 hover:text-gray-800 cursor-pointer p-2 rounded-lg hover:bg-gray-200 transition-colors shrink-0" 
-              (click)="toggleSidebar()" [title]="isSidebarOpen() ? 'طي القائمة' : 'توسيع القائمة'">
-        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path *ngIf="isSidebarOpen()" stroke-linecap="round" stroke-linejoin="round" d="M13 5l7 7-7 7M5 5l7 7-7 7" style="transform: scaleX(-1); transform-origin: center;"/>
-          <path *ngIf="!isSidebarOpen()" stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+      <button
+        class="
+          text-gray-500
+          hover:text-gray-800
+          cursor-pointer
+          p-2
+          rounded-lg
+          hover:bg-gray-200
+          transition-colors
+          shrink-0
+        "
+        (click)="toggleSidebar()"
+        [title]="isSidebarOpen() ? 'طي القائمة' : 'توسيع القائمة'"
+      >
+        <svg
+          class="w-6 h-6"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path
+            *ngIf="isSidebarOpen()"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M13 5l7 7-7 7M5 5l7 7-7 7"
+            style="transform: scaleX(-1); transform-origin: center;"
+          />
+
+          <path
+            *ngIf="!isSidebarOpen()"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M4 6h16M4 12h16M4 18h16"
+          />
         </svg>
       </button>
     </div>
 
-    <!-- Navigation Buttons -->
-    <div class="flex flex-col gap-2 w-full flex-1 overflow-y-auto custom-scrollbar">
-      
-      <!-- Chat Tab Button -->
-      <button class="w-full text-right py-3 rounded-lg text-sm font-medium transition-colors cursor-pointer flex items-center overflow-hidden shrink-0"
-              [ngClass]="[
-                activeTab() === 'chat' ? 'bg-teal-600 text-white shadow-md' : 'text-gray-600 hover:bg-gray-200',
-                isSidebarOpen() ? 'px-4 gap-3' : 'px-0 justify-center'
-              ]"
-              (click)="setTab('chat')" title="المحادثة الذكية">
-        <svg class="w-6 h-6 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
-        <span *ngIf="isSidebarOpen()" class="whitespace-nowrap font-bold">المحادثة مع الصيدلي</span>
+
+    <!-- ========================================================= -->
+    <!-- NAVIGATION -->
+    <!-- ========================================================= -->
+
+    <div
+      class="
+        flex
+        flex-col
+        gap-2
+        w-full
+        flex-1
+        overflow-y-auto
+        custom-scrollbar
+
+        max-lg:flex-row
+        max-lg:items-center
+        max-lg:justify-around
+        max-lg:gap-1
+        max-lg:overflow-hidden
+        max-lg:flex-none
+      "
+    >
+
+      <!-- CHAT -->
+      <button
+        class="
+          w-full
+          text-right
+          py-3
+          rounded-lg
+          text-sm
+          font-medium
+          transition-colors
+          cursor-pointer
+          flex
+          items-center
+          overflow-hidden
+          shrink-0
+
+          max-lg:w-auto
+          max-lg:h-14
+          max-lg:min-w-[58px]
+          max-lg:flex-1
+          max-lg:max-w-[90px]
+          max-lg:justify-center
+          max-lg:rounded-xl
+          max-lg:py-2
+        "
+        [ngClass]="[
+          activeTab() === 'chat'
+            ? 'bg-teal-600 text-white shadow-md'
+            : 'text-gray-600 hover:bg-gray-200',
+
+          isSidebarOpen()
+            ? 'lg:px-4 lg:gap-3'
+            : 'lg:px-0 lg:justify-center'
+        ]"
+        (click)="setTab('chat')"
+        title="المحادثة الذكية"
+      >
+        <svg
+          class="w-6 h-6 shrink-0"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+          />
+        </svg>
+
+        <span
+          *ngIf="isSidebarOpen()"
+          class="whitespace-nowrap font-bold max-lg:hidden"
+        >
+          المحادثة مع الصيدلي
+        </span>
+
+        <span class="hidden max-lg:block text-[10px] font-bold mt-0.5">
+          المحادثة
+        </span>
       </button>
 
 
-      <!-- Drug Info Tab Button -->
-      <button class="w-full text-right py-3 rounded-lg text-sm font-medium transition-colors cursor-pointer flex items-center overflow-hidden shrink-0"
-              [ngClass]="[
-                activeTab() === 'drug-info' ? 'bg-teal-600 text-white shadow-md' : 'text-gray-600 hover:bg-gray-200',
-                isSidebarOpen() ? 'px-4 gap-3' : 'px-0 justify-center'
-              ]"
-              (click)="setTab('drug-info')" title="معلومات الدواء">
-        <svg class="w-6 h-6 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
-        <span *ngIf="isSidebarOpen()" class="whitespace-nowrap font-bold">معلومات الدواء</span>
-      </button>
-      
-      <!-- Interactions Tab Button -->
-      <button class="w-full text-right py-3 rounded-lg text-sm font-medium transition-colors cursor-pointer flex items-center overflow-hidden shrink-0"
-              [ngClass]="[
-                activeTab() === 'interactions' ? 'bg-teal-600 text-white shadow-md' : 'text-gray-600 hover:bg-gray-200',
-                isSidebarOpen() ? 'px-4 gap-3' : 'px-0 justify-center'
-              ]"
-              (click)="setTab('interactions')" title="فحص التفاعلات">
-        <svg class="w-6 h-6 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-        <span *ngIf="isSidebarOpen()" class="whitespace-nowrap font-bold">فحص التفاعلات</span>
+      <!-- DRUG INFO -->
+      <button
+        class="
+          w-full
+          text-right
+          py-3
+          rounded-lg
+          text-sm
+          font-medium
+          transition-colors
+          cursor-pointer
+          flex
+          items-center
+          overflow-hidden
+          shrink-0
+
+          max-lg:w-auto
+          max-lg:h-14
+          max-lg:min-w-[58px]
+          max-lg:flex-1
+          max-lg:max-w-[90px]
+          max-lg:justify-center
+          max-lg:rounded-xl
+          max-lg:py-2
+        "
+        [ngClass]="[
+          activeTab() === 'drug-info'
+            ? 'bg-teal-600 text-white shadow-md'
+            : 'text-gray-600 hover:bg-gray-200',
+
+          isSidebarOpen()
+            ? 'lg:px-4 lg:gap-3'
+            : 'lg:px-0 lg:justify-center'
+        ]"
+        (click)="setTab('drug-info')"
+        title="معلومات الدواء"
+      >
+        <svg
+          class="w-6 h-6 shrink-0"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+          />
+        </svg>
+
+        <span
+          *ngIf="isSidebarOpen()"
+          class="whitespace-nowrap font-bold max-lg:hidden"
+        >
+          معلومات الدواء
+        </span>
+
+        <span class="hidden max-lg:block text-[10px] font-bold mt-0.5">
+          الأدوية
+        </span>
       </button>
 
-      <!-- History Tab Button -->
-      <button class="w-full text-right py-3 rounded-lg text-sm font-medium transition-colors cursor-pointer flex items-center overflow-hidden shrink-0"
-              [ngClass]="[
-                activeTab() === 'history' ? 'bg-teal-600 text-white shadow-md' : 'text-gray-600 hover:bg-gray-200',
-                isSidebarOpen() ? 'px-4 gap-3' : 'px-0 justify-center'
-              ]"
-              (click)="setTab('history')" title="أرشيفي الذكي">
-        <svg class="w-6 h-6 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-        <span *ngIf="isSidebarOpen()" class="whitespace-nowrap font-bold">أرشيفي الذكي</span>
+
+      <!-- INTERACTIONS -->
+      <button
+        class="
+          w-full
+          text-right
+          py-3
+          rounded-lg
+          text-sm
+          font-medium
+          transition-colors
+          cursor-pointer
+          flex
+          items-center
+          overflow-hidden
+          shrink-0
+
+          max-lg:w-auto
+          max-lg:h-14
+          max-lg:min-w-[58px]
+          max-lg:flex-1
+          max-lg:max-w-[90px]
+          max-lg:justify-center
+          max-lg:rounded-xl
+          max-lg:py-2
+        "
+        [ngClass]="[
+          activeTab() === 'interactions'
+            ? 'bg-teal-600 text-white shadow-md'
+            : 'text-gray-600 hover:bg-gray-200',
+
+          isSidebarOpen()
+            ? 'lg:px-4 lg:gap-3'
+            : 'lg:px-0 lg:justify-center'
+        ]"
+        (click)="setTab('interactions')"
+        title="فحص التفاعلات"
+      >
+        <svg
+          class="w-6 h-6 shrink-0"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+          />
+        </svg>
+
+        <span
+          *ngIf="isSidebarOpen()"
+          class="whitespace-nowrap font-bold max-lg:hidden"
+        >
+          فحص التفاعلات
+        </span>
+
+        <span class="hidden max-lg:block text-[10px] font-bold mt-0.5">
+          التفاعلات
+        </span>
+      </button>
+
+
+      <!-- HISTORY -->
+      <button
+        class="
+          w-full
+          text-right
+          py-3
+          rounded-lg
+          text-sm
+          font-medium
+          transition-colors
+          cursor-pointer
+          flex
+          items-center
+          overflow-hidden
+          shrink-0
+
+          max-lg:w-auto
+          max-lg:h-14
+          max-lg:min-w-[58px]
+          max-lg:flex-1
+          max-lg:max-w-[90px]
+          max-lg:justify-center
+          max-lg:rounded-xl
+          max-lg:py-2
+        "
+        [ngClass]="[
+          activeTab() === 'history'
+            ? 'bg-teal-600 text-white shadow-md'
+            : 'text-gray-600 hover:bg-gray-200',
+
+          isSidebarOpen()
+            ? 'lg:px-4 lg:gap-3'
+            : 'lg:px-0 lg:justify-center'
+        ]"
+        (click)="setTab('history')"
+        title="أرشيفي الذكي"
+      >
+        <svg
+          class="w-6 h-6 shrink-0"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
+        </svg>
+
+        <span
+          *ngIf="isSidebarOpen()"
+          class="whitespace-nowrap font-bold max-lg:hidden"
+        >
+          أرشيفي الذكي
+        </span>
+
+        <span class="hidden max-lg:block text-[10px] font-bold mt-0.5">
+          الأرشيف
+        </span>
       </button>
 
     </div>
   </div>
 
-  <!-- MAIN CONTENT AREA -->
-  <div class="flex-1 bg-white flex flex-col h-full overflow-hidden relative z-10">
-    
+
+  <!-- ========================================================= -->
+  <!-- MAIN CONTENT -->
+  <!-- ========================================================= -->
+
+  <div
+    class="
+      flex-1
+      min-w-0
+      bg-white
+      flex
+      flex-col
+      h-full
+      overflow-hidden
+      relative
+      z-10
+      pb-[68px]
+      lg:pb-0
+    "
+  >
+
+
+    <!-- ========================================================= -->
     <!-- CHAT TAB -->
-    <div *ngIf="activeTab() === 'chat'" class="tab-content flex-1 flex flex-col w-full h-full bg-slate-50 relative overflow-hidden">
-      <!-- Messages Area -->
-      <div class="flex-1 overflow-y-auto p-2 sm:p-6 flex flex-col gap-4 sm:gap-6 custom-scrollbar" #chatScroll>
-        <div *ngFor="let msg of messages(); let i = index; trackBy: trackByMessage" class="flex gap-2 sm:gap-3 max-w-[92%] sm:max-w-[85%] message-enter" [ngClass]="msg.role === 'user' ? 'self-end' : 'self-start'">
-          <div *ngIf="msg.role === 'assistant'" class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 shadow-sm" [ngClass]="msg.isError ? 'bg-red-100 text-red-600' : 'bg-white text-teal-600 border border-teal-100'">
-            <svg *ngIf="!msg.isError" class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A2.5 2.5 0 0 0 5 15.5 2.5 2.5 0 0 0 7.5 18 2.5 2.5 0 0 0 10 15.5 2.5 2.5 0 0 0 7.5 13m9 0a2.5 2.5 0 0 0-2.5 2.5 2.5 2.5 0 0 0 2.5 2.5 2.5 2.5 0 0 0 2.5-2.5 2.5 2.5 0 0 0-2.5-2.5z"/></svg>
-            <svg *ngIf="msg.isError" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    <!-- ========================================================= -->
+
+    <div
+      [class.hidden]="activeTab() !== 'chat'"
+      class="
+        tab-content
+        flex-1
+        min-h-0
+        min-w-0
+        flex
+        flex-col
+        w-full
+        h-full
+        bg-slate-50
+        relative
+        overflow-hidden
+      "
+    >
+
+      <!-- Messages -->
+      <div
+        #chatScroll
+        class="
+          flex-1
+          min-h-0
+          min-w-0
+          overflow-y-auto
+          px-2
+          py-3
+          sm:px-4
+          sm:py-5
+          lg:p-6
+          flex
+          flex-col
+          gap-3
+          sm:gap-5
+          lg:gap-6
+          custom-scrollbar
+        "
+      >
+
+        <div
+          *ngFor="
+            let msg of messages();
+            let i = index;
+            trackBy: trackByMessage
+          "
+          class="
+            flex
+            gap-2
+            sm:gap-3
+            max-w-[98%]
+            sm:max-w-[90%]
+            lg:max-w-[85%]
+            message-enter
+            min-w-0
+          "
+          [ngClass]="
+            msg.role === 'user'
+              ? 'self-end'
+              : 'self-start'
+          "
+        >
+
+          <!-- Assistant Avatar -->
+          <div
+            *ngIf="msg.role === 'assistant'"
+            class="
+              w-8
+              h-8
+              sm:w-10
+              sm:h-10
+              rounded-full
+              flex
+              items-center
+              justify-center
+              shrink-0
+              shadow-sm
+            "
+            [ngClass]="
+              msg.isError
+                ? 'bg-red-100 text-red-600'
+                : 'bg-white text-teal-600 border border-teal-100'
+            "
+          >
+
+            <svg
+              *ngIf="!msg.isError"
+              class="w-5 h-5 sm:w-6 sm:h-6"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+            >
+              <path
+                d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A2.5 2.5 0 0 0 5 15.5 2.5 2.5 0 0 0 7.5 18 2.5 2.5 0 0 0 10 15.5 2.5 2.5 0 0 0 7.5 13m9 0a2.5 2.5 0 0 0-2.5 2.5 2.5 2.5 0 0 0 2.5 2.5 2.5 0 0 0 2.5-2.5 2.5 2.5 0 0 0-2.5-2.5z"
+              />
+            </svg>
+
+            <svg
+              *ngIf="msg.isError"
+              class="w-5 h-5 sm:w-6 sm:h-6"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="12"/>
+              <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+
           </div>
 
-          <div class="px-3 py-2.5 sm:px-5 sm:py-3.5 rounded-2xl text-sm sm:text-[0.95rem] leading-snug sm:leading-relaxed shadow-sm text-right prose prose-sm max-w-none prose-teal" 
-               [ngClass]="msg.role === 'user' ? 'bg-teal-600 text-white rounded-tl-none prose-invert' : (msg.isError ? 'bg-red-50 text-red-700 border border-red-200 rounded-tr-none' : 'bg-white text-gray-800 border border-gray-200 rounded-tr-none')">
-            <div *ngIf="msg.content" class="m-0 break-words overflow-x-auto whitespace-pre-wrap" dir="auto" [innerHTML]="parseMarkdown(msg.content)"></div>
-            <span *ngIf="msg.isStreaming && msg.content" class="inline-block w-2 h-4 bg-teal-600 ml-1 animate-pulse"></span>
-            <div *ngIf="msg.isStreaming && !msg.content" class="flex gap-1 items-center h-4">
-              <span class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"></span>
-              <span class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></span>
-              <span class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></span>
+
+          <!-- Message Bubble -->
+          <div
+            class="
+              px-3
+              py-2.5
+              sm:px-5
+              sm:py-3.5
+              rounded-2xl
+              text-sm
+              sm:text-[0.95rem]
+              leading-relaxed
+              shadow-sm
+              text-right
+              prose
+              prose-sm
+              max-w-none
+              prose-teal
+              min-w-0
+              max-w-[calc(100vw-75px)]
+              sm:max-w-none
+              break-words
+              overflow-hidden
+            "
+            [ngClass]="
+              msg.role === 'user'
+                ? 'bg-teal-600 text-white rounded-tl-none prose-invert'
+                : (
+                    msg.isError
+                      ? 'bg-red-50 text-red-700 border border-red-200 rounded-tr-none'
+                      : 'bg-white text-gray-800 border border-gray-200 rounded-tr-none'
+                  )
+            "
+          >
+
+            <div
+              *ngIf="msg.content"
+              class="
+                m-0
+                break-words
+                overflow-x-auto
+                whitespace-pre-wrap
+              "
+              dir="auto"
+              [innerHTML]="parseMarkdown(msg.content)"
+            ></div>
+
+            <span
+              *ngIf="msg.isStreaming && msg.content"
+              class="
+                inline-block
+                w-2
+                h-4
+                bg-teal-600
+                ml-1
+                animate-pulse
+              "
+            ></span>
+
+            <div
+              *ngIf="msg.isStreaming && !msg.content"
+              class="flex gap-1 items-center h-4"
+            >
+              <span
+                class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"
+              ></span>
+
+              <span
+                class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"
+                style="animation-delay: 0.1s"
+              ></span>
+
+              <span
+                class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"
+                style="animation-delay: 0.2s"
+              ></span>
             </div>
+
           </div>
 
-          <div *ngIf="msg.role === 'user'" class="w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0 shadow-sm border border-indigo-200">
-            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+
+          <!-- User Avatar -->
+          <div
+            *ngIf="msg.role === 'user'"
+            class="
+              w-8
+              h-8
+              sm:w-10
+              sm:h-10
+              rounded-full
+              bg-indigo-100
+              text-indigo-600
+              flex
+              items-center
+              justify-center
+              shrink-0
+              shadow-sm
+              border
+              border-indigo-200
+            "
+          >
+            <svg
+              class="w-5 h-5 sm:w-6 sm:h-6"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+            >
+              <path
+                d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
+              />
+            </svg>
           </div>
+
         </div>
-        <!-- Spacer to prevent the last message from hiding behind the input area -->
-        <div class="h-32 shrink-0"></div>
+
+
+        <!-- Spacer -->
+        <div class="h-28 sm:h-32 shrink-0"></div>
+
       </div>
 
-      <!-- Input Area -->
-      <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-slate-50 via-slate-50 to-transparent pt-10 pb-4 px-4 sm:pb-6 sm:px-6 z-10 pointer-events-none">
-        <div class="max-w-4xl mx-auto relative flex items-end gap-2 sm:gap-3 pointer-events-auto">
-          <button class="w-12 h-12 rounded-xl bg-white border border-gray-300 text-gray-500 flex items-center justify-center hover:bg-red-50 hover:text-red-500 hover:border-red-200 transition-colors shrink-0 shadow-sm cursor-pointer" (click)="clearChat()" title="محادثة جديدة">
-            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+
+      <!-- ======================================================= -->
+      <!-- CHAT INPUT -->
+      <!-- ======================================================= -->
+
+      <div
+        class="
+          absolute
+          bottom-0
+          left-0
+          right-0
+          bg-gradient-to-t
+          from-slate-50
+          via-slate-50
+          to-transparent
+          pt-8
+          pb-3
+          px-2
+          sm:pt-10
+          sm:pb-5
+          sm:px-4
+          lg:px-6
+          z-10
+          pointer-events-none
+        "
+      >
+
+        <div
+          class="
+            max-w-4xl
+            mx-auto
+            relative
+            flex
+            items-end
+            gap-2
+            sm:gap-3
+            w-full
+            pointer-events-auto
+          "
+        >
+
+          <!-- Clear -->
+          <button
+            class="
+              w-10
+              h-10
+              sm:w-12
+              sm:h-12
+              rounded-xl
+              bg-white
+              border
+              border-gray-300
+              text-gray-500
+              flex
+              items-center
+              justify-center
+              hover:bg-red-50
+              hover:text-red-500
+              hover:border-red-200
+              transition-colors
+              shrink-0
+              shadow-sm
+              cursor-pointer
+            "
+            (click)="clearChat()"
+            title="محادثة جديدة"
+          >
+            <svg
+              class="w-5 h-5"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <polyline points="3 6 5 6 21 6"/>
+              <path
+                d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"
+              />
+            </svg>
           </button>
-          
-          <div class="flex-1 relative bg-white border border-gray-300 rounded-2xl shadow-sm focus-within:shadow-md focus-within:border-teal-500 transition-all flex items-end overflow-hidden">
+
+
+          <!-- Input -->
+          <div
+            class="
+              flex-1
+              min-w-0
+              relative
+              bg-white
+              border
+              border-gray-300
+              rounded-2xl
+              shadow-sm
+              focus-within:shadow-md
+              focus-within:border-teal-500
+              transition-all
+              flex
+              items-end
+              overflow-hidden
+            "
+          >
+
             <textarea
-              class="flex-1 bg-transparent text-gray-800 px-3 py-3 sm:px-5 sm:py-3.5 focus:outline-none resize-none text-sm sm:text-base leading-snug sm:leading-relaxed"
+              class="
+                flex-1
+                min-w-0
+                bg-transparent
+                text-gray-800
+                px-3
+                py-3
+                sm:px-5
+                sm:py-3.5
+                focus:outline-none
+                resize-none
+                text-sm
+                sm:text-base
+                leading-snug
+                sm:leading-relaxed
+              "
               style="min-height: 48px; max-height: 200px;"
               [(ngModel)]="chatInput"
               (keydown)="onKeydown($event)"
               placeholder="اكتب رسالتك هنا..."
               rows="1"
-              [disabled]="isChatLoading()">
-            </textarea>
+              [disabled]="isChatLoading()"
+            ></textarea>
+
+
             <div class="p-1 sm:p-1.5 shrink-0">
-              <button class="w-10 h-10 rounded-xl flex items-center justify-center transition-colors cursor-pointer"
-                      [ngClass]="(chatInput.trim() && !isChatLoading()) ? 'bg-teal-600 text-white hover:bg-teal-700 shadow-sm' : 'bg-gray-100 text-gray-400'"
-                      (click)="sendMessage()" 
-                      [disabled]="isChatLoading() || !chatInput.trim()">
-                <svg *ngIf="!isChatLoading()" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="transform: scaleX(-1);"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-                <span *ngIf="isChatLoading()" class="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin"></span>
+
+              <button
+                class="
+                  w-9
+                  h-9
+                  sm:w-10
+                  sm:h-10
+                  rounded-xl
+                  flex
+                  items-center
+                  justify-center
+                  transition-colors
+                  cursor-pointer
+                "
+                [ngClass]="
+                  (chatInput.trim() && !isChatLoading())
+                    ? 'bg-teal-600 text-white hover:bg-teal-700 shadow-sm'
+                    : 'bg-gray-100 text-gray-400'
+                "
+                (click)="sendMessage()"
+                [disabled]="isChatLoading() || !chatInput.trim()"
+              >
+
+                <svg
+                  *ngIf="!isChatLoading()"
+                  class="w-5 h-5"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  style="transform: scaleX(-1);"
+                >
+                  <line x1="22" y1="2" x2="11" y2="13"/>
+                  <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                </svg>
+
+                <span
+                  *ngIf="isChatLoading()"
+                  class="
+                    w-5
+                    h-5
+                    border-2
+                    border-current
+                    border-t-transparent
+                    rounded-full
+                    animate-spin
+                  "
+                ></span>
+
               </button>
+
             </div>
+
           </div>
+
         </div>
       </div>
+
     </div>
 
-    <div *ngIf="activeTab() === 'drug-info'" class="tab-content flex-1 overflow-y-auto p-4 lg:p-10 flex flex-col gap-6 custom-scrollbar bg-slate-50 relative">
-      <div class="max-w-4xl mx-auto w-full flex flex-col gap-6">
-        <div class="flex flex-col sm:flex-row gap-4 items-center w-full">
-          <div class="flex-1 w-full">
-            <p-autoComplete 
+
+    <!-- ========================================================= -->
+    <!-- DRUG INFO TAB -->
+    <!-- ========================================================= -->
+
+    <div
+      [class.hidden]="activeTab() !== 'drug-info'"
+      class="
+        tab-content
+        flex-1
+        min-h-0
+        overflow-y-auto
+        p-3
+        sm:p-5
+        lg:p-10
+        flex
+        flex-col
+        gap-4
+        sm:gap-6
+        custom-scrollbar
+        bg-slate-50
+        relative
+      "
+    >
+
+      <div
+        class="
+          max-w-4xl
+          mx-auto
+          w-full
+          flex
+          flex-col
+          gap-4
+          sm:gap-6
+        "
+      >
+
+        <!-- Search -->
+        <div
+          class="
+            flex
+            flex-col
+            sm:flex-row
+            gap-3
+            sm:gap-4
+            items-stretch
+            sm:items-center
+            w-full
+          "
+        >
+
+          <div class="flex-1 w-full min-w-0">
+
+            <p-autoComplete
               inputId="drugInfoSearch"
-              [(ngModel)]="drugSearchQuery" 
-              [suggestions]="drugSuggestions()" 
-              (completeMethod)="filterDrugs($event)" 
+              [(ngModel)]="drugSearchQuery"
+              [suggestions]="drugSuggestions()"
+              (completeMethod)="filterDrugs($event)"
               (onSelect)="onDrugSelect($event)"
               (keydown.enter)="searchDrug()"
               field="name"
-              placeholder="ابحث عن دواء (مثل الباراسيتامول، أموكسيسيلين)..."
+              placeholder="ابحث عن دواء..."
               [style]="{'width':'100%'}"
-              [inputStyle]="{'width':'100%', 'padding': '0.75rem 1rem', 'border-radius': '0.5rem', 'border': '1px solid #e5e7eb', 'font-size': '0.9rem'}"
-              styleClass="w-full">
-              <ng-template let-drug pTemplate="item">
-                  <div class="flex flex-col w-full overflow-hidden" style="max-width: 100%; white-space: normal; word-break: break-word;">
-                      <span class="font-medium text-gray-800 text-sm block leading-relaxed" dir="rtl">{{drug.arabicName || drug.name}}</span>
-                      <span class="text-xs text-gray-500 mt-1 block" dir="ltr" *ngIf="drug.arabicName && drug.arabicName !== drug.name">{{drug.name}}</span>
-                      <span class="text-xs text-teal-600 mt-1 block">{{drug.genericName}}</span>
-                  </div>
+              [inputStyle]="{
+                'width':'100%',
+                'padding':'0.75rem 1rem',
+                'border-radius':'0.5rem',
+                'border':'1px solid #e5e7eb',
+                'font-size':'0.9rem'
+              }"
+              styleClass="w-full"
+            >
+
+              <ng-template
+                let-drug
+                pTemplate="item"
+              >
+                <div
+                  class="
+                    flex
+                    flex-col
+                    w-full
+                    overflow-hidden
+                    p-1
+                  "
+                  style="
+                    max-width: 100%;
+                    white-space: normal;
+                    word-break: break-word;
+                  "
+                >
+
+                  <span
+                    class="
+                      font-medium
+                      text-gray-800
+                      text-sm
+                      block
+                      leading-relaxed
+                    "
+                    dir="rtl"
+                  >
+                    {{ drug.arabicName || drug.name }}
+                  </span>
+
+                  <span
+                    class="
+                      text-xs
+                      text-gray-500
+                      mt-1
+                      block
+                    "
+                    dir="ltr"
+                    *ngIf="
+                      drug.arabicName &&
+                      drug.arabicName !== drug.name
+                    "
+                  >
+                    {{ drug.name }}
+                  </span>
+
+                  <span
+                    class="
+                      text-xs
+                      text-teal-600
+                      mt-1
+                      block
+                    "
+                  >
+                    {{ drug.genericName }}
+                  </span>
+
+                </div>
               </ng-template>
+
             </p-autoComplete>
+
           </div>
-          <button class="px-6 py-3 w-full sm:w-auto bg-teal-600 hover:bg-teal-700 text-white rounded-lg font-semibold transition-colors flex items-center justify-center min-w-[120px] cursor-pointer shadow-sm disabled:opacity-50" (click)="searchDrug()" [disabled]="isDrugLoading() || !drugSearchQuery">
-            <span *ngIf="!isDrugLoading()">بحث</span>
-            <span *ngIf="isDrugLoading()" class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+
+
+          <button
+            class="
+              px-6
+              py-3
+              w-full
+              sm:w-auto
+              bg-teal-600
+              hover:bg-teal-700
+              text-white
+              rounded-lg
+              font-semibold
+              transition-colors
+              flex
+              items-center
+              justify-center
+              min-w-[120px]
+              cursor-pointer
+              shadow-sm
+              disabled:opacity-50
+            "
+            (click)="searchDrug()"
+            [disabled]="isDrugLoading() || !drugSearchQuery"
+          >
+
+            <span *ngIf="!isDrugLoading()">
+              بحث
+            </span>
+
+            <span
+              *ngIf="isDrugLoading()"
+              class="
+                w-5
+                h-5
+                border-2
+                border-white/30
+                border-t-white
+                rounded-full
+                animate-spin
+              "
+            ></span>
+
           </button>
+
         </div>
 
-        <div *ngIf="drugError()" class="p-4 bg-red-50 text-red-700 rounded-lg border border-red-200 flex items-center gap-3">
-          <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+
+        <!-- Error -->
+        <div
+          *ngIf="drugError()"
+          class="
+            p-4
+            bg-red-50
+            text-red-700
+            rounded-lg
+            border
+            border-red-200
+            flex
+            items-center
+            gap-3
+          "
+        >
+          <svg
+            class="w-5 h-5 shrink-0"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+
           {{ drugError() }}
+
         </div>
+
 
         <!-- Empty State -->
-        <div *ngIf="!drugInfo() && !isDrugLoading() && !drugError()" class="text-center py-20 px-8 bg-white border border-gray-200 rounded-2xl shadow-sm">
-          <div class="w-20 h-20 mx-auto bg-gray-50 text-gray-400 rounded-full flex items-center justify-center mb-5 border border-gray-100">
-            <svg class="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23-.693L5 14.5m14.8.8l1.402 1.402c1 1 .03 2.798-1.442 2.798H4.24c-1.47 0-2.441-1.798-1.442-2.798L4.2 15.3" />
+        <div
+          *ngIf="
+            !drugInfo() &&
+            !isDrugLoading() &&
+            !drugError()
+          "
+          class="
+            text-center
+            py-14
+            sm:py-20
+            px-5
+            sm:px-8
+            bg-white
+            border
+            border-gray-200
+            rounded-xl
+            sm:rounded-2xl
+            shadow-sm
+          "
+        >
+
+          <div
+            class="
+              w-16
+              h-16
+              sm:w-20
+              sm:h-20
+              mx-auto
+              bg-gray-50
+              text-gray-400
+              rounded-full
+              flex
+              items-center
+              justify-center
+              mb-5
+              border
+              border-gray-100
+            "
+          >
+
+            <svg
+              class="w-8 h-8 sm:w-10 sm:h-10"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l1.402 1.402c1 1 .03 2.798-1.442 2.798H4.24c-1.47 0-2.441-1.798-1.442-2.798L4.2 15.3"
+              />
             </svg>
+
           </div>
-          <h3 class="text-xl sm:text-2xl font-bold text-gray-800 mb-2">ابحث عن دواء</h3>
-          <p class="text-sm sm:text-base text-gray-500">أدخل الاسم التجاري أو العلمي لأي دواء للحصول على معلومات تفصيلية.</p>
+
+          <h3
+            class="
+              text-xl
+              sm:text-2xl
+              font-bold
+              text-gray-800
+              mb-2
+            "
+          >
+            ابحث عن دواء
+          </h3>
+
+          <p
+            class="
+              text-sm
+              sm:text-base
+              text-gray-500
+            "
+          >
+            أدخل الاسم التجاري أو العلمي لأي دواء للحصول على معلومات تفصيلية.
+          </p>
+
         </div>
 
-        <!-- Drug Result Card -->
-        <div *ngIf="drugInfo() as drug" class="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm">
-          <div class="flex flex-wrap justify-between items-start gap-4 mb-6 pb-6 border-b border-gray-100">
-            <div>
-              <h2 class="text-2xl sm:text-3xl font-bold text-teal-700 mb-2 flex items-center gap-3">
+
+        <!-- Drug Result -->
+        <div
+          *ngIf="drugInfo() as drug"
+          class="
+            bg-white
+            border
+            border-gray-200
+            rounded-xl
+            sm:rounded-2xl
+            p-4
+            sm:p-6
+            lg:p-8
+            shadow-sm
+          "
+        >
+
+          <div
+            class="
+              flex
+              flex-col
+              sm:flex-row
+              flex-wrap
+              justify-between
+              items-start
+              gap-4
+              mb-6
+              pb-6
+              border-b
+              border-gray-100
+            "
+          >
+
+            <div class="min-w-0">
+
+              <h2
+                class="
+                  text-xl
+                  sm:text-2xl
+                  lg:text-3xl
+                  font-bold
+                  text-teal-700
+                  mb-2
+                  flex
+                  flex-wrap
+                  items-center
+                  gap-2
+                "
+              >
                 {{ drug.drugName }}
-                <span *ngIf="drug.arabicName" class="text-xl sm:text-2xl text-teal-600 font-medium">({{ drug.arabicName }})</span>
+
+                <span
+                  *ngIf="drug.arabicName"
+                  class="
+                    text-lg
+                    sm:text-xl
+                    lg:text-2xl
+                    text-teal-600
+                    font-medium
+                  "
+                >
+                  ({{ drug.arabicName }})
+                </span>
+
               </h2>
-              <p class="text-sm sm:text-base text-gray-500 m-0">الاسم العلمي: <strong class="font-semibold text-gray-700">{{ drug.genericName || 'غير متوفر' }}</strong></p>
+
+              <p
+                class="
+                  text-sm
+                  sm:text-base
+                  text-gray-500
+                  m-0
+                "
+              >
+                الاسم العلمي:
+                <strong class="font-semibold text-gray-700">
+                  {{ drug.genericName || 'غير متوفر' }}
+                </strong>
+              </p>
+
             </div>
+
+
             <div class="flex flex-wrap gap-2">
-              <span class="px-4 py-1.5 bg-blue-50 text-blue-700 rounded-full text-sm font-bold">{{ drug.category }}</span>
-              <span *ngIf="drug.requiresPrescription" class="px-4 py-1.5 bg-yellow-50 text-yellow-700 rounded-full text-sm font-bold flex items-center gap-1.5">
-                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+
+              <span
+                class="
+                  px-3
+                  sm:px-4
+                  py-1.5
+                  bg-blue-50
+                  text-blue-700
+                  rounded-full
+                  text-xs
+                  sm:text-sm
+                  font-bold
+                "
+              >
+                {{ drug.category }}
+              </span>
+
+              <span
+                *ngIf="drug.requiresPrescription"
+                class="
+                  px-3
+                  sm:px-4
+                  py-1.5
+                  bg-yellow-50
+                  text-yellow-700
+                  rounded-full
+                  text-xs
+                  sm:text-sm
+                  font-bold
+                  flex
+                  items-center
+                  gap-1.5
+                "
+              >
                 يحتاج روشتة
               </span>
-              <span *ngIf="!drug.requiresPrescription" class="px-4 py-1.5 bg-green-50 text-green-700 rounded-full text-sm font-bold">يصرف بدون روشتة</span>
+
+              <span
+                *ngIf="!drug.requiresPrescription"
+                class="
+                  px-3
+                  sm:px-4
+                  py-1.5
+                  bg-green-50
+                  text-green-700
+                  rounded-full
+                  text-xs
+                  sm:text-sm
+                  font-bold
+                "
+              >
+                يصرف بدون روشتة
+              </span>
+
             </div>
+
           </div>
 
-          <p class="text-sm sm:text-base lg:text-lg text-gray-700 leading-relaxed mb-8">{{ drug.description }}</p>
+
+          <p
+            class="
+              text-sm
+              sm:text-base
+              lg:text-lg
+              text-gray-700
+              leading-relaxed
+              mb-8
+            "
+          >
+            {{ drug.description }}
+          </p>
+
 
           <!-- Accordion -->
-          <div class="flex flex-col gap-4">
-            <div class="border border-gray-200 rounded-xl overflow-hidden">
-              <button class="w-full text-right px-6 py-4 bg-gray-50 hover:bg-gray-100 flex justify-between items-center transition-colors" (click)="toggleSection('indications')">
-                <div class="flex items-center gap-3 font-bold text-gray-800 text-base sm:text-lg">
-                  <span class="text-green-500 bg-white rounded-lg p-1 shadow-sm"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></span>
+          <div class="flex flex-col gap-3 sm:gap-4">
+
+            <!-- Indications -->
+            <div
+              class="
+                border
+                border-gray-200
+                rounded-xl
+                overflow-hidden
+              "
+            >
+
+              <button
+                class="
+                  w-full
+                  text-right
+                  px-4
+                  sm:px-6
+                  py-4
+                  bg-gray-50
+                  hover:bg-gray-100
+                  flex
+                  justify-between
+                  items-center
+                  transition-colors
+                "
+                (click)="toggleSection('indications')"
+              >
+
+                <div
+                  class="
+                    flex
+                    items-center
+                    gap-3
+                    font-bold
+                    text-gray-800
+                    text-sm
+                    sm:text-lg
+                  "
+                >
                   دواعي الاستعمال
                 </div>
+
               </button>
-              <div *ngIf="isSectionExpanded('indications')" class="px-4 sm:px-6 py-4 sm:py-5 bg-white border-t border-gray-200 text-gray-700 leading-relaxed text-sm sm:text-base">
+
+              <div
+                *ngIf="isSectionExpanded('indications')"
+                class="
+                  px-4
+                  sm:px-6
+                  py-4
+                  sm:py-5
+                  bg-white
+                  border-t
+                  border-gray-200
+                  text-gray-700
+                  leading-relaxed
+                  text-sm
+                  sm:text-base
+                "
+              >
                 {{ drug.indications }}
               </div>
+
             </div>
 
-            <div class="border border-gray-200 rounded-xl overflow-hidden">
-              <button class="w-full text-right px-6 py-4 bg-gray-50 hover:bg-gray-100 flex justify-between items-center transition-colors" (click)="toggleSection('contraindications')">
-                <div class="flex items-center gap-3 font-bold text-gray-800 text-base sm:text-lg">
-                  <span class="text-red-500 bg-white rounded-lg p-1 shadow-sm"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M6 18L18 6M6 6l12 12"/></svg></span>
+
+            <!-- Contraindications -->
+            <div
+              class="
+                border
+                border-gray-200
+                rounded-xl
+                overflow-hidden
+              "
+            >
+
+              <button
+                class="
+                  w-full
+                  text-right
+                  px-4
+                  sm:px-6
+                  py-4
+                  bg-gray-50
+                  hover:bg-gray-100
+                  flex
+                  justify-between
+                  items-center
+                  transition-colors
+                "
+                (click)="toggleSection('contraindications')"
+              >
+
+                <div
+                  class="
+                    flex
+                    items-center
+                    gap-3
+                    font-bold
+                    text-gray-800
+                    text-sm
+                    sm:text-lg
+                  "
+                >
                   موانع الاستعمال
                 </div>
+
               </button>
-              <div *ngIf="isSectionExpanded('contraindications')" class="px-4 sm:px-6 py-4 sm:py-5 bg-white border-t border-gray-200 text-gray-700 leading-relaxed text-sm sm:text-base">
+
+              <div
+                *ngIf="isSectionExpanded('contraindications')"
+                class="
+                  px-4
+                  sm:px-6
+                  py-4
+                  sm:py-5
+                  bg-white
+                  border-t
+                  border-gray-200
+                  text-gray-700
+                  leading-relaxed
+                  text-sm
+                  sm:text-base
+                "
+              >
                 {{ drug.contraindications }}
               </div>
+
             </div>
 
-            <div class="border border-gray-200 rounded-xl overflow-hidden">
-              <button class="w-full text-right px-6 py-4 bg-gray-50 hover:bg-gray-100 flex justify-between items-center transition-colors" (click)="toggleSection('dosage')">
-                <div class="flex items-center gap-3 font-bold text-gray-800 text-base sm:text-lg">
-                  <span class="text-blue-500 bg-white rounded-lg p-1 shadow-sm"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25z"/></svg></span>
+
+            <!-- Dosage -->
+            <div
+              class="
+                border
+                border-gray-200
+                rounded-xl
+                overflow-hidden
+              "
+            >
+
+              <button
+                class="
+                  w-full
+                  text-right
+                  px-4
+                  sm:px-6
+                  py-4
+                  bg-gray-50
+                  hover:bg-gray-100
+                  flex
+                  justify-between
+                  items-center
+                  transition-colors
+                "
+                (click)="toggleSection('dosage')"
+              >
+
+                <div
+                  class="
+                    flex
+                    items-center
+                    gap-3
+                    font-bold
+                    text-gray-800
+                    text-sm
+                    sm:text-lg
+                  "
+                >
                   الجرعة وطريقة الاستخدام
                 </div>
+
               </button>
-              <div *ngIf="isSectionExpanded('dosage')" class="px-4 sm:px-6 py-4 sm:py-5 bg-white border-t border-gray-200 text-gray-700 leading-relaxed text-sm sm:text-base">
+
+              <div
+                *ngIf="isSectionExpanded('dosage')"
+                class="
+                  px-4
+                  sm:px-6
+                  py-4
+                  sm:py-5
+                  bg-white
+                  border-t
+                  border-gray-200
+                  text-gray-700
+                  leading-relaxed
+                  text-sm
+                  sm:text-base
+                "
+              >
                 {{ drug.dosage }}
               </div>
+
             </div>
+
           </div>
+
         </div>
+
       </div>
+
     </div>
 
-    <!-- REBUILT INTERACTIONS TAB -->
-    <div *ngIf="activeTab() === 'interactions'" class="tab-content flex-1 overflow-y-auto p-4 lg:p-10 flex flex-col gap-6 custom-scrollbar bg-slate-50 relative">
-      <div class="max-w-4xl mx-auto w-full flex flex-col gap-6">
-        
+
+    <!-- ========================================================= -->
+    <!-- INTERACTIONS TAB -->
+    <!-- ========================================================= -->
+
+    <div
+      [class.hidden]="activeTab() !== 'interactions'"
+      class="
+        tab-content
+        flex-1
+        min-h-0
+        overflow-y-auto
+        p-3
+        sm:p-5
+        lg:p-10
+        flex
+        flex-col
+        gap-4
+        sm:gap-6
+        custom-scrollbar
+        bg-slate-50
+        relative
+      "
+    >
+
+      <div
+        class="
+          max-w-4xl
+          mx-auto
+          w-full
+          flex
+          flex-col
+          gap-4
+          sm:gap-6
+        "
+      >
+
         <!-- Input Card -->
-        <div class="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm">
-          <h3 class="text-xl sm:text-2xl font-bold text-gray-800 mb-2 flex items-center gap-3">
-            <div class="bg-teal-50 text-teal-600 p-2 rounded-lg shrink-0">
-              <svg class="w-6 h-6 sm:w-7 sm:h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-            </div>
+        <div
+          class="
+            bg-white
+            border
+            border-gray-200
+            rounded-xl
+            sm:rounded-2xl
+            p-4
+            sm:p-6
+            lg:p-8
+            shadow-sm
+          "
+        >
+
+          <h3
+            class="
+              text-lg
+              sm:text-2xl
+              font-bold
+              text-gray-800
+              mb-2
+              flex
+              items-center
+              gap-3
+            "
+          >
             فحص التفاعلات الدوائية
           </h3>
-          <p class="text-sm sm:text-base text-gray-500 mb-6 font-medium">أضف دواءين على الأقل لمعرفة التداخلات والتفاعلات بينهما قبل الاستخدام.</p>
+
+          <p
+            class="
+              text-sm
+              sm:text-base
+              text-gray-500
+              mb-6
+              font-medium
+            "
+          >
+            أضف دواءين على الأقل لمعرفة التداخلات والتفاعلات بينهما قبل الاستخدام.
+          </p>
+
 
           <!-- Selected Drugs -->
-          <div class="flex flex-wrap gap-2 mb-6 min-h-[44px]">
-            <div *ngFor="let drug of drugChips()" class="px-5 py-2.5 bg-teal-50 border border-teal-100 text-teal-800 rounded-xl text-sm font-bold flex items-center gap-2 shadow-sm transition-transform hover:-translate-y-0.5">
-              {{ drug }}
-              <button class="text-teal-400 hover:text-teal-700 hover:bg-teal-100 rounded-full p-1 transition-colors cursor-pointer" (click)="removeDrugChip(drug)">
-                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" d="M6 18L18 6M6 6l12 12"/></svg>
+          <div
+            class="
+              flex
+              flex-wrap
+              gap-2
+              mb-6
+              min-h-[44px]
+            "
+          >
+
+            <div
+              *ngFor="let drug of drugChips()"
+              class="
+                px-3
+                sm:px-5
+                py-2
+                sm:py-2.5
+                bg-teal-50
+                border
+                border-teal-100
+                text-teal-800
+                rounded-xl
+                text-xs
+                sm:text-sm
+                font-bold
+                flex
+                items-center
+                gap-2
+                shadow-sm
+              "
+            >
+
+              <span class="break-words">
+                {{ drug }}
+              </span>
+
+              <button
+                class="
+                  text-teal-400
+                  hover:text-teal-700
+                  hover:bg-teal-100
+                  rounded-full
+                  p-1
+                  transition-colors
+                  cursor-pointer
+                  shrink-0
+                "
+                (click)="removeDrugChip(drug)"
+              >
+                ×
               </button>
+
             </div>
-            
-            <div *ngIf="drugChips().length === 0" class="text-gray-400 text-sm flex items-center h-full px-2 italic">
+
+
+            <div
+              *ngIf="drugChips().length === 0"
+              class="
+                text-gray-400
+                text-sm
+                flex
+                items-center
+                h-full
+                px-2
+                italic
+              "
+            >
               لم تقم بإضافة أي أدوية بعد...
             </div>
+
           </div>
 
-          <!-- Add Drug Input -->
-          <div class="flex flex-col sm:flex-row gap-3 w-full border-t border-gray-100 pt-6">
-            <div class="flex-1 relative">
-              <p-autoComplete 
+
+          <!-- Add Drug -->
+          <div
+            class="
+              flex
+              flex-col
+              sm:flex-row
+              gap-3
+              w-full
+              border-t
+              border-gray-100
+              pt-6
+            "
+          >
+
+            <div class="flex-1 relative min-w-0">
+
+              <p-autoComplete
                 inputId="interactionsSearch"
-                [(ngModel)]="drugChipInput" 
-                [suggestions]="interactionSuggestions()" 
-                (completeMethod)="filterDrugs($event)" 
+                [(ngModel)]="drugChipInput"
+                [suggestions]="interactionSuggestions()"
+                (completeMethod)="filterDrugs($event)"
                 (onSelect)="onInteractionDrugSelect($event)"
                 (keydown.enter)="addDrugChip()"
                 field="name"
                 placeholder="اكتب اسم الدواء هنا لإضافته للقائمة..."
                 [style]="{'width':'100%'}"
-                [inputStyle]="{'width':'100%', 'padding': '0.75rem 1rem', 'border-radius': '0.5rem', 'border': '1px solid #e2e8f0', 'font-size': '0.9rem', 'background-color': '#f8fafc', 'transition': 'all 0.2s ease'}"
-                styleClass="w-full">
-                <ng-template let-drug pTemplate="item">
-                    <div class="flex flex-col p-1 w-full overflow-hidden" style="max-width: 100%; white-space: normal; word-break: break-word;">
-                        <span class="font-medium text-gray-800 text-sm block leading-relaxed" dir="rtl">{{drug.arabicName || drug.name}}</span>
-                        <span class="text-xs text-gray-500 mt-1 block" dir="ltr" *ngIf="drug.arabicName && drug.arabicName !== drug.name">{{drug.name}}</span>
-                        <span class="text-xs text-teal-600 mt-1 block">{{drug.genericName}}</span>
-                    </div>
+                [inputStyle]="{
+                  'width':'100%',
+                  'padding':'0.75rem 1rem',
+                  'border-radius':'0.5rem',
+                  'border':'1px solid #e2e8f0',
+                  'font-size':'0.9rem',
+                  'background-color':'#f8fafc'
+                }"
+                styleClass="w-full"
+              >
+
+                <ng-template
+                  let-drug
+                  pTemplate="item"
+                >
+
+                  <div
+                    class="
+                      flex
+                      flex-col
+                      p-1
+                      w-full
+                      overflow-hidden
+                    "
+                  >
+
+                    <span
+                      class="
+                        font-medium
+                        text-gray-800
+                        text-sm
+                        block
+                        leading-relaxed
+                      "
+                      dir="rtl"
+                    >
+                      {{ drug.arabicName || drug.name }}
+                    </span>
+
+                    <span
+                      class="
+                        text-xs
+                        text-gray-500
+                        mt-1
+                        block
+                      "
+                      dir="ltr"
+                      *ngIf="
+                        drug.arabicName &&
+                        drug.arabicName !== drug.name
+                      "
+                    >
+                      {{ drug.name }}
+                    </span>
+
+                    <span
+                      class="
+                        text-xs
+                        text-teal-600
+                        mt-1
+                        block
+                      "
+                    >
+                      {{ drug.genericName }}
+                    </span>
+
+                  </div>
+
                 </ng-template>
+
               </p-autoComplete>
+
             </div>
-            <button class="px-8 py-3 bg-teal-600 hover:bg-teal-700 text-white rounded-xl font-bold transition-colors cursor-pointer shadow-sm disabled:opacity-50 flex items-center justify-center gap-2" (click)="addDrugChip()" [disabled]="!drugChipInput">
-              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" d="M12 4v16m8-8H4"/></svg>
+
+
+            <button
+              class="
+                px-8
+                py-3
+                w-full
+                sm:w-auto
+                bg-teal-600
+                hover:bg-teal-700
+                text-white
+                rounded-xl
+                font-bold
+                transition-colors
+                cursor-pointer
+                shadow-sm
+                disabled:opacity-50
+                flex
+                items-center
+                justify-center
+                gap-2
+              "
+              (click)="addDrugChip()"
+              [disabled]="!drugChipInput"
+            >
               إضافة
             </button>
+
           </div>
+
 
           <!-- Action Bar -->
-          <div class="flex flex-col sm:flex-row items-center justify-between pt-6 mt-6 border-t border-gray-100 gap-4 sm:gap-0">
-            <span class="text-sm sm:text-base font-bold text-gray-500 bg-gray-50 px-4 py-2 rounded-lg border border-gray-100 w-full sm:w-auto text-center">
-              عدد الأدوية المضافة: <span class="text-teal-600 text-base sm:text-lg">{{ drugChips().length }}</span>
+          <div
+            class="
+              flex
+              flex-col
+              sm:flex-row
+              items-center
+              justify-between
+              pt-6
+              mt-6
+              border-t
+              border-gray-100
+              gap-4
+            "
+          >
+
+            <span
+              class="
+                text-sm
+                sm:text-base
+                font-bold
+                text-gray-500
+                bg-gray-50
+                px-4
+                py-2
+                rounded-lg
+                border
+                border-gray-100
+                w-full
+                sm:w-auto
+                text-center
+              "
+            >
+              عدد الأدوية المضافة:
+              <span class="text-teal-600 text-lg">
+                {{ drugChips().length }}
+              </span>
             </span>
-            <button class="px-6 sm:px-8 py-3 sm:py-3.5 w-full sm:w-auto bg-gray-800 hover:bg-gray-900 text-white rounded-xl font-bold transition-all shadow-md flex items-center justify-center gap-3 cursor-pointer disabled:opacity-50 disabled:scale-100 hover:scale-[1.02]" 
-                    (click)="checkInteractions()" 
-                    [disabled]="isInteractionLoading() || drugChips().length < 2">
-              <svg *ngIf="!isInteractionLoading()" class="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-              <span *ngIf="isInteractionLoading()" class="w-5 h-5 sm:w-6 sm:h-6 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-              <span class="text-base sm:text-lg">{{ isInteractionLoading() ? 'جاري الفحص...' : 'بدء فحص التفاعلات' }}</span>
+
+
+            <button
+              class="
+                px-6
+                sm:px-8
+                py-3
+                sm:py-3.5
+                w-full
+                sm:w-auto
+                bg-gray-800
+                hover:bg-gray-900
+                text-white
+                rounded-xl
+                font-bold
+                transition-all
+                shadow-md
+                flex
+                items-center
+                justify-center
+                gap-3
+                cursor-pointer
+                disabled:opacity-50
+              "
+              (click)="checkInteractions()"
+              [disabled]="
+                isInteractionLoading() ||
+                drugChips().length < 2
+              "
+            >
+
+              <span
+                *ngIf="isInteractionLoading()"
+                class="
+                  w-5
+                  h-5
+                  border-2
+                  border-white/30
+                  border-t-white
+                  rounded-full
+                  animate-spin
+                "
+              ></span>
+
+              <span class="text-sm sm:text-lg">
+                {{
+                  isInteractionLoading()
+                    ? 'جاري الفحص...'
+                    : 'بدء فحص التفاعلات'
+                }}
+              </span>
+
             </button>
+
           </div>
+
         </div>
 
-        <!-- Error State -->
-        <div *ngIf="interactionError()" class="p-6 bg-red-50 text-red-700 rounded-2xl border-l-4 border-l-red-500 border border-y-red-100 border-r-red-100 flex items-start gap-4 shadow-sm animate-[slideUp_0.3s_ease]">
-          <div class="bg-red-100 p-2 rounded-full mt-1 shrink-0">
-            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-          </div>
+
+        <!-- Error -->
+        <div
+          *ngIf="interactionError()"
+          class="
+            p-4
+            sm:p-6
+            bg-red-50
+            text-red-700
+            rounded-xl
+            sm:rounded-2xl
+            border-l-4
+            border-l-red-500
+            border-y-red-100
+            border-r-red-100
+            flex
+            items-start
+            gap-3
+            sm:gap-4
+            shadow-sm
+          "
+        >
+
           <div>
-            <h4 class="font-bold text-lg mb-1">حدث خطأ</h4>
-            <p class="font-medium m-0 opacity-90">{{ interactionError() }}</p>
+            <h4 class="font-bold text-lg mb-1">
+              حدث خطأ
+            </h4>
+
+            <p class="font-medium m-0 opacity-90">
+              {{ interactionError() }}
+            </p>
           </div>
+
         </div>
 
-        <!-- Results Display -->
-        <div *ngIf="interactionResult() as result" class="flex flex-col gap-6 animate-[slideUp_0.4s_ease]">
-          
-          <!-- Summary Banner -->
-          <div class="p-6 rounded-2xl border flex items-start gap-5 shadow-sm" [ngClass]="{'bg-red-50 border-red-200 text-red-800': result.hasSevereInteractions, 'bg-green-50 border-green-200 text-green-800': !result.hasSevereInteractions}">
-            <div class="bg-white p-3 rounded-full shadow-sm shrink-0" [ngClass]="{'text-red-600': result.hasSevereInteractions, 'text-green-600': !result.hasSevereInteractions}">
-              <svg *ngIf="result.hasSevereInteractions" class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/></svg>
-              <svg *ngIf="!result.hasSevereInteractions" class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-            </div>
+
+        <!-- Results -->
+        <div
+          *ngIf="interactionResult() as result"
+          class="
+            flex
+            flex-col
+            gap-4
+            sm:gap-6
+          "
+        >
+
+          <!-- Summary -->
+          <div
+            class="
+              p-4
+              sm:p-6
+              rounded-xl
+              sm:rounded-2xl
+              border
+              flex
+              items-start
+              gap-3
+              sm:gap-5
+              shadow-sm
+            "
+            [ngClass]="{
+              'bg-red-50 border-red-200 text-red-800':
+                result.hasSevereInteractions,
+
+              'bg-green-50 border-green-200 text-green-800':
+                !result.hasSevereInteractions
+            }"
+          >
+
             <div class="mt-1 flex-1">
-              <h4 class="font-bold text-xl sm:text-2xl mb-2">{{ result.hasSevereInteractions ? 'تنبيه: تم رصد تفاعلات خطيرة' : 'آمن للاستخدام' }}</h4>
-              <p class="text-base sm:text-lg m-0 font-medium opacity-90 leading-relaxed">{{ result.summary }}</p>
+
+              <h4
+                class="
+                  font-bold
+                  text-lg
+                  sm:text-2xl
+                  mb-2
+                "
+              >
+                {{
+                  result.hasSevereInteractions
+                    ? 'تنبيه: تم رصد تفاعلات خطيرة'
+                    : 'آمن للاستخدام'
+                }}
+              </h4>
+
+              <p
+                class="
+                  text-sm
+                  sm:text-lg
+                  m-0
+                  font-medium
+                  opacity-90
+                  leading-relaxed
+                "
+              >
+                {{ result.summary }}
+              </p>
+
             </div>
+
           </div>
 
-          <!-- Cards -->
-          <div class="grid grid-cols-1 gap-6">
-            <div *ngFor="let int of result.interactions" class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col h-full relative overflow-hidden group hover:shadow-md transition-shadow">
-              
-              <!-- Colored Accent Line -->
-              <div class="absolute top-0 bottom-0 right-0 w-2 transition-colors"
-                   [ngClass]="{'bg-green-500': int.severity === 'None', 'bg-yellow-400': int.severity === 'Minor', 'bg-orange-500': int.severity === 'Moderate', 'bg-red-500': int.severity === 'Severe', 'bg-red-900': int.severity === 'Contraindicated'}">
-              </div>
-              
-              <div class="pl-2 pr-6">
-                <div class="flex flex-col sm:flex-row justify-between sm:items-center mb-4 border-b border-gray-100 pb-4 gap-3 sm:gap-0">
-                  <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
-                    <span class="px-3 py-1.5 sm:px-4 sm:py-2 bg-slate-100 text-slate-800 rounded-lg font-bold shadow-sm text-sm sm:text-base" dir="ltr">{{ int.drug1 }}</span>
-                    <svg class="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/></svg>
-                    <span class="px-3 py-1.5 sm:px-4 sm:py-2 bg-slate-100 text-slate-800 rounded-lg font-bold shadow-sm text-sm sm:text-base" dir="ltr">{{ int.drug2 }}</span>
+
+          <!-- Interaction Cards -->
+          <div
+            class="
+              grid
+              grid-cols-1
+              gap-4
+              sm:gap-6
+            "
+          >
+
+            <div
+              *ngFor="let int of result.interactions"
+              class="
+                bg-white
+                p-4
+                sm:p-6
+                rounded-xl
+                sm:rounded-2xl
+                shadow-sm
+                border
+                border-gray-100
+                flex
+                flex-col
+                h-full
+                relative
+                overflow-hidden
+              "
+            >
+
+              <div
+                class="
+                  pl-2
+                  pr-4
+                  sm:pr-6
+                "
+              >
+
+                <div
+                  class="
+                    flex
+                    flex-col
+                    gap-3
+                    mb-4
+                    border-b
+                    border-gray-100
+                    pb-4
+                  "
+                >
+
+                  <div
+                    class="
+                      flex
+                      items-center
+                      gap-2
+                      flex-wrap
+                    "
+                  >
+
+                    <span
+                      class="
+                        px-3
+                        py-1.5
+                        bg-slate-100
+                        text-slate-800
+                        rounded-lg
+                        font-bold
+                        shadow-sm
+                        text-xs
+                        sm:text-base
+                        break-all
+                      "
+                      dir="ltr"
+                    >
+                      {{ int.drug1 }}
+                    </span>
+
+                    <span class="text-gray-400">
+                      ↔
+                    </span>
+
+                    <span
+                      class="
+                        px-3
+                        py-1.5
+                        bg-slate-100
+                        text-slate-800
+                        rounded-lg
+                        font-bold
+                        shadow-sm
+                        text-xs
+                        sm:text-base
+                        break-all
+                      "
+                      dir="ltr"
+                    >
+                      {{ int.drug2 }}
+                    </span>
+
                   </div>
-                  <span class="px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-black uppercase tracking-wider shadow-sm self-start sm:self-auto" 
-                        [ngClass]="{'bg-green-100 text-green-700': int.severity === 'None', 'bg-yellow-100 text-yellow-800': int.severity === 'Minor', 'bg-orange-100 text-orange-800': int.severity === 'Moderate', 'bg-red-100 text-red-700': int.severity === 'Severe', 'bg-red-900 text-white': int.severity === 'Contraindicated'}">
+
+
+                  <span
+                    class="
+                      px-3
+                      py-1.5
+                      rounded-xl
+                      text-xs
+                      sm:text-sm
+                      font-black
+                      uppercase
+                      shadow-sm
+                      self-start
+                    "
+                    [ngClass]="{
+                      'bg-green-100 text-green-700':
+                        int.severity === 'None',
+
+                      'bg-yellow-100 text-yellow-800':
+                        int.severity === 'Minor',
+
+                      'bg-orange-100 text-orange-800':
+                        int.severity === 'Moderate',
+
+                      'bg-red-100 text-red-700':
+                        int.severity === 'Severe',
+
+                      'bg-red-900 text-white':
+                        int.severity === 'Contraindicated'
+                    }"
+                  >
                     {{ getSeverityLabel(int.severity) }}
                   </span>
+
                 </div>
-                
-                <h5 class="text-gray-800 font-bold mb-2 flex items-center gap-2 text-sm sm:text-base">
-                  <svg class="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"/></svg>
+
+
+                <h5
+                  class="
+                    text-gray-800
+                    font-bold
+                    mb-2
+                    text-sm
+                    sm:text-base
+                  "
+                >
                   التأثير
                 </h5>
-                <p class="text-gray-600 text-sm sm:text-base mb-5 leading-relaxed bg-blue-50/50 p-3 sm:p-4 rounded-xl border border-blue-100/50">{{ int.description }}</p>
-                
-                <h5 class="text-gray-800 font-bold mb-2 flex items-center gap-2 text-sm sm:text-base">
-                  <svg class="w-4 h-4 sm:w-5 sm:h-5 text-teal-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/></svg>
+
+                <p
+                  class="
+                    text-gray-600
+                    text-sm
+                    sm:text-base
+                    mb-5
+                    leading-relaxed
+                    bg-blue-50/50
+                    p-3
+                    sm:p-4
+                    rounded-xl
+                    border
+                    border-blue-100/50
+                  "
+                >
+                  {{ int.description }}
+                </p>
+
+
+                <h5
+                  class="
+                    text-gray-800
+                    font-bold
+                    mb-2
+                    text-sm
+                    sm:text-base
+                  "
+                >
                   التوصية الطبية
                 </h5>
-                <p class="text-teal-800 font-medium text-sm sm:text-base m-0 bg-teal-50 p-3 sm:p-4 rounded-xl border border-teal-100 leading-relaxed">{{ int.recommendation }}</p>
+
+                <p
+                  class="
+                    text-teal-800
+                    font-medium
+                    text-sm
+                    sm:text-base
+                    m-0
+                    bg-teal-50
+                    p-3
+                    sm:p-4
+                    rounded-xl
+                    border
+                    border-teal-100
+                    leading-relaxed
+                  "
+                >
+                  {{ int.recommendation }}
+                </p>
+
               </div>
+
             </div>
+
           </div>
 
         </div>
+
       </div>
+
     </div>
 
+
+    <!-- ========================================================= -->
     <!-- HISTORY TAB -->
-    <div *ngIf="activeTab() === 'history'" class="tab-content flex-1 overflow-y-auto p-4 lg:p-10 flex flex-col gap-6 custom-scrollbar bg-slate-50 relative">
-      <div class="max-w-4xl mx-auto w-full flex flex-col gap-6">
-        <section class="space-y-6" dir="rtl">
-          <!-- Header Banner -->
-          <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-teal-700 via-teal-600 to-emerald-600 p-6 sm:p-8 text-white shadow-sm">
-            <div class="absolute -left-12 -top-16 h-44 w-44 rounded-full bg-white/10"></div>
-            <div class="relative max-w-3xl">
-              <div class="mb-4 inline-flex items-center gap-2 rounded-lg bg-white/15 px-3 py-1.5 text-xs sm:text-sm font-bold"><i class="pi pi-sparkles"></i>أرشيف روشتاتي الذكي</div>
-              <h2 class="text-xl sm:text-2xl font-bold leading-tight mb-2">اسأل عن أي روشتة رفعتها قبل كده</h2>
-              <p class="text-sm sm:text-base text-white/90 m-0">هنبحث في تاريخك الدوائي ونوصلك للروشتة والأدوية المرتبطة بسؤالك.</p>
+    <!-- ========================================================= -->
+
+    <div
+      [class.hidden]="activeTab() !== 'history'"
+      class="
+        tab-content
+        flex-1
+        min-h-0
+        overflow-y-auto
+        p-3
+        sm:p-5
+        lg:p-10
+        flex
+        flex-col
+        gap-4
+        sm:gap-6
+        custom-scrollbar
+        bg-slate-50
+        relative
+      "
+    >
+
+      <div
+        class="
+          max-w-4xl
+          mx-auto
+          w-full
+          flex
+          flex-col
+          gap-4
+          sm:gap-6
+        "
+      >
+
+        <section
+          class="space-y-4 sm:space-y-6"
+          dir="rtl"
+        >
+
+          <!-- Header -->
+          <div
+            class="
+              relative
+              overflow-hidden
+              rounded-xl
+              sm:rounded-2xl
+              bg-gradient-to-br
+              from-teal-700
+              via-teal-600
+              to-emerald-600
+              p-4
+              sm:p-6
+              lg:p-8
+              text-white
+              shadow-sm
+            "
+          >
+
+            <div
+              class="
+                relative
+                max-w-3xl
+              "
+            >
+
+              <div
+                class="
+                  mb-3
+                  sm:mb-4
+                  inline-flex
+                  items-center
+                  gap-2
+                  rounded-lg
+                  bg-white/15
+                  px-3
+                  py-1.5
+                  text-xs
+                  sm:text-sm
+                  font-bold
+                "
+              >
+                <i class="pi pi-sparkles"></i>
+                أرشيف روشتاتي الذكي
+              </div>
+
+              <h2
+                class="
+                  text-lg
+                  sm:text-xl
+                  lg:text-2xl
+                  font-bold
+                  leading-tight
+                  mb-2
+                "
+              >
+                اسأل عن أي روشتة رفعتها قبل كده
+              </h2>
+
+              <p
+                class="
+                  text-sm
+                  sm:text-base
+                  text-white/90
+                  m-0
+                  leading-relaxed
+                "
+              >
+                هنبحث في تاريخك الدوائي ونوصلك للروشتة والأدوية المرتبطة بسؤالك.
+              </p>
+
             </div>
+
           </div>
 
+
           <!-- Search Form -->
-          <form class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm" (ngSubmit)="askHistory()">
-            <label for="history-question" class="mb-3 block text-sm sm:text-base font-bold text-gray-800">سؤالك عن روشتاتك</label>
-            <div class="flex flex-col sm:flex-row gap-3 w-full">
-              <div class="relative flex-1">
-                <i class="pi pi-search absolute top-1/2 -translate-y-1/2 right-4 text-gray-400"></i>
-                <input type="text" id="history-question" [(ngModel)]="historyQuestion" name="historyQuestion" (keydown)="onHistoryQuestionKeydown($event)" class="w-full h-12 rounded-xl border border-gray-300 bg-white pr-11 pl-4 text-gray-800 outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 text-sm sm:text-base shadow-sm transition-all" placeholder="مثال: أنا أخدت مسكن إيه لما ظهري كان بيوجعني؟">
+          <form
+            class="
+              bg-white
+              border
+              border-gray-200
+              rounded-xl
+              sm:rounded-2xl
+              p-4
+              sm:p-6
+              shadow-sm
+            "
+            (ngSubmit)="askHistory()"
+          >
+
+            <label
+              for="history-question"
+              class="
+                mb-3
+                block
+                text-sm
+                sm:text-base
+                font-bold
+                text-gray-800
+              "
+            >
+              سؤالك عن روشتاتك
+            </label>
+
+
+            <div
+              class="
+                flex
+                flex-col
+                sm:flex-row
+                gap-3
+                w-full
+              "
+            >
+
+              <div
+                class="
+                  relative
+                  flex-1
+                  min-w-0
+                "
+              >
+
+                <i
+                  class="
+                    pi
+                    pi-search
+                    absolute
+                    top-1/2
+                    -translate-y-1/2
+                    right-4
+                    text-gray-400
+                  "
+                ></i>
+
+                <input
+                  type="text"
+                  id="history-question"
+                  [(ngModel)]="historyQuestion"
+                  name="historyQuestion"
+                  (keydown)="onHistoryQuestionKeydown($event)"
+                  class="
+                    w-full
+                    h-12
+                    rounded-xl
+                    border
+                    border-gray-300
+                    bg-white
+                    pr-11
+                    pl-4
+                    text-gray-800
+                    outline-none
+                    focus:border-teal-500
+                    focus:ring-1
+                    focus:ring-teal-500
+                    text-sm
+                    sm:text-base
+                    shadow-sm
+                    transition-all
+                  "
+                  placeholder="مثال: أنا أخدت مسكن إيه لما ظهري كان بيوجعني؟"
+                />
+
               </div>
-              <button type="submit" class="w-full sm:w-auto px-6 h-12 bg-teal-600 hover:bg-teal-700 text-white rounded-xl font-bold flex items-center justify-center gap-2 min-w-[120px] shadow-sm disabled:opacity-50 transition-colors shrink-0" [disabled]="!historyQuestion.trim() || historyLoading()"><i class="pi" [ngClass]="historyLoading() ? 'pi-spin pi-spinner' : 'pi-sparkles'"></i>{{ historyLoading() ? 'بحث' : 'اسأل الأرشيف' }}</button>
+
+
+              <button
+                type="submit"
+                class="
+                  w-full
+                  sm:w-auto
+                  px-6
+                  h-12
+                  bg-teal-600
+                  hover:bg-teal-700
+                  text-white
+                  rounded-xl
+                  font-bold
+                  flex
+                  items-center
+                  justify-center
+                  gap-2
+                  min-w-[120px]
+                  shadow-sm
+                  disabled:opacity-50
+                  transition-colors
+                  shrink-0
+                "
+                [disabled]="
+                  !historyQuestion.trim() ||
+                  historyLoading()
+                "
+              >
+
+                <i
+                  class="pi"
+                  [ngClass]="
+                    historyLoading()
+                      ? 'pi-spin pi-spinner'
+                      : 'pi-sparkles'
+                  "
+                ></i>
+
+                {{
+                  historyLoading()
+                    ? 'بحث'
+                    : 'اسأل الأرشيف'
+                }}
+
+              </button>
+
             </div>
-            <div class="mt-4 flex flex-wrap gap-2 items-center"><span class="ml-1 text-xs sm:text-sm text-gray-500 font-medium">جرّب:</span><button type="button" *ngFor="let suggestion of historySuggestions" (click)="useHistorySuggestion(suggestion)" class="rounded-lg border border-gray-200 bg-gray-50 px-3 py-1.5 text-xs sm:text-sm font-medium text-gray-600 transition hover:bg-teal-50 hover:text-teal-700 hover:border-teal-200">{{ suggestion }}</button></div>
+
+
+            <!-- Suggestions -->
+            <div
+              class="
+                mt-4
+                flex
+                flex-wrap
+                gap-2
+                items-center
+              "
+            >
+
+              <span
+                class="
+                  ml-1
+                  text-xs
+                  sm:text-sm
+                  text-gray-500
+                  font-medium
+                "
+              >
+                جرّب:
+              </span>
+
+              <button
+                type="button"
+                *ngFor="let suggestion of historySuggestions"
+                (click)="useHistorySuggestion(suggestion)"
+                class="
+                  rounded-lg
+                  border
+                  border-gray-200
+                  bg-gray-50
+                  px-3
+                  py-1.5
+                  text-xs
+                  sm:text-sm
+                  font-medium
+                  text-gray-600
+                  transition
+                  hover:bg-teal-50
+                  hover:text-teal-700
+                  hover:border-teal-200
+                "
+              >
+                {{ suggestion }}
+              </button>
+
+            </div>
+
           </form>
 
-          <!-- Status Messages -->
-          <div *ngIf="historyError()" class="flex items-center gap-3 rounded-2xl border border-rose-200 bg-rose-50 px-5 py-4 text-rose-800"><i class="pi pi-exclamation-circle text-lg"></i><span>{{ historyError() }}</span></div>
-          <div *ngIf="historyNotice()" class="flex items-center gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-emerald-800"><i class="pi pi-check-circle text-lg"></i><span>{{ historyNotice() }}</span></div>
-          <div *ngIf="historyLoading()" class="bg-white rounded-2xl border border-slate-100 py-16 text-center shadow-sm"><i class="pi pi-spin pi-spinner text-4xl text-teal-600"></i><p class="mt-4 font-semibold text-slate-600">بنبحث في أرشيف روشتاتك...</p></div>
 
-          <!-- Results -->
+          <!-- Error -->
+          <div
+            *ngIf="historyError()"
+            class="
+              flex
+              items-center
+              gap-3
+              rounded-xl
+              sm:rounded-2xl
+              border
+              border-rose-200
+              bg-rose-50
+              px-4
+              sm:px-5
+              py-4
+              text-rose-800
+            "
+          >
+            <i class="pi pi-exclamation-circle"></i>
+            <span>{{ historyError() }}</span>
+          </div>
+
+
+          <!-- Notice -->
+          <div
+            *ngIf="historyNotice()"
+            class="
+              flex
+              items-center
+              gap-3
+              rounded-xl
+              sm:rounded-2xl
+              border
+              border-emerald-200
+              bg-emerald-50
+              px-4
+              sm:px-5
+              py-4
+              text-emerald-800
+            "
+          >
+            <i class="pi pi-check-circle"></i>
+            <span>{{ historyNotice() }}</span>
+          </div>
+
+
+          <!-- Loading -->
+          <div
+            *ngIf="historyLoading()"
+            class="
+              bg-white
+              rounded-xl
+              sm:rounded-2xl
+              border
+              border-slate-100
+              py-12
+              sm:py-16
+              text-center
+              shadow-sm
+            "
+          >
+
+            <i
+              class="
+                pi
+                pi-spin
+                pi-spinner
+                text-4xl
+                text-teal-600
+              "
+            ></i>
+
+            <p
+              class="
+                mt-4
+                font-semibold
+                text-slate-600
+              "
+            >
+              بنبحث في أرشيف روشتاتك...
+            </p>
+
+          </div>
+
+
+          <!-- =================================================== -->
+          <!-- HISTORY RESULT -->
+          <!-- =================================================== -->
+
           <ng-container *ngIf="historyResult() as answer">
-            <article class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-              <div class="flex items-start gap-4">
-                <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-teal-100 text-teal-700 shadow-sm"><i class="pi pi-sparkles text-xl"></i></div>
-                <div><p class="text-sm font-bold text-teal-700">إجابة مساعد الأرشيف</p><p class="mt-2 whitespace-pre-line leading-8 text-slate-800 font-medium">{{ answer.answer }}</p></div>
-              </div>
-            </article>
-            
-            <div *ngIf="!answer.hasMatches" class="rounded-2xl border border-slate-200 bg-slate-50 px-6 py-10 text-center text-slate-600 shadow-sm"><i class="pi pi-folder-open text-4xl text-slate-400 mb-3 block"></i><p class="mt-3 font-bold text-lg">لا توجد روشتات مناسبة للسؤال حاليًا.</p><p class="mt-1 text-sm">جرّب إضافة اسم الدواء أو الطبيب أو الفترة الزمنية.</p></div>
-            
-            <div *ngIf="answer.sources.length" class="space-y-4 mt-6">
-              <div class="flex items-center justify-between"><h2 class="text-xl font-black text-slate-900">الروشتات المرتبطة</h2><span class="text-sm font-bold bg-slate-100 text-slate-600 px-3 py-1 rounded-full">{{ answer.sources.length }} نتائج</span></div>
-              <article *ngFor="let source of answer.sources; trackBy: trackByPrescription" class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
-                <div class="grid grid-cols-1 gap-6 lg:grid-cols-[180px_1fr]">
-                  <a [routerLink]="['/patient/prescriptions/review', source.prescriptionId]" class="block min-h-36 overflow-hidden rounded-xl bg-slate-100 relative group"><img *ngIf="source.imageUrl" [src]="source.imageUrl" alt="صورة الروشتة" class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"><div *ngIf="!source.imageUrl" class="flex h-full items-center justify-center text-slate-400 min-h-[150px]"><i class="pi pi-file text-4xl"></i></div></a>
-                  <div class="min-w-0">
-                    <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between"><div><p class="text-lg font-black text-slate-900">{{ source.doctorName || 'روشتة طبية' }}</p><p class="mt-1 text-sm font-bold text-teal-700">{{ source.specialty || 'تخصص غير محدد' }} <span *ngIf="source.clinicOrHospital">· {{ source.clinicOrHospital }}</span></p></div><span class="shrink-0 rounded-full bg-slate-100 px-3 py-1.5 text-xs font-bold text-slate-600 flex items-center gap-1.5"><i class="pi pi-calendar"></i>{{ source.visitDate | date:'d MMMM y':'':'ar-EG' }}</span></div>
-                    <p *ngIf="source.diagnosisNotes" class="mt-3 text-sm leading-relaxed text-slate-600 bg-slate-50 p-3 rounded-lg border border-slate-100">{{ source.diagnosisNotes }}</p>
-                    <div class="mt-4 overflow-hidden rounded-xl border border-slate-200 bg-slate-50"><div class="flex items-center justify-between border-b border-slate-200 px-4 py-3 bg-white"><span class="font-bold text-slate-700 flex items-center gap-2"><i class="pi pi-list text-teal-600"></i>الأدوية المسجلة</span><span class="text-xs font-bold text-slate-500 bg-slate-100 px-2 py-1 rounded-md">{{ source.medicines.length }} أدوية</span></div><div class="divide-y divide-slate-100"><div *ngFor="let medicine of source.medicines; trackBy: trackByMedicine" class="flex items-center gap-3 px-4 py-3 hover:bg-white transition-colors cursor-pointer" (click)="medicine.canBeAddedToCart ? toggleHistoryMedicine(source, medicine) : null"><input type="checkbox" *ngIf="medicine.canBeAddedToCart" [checked]="isHistorySelected(source, medicine)" (change)="toggleHistoryMedicine(source, medicine)" class="h-4 w-4 accent-teal-600 rounded" (click)="$event.stopPropagation()"><span *ngIf="!medicine.canBeAddedToCart" class="h-4 w-4 rounded border border-slate-200 bg-slate-100"></span><div class="min-w-0 flex-1"><p class="font-bold text-slate-800">{{ medicine.medicineName }}</p><p *ngIf="medicine.strength || medicine.dosageForm || medicine.frequency" class="mt-1 text-xs text-slate-500">{{ medicine.strength || '' }} {{ medicine.dosageForm || '' }} <span *ngIf="medicine.frequency">· {{ medicine.frequency }}</span></p></div><span *ngIf="medicine.canBeAddedToCart" class="rounded-full bg-emerald-50 px-2 py-1 text-xs font-bold text-emerald-700">متاح للسلة</span></div></div></div>
-                    <div class="mt-5 flex flex-wrap gap-3"><a [routerLink]="['/patient/prescriptions/review', source.prescriptionId]" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-bold text-sm transition-colors flex items-center gap-2"><i class="pi pi-external-link"></i>عرض الروشتة</a><button type="button" (click)="addHistorySelectedToCart(source)" class="px-5 py-2.5 bg-teal-600 hover:bg-teal-700 text-white rounded-lg font-bold text-sm transition-colors flex items-center gap-2 shadow-sm disabled:opacity-50" [disabled]="historySelectedCount(source) === 0 || addingReviewId() === source.prescriptionId"><i class="pi" [ngClass]="addingReviewId() === source.prescriptionId ? 'pi-spin pi-spinner' : 'pi-shopping-cart'"></i>{{ addingReviewId() === source.prescriptionId ? 'جاري الإضافة...' : 'إضافة المختار للسلة' }}</button></div>
-                  </div>
+
+            <article
+              class="
+                bg-gradient-to-br
+                from-white
+                via-slate-50/50
+                to-teal-50/30
+                rounded-xl
+                sm:rounded-2xl
+                border
+                border-teal-100
+                p-4
+                sm:p-6
+                lg:p-7
+                shadow-sm
+                relative
+                overflow-hidden
+              "
+            >
+
+              <div
+                class="
+                  absolute
+                  top-0
+                  right-0
+                  left-0
+                  h-1
+                  bg-gradient-to-r
+                  from-teal-500
+                  to-emerald-400
+                "
+              ></div>
+
+
+              <div class="flex items-start gap-3 sm:gap-4">
+
+                <div
+                  class="
+                    flex
+                    h-9
+                    w-9
+                    sm:h-11
+                    sm:w-11
+                    shrink-0
+                    items-center
+                    justify-center
+                    rounded-xl
+                    bg-teal-600
+                    text-white
+                    shadow-md
+                  "
+                >
+                  <i class="pi pi-sparkles"></i>
                 </div>
-              </article>
-            </div>
+
+
+                <div
+                  class="
+                    flex-1
+                    min-w-0
+                  "
+                >
+
+                  <div
+                    class="
+                      flex
+                      items-center
+                      justify-between
+                      mb-4
+                    "
+                  >
+
+                    <span
+                      class="
+                        text-[10px]
+                        sm:text-xs
+                        font-bold
+                        text-teal-800
+                        bg-teal-100/80
+                        border
+                        border-teal-200/60
+                        px-2
+                        sm:px-3
+                        py-1
+                        rounded-full
+                        flex
+                        items-center
+                        gap-1.5
+                      "
+                    >
+
+                      <span
+                        class="
+                          w-2
+                          h-2
+                          rounded-full
+                          bg-teal-500
+                          animate-pulse
+                        "
+                      ></span>
+
+                      إجابة مساعد الأرشيف الذكي
+
+                    </span>
+
+                  </div>
+
+
+                  <!-- Answer -->
+                  <div
+                    *ngIf="answer.answer"
+                    class="
+                      prose
+                      prose-teal
+                      max-w-none
+                      text-slate-700
+                      leading-relaxed
+                      font-medium
+                      text-sm
+                      sm:text-base
+                      break-words
+                      whitespace-pre-wrap
+                      overflow-x-auto
+                    "
+                    [innerHTML]="parseMarkdown(answer.answer)"
+                  ></div>
+
+
+                  <!-- Sources -->
+                  <div
+                    *ngIf="
+                      answer.sources &&
+                      answer.sources.length
+                    "
+                    class="
+                      space-y-4
+                      sm:space-y-6
+                      mt-6
+                      sm:mt-8
+                    "
+                  >
+
+                    <div
+                      class="
+                        flex
+                        items-center
+                        justify-between
+                        border-b
+                        border-slate-200
+                        pb-3
+                        gap-3
+                      "
+                    >
+
+                      <h3
+                        class="
+                          text-base
+                          sm:text-xl
+                          font-extrabold
+                          text-slate-800
+                          flex
+                          items-center
+                          gap-2
+                        "
+                      >
+                        <i class="pi pi-paperclip text-teal-600"></i>
+                        الروشتات المرتبطة
+                      </h3>
+
+                      <span
+                        class="
+                          text-[10px]
+                          sm:text-sm
+                          font-bold
+                          bg-teal-50
+                          text-teal-700
+                          border
+                          border-teal-100
+                          px-2
+                          sm:px-3
+                          py-1
+                          rounded-full
+                          shrink-0
+                        "
+                      >
+                        {{ answer.sources.length }}
+                        {{ answer.sources.length === 1 ? 'روشتة' : 'نتائج' }}
+                      </span>
+
+                    </div>
+
+
+                    <!-- Prescription List -->
+                    <div class="space-y-4">
+
+                      <article
+                        *ngFor="
+                          let source of answer.sources;
+                          trackBy: trackByPrescription
+                        "
+                        class="
+                          bg-white
+                          rounded-xl
+                          sm:rounded-2xl
+                          p-4
+                          sm:p-6
+                          shadow-sm
+                          border
+                          border-slate-200
+                          hover:border-teal-300
+                          hover:shadow-md
+                          transition-all
+                          duration-200
+                        "
+                      >
+
+                        <!-- IMPORTANT:
+                             Mobile = image above content
+                             Desktop = image beside content
+                        -->
+                        <div
+                          class="
+                            grid
+                            grid-cols-1
+                            lg:grid-cols-[180px_1fr]
+                            gap-4
+                            sm:gap-5
+                          "
+                        >
+
+                          <!-- ================================================= -->
+                          <!-- PRESCRIPTION IMAGE -->
+                          <!-- ================================================= -->
+
+                          <a
+                            [routerLink]="[
+                              '/patient/prescriptions/review',
+                              source.prescriptionId
+                            ]"
+                            class="
+                              block
+                              h-52
+                              sm:h-60
+                              lg:h-full
+                              lg:min-h-[180px]
+                              w-full
+                              overflow-hidden
+                              rounded-xl
+                              bg-slate-50
+                              border
+                              border-slate-200
+                              relative
+                              group
+                              shrink-0
+                            "
+                          >
+
+                            <!-- FULL IMAGE -->
+                            <img
+                              *ngIf="
+                                source.imageUrl &&
+                                !isImageFailed(
+                                  source.prescriptionId
+                                )
+                              "
+                              [src]="
+                                getImageUrl(
+                                  source.imageUrl
+                                )
+                              "
+                              alt="صورة الروشتة"
+                              (error)="
+                                onImageError(
+                                  source.prescriptionId
+                                )
+                              "
+                              class="
+                                w-full
+                                h-full
+                                object-contain
+                                bg-slate-50
+                                transition-transform
+                                duration-300
+                                group-hover:scale-[1.02]
+                              "
+                            />
+
+
+                            <!-- FALLBACK -->
+                            <div
+                              *ngIf="
+                                !source.imageUrl ||
+                                isImageFailed(
+                                  source.prescriptionId
+                                )
+                              "
+                              class="
+                                flex
+                                flex-col
+                                h-full
+                                items-center
+                                justify-center
+                                p-4
+                                text-center
+                                text-slate-400
+                                bg-slate-50
+                                min-h-[150px]
+                                w-full
+                              "
+                            >
+
+                              <div
+                                class="
+                                  w-12
+                                  h-12
+                                  rounded-full
+                                  bg-slate-100
+                                  flex
+                                  items-center
+                                  justify-center
+                                  mb-2
+                                "
+                              >
+                                <i
+                                  class="
+                                    pi
+                                    pi-file-o
+                                    text-2xl
+                                  "
+                                ></i>
+                              </div>
+
+                              <span
+                                class="
+                                  text-xs
+                                  font-medium
+                                  text-slate-500
+                                "
+                              >
+                                لا توجد صورة
+                              </span>
+
+                            </div>
+
+                          </a>
+
+
+                          <!-- ================================================= -->
+                          <!-- PRESCRIPTION CONTENT -->
+                          <!-- ================================================= -->
+
+                          <div
+                            class="
+                              min-w-0
+                              flex
+                              flex-col
+                              justify-between
+                            "
+                          >
+
+                            <div>
+
+                              <!-- Doctor Info -->
+                              <div
+                                class="
+                                  flex
+                                  flex-col
+                                  gap-2
+                                  sm:flex-row
+                                  sm:items-center
+                                  sm:justify-between
+                                  border-b
+                                  border-slate-100
+                                  pb-3
+                                  mb-3
+                                "
+                              >
+
+                                <div class="min-w-0">
+
+                                  <h4
+                                    class="
+                                      text-base
+                                      sm:text-lg
+                                      font-bold
+                                      text-slate-900
+                                      leading-snug
+                                      break-words
+                                    "
+                                  >
+                                    {{
+                                      source.doctorName ||
+                                      'روشتة بدون اسم طبيب'
+                                    }}
+                                  </h4>
+
+                                  <p
+                                    class="
+                                      text-xs
+                                      sm:text-sm
+                                      font-semibold
+                                      text-teal-700
+                                      mt-0.5
+                                      break-words
+                                    "
+                                  >
+                                    {{
+                                      source.specialty ||
+                                      'تخصص عام'
+                                    }}
+
+                                    <span
+                                      *ngIf="
+                                        source.clinicOrHospital
+                                      "
+                                      class="
+                                        text-slate-400
+                                        font-normal
+                                      "
+                                    >
+                                      |
+                                      {{
+                                        source.clinicOrHospital
+                                      }}
+                                    </span>
+
+                                  </p>
+
+                                </div>
+
+
+                                <span
+                                  *ngIf="source.visitDate"
+                                  class="
+                                    shrink-0
+                                    inline-flex
+                                    items-center
+                                    gap-1.5
+                                    rounded-lg
+                                    bg-slate-100
+                                    px-2.5
+                                    py-1
+                                    text-xs
+                                    font-bold
+                                    text-slate-600
+                                    self-start
+                                  "
+                                >
+                                  <i
+                                    class="
+                                      pi
+                                      pi-calendar
+                                      text-slate-400
+                                    "
+                                  ></i>
+
+                                  {{ source.visitDate | date:'d MMM y' }}
+
+                                </span>
+
+                              </div>
+
+
+                              <!-- Diagnosis -->
+                              <p
+                                *ngIf="source.diagnosisNotes"
+                                class="
+                                  mb-4
+                                  text-xs
+                                  sm:text-sm
+                                  text-slate-600
+                                  bg-slate-50
+                                  p-3
+                                  rounded-xl
+                                  border
+                                  border-slate-100
+                                  break-words
+                                "
+                              >
+
+                                <span
+                                  class="
+                                    font-bold
+                                    text-slate-700
+                                  "
+                                >
+                                  ملاحظات/تشخيص:
+                                </span>
+
+                                {{ source.diagnosisNotes }}
+
+                              </p>
+
+
+                              <!-- Medicines -->
+                              <div
+                                class="
+                                  rounded-xl
+                                  border
+                                  border-slate-200
+                                  bg-slate-50/50
+                                  overflow-hidden
+                                "
+                              >
+
+                                <div
+                                  class="
+                                    flex
+                                    items-center
+                                    justify-between
+                                    border-b
+                                    border-slate-200
+                                    px-3
+                                    sm:px-4
+                                    py-2.5
+                                    bg-slate-100/70
+                                    gap-2
+                                  "
+                                >
+
+                                  <span
+                                    class="
+                                      font-bold
+                                      text-xs
+                                      sm:text-sm
+                                      text-slate-700
+                                      flex
+                                      items-center
+                                      gap-2
+                                    "
+                                  >
+                                    <i
+                                      class="
+                                        pi
+                                        pi-list
+                                        text-teal-600
+                                      "
+                                    ></i>
+                                    الأدوية المسجلة
+                                  </span>
+
+                                  <span
+                                    class="
+                                      text-[10px]
+                                      sm:text-xs
+                                      font-bold
+                                      text-slate-500
+                                      bg-white
+                                      border
+                                      border-slate-200
+                                      px-2
+                                      py-0.5
+                                      rounded-md
+                                      shrink-0
+                                    "
+                                  >
+                                    {{
+                                      source.medicines
+                                        ? source.medicines.length
+                                        : 0
+                                    }}
+                                    أدوية
+                                  </span>
+
+                                </div>
+
+
+                                <!-- Medicine List -->
+                                <div
+                                  *ngIf="
+                                    source.medicines &&
+                                    source.medicines.length > 0;
+                                    else noMedicines
+                                  "
+                                  class="
+                                    divide-y
+                                    divide-slate-200/60
+                                    bg-white
+                                  "
+                                >
+
+                                  <div
+                                    *ngFor="
+                                      let medicine of source.medicines;
+                                      trackBy: trackByMedicine
+                                    "
+                                    class="
+                                      flex
+                                      items-center
+                                      gap-2
+                                      sm:gap-3
+                                      px-3
+                                      sm:px-4
+                                      py-2.5
+                                      hover:bg-slate-50
+                                      transition-colors
+                                      cursor-pointer
+                                      min-w-0
+                                    "
+                                    (click)="
+                                      medicine.canBeAddedToCart
+                                        ? toggleHistoryMedicine(
+                                            source,
+                                            medicine
+                                          )
+                                        : null
+                                    "
+                                  >
+
+                                    <input
+                                      type="checkbox"
+                                      *ngIf="
+                                        medicine.canBeAddedToCart
+                                      "
+                                      [checked]="
+                                        isHistorySelected(
+                                          source,
+                                          medicine
+                                        )
+                                      "
+                                      (change)="
+                                        toggleHistoryMedicine(
+                                          source,
+                                          medicine
+                                        )
+                                      "
+                                      class="
+                                        h-4
+                                        w-4
+                                        accent-teal-600
+                                        rounded
+                                        cursor-pointer
+                                        shrink-0
+                                      "
+                                      (click)="
+                                        $event.stopPropagation()
+                                      "
+                                    />
+
+
+                                    <span
+                                      *ngIf="
+                                        !medicine.canBeAddedToCart
+                                      "
+                                      class="
+                                        h-4
+                                        w-4
+                                        rounded
+                                        border
+                                        border-slate-200
+                                        bg-slate-100
+                                        shrink-0
+                                      "
+                                    ></span>
+
+
+                                    <div
+                                      class="
+                                        min-w-0
+                                        flex-1
+                                      "
+                                    >
+
+                                      <p
+                                        class="
+                                          text-xs
+                                          sm:text-sm
+                                          font-bold
+                                          text-slate-800
+                                          truncate
+                                        "
+                                      >
+                                        {{ medicine.medicineName }}
+                                      </p>
+
+                                      <p
+                                        *ngIf="
+                                          medicine.strength ||
+                                          medicine.dosageForm ||
+                                          medicine.frequency
+                                        "
+                                        class="
+                                          text-[11px]
+                                          sm:text-xs
+                                          text-slate-500
+                                          truncate
+                                          mt-0.5
+                                        "
+                                      >
+                                        {{
+                                          medicine.strength || ''
+                                        }}
+
+                                        {{
+                                          medicine.dosageForm || ''
+                                        }}
+
+                                        <span
+                                          *ngIf="
+                                            medicine.frequency
+                                          "
+                                        >
+                                          •
+                                          {{
+                                            medicine.frequency
+                                          }}
+                                        </span>
+
+                                      </p>
+
+                                    </div>
+
+
+                                    <span
+                                      *ngIf="
+                                        medicine.canBeAddedToCart
+                                      "
+                                      class="
+                                        shrink-0
+                                        rounded-full
+                                        bg-emerald-50
+                                        border
+                                        border-emerald-200
+                                        px-2
+                                        py-0.5
+                                        text-[9px]
+                                        sm:text-[11px]
+                                        font-bold
+                                        text-emerald-700
+                                      "
+                                    >
+                                      متاح
+                                    </span>
+
+                                  </div>
+
+                                </div>
+
+
+                                <!-- Empty -->
+                                <ng-template #noMedicines>
+
+                                  <div
+                                    class="
+                                      p-4
+                                      text-center
+                                      text-xs
+                                      text-slate-400
+                                      bg-white
+                                    "
+                                  >
+                                    لا توجد أدوية مسجلة في هذه الروشتة
+                                  </div>
+
+                                </ng-template>
+
+                              </div>
+
+                            </div>
+
+
+                            <!-- Footer Buttons -->
+                            <div
+                              class="
+                                mt-4
+                                sm:mt-5
+                                flex
+                                flex-col
+                                sm:flex-row
+                                items-stretch
+                                sm:items-center
+                                justify-between
+                                gap-2
+                                sm:gap-3
+                                pt-3
+                                border-t
+                                border-slate-100
+                              "
+                            >
+
+                              <a
+                                [routerLink]="[
+                                  '/patient/prescriptions/review',
+                                  source.prescriptionId
+                                ]"
+                                class="
+                                  inline-flex
+                                  items-center
+                                  justify-center
+                                  gap-2
+                                  px-4
+                                  py-2
+                                  bg-slate-100
+                                  hover:bg-slate-200
+                                  text-slate-700
+                                  rounded-xl
+                                  font-bold
+                                  text-xs
+                                  sm:text-sm
+                                  transition-colors
+                                  w-full
+                                  sm:w-auto
+                                "
+                              >
+                                <i
+                                  class="
+                                    pi
+                                    pi-external-link
+                                  "
+                                ></i>
+                                عرض الروشتة
+                              </a>
+
+
+                              <button
+                                type="button"
+                                (click)="
+                                  addHistorySelectedToCart(
+                                    source
+                                  )
+                                "
+                                class="
+                                  inline-flex
+                                  items-center
+                                  justify-center
+                                  gap-2
+                                  px-5
+                                  py-2.5
+                                  bg-teal-600
+                                  hover:bg-teal-700
+                                  text-white
+                                  rounded-xl
+                                  font-bold
+                                  text-xs
+                                  sm:text-sm
+                                  transition-colors
+                                  shadow-sm
+                                  disabled:opacity-50
+                                  disabled:bg-slate-300
+                                  disabled:cursor-not-allowed
+                                  w-full
+                                  sm:w-auto
+                                "
+                                [disabled]="
+                                  historySelectedCount(source) === 0 ||
+                                  addingReviewId() ===
+                                    source.prescriptionId
+                                "
+                              >
+
+                                <i
+                                  class="pi"
+                                  [ngClass]="
+                                    addingReviewId() ===
+                                    source.prescriptionId
+                                      ? 'pi-spin pi-spinner'
+                                      : 'pi-shopping-cart'
+                                  "
+                                ></i>
+
+                                <span>
+                                  إضافة المختار للسلة
+
+                                  <ng-container
+                                    *ngIf="
+                                      historySelectedCount(source) > 0
+                                    "
+                                  >
+                                    ({{
+                                      historySelectedCount(source)
+                                    }})
+                                  </ng-container>
+
+                                </span>
+
+                              </button>
+
+                            </div>
+
+                          </div>
+
+                        </div>
+
+                      </article>
+
+                    </div>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            </article>
+
           </ng-container>
+
         </section>
+
       </div>
+
     </div>
+
   </div>
+
 </div>

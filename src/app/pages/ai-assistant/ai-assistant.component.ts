@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, registerLocaleData } from '@angular/common';
 import {
   Component,
   ElementRef,
@@ -8,6 +8,8 @@ import {
   inject,
   signal,
   effect,
+  ChangeDetectorRef,
+  NgZone
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AiAssistantService } from '@core/services/ai-assistant.service';
@@ -15,6 +17,8 @@ import { SearchService } from '@core/services/search.service';
 import { MedicineSearchDTO } from '@pages/inventory/search.model';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { marked } from 'marked';
+import localeAr from '@angular/common/locales/ar';
+import { environment } from '../../../environments/environment'; // أضف هذا السطر (اضبط المسار حسب مشروعك)
 import {
   ChatMessage,
   DrugInfoResult,
@@ -29,7 +33,7 @@ import { PrescriptionHistoryAnswer, PrescriptionHistoryMedicine, PrescriptionHis
 type ActiveTab = 'chat' | 'drug-info' | 'interactions' | 'history';
 
 import { RouterLink } from '@angular/router';
-
+registerLocaleData(localeAr);
 @Component({
   selector: 'app-ai-assistant',
   standalone: true,
@@ -42,7 +46,8 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
   private readonly searchService = inject(SearchService);
   private readonly historyService = inject(PrescriptionHistoryService);
   private readonly prescriptionService = inject(PrescriptionReviewService);
-
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly ngZone = inject(NgZone);
   // ── Tabs ──────────────────────────────────────────────────────────────────
   activeTab = signal<ActiveTab>('chat');
   isSidebarOpen = signal<boolean>(true);
@@ -287,19 +292,33 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
   addingReviewId = signal<string | null>(null);
   private readonly selectedMedicineIds = signal<Record<string, string[]>>({});
 
-  askHistory(): void {
-    const q = this.historyQuestion.trim();
-    if (!q || this.historyLoading()) return;
-    this.historyLoading.set(true); 
-    this.historyError.set(''); 
-    this.historyNotice.set(''); 
-    this.historyResult.set(null); 
-    this.selectedMedicineIds.set({});
-    this.historyService.ask(q).subscribe({
-      next: result => { this.historyResult.set(result); this.historyLoading.set(false); },
-      error: error => { this.historyError.set(error?.error?.message || 'تعذر البحث في أرشيف الروشتات الآن. حاول مرة أخرى.'); this.historyLoading.set(false); },
-    });
-  }
+askHistory(): void {
+  const q = this.historyQuestion.trim();
+  if (!q || this.historyLoading()) return;
+
+  this.failedImageIds.set(new Set());
+  this.historyLoading.set(true); 
+  this.historyError.set(''); 
+  this.historyNotice.set(''); 
+  this.historyResult.set(null); 
+  this.selectedMedicineIds.set({});
+
+  this.historyService.ask(q).subscribe({
+    next: result => { 
+      // إجبار أنجولار على تنفيذ تحديث الـ Signals داخل الـ Zone
+      this.ngZone.run(() => {
+        this.historyResult.set(result); 
+        this.historyLoading.set(false); 
+      });
+    },
+    error: error => { 
+      this.ngZone.run(() => {
+        this.historyError.set(error?.error?.message || 'تعذر البحث في أرشيف الروشتات الآن. حاول مرة أخرى.'); 
+        this.historyLoading.set(false); 
+      });
+    },
+  });
+}
 
   useHistorySuggestion(q: string): void { 
     this.historyQuestion = q; 
@@ -519,6 +538,41 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
     if (!content) return '';
     return marked.parse(content, { async: false }) as string;
   }
+  // أضف Set لتخزين المعرفات للصور التي فشل تحميلها
+// تحويل المتغير إلى Signal ليكون تفاعلياً تلقائياً مع Angular
+failedImageIds = signal<Set<string | number>>(new Set());
 
+onImageError(id: string | number): void {
+  this.ngZone.run(() => {
+    this.failedImageIds.update(set => {
+      const updated = new Set(set);
+      updated.add(id);
+      return updated;
+    });
+  });
+}
+
+isImageFailed(id: string | number): boolean {
+  return this.failedImageIds().has(id);
+}
+getImageUrl(path: string | undefined | null): string {
+  if (!path) return '';
+  
+  // إذا كان الرابط كاملاً بالفعل
+  if (path.startsWith('http://') || path.startsWith('https://')) {
+    return path;
+  }
+
+  try {
+    // التأكد من استخراج النطاق سواء كانت المعرفة apiUrl أو baseUrl
+    const envUrl = environment.baseUrl || (environment as any).baseUrl;
+    const baseUrl = new URL(envUrl).origin;
+    const cleanPath = path.startsWith('/') ? path : `/${path}`;
+
+    return `${baseUrl}${cleanPath}`;
+  } catch {
+    return path;
+  }
+}
   ngOnDestroy(): void {}
 }
