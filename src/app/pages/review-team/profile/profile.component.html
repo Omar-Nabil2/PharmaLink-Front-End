@@ -1,0 +1,88 @@
+<div class="max-w-4xl mx-auto p-4 lg:p-6" dir="rtl">
+  <div class="mb-6 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+    <div>
+      <h1 class="text-3xl font-black text-slate-900 tracking-tight">ملفك الشخصي</h1>
+      <p class="text-slate-500 mt-2">
+        إدارة بيانات حساب فريق المراجعة والصورة الشخصية وكلمة المرور.
+      </p>
+    </div>
+  </div>
+
+  <p-toast></p-toast>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="isLoading()" class="flex justify-center items-center py-20">
+    <i class="pi pi-spinner animate-spin text-4xl text-emerald-600"></i>
+  </div>
+
+  <div *ngIf="!isLoading() && profile()" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+    
+    <!-- Profile Picture Section -->
+    <div class="col-span-1">
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden h-full flex flex-col">
+        <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 shrink-0">
+          <h3 class="font-bold text-slate-800">الصورة الشخصية</h3>
+        </div>
+        <div class="p-6 text-center flex-grow flex flex-col justify-center">
+          <div class="mb-6 relative w-40 h-40 mx-auto">
+            <img *ngIf="imagePreview" [src]="imagePreview" alt="Profile" 
+                 class="w-full h-full rounded-full object-cover border-4 border-white shadow-md" />
+            <div *ngIf="!imagePreview"
+              class="bg-emerald-100 text-emerald-700 w-full h-full rounded-full flex items-center justify-center font-bold text-4xl border-4 border-white shadow-md">
+              {{ fullName?.charAt(0) || 'U' }}
+            </div>
+          </div>
+          <div class="flex flex-col gap-3">
+            <input type="file" #fileInput (change)="onFileSelected($event)" accept="image/*" class="hidden" />
+            <button type="button" (click)="fileInput.click()" 
+                    class="w-full px-4 py-2.5 rounded-xl font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 transition-colors flex justify-center items-center gap-2">
+              <i class="pi pi-image"></i> اختر صورة
+            </button>
+            <button *ngIf="selectedFile" (click)="uploadPicture()" [disabled]="isUploadingPicture()"
+                    class="w-full px-4 py-2.5 rounded-xl font-semibold text-white bg-emerald-600 hover:bg-emerald-700 transition-colors flex justify-center items-center gap-2 shadow-sm disabled:opacity-70 disabled:cursor-not-allowed">
+              <i *ngIf="isUploadingPicture()" class="pi pi-spinner animate-spin"></i>
+              <i *ngIf="!isUploadingPicture()" class="pi pi-upload"></i> رفع الصورة
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Forms Section -->
+    <div class="col-span-1 md:col-span-2">
+      
+      <!-- Basic Info -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden h-full flex flex-col">
+        <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 shrink-0">
+          <h3 class="font-bold text-slate-800">البيانات الأساسية</h3>
+        </div>
+        <div class="p-6 space-y-5 flex-grow flex flex-col justify-between">
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-1">الاسم الكامل</label>
+            <input type="text" [(ngModel)]="fullName" 
+                   class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all shadow-sm" 
+                   placeholder="أدخل الاسم الكامل" />
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-1">رقم الهاتف</label>
+            <input type="text" [(ngModel)]="phoneNumber" 
+                   class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all shadow-sm" 
+                   placeholder="أدخل رقم الهاتف" />
+          </div>
+
+          <div class="pt-4 mt-auto border-t border-slate-100 flex justify-end">
+            <button (click)="updateProfile()" [disabled]="isUpdating()" 
+                    class="px-6 py-2.5 rounded-xl font-semibold text-white bg-emerald-600 hover:bg-emerald-700 transition-colors flex items-center gap-2 shadow-sm disabled:opacity-70 disabled:cursor-not-allowed">
+              <i *ngIf="isUpdating()" class="pi pi-spinner animate-spin"></i>
+              <span>حفظ التعديلات</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+
+
+    </div>
+  </div>
+</div>

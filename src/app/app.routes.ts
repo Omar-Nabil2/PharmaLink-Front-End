@@ -392,6 +392,20 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'profile',
+        loadComponent: () =>
+          import('./pages/review-team/profile/profile.component').then(
+            (m) => m.ReviewTeamProfileComponent,
+          ),
+      },
+      {
+        path: 'change-password',
+        loadComponent: () =>
+          import('./pages/review-team/change-password/change-password.component').then(
+            (m) => m.ReviewTeamChangePasswordComponent,
+          ),
+      },
+      {
         path: 'prescriptions',
         loadComponent: () =>
           import('./pages/pharmacist/prescription-queue/prescription-queue').then(
