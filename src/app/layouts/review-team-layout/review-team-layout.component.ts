@@ -4,6 +4,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
 import { AuthService } from '@core/services/auth.service';
+import { ReviewTeamProfileService } from '@core/services/review-team-profile.service';
 import { routeTransitionAnimations } from '../../shared/animations/route.animations';
 
 @Component({
@@ -29,12 +30,18 @@ export class ReviewTeamLayoutComponent implements OnInit {
   readonly fullName = computed(() => this.authService.currentUser()?.fullName || 'تيم المراجعة');
   readonly roleLabel = signal('تيم المراجعة');
   readonly avatarInitial = computed(() => this.fullName().charAt(0).toUpperCase() || 'ت');
-  profilePictureUrl: string | null = null;
+  private readonly profileService = inject(ReviewTeamProfileService);
+
+  readonly profilePictureUrl = signal<string | null>(null);
 
   ngOnInit(): void {
-    if (typeof window !== 'undefined') {
-      this.profilePictureUrl = localStorage.getItem('profilePictureUrl');
-    }
+    this.profileService.getProfile().subscribe({
+      next: (res) => {
+        if (res.profilePictureUrl) {
+          this.profilePictureUrl.set(res.profilePictureUrl);
+        }
+      }
+    });
   }
 
   readonly navItems = [

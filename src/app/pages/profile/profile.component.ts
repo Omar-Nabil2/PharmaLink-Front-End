@@ -75,8 +75,14 @@ export class ProfileComponent implements OnInit {
         next: (res) => {
           this.patientData = res;
           if (this.patientData?.profilePictureUrl) {
-            const fullUrl = this.serverUrl + this.patientData.profilePictureUrl;
-            localStorage.setItem('profilePictureUrl', fullUrl);
+            let picUrl = this.patientData.profilePictureUrl;
+            if (!picUrl.startsWith('http')) {
+              const cleanServerUrl = this.serverUrl.endsWith('/') ? this.serverUrl.slice(0, -1) : this.serverUrl;
+              const cleanPicUrl = picUrl.startsWith('/') ? picUrl : '/' + picUrl;
+              picUrl = cleanServerUrl + cleanPicUrl;
+            }
+            this.patientData.profilePictureUrl = picUrl;
+            localStorage.setItem('profilePictureUrl', picUrl);
           }
           this.isLoading = false;
           this.cdr.detectChanges();
@@ -106,6 +112,14 @@ export class ProfileComponent implements OnInit {
       this.profileService.getPharmacyAdminProfile().subscribe({
         next: (response) => {
           this.pharmacyAdminData = response;
+          if (this.pharmacyAdminData?.logoUrl) {
+            let logo = this.pharmacyAdminData.logoUrl;
+            if (!logo.startsWith('http')) {
+              const cleanServerUrl = this.serverUrl.endsWith('/') ? this.serverUrl.slice(0, -1) : this.serverUrl;
+              const cleanLogoUrl = logo.startsWith('/') ? logo : '/' + logo;
+              this.pharmacyAdminData.logoUrl = cleanServerUrl + cleanLogoUrl;
+            }
+          }
           this.isLoading = false;
           this.cdr.detectChanges();
         },
@@ -155,9 +169,14 @@ export class ProfileComponent implements OnInit {
           this.profileService.getPatientProfilePictureUrl().subscribe({
             next: (res) => {
               if (res.url && this.patientData) {
-                this.patientData.profilePictureUrl = res.url;
-                const fullUrl = this.serverUrl + res.url;
-                localStorage.setItem('profilePictureUrl', fullUrl);
+                let picUrl = res.url;
+                if (!picUrl.startsWith('http')) {
+                  const cleanServerUrl = this.serverUrl.endsWith('/') ? this.serverUrl.slice(0, -1) : this.serverUrl;
+                  const cleanPicUrl = picUrl.startsWith('/') ? picUrl : '/' + picUrl;
+                  picUrl = cleanServerUrl + cleanPicUrl;
+                }
+                this.patientData.profilePictureUrl = picUrl;
+                localStorage.setItem('profilePictureUrl', picUrl);
               }
               this.isLoading = false;
               this.cdr.detectChanges();
