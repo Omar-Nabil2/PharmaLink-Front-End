@@ -1,4 +1,3 @@
-import { EnumTranslatePipe } from '@core/pipes/enum-translate.pipe';
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -9,7 +8,7 @@ import { environment } from '../../../environments/environment';
 @Component({
   selector: 'app-patient-prescriptions-list',
   standalone: true,
-  imports: [EnumTranslatePipe, CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './patient-prescription-review.component.html'
 })
 export class PatientPrescriptionsListComponent implements OnInit {

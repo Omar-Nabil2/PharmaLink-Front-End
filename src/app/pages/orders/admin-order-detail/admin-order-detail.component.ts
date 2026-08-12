@@ -1,4 +1,3 @@
-import { EnumTranslatePipe } from '@core/pipes/enum-translate.pipe';
 import { Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -19,7 +18,7 @@ import { AppRoles } from '@core/enums/app-roles.constant';
 @Component({
   selector: 'app-admin-order-detail',
   standalone: true,
-  imports: [EnumTranslatePipe, 
+  imports: [
     CommonModule,
     FormsModule,
     RouterLink,

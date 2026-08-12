@@ -101,7 +101,7 @@
 
             <!-- Status badge -->
             <span class="status-badge" [ngClass]="getStatusClass(owner.status)">
-              {{ (owner.status | enumTranslate) }}
+              {{ getStatusLabel(owner.status) }}
             </span>
           </div>
 

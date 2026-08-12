@@ -36,14 +36,14 @@
         <div *ngIf="reviewDetail.processingStatus" class="flex items-center gap-1.5">
           <span class="text-xs text-slate-500 font-semibold">حالة المعالجة:</span>
           <span class="px-4 py-1.5 rounded-full text-xs font-bold border bg-slate-50 text-slate-700 border-slate-200 shadow-sm">
-            {{ (reviewDetail.processingStatus | enumTranslate) }}
+            {{ getProcessingStatusLabel(reviewDetail.processingStatus) }}
           </span>
         </div>
         <div class="flex items-center gap-1.5">
           <span class="text-xs text-slate-500 font-semibold">حالة المراجعة:</span>
           <span class="px-4 py-1.5 rounded-full text-xs font-bold border flex items-center gap-2 shadow-sm" [ngClass]="getStatusClass(reviewDetail.status)">
             <span class="w-2 h-2 rounded-full bg-current"></span>
-            {{ (reviewDetail.status | enumTranslate) }}
+            {{ getStatusLabel(reviewDetail.status) }}
           </span>
         </div>
       </div>
@@ -129,7 +129,7 @@
                 <td class="py-3 text-center text-slate-600 font-mono">{{ med.quantity || 1 }}</td>
                 <td class="py-3 text-center">
                   <span class="inline-flex px-2.5 py-1 rounded-full border text-xs font-bold" [ngClass]="getMedicineStatusClass(med.matchStatus)">
-                    {{ (med.matchStatus | enumTranslate) }}
+                    {{ getMedicineStatusLabel(med.matchStatus) }}
                   </span>
                   <div *ngIf="med.confidence" class="text-[11px] text-slate-400 mt-1">
                     ثقة {{ (med.confidence * 100) | number:'1.0-0' }}%

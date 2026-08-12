@@ -57,7 +57,7 @@
           <div class="absolute top-3 right-3">
              <span class="px-3 py-1 rounded-full text-xs font-bold border flex items-center gap-1.5 shadow-sm bg-white/95 backdrop-blur-sm" [ngClass]="getStatusClass(item.status)">
               <span class="w-2 h-2 rounded-full bg-current"></span>
-              {{ (item.status | enumTranslate) }}
+              {{ getStatusLabel(item.status) }}
             </span>
           </div>
           
