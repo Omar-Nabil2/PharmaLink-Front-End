@@ -89,6 +89,7 @@
                                     <!-- القائمة المنسدلة الاحترافية هتفضل شغالة زي الفل -->
                                     <ng-template let-medicine pTemplate="item">
                                         <div class="flex flex-col">
+                                            <div class="text-slate-400 text-xs mt-1">دقة الذكاء الاصطناعي: {{ med.get('confidence')?.value }}%</div>
                                             <span class="font-bold text-slate-700">{{ medicine.name }}</span>
                                             <span class="text-xs text-slate-500 mt-1"
                                                 *ngIf="medicine.genericName || medicine.strength">
@@ -104,25 +105,25 @@
 
                             <!-- الصف الثاني: تفاصيل الدواء -->
                             <div class="col-span-6 md:col-span-3">
-                                <label class="block text-xs font-bold text-slate-600 mb-1">التركيز (Strength)</label>
+                                <label class="block text-xs font-bold text-slate-600 mb-1">التركيز</label>
                                 <input formControlName="strength" type="text" placeholder="مثال: 500mg"
                                     [readonly]="isReadOnly"
                                     class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:border-emerald-500 outline-none read-only:bg-slate-100 read-only:text-slate-500 read-only:border-slate-200 read-only:focus:border-slate-200 read-only:focus:ring-0 read-only:cursor-not-allowed">
                             </div>
                             <div class="col-span-6 md:col-span-3">
-                                <label class="block text-xs font-bold text-slate-600 mb-1">الشكل (Form)</label>
+                                <label class="block text-xs font-bold text-slate-600 mb-1">الشكل</label>
                                 <input formControlName="dosageForm" type="text" placeholder="أقراص، شراب..."
                                     [readonly]="isReadOnly"
                                     class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:border-emerald-500 outline-none read-only:bg-slate-100 read-only:text-slate-500 read-only:border-slate-200 read-only:focus:border-slate-200 read-only:focus:ring-0 read-only:cursor-not-allowed">
                             </div>
                             <div class="col-span-6 md:col-span-3">
-                                <label class="block text-xs font-bold text-slate-600 mb-1">الكمية (العلب) <span
+                                <label class="block text-xs font-bold text-slate-600 mb-1">الكمية <span
                                         class="text-red-500">*</span></label>
                                 <input formControlName="quantity" type="number" min="1" [readonly]="isReadOnly"
                                     class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:border-emerald-500 outline-none read-only:bg-slate-100 read-only:text-slate-500 read-only:border-slate-200 read-only:focus:border-slate-200 read-only:focus:ring-0 read-only:cursor-not-allowed">
                             </div>
                             <div class="col-span-6 md:col-span-3">
-                                <label class="block text-xs font-bold text-slate-600 mb-1"> التعاطي (Route)</label>
+                                <label class="block text-xs font-bold text-slate-600 mb-1">التعاطي</label>
                                 <input formControlName="route" type="text" placeholder="فموي، حقن..."
                                     [readonly]="isReadOnly"
                                     class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:border-emerald-500 outline-none read-only:bg-slate-100 read-only:text-slate-500 read-only:border-slate-200 read-only:focus:border-slate-200 read-only:focus:ring-0 read-only:cursor-not-allowed">
@@ -130,19 +131,19 @@
 
                             <!-- الصف الثالث: الجرعات والمدة -->
                             <div class="col-span-12 md:col-span-4">
-                                <label class="block text-xs font-bold text-slate-600 mb-1">الجرعة (Dose)</label>
+                                <label class="block text-xs font-bold text-slate-600 mb-1">الجرعة</label>
                                 <input formControlName="dose" type="text" placeholder="قرص واحد، 5 مل..."
                                     [readonly]="isReadOnly"
                                     class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:border-emerald-500 outline-none read-only:bg-slate-100 read-only:text-slate-500 read-only:border-slate-200 read-only:focus:border-slate-200 read-only:focus:ring-0 read-only:cursor-not-allowed">
                             </div>
                             <div class="col-span-12 md:col-span-4">
-                                <label class="block text-xs font-bold text-slate-600 mb-1">التكرار (Frequency)</label>
+                                <label class="block text-xs font-bold text-slate-600 mb-1">التكرار</label>
                                 <input formControlName="frequency" type="text" placeholder="3 مرات يومياً..."
                                     [readonly]="isReadOnly"
                                     class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:border-emerald-500 outline-none read-only:bg-slate-100 read-only:text-slate-500 read-only:border-slate-200 read-only:focus:border-slate-200 read-only:focus:ring-0 read-only:cursor-not-allowed">
                             </div>
                             <div class="col-span-12 md:col-span-4">
-                                <label class="block text-xs font-bold text-slate-600 mb-1">المدة (Duration)</label>
+                                <label class="block text-xs font-bold text-slate-600 mb-1">المدة</label>
                                 <input formControlName="duration" type="text" placeholder="لمدة 5 أيام..."
                                     [readonly]="isReadOnly"
                                     class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:border-emerald-500 outline-none read-only:bg-slate-100 read-only:text-slate-500 read-only:border-slate-200 read-only:focus:border-slate-200 read-only:focus:ring-0 read-only:cursor-not-allowed">
