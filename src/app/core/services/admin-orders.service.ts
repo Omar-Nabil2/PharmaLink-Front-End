@@ -100,4 +100,8 @@ export class AdminOrdersService {
   rejectPrescription(orderId: string, reason: string): Observable<any> {
     return this.http.post<any>(`${this.baseUrl}/AdminOrders/${orderId}/reject-prescription`, { reason });
   }
+
+  removeOrderItem(orderId: string, itemId: string): Observable<any> {
+    return this.http.delete<any>(`${this.baseUrl}/AdminOrders/${orderId}/items/${itemId}`);
+  }
 }

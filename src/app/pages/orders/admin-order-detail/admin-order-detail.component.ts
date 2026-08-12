@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TableModule } from 'primeng/table';
@@ -32,7 +32,7 @@ import { AppRoles } from '@core/enums/app-roles.constant';
   templateUrl: './admin-order-detail.component.html',
   styleUrl: './admin-order-detail.component.scss',
 })
-export class AdminOrderDetailComponent implements OnInit {
+export class AdminOrderDetailComponent implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly adminOrdersService = inject(AdminOrdersService);
@@ -44,6 +44,7 @@ export class AdminOrderDetailComponent implements OnInit {
   order = signal<AdminOrderDetailDTO | null>(null);
   isLoading = signal<boolean>(false);
   isSplitting = signal<boolean>(false);
+  prescriptionImageUrl = signal<string | null>(null);
 
   isAdmin(): boolean {
     return this.authService.hasRole(AppRoles.Admin);
@@ -85,11 +86,26 @@ export class AdminOrderDetailComponent implements OnInit {
     }
   }
 
+  ngOnDestroy(): void {
+    // No longer using ObjectURL
+  }
+
   loadOrderDetails(): void {
     this.isLoading.set(true);
     this.adminOrdersService.getOrderDetails(this.orderId()).subscribe({
       next: (res) => {
         this.order.set(res);
+        if (res.hasPrescription && res.prescriptionId) {
+          this.prescriptionService.getPrescriptionFile(res.prescriptionId).subscribe({
+            next: (blob) => {
+              const reader = new FileReader();
+              reader.onload = (e) => {
+                this.prescriptionImageUrl.set(e.target?.result as string);
+              };
+              reader.readAsDataURL(blob);
+            }
+          });
+        }
         this.isLoading.set(false);
       },
       error: () => {
@@ -397,5 +413,30 @@ export class AdminOrderDetailComponent implements OnInit {
       '5': 'badge-item-unavailable', Unavailable: 'badge-item-unavailable',
     };
     return `status-badge ${map[str] ?? 'badge-default'}`;
+  }
+
+  isRemoving = signal<boolean>(false);
+  removeDrug(itemId: string): void {
+    if (!confirm('هل أنت متأكد من رغبتك في حذف هذا الدواء من الطلب؟')) return;
+    this.isRemoving.set(true);
+    this.adminOrdersService.removeOrderItem(this.orderId(), itemId).subscribe({
+      next: (res) => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'نجاح',
+          detail: 'تم حذف الدواء من الطلب بنجاح.',
+        });
+        this.isRemoving.set(false);
+        this.loadOrderDetails();
+      },
+      error: (err) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'خطأ',
+          detail: err.error?.detail || err.error?.message || 'فشل حذف الدواء من الطلب.',
+        });
+        this.isRemoving.set(false);
+      }
+    });
   }
 }

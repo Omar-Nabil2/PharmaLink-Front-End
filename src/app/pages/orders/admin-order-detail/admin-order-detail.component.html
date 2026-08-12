@@ -35,8 +35,8 @@
         <span>العودة للقائمة</span>
       </button>
 
-      <!-- Prescription Review Buttons (Visible only if status is 6) -->
-      <ng-container *ngIf="ord.orderStatus === 6">
+      <!-- Prescription Review Buttons (Visible only if status is 6 or PendingPrescriptionReview) -->
+      <ng-container *ngIf="ord.orderStatus === 6 || ord.orderStatus === 'PendingPrescriptionReview'">
         <button
           class="btn-primary bg-teal-600 hover:bg-teal-700"
           [disabled]="isReviewing()"
@@ -56,9 +56,9 @@
       </ng-container>
 
       <button
-        *ngIf="ord.orderStatus !== 6"
+        *ngIf="ord.orderStatus !== 6 && ord.orderStatus !== 'PendingPrescriptionReview'"
         class="btn-primary"
-        [disabled]="isSplitting() || ord.orderStatus === 4 || ord.orderStatus === 5 || ord.orderStatus === 7"
+        [disabled]="isSplitting() || ord.orderStatus === 4 || ord.orderStatus === 5 || ord.orderStatus === 7 || ord.orderStatus === 'Completed' || ord.orderStatus === 'Cancelled' || ord.orderStatus === 'PrescriptionRejected'"
         (click)="onResplit()"
       >
         <i class="pi pi-refresh" [class.pi-spin]="isSplitting()"></i>
@@ -85,6 +85,7 @@
                 <th class="py-3 px-4 text-muted-foreground font-semibold text-left whitespace-nowrap">سعر الوحدة</th>
                 <th class="py-3 px-4 text-muted-foreground font-semibold text-left whitespace-nowrap">الإجمالي</th>
                 <th class="py-3 px-4 text-muted-foreground font-semibold whitespace-nowrap">الحالة</th>
+                <th class="py-3 px-4 text-muted-foreground font-semibold whitespace-nowrap" *ngIf="ord.orderStatus === 6 || ord.orderStatus === 'PendingPrescriptionReview' || ord.orderStatus === 1 || ord.orderStatus === 'Pending'">إجراءات</th>
               </tr>
             </thead>
             <tbody>
@@ -110,6 +111,16 @@
                     <span class="status-dot"></span>
                     {{ getItemStatusLabel(item.itemStatus) }}
                   </span>
+                </td>
+                <td class="py-3 px-4 whitespace-nowrap" *ngIf="ord.orderStatus === 6 || ord.orderStatus === 'PendingPrescriptionReview' || ord.orderStatus === 1 || ord.orderStatus === 'Pending'">
+                  <button
+                    class="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-full transition-colors disabled:opacity-50"
+                    (click)="removeDrug(item.orderItemId)"
+                    [disabled]="isRemoving()"
+                    title="حذف هذا الدواء من الطلب"
+                  >
+                    <i class="pi pi-trash"></i>
+                  </button>
                 </td>
               </tr>
             </tbody>
@@ -238,11 +249,21 @@
             <span class="text-mute">عنوان التوصيل</span>
             <span class="text-ink font-semibold leading-relaxed">{{ ord.deliveryAddress }}</span>
           </div>
-          <div class="flex justify-between py-2 border-b border-border text-sm" *ngIf="ord.hasPrescription">
-            <span class="text-mute">الروشتة الطبية</span>
-            <button (click)="viewPrescription(ord.prescriptionId)" class="text-teal-600 hover:text-teal-700 font-bold flex items-center gap-1">
-              <i class="pi pi-file-pdf"></i> عرض الروشتة
-            </button>
+          <div class="flex flex-col py-2 border-b border-border text-sm gap-2" *ngIf="ord.hasPrescription">
+            <div class="flex justify-between w-full">
+              <span class="text-mute">الروشتة الطبية</span>
+              <button (click)="viewPrescription(ord.prescriptionId)" class="text-teal-600 hover:text-teal-700 font-bold flex items-center gap-1">
+                <i class="pi pi-external-link"></i> عرض في نافذة جديدة
+              </button>
+            </div>
+            
+            <div *ngIf="prescriptionImageUrl()" class="w-full mt-2 rounded-xl border border-gray-200 overflow-hidden bg-gray-50 flex items-center justify-center p-2 min-h-[150px]">
+              <img [src]="prescriptionImageUrl()" alt="صورة الروشتة" class="max-w-full max-h-[400px] object-contain rounded-lg cursor-pointer" (click)="viewPrescription(ord.prescriptionId)" />
+            </div>
+            <div *ngIf="!prescriptionImageUrl()" class="w-full mt-2 rounded-xl border border-gray-200 bg-gray-50 flex items-center justify-center p-6 text-gray-400">
+              <i class="pi pi-image text-3xl"></i>
+              <span class="mr-2">جاري تحميل الروشتة...</span>
+            </div>
           </div>
           <div class="flex justify-between pt-4 text-base font-bold">
             <span class="text-ink">المبلغ الإجمالي</span>
