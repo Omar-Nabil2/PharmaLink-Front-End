@@ -80,7 +80,7 @@
           <table class="w-full text-right border-collapse text-sm">
             <thead>
               <tr class="bg-muted/50 border-b border-border">
-                <th class="py-3 px-4 text-muted-foreground font-semibold whitespace-nowrap">الدواء</th>
+                <th class="py-3 px-4 text-muted-foreground font-semibold">الدواء</th>
                 <th class="py-3 px-4 text-muted-foreground font-semibold text-center whitespace-nowrap">الكمية</th>
                 <th class="py-3 px-4 text-muted-foreground font-semibold text-left whitespace-nowrap">سعر الوحدة</th>
                 <th class="py-3 px-4 text-muted-foreground font-semibold text-left whitespace-nowrap">الإجمالي</th>
@@ -92,9 +92,9 @@
                 *ngFor="let item of ord.items"
                 class="border-b border-border hover:bg-muted/30 transition-colors duration-200"
               >
-                <td class="py-3 px-4 whitespace-nowrap">
-                  <div class="font-bold text-ink">{{ item.drugName }}</div>
-                  <div class="text-xs text-mute" *ngIf="item.genericName">
+                <td class="py-3 px-4 min-w-[200px] max-w-sm">
+                  <div class="font-bold text-ink text-wrap break-words leading-snug">{{ item.drugName }}</div>
+                  <div class="text-xs text-mute text-wrap break-words mt-1" *ngIf="item.genericName">
                     {{ item.genericName }}
                   </div>
                 </td>
@@ -141,18 +141,24 @@
                 <span class="font-bold text-ink text-sm sm:text-base"
                   >{{ leg.pharmacyName }} — {{ leg.branchName }}</span
                 >
-                <span
-                  class="leg-type-badge text-xs px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200"
-                >
-                  {{ getLegTypeLabel(leg.legType) }}
-                </span>
-                <span [class]="getLegStatusClass(leg.legStatus)">
-                  <span class="status-dot"></span>
-                  {{ getLegStatusLabel(leg.legStatus) }}
-                </span>
+                <div class="flex items-center gap-1.5">
+                  <span class="text-xs text-mute">المهمة:</span>
+                  <span class="leg-type-badge text-xs px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200 font-semibold">
+                    {{ getLegTypeLabel(leg.legType) }}
+                  </span>
+                </div>
+                
+                <div class="flex items-center gap-1.5">
+                  <span class="text-xs text-mute">الحالة:</span>
+                  <span [class]="getLegStatusClass(leg.legStatus)">
+                    <span class="status-dot"></span>
+                    {{ getLegStatusLabel(leg.legStatus) }}
+                  </span>
+                </div>
               </div>
               <div class="flex items-center gap-2">
                 <button
+                  *ngIf="isAdmin()"
                   class="btn-sm btn-sm-accent"
                   (click)="openUpdateLegStatus(leg.legId, leg.legStatus)"
                 >
@@ -247,6 +253,7 @@
 
       <!-- Instruction Note Card -->
       <div
+        *ngIf="isAdmin()"
         class="bg-surface border border-border rounded-xl p-6 border-r-4 border-r-[#0f9d76] shadow-sm"
       >
         <h3 class="font-bold text-ink mb-2">تعليمات مسؤول النظام</h3>

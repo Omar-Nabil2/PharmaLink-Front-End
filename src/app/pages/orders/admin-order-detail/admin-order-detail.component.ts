@@ -12,6 +12,8 @@ import { AdminOrderDetailDTO } from '../admin-orders.model';
 
 import { FormsModule } from '@angular/forms';
 import { PrescriptionService } from '@core/services/prescription.service';
+import { AuthService } from '@core/services/auth.service';
+import { AppRoles } from '@core/enums/app-roles.constant';
 
 @Component({
   selector: 'app-admin-order-detail',
@@ -36,11 +38,16 @@ export class AdminOrderDetailComponent implements OnInit {
   private readonly adminOrdersService = inject(AdminOrdersService);
   private readonly messageService = inject(MessageService);
   private readonly prescriptionService = inject(PrescriptionService);
+  public readonly authService = inject(AuthService);
 
   orderId = signal<string>('');
   order = signal<AdminOrderDetailDTO | null>(null);
   isLoading = signal<boolean>(false);
   isSplitting = signal<boolean>(false);
+
+  isAdmin(): boolean {
+    return this.authService.hasRole(AppRoles.Admin);
+  }
 
   // Leg detail modal state
   showLegDetailModal = false;
