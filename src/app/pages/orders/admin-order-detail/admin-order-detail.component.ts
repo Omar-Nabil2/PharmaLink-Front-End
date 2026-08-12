@@ -15,10 +15,12 @@ import { PrescriptionService } from '@core/services/prescription.service';
 import { AuthService } from '@core/services/auth.service';
 import { AppRoles } from '@core/enums/app-roles.constant';
 
+import { EnumTranslatePipe } from '@core/pipes/enum-translate.pipe';
+
 @Component({
   selector: 'app-admin-order-detail',
   standalone: true,
-  imports: [
+  imports: [EnumTranslatePipe, 
     CommonModule,
     FormsModule,
     RouterLink,

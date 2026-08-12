@@ -164,7 +164,7 @@
                 '!bg-emerald-600': drug.isActive === true || $any(drug.isActive) === 'true',
                 '!bg-red-500': drug.isActive === false || $any(drug.isActive) === 'false'
               }">
-              {{ getStatusLabel(drug) }}
+              {{ (getStatusLabel(drug) | enumTranslate) }}
             </span>
           </td>
 
@@ -362,7 +362,7 @@
       </div>
       <div class="p-3 bg-white border border-slate-100 rounded-lg">
         <span class="text-xs text-slate-400 block">الحالة:</span>
-        <span class="font-bold text-slate-700">{{ getStatusLabel(drug) }}</span>
+        <span class="font-bold text-slate-700">{{ (getStatusLabel(drug) | enumTranslate) }}</span>
       </div>
     </div>
   </div>

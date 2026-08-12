@@ -7,10 +7,12 @@ import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { ProgressBarModule } from 'primeng/progressbar';
 
+import { EnumTranslatePipe } from '@core/pipes/enum-translate.pipe';
+
 @Component({
   selector: 'app-upload-prescription',
   standalone: true,
-  imports: [CommonModule, RouterModule, ToastModule, ProgressBarModule],
+  imports: [EnumTranslatePipe, CommonModule, RouterModule, ToastModule, ProgressBarModule],
   providers: [MessageService],
   templateUrl: './upload-prescription.component.html'
 })

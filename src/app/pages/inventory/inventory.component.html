@@ -325,7 +325,7 @@
             class="inline-flex items-center rounded-full px-3 py-1 text-[10px] lg:text-xs font-medium"
             [class]="getBadgeClasses(item)"
           >
-            {{ getStatusLabel(item) }}
+            {{ (getStatusLabel(item) | enumTranslate) }}
           </span>
         </div>
       </div>

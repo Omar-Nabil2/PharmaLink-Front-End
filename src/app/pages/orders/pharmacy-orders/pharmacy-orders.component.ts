@@ -13,6 +13,8 @@ import { MessageService } from 'primeng/api';
 import { PharmacyOrdersService } from '@core/services/pharmacy-orders.service';
 import { SearchService } from '@core/services/search.service';
 import { PharmacyBranchSearchDTO } from '@pages/inventory/search.model';
+
+import { EnumTranslatePipe } from '@core/pipes/enum-translate.pipe';
 import {
   FulfillmentMode,
   ORDER_SORT_OPTIONS,
@@ -38,7 +40,7 @@ const ALL_BRANCHES = 'ALL';
 @Component({
   selector: 'app-pharmacy-orders',
   standalone: true,
-  imports: [
+  imports: [EnumTranslatePipe, 
     DatePipe,
     DecimalPipe,
     NgClass,

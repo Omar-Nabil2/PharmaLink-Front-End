@@ -68,11 +68,13 @@ interface AdminOrderLeg {
 
 import { Router } from '@angular/router';
 
+import { EnumTranslatePipe } from '@core/pipes/enum-translate.pipe';
+
 @Component({
   selector: 'app-admin-orders',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, FormsModule, ToastModule],
+  imports: [EnumTranslatePipe, CommonModule, FormsModule, ToastModule],
   providers: [MessageService],
   templateUrl: './admin-orders.component.html',
   styleUrl: './admin-orders.component.scss',

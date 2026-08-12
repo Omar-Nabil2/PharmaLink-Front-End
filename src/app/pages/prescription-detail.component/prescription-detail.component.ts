@@ -6,10 +6,12 @@ import { MedicineDto } from '@core/interfaces/prescription-review.interface';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 
+import { EnumTranslatePipe } from '@core/pipes/enum-translate.pipe';
+
 @Component({
   selector: 'app-patient-prescription-detail',
   standalone: true,
-  imports: [CommonModule, RouterModule, ToastModule],
+  imports: [EnumTranslatePipe, CommonModule, RouterModule, ToastModule],
   providers: [MessageService],
   templateUrl: './prescription-detail.component.html' // أو ضع الـ HTML هنا إذا كان Inline
 })

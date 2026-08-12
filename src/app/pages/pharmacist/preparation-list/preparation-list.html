@@ -39,7 +39,7 @@
 
                         <div class="status-container">
                             <span class="status-badge" [ngClass]="getStatusBadgeClass(order.status)">
-                                {{ getStatusLabel(order.status, order.legType) }}
+                                {{ (getStatusLabel(order.status, order.legType) | enumTranslate) }}
                             </span>
                         </div>
                     </div>

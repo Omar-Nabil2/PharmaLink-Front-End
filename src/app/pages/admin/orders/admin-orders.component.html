@@ -199,7 +199,7 @@
               <td>
                 <span [class]="getLegStatusClass(order.legStatus)">
                   <span class="status-dot"></span>
-                  {{ getLegStatusLabel(order.legStatus) }}
+                  {{ (getLegStatusLabel(order.legStatus) | enumTranslate) }}
                 </span>
               </td>
               <td>
@@ -411,7 +411,7 @@
                     <span class="leg-type-badge">{{ getLegTypeLabel(leg.legType) }}</span>
                     <span [class]="getLegStatusClass(leg.legStatus)">
                       <span class="status-dot"></span>
-                      {{ getLegStatusLabel(leg.legStatus) }}
+                      {{ (getLegStatusLabel(leg.legStatus) | enumTranslate) }}
                     </span>
                   </div>
                   <div class="leg-actions-row">
@@ -502,7 +502,7 @@
               <span class="detail-label">حالة الجزء</span>
               <span [class]="getLegStatusClass(selectedLegDetail.legStatus)">
                 <span class="status-dot"></span>
-                {{ getLegStatusLabel(selectedLegDetail.legStatus) }}
+                {{ (getLegStatusLabel(selectedLegDetail.legStatus) | enumTranslate) }}
               </span>
             </div>
             @if (selectedLegDetail.readyByEstimate) {

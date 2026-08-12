@@ -29,6 +29,8 @@ import {
 } from '@core/models/pharmacist-management.model';
 import { GetPharmacyBranchResponseDTO } from '../../../branches/pharmacy-branch.model';
 
+import { EnumTranslatePipe } from '@core/pipes/enum-translate.pipe';
+
 /** Validation error map: field name → error message */
 interface FieldErrors {
   [field: string]: string;
@@ -38,7 +40,7 @@ interface FieldErrors {
   selector: 'app-pharmacists-list',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
+  imports: [EnumTranslatePipe, 
     CommonModule,
     FormsModule,
     ToastModule,

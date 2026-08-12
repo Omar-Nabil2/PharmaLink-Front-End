@@ -5,10 +5,12 @@ import { PrescriptionReviewService } from '@core/services/prescription-review.se
 import { GetAllPrescriptionReviewDto } from '@core/interfaces/prescription-review.interface';
 import { environment } from '../../../environments/environment';
 
+import { EnumTranslatePipe } from '@core/pipes/enum-translate.pipe';
+
 @Component({
   selector: 'app-patient-prescriptions-list',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [EnumTranslatePipe, CommonModule, RouterModule],
   templateUrl: './patient-prescription-review.component.html'
 })
 export class PatientPrescriptionsListComponent implements OnInit {

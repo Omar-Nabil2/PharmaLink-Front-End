@@ -20,6 +20,8 @@ import { AdminPharmacyService } from '@core/services/admin-pharmacy.service';
 import { ErrorHandlerService } from '@core/services/error-handler.service';
 import { MessageService } from 'primeng/api';
 import { environment } from '@environments/environment';
+
+import { EnumTranslatePipe } from '@core/pipes/enum-translate.pipe';
 import {
   AdminPharmacySummaryDto,
   AdminCreatePharmacyRequest,
@@ -36,7 +38,7 @@ type DialogMode = 'create' | 'edit';
   selector: 'app-admin-pharmacies',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [EnumTranslatePipe, CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './admin-pharmacies.component.html',
   styleUrl: './admin-pharmacies.component.scss',
 })
