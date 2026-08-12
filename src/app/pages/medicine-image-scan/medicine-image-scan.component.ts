@@ -169,12 +169,10 @@ export class MedicineImageScanComponent {
         return 'مطابقة محتملة';
       case 'alternativesuggested':
         return 'بديل مقترح';
-      case 'unavailable':
-        return 'موجود لكن غير متوفر';
       case 'notfound':
-        return 'غير موجود في الكتالوج';
+        return 'غير موجود';
       default:
-        return status || 'غير محدد';
+        return status || 'مجهول';
     }
   }
 
@@ -183,10 +181,9 @@ export class MedicineImageScanComponent {
       case 'exactmatch':
         return 'bg-emerald-50 text-emerald-700 border-emerald-200';
       case 'fuzzymatch':
-        return 'bg-sky-50 text-sky-700 border-sky-200';
+        return 'bg-teal-50 text-teal-700 border-teal-200';
       case 'alternativesuggested':
         return 'bg-amber-50 text-amber-700 border-amber-200';
-      case 'unavailable':
       case 'notfound':
         return 'bg-rose-50 text-rose-700 border-rose-200';
       default:

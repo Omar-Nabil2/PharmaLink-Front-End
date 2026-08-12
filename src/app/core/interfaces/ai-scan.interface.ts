@@ -12,7 +12,7 @@ export interface MedicineImageScanResponse {
   matchedDrugId?: string | null;
   suggestedAlternativeDrugId?: string | null;
   cartDrugId?: string | null;
-  matchStatus: 'NotFound' | 'ExactMatch' | 'FuzzyMatch' | 'AlternativeSuggested' | 'Unavailable' | string;
+  matchStatus: 'NotFound' | 'ExactMatch' | 'FuzzyMatch' | 'AlternativeSuggested' | string;
   matchScore: number;
   matchReason?: string | null;
   canBeAddedToCart: boolean;

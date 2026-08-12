@@ -139,8 +139,6 @@ export class PatientPrescriptionDetailComponent implements OnInit, OnDestroy {
         return 'مطابقة محتملة';
       case 'alternativesuggested':
         return 'بديل مقترح';
-      case 'unavailable':
-        return 'غير متوفر';
       case 'notfound':
         return 'غير موجود';
       default:
@@ -156,7 +154,6 @@ export class PatientPrescriptionDetailComponent implements OnInit, OnDestroy {
         return 'bg-sky-50 text-sky-700 border-sky-200';
       case 'alternativesuggested':
         return 'bg-amber-50 text-amber-700 border-amber-200';
-      case 'unavailable':
       case 'notfound':
         return 'bg-rose-50 text-rose-700 border-rose-200';
       default:

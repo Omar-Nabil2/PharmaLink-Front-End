@@ -17,7 +17,7 @@ export interface MedicineDto {
     confidence?: number;
     matchedDrugId?: string | null;
     suggestedAlternativeDrugId?: string | null;
-    matchStatus?: 'NotFound' | 'ExactMatch' | 'FuzzyMatch' | 'AlternativeSuggested' | 'Unavailable' | string;
+    matchStatus?: 'NotFound' | 'ExactMatch' | 'FuzzyMatch' | 'AlternativeSuggested' | string;
     matchReason?: string | null;
     matchScore?: number | null;
     aiNote?: string | null;
