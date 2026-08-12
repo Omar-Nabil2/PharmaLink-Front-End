@@ -28,9 +28,13 @@
                     <i class="pi pi-image text-emerald-600"></i> الصورة المرفوعة
                 </h2>
                 <div
-                    class="bg-slate-100 rounded-xl overflow-hidden flex items-center justify-center border border-slate-200">
-                    <img [src]="prescriptionData.imageUrl" (error)="onImageError($event)" alt="صورة الروشتة"
+                    class="bg-slate-100 rounded-xl overflow-hidden flex items-center justify-center border border-slate-200 min-h-[200px]">
+                    <img *ngIf="prescriptionImageUrl" [src]="prescriptionImageUrl" (error)="onImageError($event)" alt="صورة الروشتة"
                         class="max-w-full h-auto max-h-[400px] object-contain" />
+                    <div *ngIf="!prescriptionImageUrl" class="text-slate-400 py-10 flex flex-col items-center">
+                       <i class="pi pi-spin pi-spinner text-3xl mb-2"></i>
+                       <span>جاري تحميل الروشتة...</span>
+                    </div>
                 </div>
             </div>
 

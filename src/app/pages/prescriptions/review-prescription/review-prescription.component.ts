@@ -28,6 +28,7 @@ export class ReviewPrescriptionComponent implements OnInit {
     isLoading = true;
     medicineSearchResults: any[] = [];
     filteredMedicines: any[] = [];
+    prescriptionImageUrl: string | null = null;
 
     constructor(
         private readonly fb: FormBuilder,
@@ -59,34 +60,7 @@ export class ReviewPrescriptionComponent implements OnInit {
     loadPrescription(): void {
         this.reviewService.getReview(this.prescriptionId).subscribe({
             next: (data) => {
-                if (data.imageUrl) {
-                    const lastHttpIndex = data.imageUrl.lastIndexOf('http');
-                    if (lastHttpIndex > 0) {
-                        data.imageUrl = data.imageUrl.substring(lastHttpIndex);
-                    } else if (!data.imageUrl.startsWith('http')) {
-                        const prefix = data.imageUrl.startsWith('/') ? '' : '/';
-                        data.imageUrl = 'https://pharmalink.tryasp.net' + prefix + data.imageUrl;
-                    }
-                    
-                    this.http.get(data.imageUrl, { responseType: 'blob' }).subscribe({
-                        next: (blob) => {
-                            const reader = new FileReader();
-                            reader.onload = (e) => {
-                                if (this.prescriptionData) {
-                                    this.prescriptionData.imageUrl = e.target?.result as string;
-                                    this.cdr.detectChanges();
-                                }
-                            };
-                            reader.readAsDataURL(blob);
-                        },
-                        error: (err) => {
-                            console.error('Failed to load prescription image blob:', err);
-                        }
-                    });
-                }
-
                 this.prescriptionData = data;
-
                 if (this.isReadOnly) {
                     this.reviewForm.disable();
                 } else {
@@ -104,6 +78,32 @@ export class ReviewPrescriptionComponent implements OnInit {
 
                 this.isLoading = false;
                 this.cdr.detectChanges();
+
+                if (data.imageUrl) {
+                    const lastHttpIndex = data.imageUrl.lastIndexOf('http');
+                    if (lastHttpIndex > 0) {
+                        data.imageUrl = data.imageUrl.substring(lastHttpIndex);
+                    } else if (!data.imageUrl.startsWith('http')) {
+                        const prefix = data.imageUrl.startsWith('/') ? '' : '/';
+                        data.imageUrl = 'https://pharmalink.tryasp.net' + prefix + data.imageUrl;
+                    }
+                    
+                    this.http.get(data.imageUrl, { responseType: 'blob' }).subscribe({
+                        next: (blob) => {
+                            const reader = new FileReader();
+                            reader.onload = (e) => {
+                                this.prescriptionImageUrl = e.target?.result as string;
+                                this.cdr.detectChanges();
+                            };
+                            reader.readAsDataURL(blob);
+                        },
+                        error: (err) => {
+                            console.error('Failed to load prescription image blob:', err);
+                            this.prescriptionImageUrl = data.imageUrl;
+                            this.cdr.detectChanges();
+                        }
+                    });
+                }
             },
             error: (err) => {
                 console.error('Error loading prescription:', err);
