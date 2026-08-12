@@ -210,8 +210,7 @@ export class PrescriptionReviewService {
     }
 
     return this.http.get<PaginatedResponse<GetAllPrescriptionReviewDto>>(
-      `${this.url}/PrescriptionReviews/GetAllPrescriptionsforpatient?PageNumber=1&PageSize=10
-`,
+      `${this.url}/PrescriptionReviews/GetAllPrescriptionsforPatient`,
       { params }
     );
   }
