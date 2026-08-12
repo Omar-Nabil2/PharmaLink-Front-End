@@ -96,7 +96,6 @@
                 <th class="pb-3 font-semibold">اسم الدواء</th>
                 <th class="pb-3 font-semibold text-center">الكمية</th>
                 <th class="pb-3 font-semibold text-center">الحالة</th>
-                <th class="pb-3 font-semibold">ملاحظة</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-100 text-sm">
@@ -124,12 +123,9 @@
                     ثقة {{ (med.confidence * 100) | number:'1.0-0' }}%
                   </div>
                 </td>
-                <td class="py-3 text-xs text-slate-500 leading-5 max-w-[220px]">
-                  {{ med.matchReason || med.aiNote || 'لا توجد ملاحظات' }}
-                </td>
               </tr>
               <tr *ngIf="!reviewDetail.medicines || reviewDetail.medicines.length === 0">
-                <td [attr.colspan]="reviewDetail.status === 'Approved' ? 5 : 4" class="py-8 text-center text-slate-400 text-xs">لا توجد أدوية محددة حتى الآن.</td>
+                <td [attr.colspan]="reviewDetail.status === 'Approved' ? 4 : 3" class="py-8 text-center text-slate-400 text-xs">لا توجد أدوية محددة حتى الآن.</td>
               </tr>
             </tbody>
           </table>
