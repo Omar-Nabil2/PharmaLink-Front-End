@@ -21,7 +21,7 @@ import { DrugDto, DrugCategory } from '../../core/interfaces/drug.interface';
 @Component({
   selector: 'app-drugs',
   standalone: true,
-  imports: [CommonModule, TagModule, TreeSelectModule, FormsModule, RouterLink],
+  imports: [CommonModule, TagModule, TreeSelectModule, FormsModule],
   templateUrl: './drugs.html',
 })
 export class DrugsComponent implements OnInit {

@@ -31,7 +31,7 @@ export class ReviewTeamDashboardComponent implements OnInit {
       inquiryMetrics: this.medicalInquiryService.getMetrics(),
     }).subscribe({
       next: ({ reviews, inquiries, inquiryMetrics }) => {
-        this.pendingReviews.set(reviews.totalPages ?? reviews.items?.length ?? 0);
+        this.pendingReviews.set(reviews.totalCount ?? reviews.items?.length ?? 0);
         this.pendingInquiries.set(
           inquiryMetrics.pendingInquiries ?? inquiries.filter((i) => i.status === 'Pending').length,
         );
