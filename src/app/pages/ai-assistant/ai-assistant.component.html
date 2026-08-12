@@ -85,7 +85,7 @@
     <!-- CHAT TAB -->
     <div *ngIf="activeTab() === 'chat'" class="tab-content flex-1 flex flex-col w-full h-full bg-slate-50 relative overflow-hidden">
       <!-- Messages Area -->
-      <div class="flex-1 overflow-y-auto p-2 sm:p-6 flex flex-col gap-4 sm:gap-6 custom-scrollbar pb-32" #chatScroll>
+      <div class="flex-1 overflow-y-auto p-2 sm:p-6 flex flex-col gap-4 sm:gap-6 custom-scrollbar pb-48" #chatScroll>
         <div *ngFor="let msg of messages(); let i = index; trackBy: trackByMessage" class="flex gap-2 sm:gap-3 max-w-[92%] sm:max-w-[85%] message-enter" [ngClass]="msg.role === 'user' ? 'self-end' : 'self-start'">
           <div *ngIf="msg.role === 'assistant'" class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 shadow-sm" [ngClass]="msg.isError ? 'bg-red-100 text-red-600' : 'bg-white text-teal-600 border border-teal-100'">
             <svg *ngIf="!msg.isError" class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A2.5 2.5 0 0 0 5 15.5 2.5 2.5 0 0 0 7.5 18 2.5 2.5 0 0 0 10 15.5 2.5 2.5 0 0 0 7.5 13m9 0a2.5 2.5 0 0 0-2.5 2.5 2.5 2.5 0 0 0 2.5 2.5 2.5 2.5 0 0 0 2.5-2.5 2.5 2.5 0 0 0-2.5-2.5z"/></svg>
@@ -110,9 +110,9 @@
       </div>
 
       <!-- Input Area -->
-      <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-slate-50 via-slate-50 to-transparent pt-10 pb-4 px-4 sm:pb-6 sm:px-6 z-10">
-        <div class="max-w-4xl mx-auto relative flex items-end gap-2 sm:gap-3">
-          <button class="w-12 h-12 rounded-xl bg-white border border-gray-300 text-gray-500 flex items-center justify-center hover:bg-red-50 hover:text-red-500 hover:border-red-200 transition-colors shrink-0 shadow-sm" (click)="clearChat()" title="محادثة جديدة">
+      <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-slate-50 via-slate-50 to-transparent pt-10 pb-4 px-4 sm:pb-6 sm:px-6 z-10 pointer-events-none">
+        <div class="max-w-4xl mx-auto relative flex items-end gap-2 sm:gap-3 pointer-events-auto">
+          <button class="w-12 h-12 rounded-xl bg-white border border-gray-300 text-gray-500 flex items-center justify-center hover:bg-red-50 hover:text-red-500 hover:border-red-200 transition-colors shrink-0 shadow-sm cursor-pointer" (click)="clearChat()" title="محادثة جديدة">
             <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
           </button>
           

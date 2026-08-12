@@ -155,14 +155,14 @@
       <h2 class="text-lg font-bold text-gray-800 mb-4">مراجعة الأدوية</h2>
       <div class="divide-y divide-gray-100">
         <div *ngFor="let item of cart.items; trackBy: trackByItemId" class="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4 text-sm border-b border-gray-50 last:border-0">
-          <div class="font-bold text-gray-800 leading-tight text-base sm:text-sm">
+          <div class="font-bold text-gray-800 leading-tight text-base sm:text-sm flex-1 min-w-0">
             {{ item.drugArabicName || item.drugBrandName }}
             <span *ngIf="item.requiresPrescription" class="inline-flex items-center gap-1 bg-red-50 text-red-600 text-[10px] px-2 py-0.5 rounded-full font-bold ms-2 align-middle mt-1 sm:mt-0">
               <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
               يلزم روشتة
             </span>
           </div>
-          <div class="text-gray-500 flex items-center justify-between sm:justify-end w-full sm:w-auto bg-gray-50 sm:bg-transparent p-2 sm:p-0 rounded-lg sm:rounded-none">
+          <div class="text-gray-500 flex items-center justify-between sm:justify-end w-full sm:w-auto bg-gray-50 sm:bg-transparent p-2 sm:p-0 rounded-lg sm:rounded-none shrink-0 whitespace-nowrap">
             <span class="text-xs sm:text-sm" dir="rtl">{{ item.quantity }} × {{ item.unitPriceSnapshot | number:'1.2-2' }} ج</span>
             <span class="font-black text-teal-600 text-sm sm:text-base ms-2">الإجمالي: {{ item.lineTotal | number:'1.2-2' }} ج</span>
           </div>
