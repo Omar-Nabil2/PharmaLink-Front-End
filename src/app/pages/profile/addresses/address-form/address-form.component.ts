@@ -62,7 +62,8 @@ export class AddressFormComponent implements OnInit {
         next: (addresses) => {
           if (!addresses || addresses.length === 0) {
             this.isFirstAddress = true;
-            this.addressForm.patchValue({ isDefault: true });
+            this.addressForm.patchValue({ isDefault: false });
+            this.addressForm.get('isDefault')?.disable();
           }
         }
       });
@@ -108,7 +109,7 @@ export class AddressFormComponent implements OnInit {
     }
 
     this.isSubmitting = true;
-    const formData = this.addressForm.value;
+    const formData = this.addressForm.getRawValue();
 
     if (this.isEditMode && this.addressId) {
       this.addressesService.updateAddress(this.addressId, formData).subscribe({
@@ -155,6 +156,7 @@ export class AddressFormComponent implements OnInit {
           latitude: position.coords.latitude,
           longitude: position.coords.longitude
         });
+        this.cdr.detectChanges();
         Swal.fire('نجاح', 'تم تحديد موقعك بنجاح!', 'success');
       },
       (error) => {
