@@ -68,11 +68,11 @@
           </div>
           <div class="rounded-lg border border-green-100 bg-white p-3">
             <span class="text-xs text-surface-500 block">حالة المراجعة</span>
-            <span class="text-sm font-bold text-surface-900">{{ responseData?.status || 'PendingReview' }}</span>
+            <span class="text-sm font-bold text-surface-900">{{ responseData?.status === 'PendingReview' ? 'قيد المراجعة' : (responseData?.status || 'قيد المراجعة') }}</span>
           </div>
           <div class="rounded-lg border border-green-100 bg-white p-3">
             <span class="text-xs text-surface-500 block">حالة المعالجة</span>
-            <span class="text-sm font-bold text-surface-900">{{ responseData?.processingStatus || 'Processing' }}</span>
+            <span class="text-sm font-bold text-surface-900">{{ responseData?.processingStatus === 'Processing' ? 'جاري المعالجة' : (responseData?.processingStatus || 'جاري المعالجة') }}</span>
           </div>
         </div>
 
