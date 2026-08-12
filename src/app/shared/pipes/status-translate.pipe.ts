@@ -16,7 +16,7 @@ const STATUS_ARABIC_MAP: Record<string, string> = {
   // ── Common delivery aliases ────────────────────────────────
   InDelivery: 'جاري التوصيل',
   OutForDelivery: 'جاري التوصيل',
-  Delivered: 'تم التسليم',
+  Delivered: 'مكتمل',
   // ── Shared terminal state ──────────────────────────────────
   Cancelled: 'ملغى',
   // ── ItemStatus ─────────────────────────────────────────────

@@ -4,11 +4,12 @@ import { TableModule, TableLazyLoadEvent } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { CardModule } from 'primeng/card';
 import { DriverService, DeliveryJobHistory } from '@core/services/driver.service';
+import { StatusTranslatePipe } from '@shared/pipes/status-translate.pipe';
 
 @Component({
     selector: 'app-driver-history',
     standalone: true,
-    imports: [CommonModule, TableModule, TagModule, CardModule],
+    imports: [CommonModule, TableModule, TagModule, CardModule, StatusTranslatePipe],
     templateUrl: './driver-history.component.html'
 })
 export class DriverHistoryComponent {

@@ -42,7 +42,7 @@
                         {{ job.completedAtUtc | date:'dd/MM/yyyy, hh:mm a' }}
                     </td>
                     <td class="text-center">
-                        <p-tag severity="success" value="مكتمل" [rounded]="true"></p-tag>
+                        <p-tag [severity]="job.status === 'Cancelled' ? 'danger' : 'success'" [value]="job.status | statusTranslate" [rounded]="true"></p-tag>
                     </td>
                 </tr>
             </ng-template>
