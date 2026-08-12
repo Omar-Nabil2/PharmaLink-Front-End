@@ -49,8 +49,8 @@
             <div class="relative mr-1">
               <button (click)="toggleProfileMenu()" class="flex items-center gap-2 px-2 py-1.5 rounded-full hover:bg-slate-100 transition border border-transparent hover:border-slate-200 cursor-pointer">
                 <div class="w-8 h-8 rounded-full bg-teal-100 text-teal-700 flex items-center justify-center font-bold overflow-hidden border border-slate-200 shrink-0">
-                  <img *ngIf="profilePictureUrl" [src]="profilePictureUrl" alt="Profile" class="w-full h-full object-cover">
-                  <span *ngIf="!profilePictureUrl">{{ fullName.charAt(0) }}</span>
+                  <img *ngIf="profilePictureUrl()" [src]="profilePictureUrl()" alt="Profile" class="w-full h-full object-cover">
+                  <span *ngIf="!profilePictureUrl()">{{ fullName.charAt(0) }}</span>
                 </div>
                 <span class="text-sm font-bold text-slate-800 max-w-[100px] truncate hidden xl:inline">{{ fullName }}</span>
                 <i class="pi pi-chevron-down text-xs text-slate-400"></i>
@@ -131,8 +131,8 @@
               <div class="h-px bg-surface-pressed my-2 mx-2"></div>
               <a routerLink="/patient/profile" (click)="menuOpen = false" class="px-4 py-3 flex items-center gap-4 text-body hover:bg-canvas-soft border border-transparent rounded-xl transition cursor-pointer font-bold">
                 <div class="w-9 h-9 rounded-full overflow-hidden bg-teal-100/50 flex items-center justify-center shrink-0 border border-teal-100">
-                   <img *ngIf="profilePictureUrl" [src]="profilePictureUrl" alt="Profile" class="w-full h-full object-cover">
-                   <span *ngIf="!profilePictureUrl" class="text-teal-700 font-bold text-sm">{{ fullName.charAt(0) }}</span>
+                   <img *ngIf="profilePictureUrl()" [src]="profilePictureUrl()" alt="Profile" class="w-full h-full object-cover">
+                   <span *ngIf="!profilePictureUrl()" class="text-teal-700 font-bold text-sm">{{ fullName.charAt(0) }}</span>
                 </div>
                 الملف الشخصي
               </a>
