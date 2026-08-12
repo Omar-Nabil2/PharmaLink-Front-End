@@ -1,5 +1,5 @@
-import { Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, OnDestroy, inject, signal, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
@@ -18,6 +18,12 @@ import { Subscription } from 'rxjs';
 export class DriverDashboardComponent implements OnInit, OnDestroy {
     private driverService = inject(DriverService);
     private messageService = inject(MessageService);
+    private platformId = inject(PLATFORM_ID);
+    
+    // Map variables
+    private map: any;
+    private routingControl: any;
+
 
     // استخدام Signals
     availableJobs = signal<DeliveryJobNotification[]>([]);
@@ -30,25 +36,23 @@ export class DriverDashboardComponent implements OnInit, OnDestroy {
         const token = localStorage.getItem('token') || '';
         this.driverService.startConnection(token);
 
-        // ==========================================
-        // 1. تحديد موقع الطيار أولاً، ثم جلب الطلبات القريبة
-        // ==========================================
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const driverLat = position.coords.latitude;
-                    const driverLng = position.coords.longitude;
-                    this.loadInitialJobs(driverLat, driverLng); // جلب الطلبات القريبة
-                },
-                (error) => {
-                    console.warn('لم نتمكن من تحديد موقع الطيار، سيتم جلب كل الطلبات كبديل.');
-                    this.loadInitialJobs(null, null);
-                },
-                { enableHighAccuracy: false, timeout: 20000, maximumAge: 60000 }
-            );
-        } else {
-            this.loadInitialJobs(null, null);
-        }
+        // 1. Check for Active Job First
+        this.isLoading.set(true);
+        this.driverService.getActiveJob().subscribe({
+            next: (active) => {
+                this.isLoading.set(false);
+                if (active) {
+                    this.activeJob.set(active);
+                    this.initMap(active);
+                } else {
+                    this.loadInitialJobsWithLocation();
+                }
+            },
+            error: (err) => {
+                this.isLoading.set(false);
+                this.loadInitialJobsWithLocation();
+            }
+        });
 
         // ==========================================
         // 2. استقبال الطلبات الجديدة عبر SignalR (زي ما هي بالظبط)
@@ -88,6 +92,93 @@ export class DriverDashboardComponent implements OnInit, OnDestroy {
                 }
             })
         );
+    }
+
+
+    private loadInitialJobsWithLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    this.loadInitialJobs(position.coords.latitude, position.coords.longitude);
+                },
+                (error) => {
+                    this.loadInitialJobs(null, null);
+                },
+                { enableHighAccuracy: false, timeout: 20000, maximumAge: 60000 }
+            );
+        } else {
+            this.loadInitialJobs(null, null);
+        }
+    }
+
+    private async initMap(job: DeliveryJobNotification) {
+        if (!isPlatformBrowser(this.platformId)) return;
+        
+        try {
+            const L = await import('leaflet');
+            await import('leaflet-routing-machine');
+
+            // Wait a tick for DOM to render the map container
+            setTimeout(() => {
+                const mapContainer = document.getElementById('driver-map');
+                if (!mapContainer) return;
+                
+                if (this.map) {
+                    this.map.remove();
+                }
+
+                // Default center to pharmacy or driver
+                const centerLat = job.pharmacyLatitude || 30.0444;
+                const centerLng = job.pharmacyLongitude || 31.2357;
+
+                this.map = L.map('driver-map').setView([centerLat, centerLng], 13);
+
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors'
+                }).addTo(this.map);
+
+                // Add Routing if we have driver location
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition((pos) => {
+                        const driverLat = pos.coords.latitude;
+                        const driverLng = pos.coords.longitude;
+                        
+                        // Custom icon for Driver
+                        const driverIcon = L.icon({
+                            iconUrl: 'https://cdn-icons-png.flaticon.com/512/3204/3204987.png',
+                            iconSize: [38, 38]
+                        });
+                        
+                        // Custom icon for Pharmacy/Customer
+                        const locationIcon = L.icon({
+                            iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
+                            iconSize: [38, 38]
+                        });
+
+                        const waypoints = [
+                            L.latLng(driverLat, driverLng),
+                            L.latLng(job.pharmacyLatitude || centerLat, job.pharmacyLongitude || centerLng),
+                            L.latLng(job.latitude || centerLat, job.longitude || centerLng)
+                        ];
+
+                        this.routingControl = (L as any).Routing.control({
+                            waypoints: waypoints,
+                            routeWhileDragging: false,
+                            addWaypoints: false,
+                            show: false, // hide the detailed turn-by-turn text box to save space
+                            createMarker: (i: number, waypoint: any, n: number) => {
+                                const isDriver = i === 0;
+                                return L.marker(waypoint.latLng, {
+                                    icon: isDriver ? driverIcon : locationIcon
+                                });
+                            }
+                        }).addTo(this.map);
+                    });
+                }
+            }, 100);
+        } catch (e) {
+            console.error('Failed to load map', e);
+        }
     }
 
     // ==========================================
@@ -130,6 +221,7 @@ export class DriverDashboardComponent implements OnInit, OnDestroy {
                 this.availableJobs.set([]); // تفريغ باقي الطلبات
                 this.isLoading.set(false);
                 this.messageService.add({ severity: 'success', summary: 'تم القبول', detail: 'تم قبول الطلب بنجاح، توجه للصيدلية!' });
+                this.initMap(job);
             },
             error: (err) => {
                 this.isLoading.set(false);
@@ -183,7 +275,12 @@ export class DriverDashboardComponent implements OnInit, OnDestroy {
             next: () => {
                 this.activeJob.set(null);
                 this.isLoading.set(false);
+                if (this.map) {
+                    this.map.remove();
+                    this.map = null;
+                }
                 this.messageService.add({ severity: 'success', summary: 'تم التسليم', detail: 'تم إنهاء الطلب بنجاح، أنت متاح الآن.' });
+                this.loadInitialJobsWithLocation();
             },
             error: () => {
                 this.isLoading.set(false);

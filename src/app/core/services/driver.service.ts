@@ -155,6 +155,10 @@ export class DriverService {
         return this.http.get<DeliveryJobNotification[]>(`${this.baseUrl}/DeliveryDrivers/available-jobs`, { params });
     }
 
+    getActiveJob(): Observable<DeliveryJobNotification | null> {
+        return this.http.get<DeliveryJobNotification | null>(`${this.baseUrl}/DeliveryDrivers/active-job`);
+    }
+
     getDriverHistory(pageNumber: number, pageSize: number) {
         let params = new HttpParams()
             .set('pageNumber', pageNumber.toString())
