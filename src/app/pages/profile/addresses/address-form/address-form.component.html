@@ -173,9 +173,14 @@
       </div>
 
       <!-- Default Address Toggle -->
-      <div class="mb-8 border-t border-slate-100 pt-6" *ngIf="!isFirstAddress">
-        <label class="flex items-center gap-3 cursor-pointer group w-fit">
-          <input type="checkbox" formControlName="isDefault" class="w-5 h-5 accent-teal-600 cursor-pointer">
+      <div class="mb-8 border-t border-slate-100 pt-6">
+        <label class="flex items-center gap-3 w-fit" [ngClass]="isFirstAddress ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer group'">
+          <div class="relative flex items-center">
+            <input type="checkbox" formControlName="isDefault" class="peer sr-only">
+            <div class="w-5 h-5 border-2 border-slate-300 rounded bg-slate-50 peer-checked:bg-teal-600 peer-checked:border-teal-600 flex items-center justify-center transition-all">
+              <i class="pi pi-check text-white text-xs opacity-0 peer-checked:opacity-100 font-bold"></i>
+            </div>
+          </div>
           <span class="text-slate-800 font-bold text-sm">تعيين كعنوان افتراضي للطلبات القادمة</span>
         </label>
       </div>
