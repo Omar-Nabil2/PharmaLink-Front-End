@@ -1,4 +1,3 @@
-import { EnumTranslatePipe } from '@core/pipes/enum-translate.pipe';
 import {
   Component,
   OnInit,
@@ -73,7 +72,7 @@ import { Router } from '@angular/router';
   selector: 'app-admin-orders',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [EnumTranslatePipe, CommonModule, FormsModule, ToastModule],
+  imports: [CommonModule, FormsModule, ToastModule],
   providers: [MessageService],
   templateUrl: './admin-orders.component.html',
   styleUrl: './admin-orders.component.scss',

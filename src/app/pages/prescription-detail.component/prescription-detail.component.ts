@@ -1,4 +1,3 @@
-import { EnumTranslatePipe } from '@core/pipes/enum-translate.pipe';
 import { Component, OnDestroy, OnInit, inject ,ChangeDetectorRef} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
@@ -10,7 +9,7 @@ import { ToastModule } from 'primeng/toast';
 @Component({
   selector: 'app-patient-prescription-detail',
   standalone: true,
-  imports: [EnumTranslatePipe, CommonModule, RouterModule, ToastModule],
+  imports: [CommonModule, RouterModule, ToastModule],
   providers: [MessageService],
   templateUrl: './prescription-detail.component.html' // أو ضع الـ HTML هنا إذا كان Inline
 })

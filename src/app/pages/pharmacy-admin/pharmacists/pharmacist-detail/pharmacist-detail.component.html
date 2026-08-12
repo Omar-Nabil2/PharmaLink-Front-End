@@ -14,7 +14,7 @@
           <h1 class="text-base md:text-xl lg:text-2xl font-bold tracking-tight text-foreground">{{ pharmacist.fullName }}</h1>
           <span [class]="getStatusClass(pharmacist.status)">
             <span class="status-dot"></span>
-            {{ (pharmacist.status | enumTranslate) }}
+            {{ getStatusLabel(pharmacist.status) }}
           </span>
         </div>
         <h1 *ngIf="isLoading || !pharmacist" class="text-base md:text-xl lg:text-2xl font-bold tracking-tight text-foreground">تفاصيل الصيدلي</h1>

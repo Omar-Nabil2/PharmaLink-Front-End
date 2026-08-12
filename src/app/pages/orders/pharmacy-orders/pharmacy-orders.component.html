@@ -205,7 +205,7 @@
                   class="inline-flex items-center rounded-full px-3 py-1 text-[10px] lg:text-xs font-medium"
                   [ngClass]="getLegStatusClasses(order.legStatus ?? order.orderStatus!)"
                 >
-                  {{ (order.legStatus ?? order.orderStatus! | enumTranslate) }}
+                  {{ getLegStatusLabel(order.legStatus ?? order.orderStatus!) }}
                 </span>
               </td>
               <td class="p-4">
@@ -264,7 +264,7 @@
               class="inline-flex items-center rounded-full px-3 py-1 text-[10px] lg:text-xs font-medium"
               [ngClass]="getLegStatusClasses(detail.legStatus ?? detail.orderStatus!)"
             >
-              {{ (detail.legStatus ?? detail.orderStatus! | enumTranslate) }}
+              {{ getLegStatusLabel(detail.legStatus ?? detail.orderStatus!) }}
             </span>
           </div>
           <div class="flex justify-between border-b border-border pb-2">
@@ -361,7 +361,7 @@
                     class="inline-flex items-center rounded-full px-3 py-1 text-[10px] lg:text-xs font-medium"
                     [ngClass]="getLegStatusClasses(leg.legStatus)"
                   >
-                    {{ (leg.legStatus | enumTranslate) }}
+                    {{ getLegStatusLabel(leg.legStatus) }}
                   </span>
                 </div>
               }

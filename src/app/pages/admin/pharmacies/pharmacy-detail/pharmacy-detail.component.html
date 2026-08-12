@@ -67,7 +67,7 @@
             ترخيص: {{ pharmacy.licenseNumber }}
           </span>
           <span class="status-badge" [ngClass]="getStatusClass(pharmacy.verificationStatus)">
-            {{ (pharmacy.verificationStatus | enumTranslate) }}
+            {{ getStatusLabel(pharmacy.verificationStatus) }}
           </span>
         </div>
       </div>
@@ -141,7 +141,7 @@
             <span class="info-label">حالة التوثيق</span>
             <span class="info-value">
               <span class="status-badge" [ngClass]="getStatusClass(pharmacy.verificationStatus)">
-                {{ (pharmacy.verificationStatus | enumTranslate) }}
+                {{ getStatusLabel(pharmacy.verificationStatus) }}
               </span>
             </span>
           </div>

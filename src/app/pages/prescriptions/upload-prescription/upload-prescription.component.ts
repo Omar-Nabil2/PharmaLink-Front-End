@@ -1,4 +1,3 @@
-import { EnumTranslatePipe } from '@core/pipes/enum-translate.pipe';
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpEventType } from '@angular/common/http';
@@ -11,7 +10,7 @@ import { ProgressBarModule } from 'primeng/progressbar';
 @Component({
   selector: 'app-upload-prescription',
   standalone: true,
-  imports: [EnumTranslatePipe, CommonModule, RouterModule, ToastModule, ProgressBarModule],
+  imports: [CommonModule, RouterModule, ToastModule, ProgressBarModule],
   providers: [MessageService],
   templateUrl: './upload-prescription.component.html'
 })
