@@ -81,7 +81,7 @@
           <span class="block type-body-sm-strong text-body mb-1">تاريخ إنشاء الحساب</span>
           <p class="type-body-md text-ink">
             <i class="pi pi-calendar text-xs text-body me-1"></i>
-            {{ adminData.createdAt ? (adminData.createdAt | date: 'MMMM d, y') : 'غير محدد' }}
+            {{ adminData.createdAt ? (adminData.createdAt | date:'longDate') : 'غير محدد' }}
           </p>
         </div>
       </div>
@@ -140,7 +140,7 @@
           <span class="block type-body-sm-strong text-body mb-1">عضو منذ</span>
           <p class="type-body-md text-ink">
             <i class="pi pi-calendar text-xs text-body me-1"></i>
-            {{ patientData.createdAt | date: 'MMMM d, y' }}
+            {{ patientData.createdAt | date:'longDate' }}
           </p>
         </div>
       </div>
