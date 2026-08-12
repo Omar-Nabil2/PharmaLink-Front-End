@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
@@ -44,31 +44,31 @@ export class PatientLayoutComponent implements OnInit {
     return localStorage.getItem('fullName') || 'حسابي';
   }
 
-  get profilePictureUrl(): string | null {
-    if (typeof window === 'undefined') return null;
-    return localStorage.getItem('profilePictureUrl');
-  }
+  readonly profilePictureUrl = signal<string | null>(null);
 
   prepareRoute(outlet: RouterOutlet) {
     return outlet && outlet.isActivated ? outlet.activatedRoute.snapshot.url.join('') : '';
   }
 
   ngOnInit() {
+    if (typeof window !== 'undefined') {
+      this.profilePictureUrl.set(localStorage.getItem('profilePictureUrl'));
+    }
+
     if (this.authService.isLoggedIn()) {
       // Initialize cart count
       this.cartService.getCart().subscribe({ error: () => {} });
       
-      if (!localStorage.getItem('profilePictureUrl')) {
       this.profileService.getPatientProfilePictureUrl().subscribe({
         next: (res) => {
             if (res.url) {
               localStorage.setItem('profilePictureUrl', res.url);
+              this.profilePictureUrl.set(res.url);
             }
         },
         error: () => {}
       });
     }
-  }
   }
 
   toggleProfileMenu(): void {

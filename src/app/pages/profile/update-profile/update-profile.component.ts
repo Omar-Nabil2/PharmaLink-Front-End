@@ -19,7 +19,12 @@ export class UpdateProfileComponent implements OnInit {
     isFetching = true;
     isPatient = false;
     isPharmacyAdmin = false;
-    isDriver = false; // 👈 متغير جديد للطيار
+    isDriver = false;
+
+    selectedFile: File | null = null;
+    imagePreview: string | null = null;
+    isUploadingPicture = false;
+    fullNameForAvatar = ''; // 👈 متغير جديد للطيار
 
     // 👈 ضفنا vehicleInfo هنا
     originalData: { fullName: string; phoneNumber: string; vehicleInfo?: string } = { fullName: '', phoneNumber: '' };
@@ -44,6 +49,7 @@ export class UpdateProfileComponent implements OnInit {
     ngOnInit(): void {
         const role = typeof window !== 'undefined' ? localStorage.getItem('roleName') : null;
         this.isPharmacyAdmin = role === 'PharmacyAdmin';
+        this.isPatient = role === 'Patient';
         this.isDriver = role === 'DeliveryDriver'; // 👈 تحديد إذا كان اليوزر طيار
 
         // لو اليوزر طيار، نفعّل حقل الـ vehicleInfo ونخليه مطلوب
@@ -73,7 +79,10 @@ export class UpdateProfileComponent implements OnInit {
             next: (data: any) => {
                 const fetchedFullName = data?.fullName ?? data?.value?.fullName ?? '';
                 const fetchedPhoneNumber = data?.phoneNumber ?? data?.value?.phoneNumber ?? '';
-                const fetchedVehicleInfo = data?.vehicleInfo ?? data?.value?.vehicleInfo ?? ''; // 👈 جلب بيانات المركبة
+                const fetchedVehicleInfo = data?.vehicleInfo ?? data?.value?.vehicleInfo ?? '';
+                const fetchedProfilePic = data?.profilePictureUrl ?? data?.value?.profilePictureUrl ?? '';
+                this.imagePreview = fetchedProfilePic || null;
+                this.fullNameForAvatar = fetchedFullName; // 👈 جلب بيانات المركبة
 
                 this.originalData = {
                     fullName: fetchedFullName,
@@ -186,6 +195,42 @@ export class UpdateProfileComponent implements OnInit {
         });
     }
 
+
+    onFileSelected(event: any): void {
+        const file = event.target.files[0];
+        if (file) {
+            this.selectedFile = file;
+            const reader = new FileReader();
+            reader.onload = () => {
+                this.imagePreview = reader.result as string;
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    uploadPicture(): void {
+        if (!this.selectedFile) return;
+        this.isUploadingPicture = true;
+        if (this.isPatient) {
+            this.profileService.uploadPatientProfilePicture(this.selectedFile).subscribe({
+                next: () => {
+                    this.isUploadingPicture = false;
+                    this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تم تحديث الصورة الشخصية' });
+                    this.profileService.getPatientProfilePictureUrl().subscribe({
+                        next: (res) => {
+                            if (res.url) {
+                                localStorage.setItem('profilePictureUrl', res.url);
+                            }
+                        }
+                    });
+                },
+                error: (err) => {
+                    this.isUploadingPicture = false;
+                    this.errorHandler.handleError(err, 'فشل رفع الصورة');
+                }
+            });
+        }
+    }
 
     getProfileLink(): string {
         const roleStr = typeof window !== 'undefined' ? localStorage.getItem('roleName')?.toLowerCase() : '';
