@@ -154,7 +154,7 @@
                   <span class="text-xs text-mute">الحالة:</span>
                   <span [class]="getLegStatusClass(leg.legStatus)">
                     <span class="status-dot"></span>
-                    {{ getLegStatusLabel(leg.legStatus) }}
+                    {{ (leg.legStatus | enumTranslate) }}
                   </span>
                 </div>
               </div>

@@ -1,3 +1,4 @@
+import { EnumTranslatePipe } from '@core/pipes/enum-translate.pipe';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -31,7 +32,7 @@ interface FieldErrors {
   selector: 'app-pharmacist-detail',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, FormsModule, RouterLink, ToastModule, DialogModule],
+  imports: [EnumTranslatePipe, CommonModule, FormsModule, RouterLink, ToastModule, DialogModule],
   providers: [MessageService],
   templateUrl: './pharmacist-detail.component.html',
   styleUrl: './pharmacist-detail.component.scss',

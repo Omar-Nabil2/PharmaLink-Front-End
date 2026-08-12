@@ -1,3 +1,4 @@
+import { EnumTranslatePipe } from '@core/pipes/enum-translate.pipe';
 import { Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DatePipe, DecimalPipe, NgClass } from '@angular/common';
@@ -38,7 +39,7 @@ const ALL_BRANCHES = 'ALL';
 @Component({
   selector: 'app-pharmacy-orders',
   standalone: true,
-  imports: [
+  imports: [EnumTranslatePipe, 
     DatePipe,
     DecimalPipe,
     NgClass,

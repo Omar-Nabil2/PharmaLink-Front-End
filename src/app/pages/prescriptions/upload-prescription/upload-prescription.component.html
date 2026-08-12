@@ -103,7 +103,7 @@
                   </div>
                   <div class="mt-3 flex flex-wrap items-center gap-2">
                     <span class="px-2.5 py-1 rounded-full border text-xs font-bold" [ngClass]="getStatusClass(med.status || med.matchStatus)">
-                      {{ getStatusLabel(med.status || med.matchStatus) }}
+                      {{ (med.status || med.matchStatus | enumTranslate) }}
                     </span>
                     <span *ngIf="med.confidence" class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 text-xs font-bold">
                       ثقة AI: {{ (med.confidence * 100) | number:'1.0-0' }}%

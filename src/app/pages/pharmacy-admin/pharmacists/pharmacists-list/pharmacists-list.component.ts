@@ -1,3 +1,4 @@
+import { EnumTranslatePipe } from '@core/pipes/enum-translate.pipe';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -38,7 +39,7 @@ interface FieldErrors {
   selector: 'app-pharmacists-list',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
+  imports: [EnumTranslatePipe, 
     CommonModule,
     FormsModule,
     ToastModule,

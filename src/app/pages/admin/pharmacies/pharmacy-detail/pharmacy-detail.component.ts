@@ -1,3 +1,4 @@
+import { EnumTranslatePipe } from '@core/pipes/enum-translate.pipe';
 import {
   Component,
   OnInit,
@@ -20,7 +21,7 @@ import {
   selector: 'app-pharmacy-detail',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule],
+  imports: [EnumTranslatePipe, CommonModule],
   templateUrl: './pharmacy-detail.component.html',
   styleUrl: './pharmacy-detail.component.scss',
 })
