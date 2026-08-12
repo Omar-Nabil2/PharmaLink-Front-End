@@ -85,7 +85,7 @@
                 <th class="py-3 px-4 text-muted-foreground font-semibold text-left whitespace-nowrap">سعر الوحدة</th>
                 <th class="py-3 px-4 text-muted-foreground font-semibold text-left whitespace-nowrap">الإجمالي</th>
                 <th class="py-3 px-4 text-muted-foreground font-semibold whitespace-nowrap">الحالة</th>
-                <th class="py-3 px-4 text-muted-foreground font-semibold whitespace-nowrap" *ngIf="ord.orderStatus === 6 || ord.orderStatus === 'PendingPrescriptionReview' || ord.orderStatus === 1 || ord.orderStatus === 'Pending'">إجراءات</th>
+                <!-- تم إخفاء عمود الإجراءات بناء على طلب المستخدم -->
               </tr>
             </thead>
             <tbody>
@@ -112,16 +112,7 @@
                     {{ getItemStatusLabel(item.itemStatus) }}
                   </span>
                 </td>
-                <td class="py-3 px-4 whitespace-nowrap" *ngIf="ord.orderStatus === 6 || ord.orderStatus === 'PendingPrescriptionReview' || ord.orderStatus === 1 || ord.orderStatus === 'Pending'">
-                  <button
-                    class="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-full transition-colors disabled:opacity-50"
-                    (click)="removeDrug(item.orderItemId)"
-                    [disabled]="isRemoving()"
-                    title="حذف هذا الدواء من الطلب"
-                  >
-                    <i class="pi pi-trash"></i>
-                  </button>
-                </td>
+                <!-- زر الحذف ملغي -->
               </tr>
             </tbody>
           </table>

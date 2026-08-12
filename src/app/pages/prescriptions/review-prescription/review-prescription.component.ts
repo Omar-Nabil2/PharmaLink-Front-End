@@ -80,29 +80,16 @@ export class ReviewPrescriptionComponent implements OnInit {
                 this.cdr.detectChanges();
 
                 if (data.imageUrl) {
-                    const lastHttpIndex = data.imageUrl.lastIndexOf('http');
+                    let finalUrl = data.imageUrl;
+                    const lastHttpIndex = finalUrl.lastIndexOf('http');
                     if (lastHttpIndex > 0) {
-                        data.imageUrl = data.imageUrl.substring(lastHttpIndex);
-                    } else if (!data.imageUrl.startsWith('http')) {
-                        const prefix = data.imageUrl.startsWith('/') ? '' : '/';
-                        data.imageUrl = 'https://pharmalink.tryasp.net' + prefix + data.imageUrl;
+                        finalUrl = finalUrl.substring(lastHttpIndex);
+                    } else if (!finalUrl.startsWith('http')) {
+                        const prefix = finalUrl.startsWith('/') ? '' : '/';
+                        finalUrl = 'https://pharmalink.tryasp.net' + prefix + finalUrl;
                     }
-                    
-                    this.http.get(data.imageUrl, { responseType: 'blob' }).subscribe({
-                        next: (blob) => {
-                            const reader = new FileReader();
-                            reader.onload = (e) => {
-                                this.prescriptionImageUrl = e.target?.result as string;
-                                this.cdr.detectChanges();
-                            };
-                            reader.readAsDataURL(blob);
-                        },
-                        error: (err) => {
-                            console.error('Failed to load prescription image blob:', err);
-                            this.prescriptionImageUrl = data.imageUrl;
-                            this.cdr.detectChanges();
-                        }
-                    });
+                    this.prescriptionImageUrl = finalUrl;
+                    this.cdr.detectChanges();
                 }
             },
             error: (err) => {
