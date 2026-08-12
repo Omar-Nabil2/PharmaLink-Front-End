@@ -121,7 +121,7 @@
 
             <!-- Status badge -->
             <span class="status-badge" [ngClass]="getStatusClass(pharmacy.verificationStatus)">
-              {{ getStatusLabel(pharmacy.verificationStatus) }}
+              {{ (getStatusLabel(pharmacy.verificationStatus) | enumTranslate) }}
             </span>
           </div>
 

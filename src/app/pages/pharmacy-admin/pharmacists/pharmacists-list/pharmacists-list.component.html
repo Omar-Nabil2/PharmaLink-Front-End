@@ -167,7 +167,7 @@
                   'bg-amber-50 text-amber-700 border border-amber-200': parseStatusNumber(p.status) === 3
                 }"
               >
-                {{ getStatusLabel(p.status) }}
+                {{ (getStatusLabel(p.status) | enumTranslate) }}
               </span>
             </td>
             <td class="p-4" (click)="$event.stopPropagation()">

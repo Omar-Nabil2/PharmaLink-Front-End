@@ -10,6 +10,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { environment } from '@environments/environment';
 import { AdminPharmacyService } from '@core/services/admin-pharmacy.service';
 import { ErrorHandlerService } from '@core/services/error-handler.service';
+
+import { EnumTranslatePipe } from '@core/pipes/enum-translate.pipe';
 import {
   AdminPharmacyDetailDto,
   AdminPharmacyBranchDto,
@@ -20,7 +22,7 @@ import {
   selector: 'app-pharmacy-detail',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule],
+  imports: [EnumTranslatePipe, CommonModule],
   templateUrl: './pharmacy-detail.component.html',
   styleUrl: './pharmacy-detail.component.scss',
 })

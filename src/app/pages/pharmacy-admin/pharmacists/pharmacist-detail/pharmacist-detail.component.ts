@@ -15,6 +15,8 @@ import { ToastModule } from 'primeng/toast';
 import { DialogModule } from 'primeng/dialog';
 import { MessageService } from 'primeng/api';
 import { PharmacistManagementService } from '@core/services/pharmacist-management.service';
+
+import { EnumTranslatePipe } from '@core/pipes/enum-translate.pipe';
 import {
   AssignmentHistoryItemDTO,
   PharmacistResponseDTO,
@@ -31,7 +33,7 @@ interface FieldErrors {
   selector: 'app-pharmacist-detail',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, FormsModule, RouterLink, ToastModule, DialogModule],
+  imports: [EnumTranslatePipe, CommonModule, FormsModule, RouterLink, ToastModule, DialogModule],
   providers: [MessageService],
   templateUrl: './pharmacist-detail.component.html',
   styleUrl: './pharmacist-detail.component.scss',

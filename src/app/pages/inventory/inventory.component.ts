@@ -17,6 +17,8 @@ import { ViewInventoryDialogComponent } from './view-inventory-dialog/view-inven
 import { InventoryService } from '@core/services/inventory.service';
 import { SearchService } from '@core/services/search.service';
 import { MedicineSearchDTO, PharmacyBranchSearchDTO } from './search.model';
+
+import { EnumTranslatePipe } from '@core/pipes/enum-translate.pipe';
 import {
   AddPharmacyInventoryDto,
   GetPharmacyInventoryDTO,
@@ -37,7 +39,7 @@ const ALL_BRANCHES = 'ALL';
 @Component({
   selector: 'app-inventory',
   standalone: true,
-  imports: [
+  imports: [EnumTranslatePipe, 
     DecimalPipe,
     NgClass,
     FormsModule,

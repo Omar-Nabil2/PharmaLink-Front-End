@@ -4,10 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { PreparationListService } from '../../../core/services/preparation-list.service';
 import { PreparationListDTO } from '../../../core/interfaces/preparation-list.interface';
 
+import { EnumTranslatePipe } from '@core/pipes/enum-translate.pipe';
+
 @Component({
   selector: 'app-preparation-list',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [EnumTranslatePipe, CommonModule, FormsModule],
   templateUrl: './preparation-list.html',
   styleUrls: ['./preparation-list.scss']
 })

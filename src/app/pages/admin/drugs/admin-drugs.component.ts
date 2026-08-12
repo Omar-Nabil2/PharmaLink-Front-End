@@ -13,6 +13,8 @@ import { TreeSelectModule } from 'primeng/treeselect';
 import { MessageService, TreeNode } from 'primeng/api';
 import { AdminDrugService } from '@core/services/admin-drug.service';
 import { CategoryService } from '@core/services/category.service';
+
+import { EnumTranslatePipe } from '@core/pipes/enum-translate.pipe';
 import {
   CreateDrugDto,
   DRUG_CATEGORY_LABELS,
@@ -24,7 +26,7 @@ import {
 @Component({
   selector: 'app-admin-drugs',
   standalone: true,
-  imports: [
+  imports: [EnumTranslatePipe, 
     CommonModule,
     FormsModule,
     TableModule,
