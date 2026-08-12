@@ -1,3 +1,4 @@
+import { EnumTranslatePipe } from '@core/pipes/enum-translate.pipe';
 import { CommonModule } from '@angular/common';
 import { HttpEventType } from '@angular/common/http';
 import { Component, inject } from '@angular/core';
@@ -12,7 +13,7 @@ import { ToastModule } from 'primeng/toast';
 @Component({
   selector: 'app-medicine-image-scan',
   standalone: true,
-  imports: [CommonModule, RouterModule, ToastModule, ProgressBarModule],
+  imports: [EnumTranslatePipe, CommonModule, RouterModule, ToastModule, ProgressBarModule],
   providers: [MessageService],
   templateUrl: './medicine-image-scan.component.html'
 })

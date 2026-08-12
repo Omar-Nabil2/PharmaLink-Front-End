@@ -72,7 +72,7 @@
             </div>
 
             <span class="px-3 py-1.5 rounded-full border text-xs font-bold" [ngClass]="getStatusClass(result.matchStatus)">
-              {{ getStatusLabel(result.matchStatus) }}
+              {{ (result.matchStatus | enumTranslate) }}
             </span>
           </div>
 

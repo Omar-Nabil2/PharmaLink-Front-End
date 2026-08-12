@@ -1,3 +1,4 @@
+import { EnumTranslatePipe } from '@core/pipes/enum-translate.pipe';
 import {
   Component,
   OnInit,
@@ -36,7 +37,7 @@ type DialogMode = 'create' | 'edit';
   selector: 'app-admin-pharmacies',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [EnumTranslatePipe, CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './admin-pharmacies.component.html',
   styleUrl: './admin-pharmacies.component.scss',
 })
