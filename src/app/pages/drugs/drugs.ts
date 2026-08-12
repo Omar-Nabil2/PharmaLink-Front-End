@@ -153,6 +153,11 @@ export class DrugsComponent implements OnInit {
     this.searchTerm = '';
     this.pageNumber = 1;
     this.loadCategories();
+    window.history.pushState({
+      breadcrumbs: this.breadcrumbs,
+      currentCategory: this.currentCategory,
+      viewMode: this.viewMode
+    }, '', window.location.href);
   }
 
   onBreadcrumbClick(index: number): void {
@@ -168,6 +173,11 @@ export class DrugsComponent implements OnInit {
     this.searchTerm = '';
     this.pageNumber = 1;
     this.loadCategories();
+    window.history.pushState({
+      breadcrumbs: this.breadcrumbs,
+      currentCategory: this.currentCategory,
+      viewMode: this.viewMode
+    }, '', window.location.href);
   }
 
   onSortChange(): void {
