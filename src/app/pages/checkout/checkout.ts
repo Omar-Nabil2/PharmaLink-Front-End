@@ -45,6 +45,7 @@ export class CheckoutComponent implements OnInit {
   showPreviewModal = false;
   isPreviewing = false;
   routingPlan: OrderRoutingPlan | null = null;
+  isLocating = false;
 
   constructor(
     private readonly cartService: CartService,
@@ -127,6 +128,48 @@ export class CheckoutComponent implements OnInit {
 
   selectAddress(addressId: string): void {
     this.selectedAddressId = addressId;
+  }
+
+  useCurrentLocation(): void {
+    if (!navigator.geolocation) {
+      this.messageService.add({ severity: 'error', summary: 'خطأ', detail: 'متصفحك لا يدعم تحديد الموقع' });
+      return;
+    }
+
+    this.isLocating = true;
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const addressData = {
+          addressLine: 'الموقع الحالي من الخريطة',
+          city: 'مدينة التوصيل',
+          governorate: 'محافظة التوصيل',
+          label: 'موقعي الحالي',
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          isDefault: false
+        };
+
+        this.addressService.createAddress(addressData).subscribe({
+          next: (res) => {
+            this.addresses.push(res);
+            this.selectedAddressId = res.addressId;
+            this.isLocating = false;
+            this.cdr.detectChanges();
+            this.messageService.add({ severity: 'success', summary: 'نجاح', detail: 'تم تحديد موقعك بنجاح' });
+          },
+          error: (err) => {
+            this.isLocating = false;
+            this.cdr.detectChanges();
+            this.errorHandler.handleError(err, 'فشل في حفظ الموقع الحالي');
+          }
+        });
+      },
+      (error) => {
+        this.isLocating = false;
+        this.cdr.detectChanges();
+        this.messageService.add({ severity: 'error', summary: 'خطأ', detail: 'يرجى السماح بالوصول لموقعك الجغرافي' });
+      }
+    );
   }
 
   setFulfillmentMode(mode: FulfillmentMode): void {

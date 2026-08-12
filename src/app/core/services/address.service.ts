@@ -15,4 +15,8 @@ export class AddressService {
   getMyAddresses(): Observable<AddressResponse[]> {
     return this.http.get<AddressResponse[]>(`${this.baseUrl}/PatientAddresses/MyAddresses`);
   }
+
+  createAddress(addressData: any): Observable<AddressResponse> {
+    return this.http.post<AddressResponse>(`${this.baseUrl}/PatientAddresses`, addressData);
+  }
 }
