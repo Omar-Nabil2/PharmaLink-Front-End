@@ -11,6 +11,8 @@ const STATUS_ARABIC_MAP: Record<string, string> = {
   Pending: 'قيد الانتظار',
   Processing: 'جاري التجهيز',
   Shipped: 'جاري التوصيل',
+  PendingPrescriptionReview: 'مراجعة الروشتة',
+  PrescriptionRejected: 'روشتة مرفوضة',
   // ── Common delivery aliases ────────────────────────────────
   InDelivery: 'جاري التوصيل',
   OutForDelivery: 'جاري التوصيل',
@@ -41,7 +43,7 @@ const ENUM_ORDINAL_MAPS: Record<string, Record<number, string>> = {
   UserStatus: { 1: 'Active', 2: 'Inactive', 3: 'Suspended' },
   VerificationStatus: { 1: 'Pending', 2: 'Verified', 3: 'Rejected' },
   FulfillmentMode: { 1: 'Delivery', 2: 'Pickup' },
-  OrderStatus: { 1: 'Pending', 2: 'Processing', 3: 'Shipped', 4: 'Completed', 5: 'Cancelled' },
+  OrderStatus: { 1: 'Pending', 2: 'Processing', 3: 'Shipped', 4: 'Completed', 5: 'Cancelled', 6: 'PendingPrescriptionReview', 7: 'PrescriptionRejected' },
   ItemStatus: { 1: 'Pending', 2: 'Fulfilled', 3: 'Cancelled', 4: 'Awarded', 5: 'Unavailable' },
   LegStatus: {
     1: 'Assigned',
