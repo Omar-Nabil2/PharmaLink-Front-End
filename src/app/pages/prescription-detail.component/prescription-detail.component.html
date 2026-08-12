@@ -32,14 +32,20 @@
         <h1 class="text-xl font-black text-slate-800">تفاصيل الروشتة الطبية</h1>
       </div>
 
-      <div class="flex flex-wrap items-center gap-2">
-        <span *ngIf="reviewDetail.processingStatus" class="px-4 py-1.5 rounded-full text-xs font-bold border bg-slate-50 text-slate-700 border-slate-200">
-          {{ getProcessingStatusLabel(reviewDetail.processingStatus) }}
-        </span>
-        <span class="px-4 py-1.5 rounded-full text-xs font-bold border flex items-center gap-2" [ngClass]="getStatusClass(reviewDetail.status)">
-          <span class="w-2 h-2 rounded-full bg-current"></span>
-          {{ getStatusLabel(reviewDetail.status) }}
-        </span>
+      <div class="flex flex-wrap items-center gap-3">
+        <div *ngIf="reviewDetail.processingStatus" class="flex items-center gap-1.5">
+          <span class="text-xs text-slate-500 font-semibold">حالة المعالجة:</span>
+          <span class="px-4 py-1.5 rounded-full text-xs font-bold border bg-slate-50 text-slate-700 border-slate-200 shadow-sm">
+            {{ getProcessingStatusLabel(reviewDetail.processingStatus) }}
+          </span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="text-xs text-slate-500 font-semibold">حالة المراجعة:</span>
+          <span class="px-4 py-1.5 rounded-full text-xs font-bold border flex items-center gap-2 shadow-sm" [ngClass]="getStatusClass(reviewDetail.status)">
+            <span class="w-2 h-2 rounded-full bg-current"></span>
+            {{ getStatusLabel(reviewDetail.status) }}
+          </span>
+        </div>
       </div>
     </div>
 
