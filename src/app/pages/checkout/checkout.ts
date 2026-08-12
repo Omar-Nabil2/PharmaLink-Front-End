@@ -138,11 +138,32 @@ export class CheckoutComponent implements OnInit {
 
     this.isLocating = true;
     navigator.geolocation.getCurrentPosition(
-      (position) => {
+      async (position) => {
+        let city = 'مدينة التوصيل';
+        let governorate = 'محافظة التوصيل';
+        let addressLine = 'الموقع الحالي من الخريطة';
+
+        try {
+          const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${position.coords.latitude}&lon=${position.coords.longitude}&accept-language=ar`);
+          if (res.ok) {
+            const data = await res.json();
+            if (data && data.address) {
+              governorate = data.address.state || data.address.region || data.address.county || governorate;
+              city = data.address.city || data.address.town || data.address.village || data.address.suburb || city;
+              
+              // We can use a shorter display string instead of the very long full display_name if we want,
+              // but display_name gives the most accurate detailed address.
+              addressLine = data.display_name || addressLine;
+            }
+          }
+        } catch (err) {
+          console.error('Reverse geocoding failed', err);
+        }
+
         const addressData = {
-          addressLine: 'الموقع الحالي من الخريطة',
-          city: 'مدينة التوصيل',
-          governorate: 'محافظة التوصيل',
+          addressLine: addressLine,
+          city: city,
+          governorate: governorate,
           label: 'موقعي الحالي',
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
