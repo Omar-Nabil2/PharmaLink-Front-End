@@ -255,26 +255,36 @@ export class ReviewPrescriptionComponent implements OnInit {
         return this.prescriptionData?.status !== 'PendingReview';
     }
 
-    getStatusArabicLabel(status: string | undefined): string {
-        if (!status) return 'جاري التحميل...';
-        switch (status) {
-            case 'PendingReview': return 'قيد المراجعة';
-            case 'Approved': return 'موافق عليها';
-            case 'Rejected': return 'مرفوضة';
-            case 'OrderCreated': return 'تم إنشاء الطلب';
-            default: return status;
+    getStatusArabicLabel(status: string | number | undefined): string {
+        if (status === null || status === undefined) return 'جاري التحميل...';
+        const str = String(status).trim();
+        switch (str) {
+            case 'PendingReview': 
+            case '1': return 'قيد المراجعة';
+            case 'Approved': 
+            case '2': return 'موافق عليها';
+            case 'Rejected': 
+            case '3': return 'مرفوضة';
+            case 'OrderCreated': 
+            case '4': return 'تم إنشاء الطلب';
+            default: return str;
         }
     }
 
-    getStatusClasses(status: string | undefined): string {
-        switch (status) {
+    getStatusClasses(status: string | number | undefined): string {
+        const str = String(status).trim();
+        switch (str) {
             case 'PendingReview':
+            case '1':
                 return 'bg-amber-100 text-amber-700 border-amber-200';
             case 'Approved':
+            case '2':
                 return 'bg-emerald-100 text-emerald-700 border-emerald-200';
             case 'Rejected':
+            case '3':
                 return 'bg-red-100 text-red-700 border-red-200';
             case 'OrderCreated':
+            case '4':
                 return 'bg-blue-100 text-blue-700 border-blue-200';
             default:
                 return 'bg-slate-100 text-slate-700 border-slate-200';

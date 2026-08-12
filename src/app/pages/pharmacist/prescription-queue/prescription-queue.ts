@@ -120,14 +120,20 @@ export class PrescriptionQueue implements OnInit, OnDestroy {
     this.loadSubject.next();
   }
 
-  getStatusArabicLabel(status: string): string {
+  getStatusArabicLabel(status: string | number): string {
+    if (status === null || status === undefined) return '';
+    const str = String(status).trim();
     const labels: Record<string, string> = {
       'PendingReview': 'قيد المراجعة',
+      '1': 'قيد المراجعة',
       'Approved': 'موافق عليها',
+      '2': 'موافق عليها',
       'Rejected': 'مرفوضة',
-      'OrderCreated': 'تم إنشاء الطلب'
+      '3': 'مرفوضة',
+      'OrderCreated': 'تم إنشاء الطلب',
+      '4': 'تم إنشاء الطلب'
     };
-    return labels[status] || status;
+    return labels[str] || str;
   }
 
   getStatusClasses(status: string): string {

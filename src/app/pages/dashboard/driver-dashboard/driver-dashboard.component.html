@@ -108,9 +108,14 @@
                             class="text-sm">ج.م</span></span>
                 </div>
 
-                <p-button label="قبول" icon="pi pi-directions" (onClick)="acceptJob(job)" [loading]="isLoading()"
-                    styleClass="p-button-sm px-6">
-                </p-button>
+                <div class="flex items-center gap-2">
+                    <p-button icon="pi pi-map" (onClick)="openGoogleMaps(job)" pTooltip="عرض المسار على الخريطة" tooltipPosition="top"
+                        styleClass="p-button-outlined p-button-info p-button-sm px-3" title="عرض المسار على الخريطة">
+                    </p-button>
+                    <p-button label="قبول" icon="pi pi-directions" (onClick)="acceptJob(job)" [loading]="isLoading()"
+                        styleClass="p-button-sm px-6">
+                    </p-button>
+                </div>
             </div>
         </p-card>
         }
