@@ -78,6 +78,7 @@ export class ProfileComponent implements OnInit {
             let picUrl = this.patientData.profilePictureUrl;
             if (!picUrl.startsWith('http')) {
               const cleanServerUrl = this.serverUrl.endsWith('/') ? this.serverUrl.slice(0, -1) : this.serverUrl;
+              picUrl = picUrl.replace(/\\/g, '/');
               const cleanPicUrl = picUrl.startsWith('/') ? picUrl : '/' + picUrl;
               picUrl = cleanServerUrl + cleanPicUrl;
             }
@@ -116,6 +117,7 @@ export class ProfileComponent implements OnInit {
             let logo = this.pharmacyAdminData.logoUrl;
             if (!logo.startsWith('http')) {
               const cleanServerUrl = this.serverUrl.endsWith('/') ? this.serverUrl.slice(0, -1) : this.serverUrl;
+              logo = logo.replace(/\\/g, '/');
               const cleanLogoUrl = logo.startsWith('/') ? logo : '/' + logo;
               this.pharmacyAdminData.logoUrl = cleanServerUrl + cleanLogoUrl;
             }
@@ -172,6 +174,7 @@ export class ProfileComponent implements OnInit {
                 let picUrl = res.url;
                 if (!picUrl.startsWith('http')) {
                   const cleanServerUrl = this.serverUrl.endsWith('/') ? this.serverUrl.slice(0, -1) : this.serverUrl;
+                  picUrl = picUrl.replace(/\\/g, '/');
                   const cleanPicUrl = picUrl.startsWith('/') ? picUrl : '/' + picUrl;
                   picUrl = cleanServerUrl + cleanPicUrl;
                 }

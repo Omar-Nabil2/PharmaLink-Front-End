@@ -62,8 +62,15 @@ export class PatientLayoutComponent implements OnInit {
       this.profileService.getPatientProfilePictureUrl().subscribe({
         next: (res) => {
             if (res.url) {
-              localStorage.setItem('profilePictureUrl', res.url);
-              this.profilePictureUrl.set(res.url);
+              let picUrl = res.url.replace(/\\/g, '/');
+              if (!picUrl.startsWith('http')) {
+                const serverUrl = environment.baseUrl.replace('/api/v1', '');
+                const cleanServerUrl = serverUrl.endsWith('/') ? serverUrl.slice(0, -1) : serverUrl;
+                const cleanPicUrl = picUrl.startsWith('/') ? picUrl : '/' + picUrl;
+                picUrl = cleanServerUrl + cleanPicUrl;
+              }
+              localStorage.setItem('profilePictureUrl', picUrl);
+              this.profilePictureUrl.set(picUrl);
             }
         },
         error: () => {}
