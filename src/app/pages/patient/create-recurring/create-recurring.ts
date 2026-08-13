@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { Subject, takeUntil, finalize } from 'rxjs';
 import { RecurringPrescriptionsService, RecurringDto } from '../../../core/services/recurring-prescriptions.service';
+import { PrescriptionService } from '../../../core/services/prescription.service';
+import { HttpEventType } from '@angular/common/http';
 
 interface BranchOption { id: string; name: string; }
 
@@ -17,6 +19,9 @@ interface BranchOption { id: string; name: string; }
 export class CreateRecurring implements OnInit, OnDestroy {
   isLoading = false;
   saving = false;
+  isUploading = false;
+  uploadProgress = 0;
+  selectedFile: File | null = null;
   editId: string | null = null;
   error: string | null = null;
 
@@ -47,6 +52,7 @@ export class CreateRecurring implements OnInit, OnDestroy {
 
   constructor(
     private svc: RecurringPrescriptionsService,
+    private prescriptionSvc: PrescriptionService,
     private router: Router,
     private route: ActivatedRoute
   ) {}
@@ -91,12 +97,45 @@ export class CreateRecurring implements OnInit, OnDestroy {
     this.form.intervalDays = this.customInterval;
   }
 
+  onFileSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      this.selectedFile = file;
+    }
+  }
+
   submit() {
     if (!this.form.name?.trim()) { this.error = 'يرجى إدخال اسم للروشتة الدورية'; return; }
     this.error = null;
     this.saving = true;
+
+    if (this.selectedFile && !this.editId) {
+      this.isUploading = true;
+      this.prescriptionSvc.uploadPrescription(this.selectedFile).pipe(takeUntil(this.destroy$)).subscribe({
+        next: (event: any) => {
+          if (event.type === HttpEventType.UploadProgress) {
+            this.uploadProgress = Math.round((100 * event.loaded) / (event.total || 1));
+          } else if (event.type === HttpEventType.Response) {
+            const prescriptionId = event.body?.id;
+            this.isUploading = false;
+            this.submitRecurring(prescriptionId);
+          }
+        },
+        error: () => {
+          this.isUploading = false;
+          this.saving = false;
+          this.error = 'فشل رفع صورة الروشتة. يرجى المحاولة مرة أخرى.';
+        }
+      });
+    } else {
+      this.submitRecurring();
+    }
+  }
+
+  private submitRecurring(prescriptionId?: string) {
     const payload = {
       ...this.form,
+      prescriptionId: prescriptionId || undefined,
       endDate: this.form.endDate || undefined,
       preferredBranchId: this.form.preferredBranchId || undefined,
       deliveryAddressId: this.form.deliveryAddressId || undefined,
