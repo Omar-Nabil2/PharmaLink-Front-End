@@ -31,7 +31,7 @@ export interface CreateReminderRequest {
 @Injectable({ providedIn: 'root' })
 export class RemindersService {
   private api = inject(HttpClient);
-  private base = `${environment.apiUrl}/api/medicine-reminders`;
+  private base = `${environment.baseUrl}/api/medicine-reminders`;
 
   getAll() { return this.api.get<ReminderDto[]>(this.base); }
   create(dto: CreateReminderRequest) { return this.api.post<ReminderDto>(this.base, dto); }

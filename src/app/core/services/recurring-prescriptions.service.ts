@@ -30,7 +30,7 @@ export interface RecurringDto {
 @Injectable({ providedIn: 'root' })
 export class RecurringPrescriptionsService {
   private api = inject(HttpClient);
-  private base = `${environment.apiUrl}/api/recurring-prescriptions`;
+  private base = `${environment.baseUrl}/api/recurring-prescriptions`;
 
   getAll() { return this.api.get<RecurringDto[]>(this.base); }
   create(dto: any) { return this.api.post<RecurringDto>(this.base, dto); }
