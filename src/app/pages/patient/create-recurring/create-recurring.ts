@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
@@ -17,6 +17,8 @@ interface BranchOption { id: string; name: string; }
   styleUrl: './create-recurring.scss',
 })
 export class CreateRecurring implements OnInit, OnDestroy {
+  minDate = new Date().toISOString().split('T')[0];
+
   isLoading = false;
   saving = false;
   isUploading = false;
@@ -54,7 +56,8 @@ export class CreateRecurring implements OnInit, OnDestroy {
     private svc: RecurringPrescriptionsService,
     private prescriptionSvc: PrescriptionService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -64,7 +67,7 @@ export class CreateRecurring implements OnInit, OnDestroy {
 
   loadForEdit(id: string) {
     this.isLoading = true;
-    this.svc.getAll().pipe(takeUntil(this.destroy$), finalize(() => this.isLoading = false)).subscribe({
+    this.svc.getAll().pipe(takeUntil(this.destroy$), finalize(() => { this.cdr.detectChanges(); this.isLoading = false; this.cdr.detectChanges(); })).subscribe({
       next: (items) => {
         const item = items.find(x => x.id === id);
         if (!item) return;
@@ -117,12 +120,12 @@ export class CreateRecurring implements OnInit, OnDestroy {
             this.uploadProgress = Math.round((100 * event.loaded) / (event.total || 1));
           } else if (event.type === HttpEventType.Response) {
             const prescriptionId = event.body?.id;
-            this.isUploading = false;
+            this.isUploading = false; this.cdr.detectChanges();
             this.submitRecurring(prescriptionId);
           }
         },
-        error: () => {
-          this.isUploading = false;
+        error: () => { this.cdr.detectChanges();
+          this.isUploading = false; this.cdr.detectChanges();
           this.saving = false;
           this.error = 'فشل رفع صورة الروشتة. يرجى المحاولة مرة أخرى.';
         }
