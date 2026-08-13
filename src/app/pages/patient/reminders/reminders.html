@@ -1,0 +1,285 @@
+<ng-container *ngIf="reminders$ | async as reminders">
+<div class="min-h-screen bg-slate-50" dir="rtl">
+
+  <!-- ═══════════════ HEADER ═══════════════ -->
+  <div class="bg-white border-b border-slate-100 sticky top-0 z-10 shadow-sm">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl bg-teal-50 flex items-center justify-center border border-teal-100">
+          <i class="pi pi-bell text-teal-600 text-lg"></i>
+        </div>
+        <div>
+          <h1 class="text-xl font-black text-slate-800">منبهاتي </h1>
+          <p class="text-xs text-slate-400 font-semibold">تذكيرات مواعيد الأدوية</p>
+        </div>
+      </div>
+      <button (click)="openAdd()"
+        class="flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white px-5 py-2.5 rounded-xl font-bold text-sm transition-all shadow-md shadow-teal-500/20 active:scale-95">
+        <i class="pi pi-plus text-xs"></i>
+        إضافة منبه
+      </button>
+    </div>
+  </div>
+
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-8">
+
+    <!-- Loading -->
+    <div *ngIf="isLoading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div *ngFor="let i of [1,2,3,4,5,6]"
+        class="bg-white rounded-3xl p-6 animate-pulse border border-slate-100">
+        <div class="h-5 bg-slate-100 rounded-xl w-2/3 mb-3"></div>
+        <div class="h-4 bg-slate-100 rounded-xl w-1/2 mb-5"></div>
+        <div class="flex gap-2 mb-4">
+          <div class="h-7 bg-slate-100 rounded-full w-16"></div>
+          <div class="h-7 bg-slate-100 rounded-full w-16"></div>
+        </div>
+        <div class="h-10 bg-slate-100 rounded-xl w-full"></div>
+      </div>
+    </div>
+
+    <!-- Error -->
+    <div *ngIf="!isLoading && error"
+      class="text-center py-20 flex flex-col items-center gap-4">
+      <div class="w-16 h-16 rounded-full bg-red-50 flex items-center justify-center border border-red-100">
+        <i class="pi pi-exclamation-triangle text-2xl text-red-500"></i>
+      </div>
+      <p class="text-slate-600 font-bold">{{ error }}</p>
+      <button (click)="load()" class="bg-teal-600 text-white px-6 py-2.5 rounded-xl font-bold text-sm hover:bg-teal-700 transition-all">
+        إعادة المحاولة
+      </button>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!isLoading && !error && reminders.length === 0"
+      class="text-center py-24 flex flex-col items-center gap-4">
+      <div class="w-20 h-20 rounded-full bg-teal-50 flex items-center justify-center border border-teal-100 mb-2">
+        <i class="pi pi-bell text-3xl text-teal-400"></i>
+      </div>
+      <h3 class="text-lg font-black text-slate-700">لا توجد منبهات بعد</h3>
+      <p class="text-slate-400 font-semibold text-sm max-w-xs">أضف أول منبه لتذكيرك بمواعيد أدويتك بسهولة</p>
+      <button (click)="openAdd()"
+        class="mt-2 bg-teal-600 hover:bg-teal-700 text-white px-8 py-3 rounded-xl font-bold transition-all shadow-md shadow-teal-500/20 flex items-center gap-2">
+        <i class="pi pi-plus"></i>
+        إضافة أول منبه
+      </button>
+    </div>
+
+    <!-- ═══════════════ REMINDERS GRID ═══════════════ -->
+    <div *ngIf="!isLoading && !error && reminders.length > 0"
+      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+
+      <div *ngFor="let r of reminders"
+        class="group bg-white rounded-3xl border border-slate-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden flex flex-col"
+        [class.opacity-60]="!r.isActive">
+
+        <!-- Top color strip -->
+        <div class="h-1.5 w-full"
+          [ngClass]="r.isActive ? 'bg-gradient-to-r from-teal-400 to-emerald-400' : 'bg-slate-200'"></div>
+
+        <div class="p-5 flex-1 flex flex-col gap-4">
+
+          <!-- Header -->
+          <div class="flex items-start justify-between gap-2">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 border"
+                [ngClass]="r.isActive ? 'bg-teal-50 border-teal-100 text-teal-600' : 'bg-slate-50 border-slate-100 text-slate-400'">
+                <i class="pi pi-heart-fill text-base"></i>
+              </div>
+              <div>
+                <h3 class="font-black text-slate-800 text-base leading-tight">{{ r.medicineName }}</h3>
+                <p *ngIf="r.dosage" class="text-xs text-slate-400 font-semibold mt-0.5">{{ r.dosage }}</p>
+              </div>
+            </div>
+            <!-- Toggle -->
+            <button (click)="toggle(r)"
+              class="relative w-12 h-6 rounded-full transition-colors duration-300 shrink-0 focus:outline-none"
+              [ngClass]="r.isActive ? 'bg-teal-500' : 'bg-slate-200'">
+              <span class="absolute top-0.5 w-5 h-5 rounded-full bg-white shadow-sm transition-all duration-300"
+                [ngClass]="r.isActive ? 'right-0.5' : 'left-0.5'"></span>
+            </button>
+          </div>
+
+          <!-- Times -->
+          <div class="flex flex-wrap gap-2">
+            <span *ngFor="let t of r.reminderTimes"
+              class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-black border"
+              [ngClass]="r.isActive ? 'bg-teal-50 text-teal-700 border-teal-100' : 'bg-slate-50 text-slate-500 border-slate-100'">
+              <i class="pi pi-clock text-[10px]"></i>
+              {{ formatTime(t) }}
+            </span>
+          </div>
+
+          <!-- Notes -->
+          <p *ngIf="r.notes" class="text-xs text-slate-500 font-semibold bg-slate-50 rounded-xl px-3 py-2 border border-slate-100 leading-relaxed">
+            {{ r.notes }}
+          </p>
+
+          <!-- Date & Channels -->
+          <div class="flex items-center justify-between gap-2">
+            <span class="text-xs font-bold text-slate-400 flex items-center gap-1">
+              <i class="pi pi-calendar text-[10px]"></i>
+              {{ r.endDate ? 'حتى ' + formatDate(r.endDate) : 'مستمر' }}
+            </span>
+            <div class="flex gap-1.5">
+              <span *ngIf="r.notifyByEmail"
+                class="px-2 py-1 rounded-full text-[10px] font-black bg-blue-50 text-blue-600 border border-blue-100 flex items-center gap-1">
+                <i class="pi pi-envelope text-[9px]"></i> إيميل
+              </span>
+              <span *ngIf="r.notifyByWhatsApp"
+                class="px-2 py-1 rounded-full text-[10px] font-black bg-green-50 text-green-600 border border-green-100 flex items-center gap-1">
+                <i class="pi pi-comment text-[9px]"></i> واتساب
+              </span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Actions -->
+        <div class="px-5 pb-5 flex gap-2">
+          <button (click)="openEdit(r)"
+            class="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-slate-300 text-xs font-bold transition-all">
+            <i class="pi pi-pencil text-[10px]"></i> تعديل
+          </button>
+          <button (click)="delete(r)"
+            class="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl border border-red-100 text-red-500 hover:bg-red-50 text-xs font-bold transition-all">
+            <i class="pi pi-trash text-[10px]"></i> حذف
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ═══════════════ DIALOG ═══════════════ -->
+  <div *ngIf="showDialog"
+    class="fixed inset-0 z-50 flex items-center justify-center p-4"
+    (click)="closeDialog()">
+    <!-- Backdrop -->
+    <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"></div>
+
+    <!-- Modal -->
+    <div class="relative bg-white rounded-3xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto"
+      (click)="$event.stopPropagation()">
+
+      <!-- Modal Header -->
+      <div class="sticky top-0 bg-white rounded-t-3xl border-b border-slate-100 px-6 py-4 flex items-center justify-between z-10">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-xl bg-teal-50 flex items-center justify-center border border-teal-100">
+            <i class="pi pi-bell text-teal-600"></i>
+          </div>
+          <h2 class="font-black text-slate-800 text-base">{{ editingId ? 'تعديل المنبه' : 'منبه جديد' }}</h2>
+        </div>
+        <button (click)="closeDialog()"
+          class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500 transition-colors">
+          <i class="pi pi-times text-sm"></i>
+        </button>
+      </div>
+
+      <div class="p-6 flex flex-col gap-5">
+
+        <!-- Medicine Name -->
+        <div class="flex flex-col gap-1.5">
+          <label class="text-xs font-black text-slate-600 flex items-center gap-1">
+            <i class="pi pi-heart-fill text-teal-500 text-[10px]"></i>
+            اسم الدواء <span class="text-red-400">*</span>
+          </label>
+          <input [(ngModel)]="form.medicineName" type="text" placeholder="مثال: Paracetamol / باراسيتامول"
+            class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:outline-none focus:border-teal-400 focus:bg-white text-sm font-semibold text-slate-700 transition-all placeholder:text-slate-300" />
+        </div>
+
+        <!-- Dosage -->
+        <div class="flex flex-col gap-1.5">
+          <label class="text-xs font-black text-slate-600">الجرعة (اختياري)</label>
+          <input [(ngModel)]="form.dosage" type="text" placeholder="مثال: قرص واحد / 500mg"
+            class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:outline-none focus:border-teal-400 focus:bg-white text-sm font-semibold text-slate-700 transition-all placeholder:text-slate-300" />
+        </div>
+
+        <!-- Reminder Times -->
+        <div class="flex flex-col gap-2">
+          <div class="flex items-center justify-between">
+            <label class="text-xs font-black text-slate-600 flex items-center gap-1">
+              <i class="pi pi-clock text-teal-500 text-[10px]"></i>
+              مواعيد التذكير <span class="text-red-400">*</span>
+            </label>
+            <button (click)="addTime()"
+              class="text-xs font-black text-teal-600 hover:text-teal-700 flex items-center gap-1 bg-teal-50 hover:bg-teal-100 px-3 py-1.5 rounded-lg transition-all border border-teal-100">
+              <i class="pi pi-plus text-[9px]"></i> إضافة وقت
+            </button>
+          </div>
+          <div class="flex flex-col gap-2">
+            <div *ngFor="let t of form.reminderTimes; let i = index"
+              class="flex items-center gap-2 bg-slate-50 rounded-xl px-3 py-2 border border-slate-100">
+              <i class="pi pi-clock text-teal-400 text-sm shrink-0"></i>
+              <input [(ngModel)]="form.reminderTimes[i]" type="time"
+                class="flex-1 bg-transparent focus:outline-none text-sm font-black text-slate-700 cursor-pointer" />
+              <button *ngIf="form.reminderTimes.length > 1" (click)="removeTime(i)"
+                class="w-6 h-6 rounded-lg bg-red-50 hover:bg-red-100 text-red-400 flex items-center justify-center transition-all shrink-0">
+                <i class="pi pi-times text-[9px]"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dates -->
+        <div class="grid grid-cols-2 gap-3">
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-black text-slate-600">تاريخ البداية <span class="text-red-400">*</span></label>
+            <input [(ngModel)]="form.startDate" type="date" [min]="minDate"
+              class="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:outline-none focus:border-teal-400 focus:bg-white text-sm font-semibold text-slate-700 transition-all" />
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-black text-slate-600">تاريخ النهاية (اختياري)</label>
+            <input [(ngModel)]="form.endDate" type="date" [min]="form.startDate || minDate"
+              class="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:outline-none focus:border-teal-400 focus:bg-white text-sm font-semibold text-slate-700 transition-all" />
+          </div>
+        </div>
+
+        <!-- Notes -->
+        <div class="flex flex-col gap-1.5">
+          <label class="text-xs font-black text-slate-600">ملاحظات (اختياري)</label>
+          <textarea [(ngModel)]="form.notes" rows="2" placeholder="مثال: بعد الأكل مباشرة"
+            class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:outline-none focus:border-teal-400 focus:bg-white text-sm font-semibold text-slate-700 transition-all placeholder:text-slate-300 resize-none"></textarea>
+        </div>
+
+        <!-- Notification Channels -->
+        <div class="flex flex-col gap-2">
+          <label class="text-xs font-black text-slate-600">طريقة التنبيه</label>
+          <div class="grid grid-cols-2 gap-3">
+            <button (click)="form.notifyByEmail = !form.notifyByEmail"
+              class="flex items-center gap-3 px-4 py-3 rounded-xl border-2 text-sm font-bold transition-all"
+              [ngClass]="form.notifyByEmail ? 'bg-blue-50 border-blue-400 text-blue-700' : 'bg-slate-50 border-slate-200 text-slate-500'">
+              <i class="pi pi-envelope text-base"></i>
+              <span>إيميل</span>
+              <i *ngIf="form.notifyByEmail" class="pi pi-check-circle text-blue-500 mr-auto"></i>
+            </button>
+            <button (click)="form.notifyByWhatsApp = !form.notifyByWhatsApp"
+              class="flex items-center gap-3 px-4 py-3 rounded-xl border-2 text-sm font-bold transition-all"
+              [ngClass]="form.notifyByWhatsApp ? 'bg-green-50 border-green-400 text-green-700' : 'bg-slate-50 border-slate-200 text-slate-500'">
+              <i class="pi pi-comment text-base"></i>
+              <span>واتساب</span>
+              <i *ngIf="form.notifyByWhatsApp" class="pi pi-check-circle text-green-500 mr-auto"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex gap-3 pt-2">
+          <button (click)="closeDialog()"
+            class="flex-1 py-3 rounded-xl border border-slate-200 text-slate-600 font-bold text-sm hover:bg-slate-50 transition-all">
+            إلغاء
+          </button>
+          <button (click)="save()" [disabled]="saving || !form.medicineName?.trim()"
+            class="flex-1 py-3 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold text-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-md shadow-teal-500/20">
+            <i *ngIf="saving" class="pi pi-spin pi-spinner text-xs"></i>
+            <i *ngIf="!saving" class="pi pi-check text-xs"></i>
+            {{ saving ? 'جاري الحفظ...' : 'حفظ المنبه' }}
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+</ng-container>

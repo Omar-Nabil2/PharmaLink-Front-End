@@ -38,6 +38,7 @@ export class PatientLayoutComponent implements OnInit {
 
   menuOpen = false;
   profileMenuOpen = false;
+  alarmMenuOpen = false;
 
   get fullName(): string {
     if (typeof window === 'undefined') return 'حسابي';
@@ -80,6 +81,12 @@ export class PatientLayoutComponent implements OnInit {
 
   toggleProfileMenu(): void {
     this.profileMenuOpen = !this.profileMenuOpen;
+    if (this.profileMenuOpen) this.alarmMenuOpen = false;
+  }
+
+  toggleAlarmMenu(): void {
+    this.alarmMenuOpen = !this.alarmMenuOpen;
+    if (this.alarmMenuOpen) this.profileMenuOpen = false;
   }
 
   logout(): void {

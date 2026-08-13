@@ -1,0 +1,1481 @@
+@use 'sass:color';
+
+// ═══════════════════════════════════════════════════════
+// CREATE RECURRING PRESCRIPTION PAGE STYLES
+// Professional Medical-grade RTL Arabic UI
+// ═══════════════════════════════════════════════════════
+
+
+// ---------- Design Tokens ----------
+$teal:      #007671;
+$teal-50:   #f0faf9;
+$teal-100:  #ccefed;
+$teal-600:  #007671;
+$teal-700:  #005e5a;
+
+$blue-50:   #eff8ff;
+$blue-100:  #dbeafe;
+$blue-600:  #2563eb;
+
+$indigo-50:  #eef2ff;
+$indigo-100: #e0e7ff;
+$indigo-600: #4f46e5;
+
+$amber-50:  #fffbeb;
+$amber-100: #fef3c7;
+$amber-500: #f59e0b;
+$amber-600: #d97706;
+
+$purple-50:  #faf5ff;
+$purple-100: #ede9fe;
+$purple-500: #8b5cf6;
+$purple-600: #7c3aed;
+
+$red-50:  #fef2f2;
+$red-100: #fee2e2;
+$red-500: #ef4444;
+
+$slate-50:  #f8fafc;
+$slate-100: #f1f5f9;
+$slate-200: #e2e8f0;
+$slate-300: #cbd5e1;
+$slate-400: #94a3b8;
+$slate-500: #64748b;
+$slate-600: #475569;
+$slate-700: #334155;
+$slate-800: #1e293b;
+$slate-900: #0f172a;
+
+$radius-card: 20px;
+$radius-field: 12px;
+$radius-btn: 999px;
+
+$shadow-card: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+
+// ---------- Page Wrapper ----------
+.cr-page {
+  min-height: 100vh;
+  background: #f6f8f7;
+  direction: rtl;
+  font-family: 'Tajawal', 'Cairo', sans-serif;
+}
+
+// ---------- Page Header ----------
+.cr-page-header {
+  background: #fff;
+  border-bottom: 1px solid $slate-200;
+  padding: 28px 0 24px;
+  margin-bottom: 0;
+
+  &__inner {
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: 0 32px;
+
+    @media (max-width: 599px) { padding: 0 16px; }
+  }
+
+  &__title-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 12px;
+  }
+
+  &__icon-wrap {
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+    background: $teal-50;
+    border: 1.5px solid $teal-100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: $teal-600;
+    font-size: 22px;
+  }
+
+  &__title {
+    font-size: 22px;
+    font-weight: 800;
+    color: $slate-800;
+    margin: 0;
+    line-height: 1.3;
+
+    @media (max-width: 599px) { font-size: 18px; }
+  }
+
+  &__subtitle {
+    font-size: 14px;
+    color: $slate-500;
+    margin: 4px 0 0;
+    font-weight: 500;
+
+    @media (max-width: 599px) { font-size: 13px; }
+  }
+}
+
+// ---------- Breadcrumb ----------
+.cr-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: $slate-400;
+
+  &__link {
+    color: $slate-500;
+    font-weight: 600;
+    transition: color .15s;
+    text-decoration: none;
+
+    &:hover { color: $teal-600; }
+  }
+
+  &__sep {
+    font-size: 11px;
+    color: $slate-300;
+  }
+
+  &__current {
+    color: $teal-600;
+    font-weight: 700;
+  }
+}
+
+// ---------- Content Area ----------
+.cr-content {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 32px 32px 120px;
+
+  @media (max-width: 599px) {
+    padding: 20px 16px 110px;
+  }
+}
+
+// ---------- Form Grid ----------
+.cr-form-layout {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 24px;
+  align-items: start;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// ---------- Main Column ----------
+.cr-main-col {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+// ---------- Card ----------
+.cr-card {
+  background: #fff;
+  border-radius: $radius-card;
+  border: 1px solid $slate-200;
+  box-shadow: $shadow-card;
+  overflow: hidden;
+
+  &__head {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 20px 24px;
+    border-bottom: 1px solid $slate-100;
+  }
+
+  &__icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 16px;
+
+    &--teal {
+      background: $teal-50;
+      color: $teal-600;
+      border: 1.5px solid $teal-100;
+    }
+    &--blue {
+      background: $blue-50;
+      color: $blue-600;
+      border: 1.5px solid $blue-100;
+    }
+    &--indigo {
+      background: $indigo-50;
+      color: $indigo-600;
+      border: 1.5px solid $indigo-100;
+    }
+    &--amber {
+      background: $amber-50;
+      color: $amber-600;
+      border: 1.5px solid $amber-100;
+    }
+  }
+
+  &__title {
+    font-size: 15px;
+    font-weight: 800;
+    color: $slate-800;
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  &__subtitle {
+    font-size: 13px;
+    color: $slate-400;
+    margin: 3px 0 0;
+    font-weight: 500;
+  }
+
+  &__body {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+}
+
+// ---------- Field ----------
+.cr-field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+
+  &__label {
+    font-size: 13px;
+    font-weight: 700;
+    color: $slate-700;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  &__req { color: #dc2626; font-weight: 700; }
+
+  &__opt {
+    font-size: 11px;
+    font-weight: 600;
+    color: $slate-400;
+    background: $slate-100;
+    border-radius: 999px;
+    padding: 1px 8px;
+  }
+
+  &__input {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: $radius-field;
+    border: 1.5px solid $slate-200;
+    background: $slate-50;
+    font-size: 14px;
+    font-weight: 600;
+    color: $slate-800;
+    font-family: inherit;
+    transition: border-color .15s, background .15s, box-shadow .15s;
+    outline: none;
+    box-sizing: border-box;
+
+    &::placeholder { color: $slate-300; font-weight: 500; }
+
+    &:focus {
+      border-color: $teal-600;
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba($teal-600, .08);
+    }
+
+    &--date {
+      cursor: pointer;
+      padding-right: 42px;
+    }
+  }
+
+  &__textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: $radius-field;
+    border: 1.5px solid $slate-200;
+    background: $slate-50;
+    font-size: 14px;
+    font-weight: 600;
+    color: $slate-800;
+    font-family: inherit;
+    transition: border-color .15s, background .15s, box-shadow .15s;
+    outline: none;
+    box-sizing: border-box;
+    resize: vertical;
+    min-height: 90px;
+    line-height: 1.6;
+
+    &::placeholder { color: $slate-300; font-weight: 500; }
+
+    &:focus {
+      border-color: $teal-600;
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba($teal-600, .08);
+    }
+  }
+
+  &__helper {
+    font-size: 12px;
+    color: $slate-400;
+    margin: 0;
+    font-weight: 500;
+  }
+
+  &__error-msg {
+    font-size: 12px;
+    color: $red-500;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin: 0;
+  }
+}
+
+// ---------- Date Wrap ----------
+.cr-date-wrap {
+  position: relative;
+
+  &__icon {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: $slate-400;
+    font-size: 14px;
+    pointer-events: none;
+  }
+}
+
+.cr-dates-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+
+  @media (max-width: 640px) { grid-template-columns: 1fr; }
+}
+
+// ---------- Upload / Preview ----------
+.cr-dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 36px 24px;
+  border-radius: 16px;
+  border: 2px dashed $slate-200;
+  background: $slate-50;
+  cursor: pointer;
+  transition: background .2s, border-color .2s;
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+
+  &:hover {
+    background: $teal-50;
+    border-color: $teal-100;
+  }
+
+  &__icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: $teal-100;
+    color: $teal-600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    transition: transform .2s;
+  }
+
+  &:hover &__icon {
+    transform: scale(1.1);
+  }
+
+  &__primary {
+    font-size: 14px;
+    font-weight: 700;
+    color: $slate-700;
+  }
+
+  &__hint {
+    font-size: 12px;
+    color: $slate-400;
+    font-weight: 500;
+  }
+}
+
+.cr-file-hidden {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+}
+
+.cr-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  &__img-link {
+    display: block;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1.5px solid $slate-200;
+    position: relative;
+
+    &:hover .cr-preview__overlay { opacity: 1; }
+    &:hover .cr-preview__img { transform: scale(1.04); }
+  }
+
+  &__img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    display: block;
+    transition: transform .3s;
+  }
+
+  &__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity .2s;
+    color: #fff;
+    font-size: 24px;
+  }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 14px;
+    background: $slate-50;
+    border-radius: 12px;
+    border: 1px solid $slate-200;
+  }
+
+  &__file {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  &__file-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: $teal-50;
+    color: $teal-600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 15px;
+  }
+
+  &__file-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: $slate-700;
+    margin: 0;
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__file-size {
+    font-size: 12px;
+    color: $slate-400;
+    margin: 2px 0 0;
+    font-weight: 500;
+  }
+}
+
+.cr-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  &__track {
+    height: 6px;
+    background: $slate-100;
+    border-radius: 999px;
+    overflow: hidden;
+  }
+
+  &__fill {
+    height: 100%;
+    background: linear-gradient(90deg, $teal-600, color.adjust($teal-600, $lightness: 10%));
+    border-radius: 999px;
+    transition: width .3s;
+    position: relative;
+    overflow: hidden;
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(255,255,255,.25);
+      animation: shimmer 1.2s infinite;
+    }
+  }
+
+  &__label {
+    font-size: 12px;
+    font-weight: 600;
+    color: $slate-500;
+    text-align: center;
+  }
+}
+
+@keyframes shimmer {
+  0% { opacity: 0; }
+  50% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+// ---------- Interval Buttons ----------
+.cr-interval-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+
+  @media (max-width: 480px) { grid-template-columns: repeat(2, 1fr); }
+}
+
+.cr-interval-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 14px 10px;
+  border-radius: 14px;
+  border: 2px solid $slate-200;
+  background: $slate-50;
+  color: $slate-500;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all .15s;
+  position: relative;
+  font-family: inherit;
+
+  i.pi { font-size: 18px; }
+
+  &:hover:not(&--active) {
+    border-color: $teal-100;
+    background: $teal-50;
+    color: $teal-600;
+  }
+
+  &--active {
+    border-color: $teal-600;
+    background: $teal-50;
+    color: $teal-700;
+    box-shadow: 0 0 0 3px rgba($teal-600, .08);
+  }
+
+  &__check {
+    position: absolute;
+    top: 6px;
+    left: 8px;
+    font-size: 10px;
+    color: $teal-600;
+  }
+}
+
+// ---------- Custom Interval ----------
+.cr-custom-interval {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: $teal-50;
+  border: 1.5px solid $teal-100;
+  border-radius: 14px;
+
+  &__pre, &__suf {
+    font-size: 14px;
+    font-weight: 700;
+    color: $teal-700;
+    white-space: nowrap;
+  }
+
+  &__input {
+    width: 80px;
+    padding: 8px 12px;
+    border-radius: 10px;
+    border: 1.5px solid $teal-100;
+    background: #fff;
+    font-size: 18px;
+    font-weight: 800;
+    color: $teal-700;
+    text-align: center;
+    font-family: inherit;
+    outline: none;
+    transition: border-color .15s, box-shadow .15s;
+
+    &:focus {
+      border-color: $teal-600;
+      box-shadow: 0 0 0 3px rgba($teal-600, .12);
+    }
+  }
+}
+
+// ---------- Fulfillment Cards ----------
+.cr-fulfillment-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+
+  @media (max-width: 480px) { grid-template-columns: 1fr; }
+}
+
+.cr-fulfill-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 16px;
+  border-radius: 16px;
+  border: 2px solid $slate-200;
+  background: $slate-50;
+  cursor: pointer;
+  transition: all .15s;
+  text-align: right;
+  font-family: inherit;
+
+  &__icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: $slate-100;
+    color: $slate-500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+    transition: all .15s;
+  }
+
+  &__body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  &__title {
+    font-size: 14px;
+    font-weight: 800;
+    color: $slate-700;
+  }
+
+  &__desc {
+    font-size: 12px;
+    color: $slate-400;
+    font-weight: 500;
+  }
+
+  &__check {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid $slate-200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 10px;
+    color: transparent;
+    transition: all .15s;
+  }
+
+  &:hover:not(&--active) {
+    border-color: $teal-100;
+    background: $teal-50;
+  }
+
+  &--active {
+    border-color: $teal-600;
+    background: $teal-50;
+
+    .cr-fulfill-card__icon {
+      background: $teal-600;
+      color: #fff;
+    }
+
+    .cr-fulfill-card__title { color: $teal-700; }
+
+    .cr-fulfill-card__check {
+      background: $teal-600;
+      border-color: $teal-600;
+      color: #fff;
+    }
+  }
+}
+
+// ---------- Pharmacy Section ----------
+.cr-pharmacy-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  &__label {
+    font-size: 13px;
+    font-weight: 700;
+    color: $slate-600;
+  }
+}
+
+.cr-pharmacy-opt {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 14px;
+  border: 2px solid $slate-200;
+  background: $slate-50;
+  cursor: pointer;
+  transition: all .15s;
+  text-align: right;
+  width: 100%;
+  font-family: inherit;
+
+  &__icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 16px;
+    transition: all .15s;
+
+    &--smart {
+      background: $purple-50;
+      color: $purple-500;
+      border: 1.5px solid $purple-100;
+    }
+  }
+
+  &__body { flex: 1; text-align: right; }
+
+  &__name-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+
+  &__name {
+    font-size: 14px;
+    font-weight: 800;
+    color: $slate-700;
+  }
+
+  &__badge {
+    font-size: 11px;
+    font-weight: 700;
+    background: $teal-100;
+    color: $teal-700;
+    padding: 2px 8px;
+    border-radius: 999px;
+  }
+
+  &__desc {
+    font-size: 12px;
+    color: $slate-400;
+    font-weight: 500;
+    line-height: 1.5;
+  }
+
+  &__radio {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid $slate-300;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all .15s;
+    margin-top: 2px;
+
+    &--on {
+      border-color: $teal-600;
+      background: $teal-600;
+    }
+  }
+
+  &__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #fff;
+    opacity: 0;
+    transition: opacity .15s;
+  }
+
+  &__radio--on &__dot { opacity: 1; }
+
+  &--active {
+    border-color: $teal-600;
+    background: $teal-50;
+  }
+}
+
+// ---------- Pharmacy Manual ----------
+.cr-pharmacy-manual {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  &__sep-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: $slate-400;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    &::before, &::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: $slate-200;
+    }
+  }
+}
+
+.cr-pharmacy-search {
+  position: relative;
+
+  &__icon {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: $slate-400;
+    font-size: 13px;
+    pointer-events: none;
+  }
+
+  &__input {
+    width: 100%;
+    padding: 11px 42px 11px 16px;
+    border-radius: 12px;
+    border: 1.5px solid $slate-200;
+    background: $slate-50;
+    font-size: 13px;
+    font-weight: 600;
+    color: $slate-700;
+    font-family: inherit;
+    outline: none;
+    transition: border-color .15s;
+    box-sizing: border-box;
+
+    &::placeholder { color: $slate-300; }
+    &:focus { border-color: $teal-600; background: #fff; }
+  }
+}
+
+.cr-pharmacy-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 260px;
+  overflow-y: auto;
+  padding-left: 2px;
+}
+
+.cr-pharmacy-empty {
+  text-align: center;
+  padding: 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: $slate-400;
+  margin: 0;
+}
+
+.cr-pharmacy-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 2px solid $slate-200;
+  background: #fff;
+  cursor: pointer;
+  transition: all .15s;
+  text-align: right;
+  width: 100%;
+  font-family: inherit;
+
+  &__icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: $slate-100;
+    color: $slate-500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    flex-shrink: 0;
+    transition: all .15s;
+
+    &--on {
+      background: $teal-600;
+      color: #fff;
+    }
+  }
+
+  &__body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    overflow: hidden;
+  }
+
+  &__name {
+    font-size: 13px;
+    font-weight: 800;
+    color: $slate-700;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__branch {
+    font-size: 11px;
+    color: $slate-400;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    i { font-size: 10px; }
+  }
+
+  &__radio {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 2px solid $slate-300;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all .15s;
+
+    &--on {
+      border-color: $teal-600;
+      background: $teal-600;
+    }
+  }
+
+  &__dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #fff;
+    opacity: 0;
+  }
+
+  &__radio--on &__dot { opacity: 1; }
+
+  &:hover:not(&--active) { border-color: $slate-300; }
+
+  &--active { border-color: $teal-600; background: $teal-50; }
+}
+
+.cr-pharmacy-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: $slate-500;
+}
+
+// ---------- Confirmation Row ----------
+.cr-confirm-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px;
+  background: $slate-50;
+  border-radius: 14px;
+  border: 1.5px solid $slate-200;
+
+  &__icon {
+    font-size: 20px;
+    color: $amber-500;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  &__text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  &__title {
+    font-size: 14px;
+    font-weight: 800;
+    color: $slate-800;
+  }
+
+  &__desc {
+    font-size: 13px;
+    color: $slate-500;
+    font-weight: 500;
+    line-height: 1.5;
+  }
+}
+
+// ---------- Toggle ----------
+.cr-toggle {
+  position: relative;
+  width: 48px;
+  height: 26px;
+  border-radius: 999px;
+  background: $slate-200;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background .2s;
+  padding: 0;
+
+  &--on {
+    background: $teal-600;
+  }
+
+  &__thumb {
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 4px rgba(0,0,0,.2);
+    transition: transform .2s;
+  }
+
+  &--on &__thumb {
+    transform: translateX(-22px);
+  }
+}
+
+// ---------- Error Banner ----------
+.cr-error-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 18px;
+  background: $red-50;
+  border: 1px solid $red-100;
+  border-radius: 14px;
+  color: $red-500;
+
+  i { flex-shrink: 0; font-size: 16px; }
+  p { margin: 0; font-size: 14px; font-weight: 600; }
+}
+
+// ---------- Actions ----------
+.cr-actions {
+  display: flex;
+  gap: 12px;
+  padding-bottom: 16px;
+
+  @media (max-width: 768px) { display: none; }
+}
+
+// ---------- Buttons ----------
+.cr-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: inherit;
+  font-weight: 700;
+  border-radius: $radius-btn;
+  cursor: pointer;
+  transition: all .15s;
+  text-decoration: none;
+  border: none;
+  white-space: nowrap;
+
+  &--primary {
+    background: $teal-600;
+    color: #fff;
+
+    &:hover:not(:disabled) { background: $teal-700; }
+    &:disabled { opacity: .55; cursor: not-allowed; }
+  }
+
+  &--ghost {
+    background: transparent;
+    color: $slate-600;
+    border: 1.5px solid $slate-200;
+
+    &:hover:not(:disabled) { background: $slate-50; }
+  }
+
+  &--lg {
+    padding: 14px 28px;
+    font-size: 15px;
+    flex: 1;
+  }
+
+  &--md {
+    padding: 12px 22px;
+    font-size: 14px;
+  }
+
+  &--sm {
+    padding: 7px 14px;
+    font-size: 12px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  &--flex { flex: 1; }
+}
+
+// ---------- Sidebar ----------
+.cr-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: sticky;
+  top: 24px;
+
+  @media (max-width: 1024px) {
+    position: static;
+    order: -1;
+  }
+}
+
+// ---------- Summary Card ----------
+.cr-summary {
+  background: #fff;
+  border-radius: $radius-card;
+  border: 1px solid $slate-200;
+  box-shadow: $shadow-card;
+  overflow: hidden;
+
+  &__head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 18px 20px;
+    border-bottom: 1px solid $slate-100;
+  }
+
+  &__head-icon {
+    font-size: 15px;
+    color: $teal-600;
+  }
+
+  &__title {
+    font-size: 14px;
+    font-weight: 800;
+    color: $slate-800;
+    margin: 0;
+  }
+
+  &__body {
+    padding: 8px 0;
+  }
+
+  &__row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 20px;
+    border-bottom: 1px solid $slate-50;
+
+    &:last-child { border-bottom: none; }
+  }
+
+  &__label {
+    font-size: 12px;
+    font-weight: 600;
+    color: $slate-400;
+    flex-shrink: 0;
+  }
+
+  &__val {
+    font-size: 13px;
+    font-weight: 700;
+    color: $slate-700;
+    text-align: left;
+    word-break: break-word;
+
+    &--empty { color: $slate-300; font-style: italic; }
+  }
+}
+
+// ---------- Next Order ----------
+.cr-next-order {
+  margin: 0 16px 16px;
+  padding: 14px 16px;
+  background: linear-gradient(135deg, $teal-50, color.adjust($teal-50, $lightness: 2%));
+  border: 1.5px solid $teal-100;
+  border-radius: 14px;
+  text-align: center;
+
+  &__label {
+    font-size: 11px;
+    font-weight: 700;
+    color: $teal-600;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-bottom: 6px;
+  }
+
+  &__date {
+    font-size: 16px;
+    font-weight: 800;
+    color: $teal-700;
+    margin-bottom: 4px;
+  }
+
+  &__note {
+    font-size: 11px;
+    color: $teal-600;
+    font-weight: 500;
+    margin: 0;
+    opacity: .8;
+  }
+}
+
+// ---------- Sidebar Image Card ----------
+.cr-sidebar-img {
+  background: #fff;
+  border-radius: $radius-card;
+  border: 1px solid $slate-200;
+  box-shadow: $shadow-card;
+  overflow: hidden;
+
+  &__head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 18px;
+    border-bottom: 1px solid $slate-100;
+    font-size: 13px;
+    font-weight: 700;
+    color: $slate-700;
+
+    i { color: $blue-600; }
+  }
+
+  &__link {
+    display: block;
+    position: relative;
+    overflow: hidden;
+
+    &:hover .cr-sidebar-img__overlay { opacity: 1; }
+    &:hover .cr-sidebar-img__img { transform: scale(1.04); }
+  }
+
+  &__img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    display: block;
+    transition: transform .3s;
+  }
+
+  &__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity .2s;
+    color: #fff;
+    font-size: 22px;
+  }
+}
+
+// ---------- Medicines Empty State ----------
+.cr-medicines-empty {
+  background: #fff;
+  border-radius: $radius-card;
+  border: 1.5px dashed $slate-200;
+  padding: 24px 20px;
+  text-align: center;
+
+  &__icon {
+    font-size: 28px;
+    color: $slate-200;
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  &__title {
+    font-size: 13px;
+    font-weight: 700;
+    color: $slate-500;
+    margin: 0 0 6px;
+  }
+
+  &__desc {
+    font-size: 12px;
+    color: $slate-400;
+    font-weight: 500;
+    margin: 0;
+    line-height: 1.5;
+  }
+}
+
+// ---------- Tips Card ----------
+.cr-tips {
+  background: #fff;
+  border-radius: $radius-card;
+  border: 1px solid $slate-200;
+  box-shadow: $shadow-card;
+  padding: 18px;
+
+  &__head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 800;
+    color: $slate-700;
+    margin-bottom: 12px;
+
+    i { color: $amber-500; }
+  }
+
+  &__list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    li {
+      font-size: 12px;
+      color: $slate-500;
+      font-weight: 500;
+      padding-right: 14px;
+      position: relative;
+      line-height: 1.5;
+
+      &::before {
+        content: '';
+        position: absolute;
+        right: 0;
+        top: 8px;
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: $teal-600;
+      }
+    }
+  }
+}
+
+// ---------- Mobile Sticky Bar ----------
+.cr-mobile-bar {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  z-index: 50;
+  background: rgba(255,255,255,.96);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid $slate-200;
+  padding: 12px 16px;
+  padding-bottom: max(12px, env(safe-area-inset-bottom));
+  gap: 10px;
+
+  @media (max-width: 768px) {
+    display: flex;
+    align-items: center;
+  }
+}
+
+// ---------- Skeleton Loading ----------
+.cr-skeleton-wrap {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 24px;
+  align-items: start;
+
+  @media (max-width: 1024px) { grid-template-columns: 1fr; }
+}
+
+.cr-skeleton-col {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.cr-skeleton-side {
+  @media (max-width: 1024px) { display: none; }
+}
+
+.cr-skel {
+  background: #fff;
+  border-radius: $radius-card;
+  border: 1px solid $slate-200;
+  animation: pulse 1.5s ease-in-out infinite;
+
+  &--h140 { height: 140px; }
+  &--h160 { height: 160px; }
+  &--h200 { height: 200px; }
+  &--h300 { height: 300px; }
+  &--full { height: 400px; }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .6; }
+}

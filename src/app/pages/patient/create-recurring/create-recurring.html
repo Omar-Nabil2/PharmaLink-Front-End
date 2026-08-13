@@ -1,0 +1,432 @@
+<div class="cr-page" dir="rtl">
+
+  <!-- PAGE HEADER + BREADCRUMB -->
+  <div class="cr-page-header">
+    <div class="cr-page-header__inner">
+      <nav class="cr-breadcrumb" aria-label="مسار التصفح">
+        <a routerLink="/patient/dashboard" class="cr-breadcrumb__link">الرئيسية</a>
+        <i class="pi pi-angle-left cr-breadcrumb__sep"></i>
+        <a routerLink="/patient/prescriptions/recurring" class="cr-breadcrumb__link">روشتتي</a>
+        <i class="pi pi-angle-left cr-breadcrumb__sep"></i>
+        <span class="cr-breadcrumb__current">{{ editId ? "تعديل الروشتة الدورية" : "إنشاء روشتة دورية" }}</span>
+      </nav>
+      <div class="cr-page-header__title-row">
+        <div class="cr-page-header__icon-wrap">
+          <i class="pi pi-sync"></i>
+        </div>
+        <div>
+          <h1 class="cr-page-header__title">{{ editId ? "تعديل الروشتة الدورية" : "إنشاء روشتة دورية" }}</h1>
+          <p class="cr-page-header__subtitle">سيتم إنشاء طلبات الأدوية تلقائياً حسب الجدول الذي تحدده</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="cr-content">
+
+    <!-- Loading Skeleton -->
+    <div *ngIf="isLoading" class="cr-skeleton-wrap">
+      <div class="cr-skeleton-col">
+        <div class="cr-skel cr-skel--h200"></div>
+        <div class="cr-skel cr-skel--h160"></div>
+        <div class="cr-skel cr-skel--h140"></div>
+      </div>
+      <div class="cr-skeleton-side">
+        <div class="cr-skel cr-skel--h300"></div>
+      </div>
+    </div>
+
+    <!-- FORM -->
+    <form *ngIf="!isLoading" (ngSubmit)="submit()" class="cr-form-layout" novalidate>
+
+      <!-- ═══════ MAIN COLUMN ═══════ -->
+      <div class="cr-main-col">
+
+        <!-- Section 1: معلومات الروشتة -->
+        <div class="cr-card">
+          <div class="cr-card__head">
+            <span class="cr-card__icon cr-card__icon--teal"><i class="pi pi-file-edit"></i></span>
+            <div>
+              <h2 class="cr-card__title">معلومات الروشتة</h2>
+              <p class="cr-card__subtitle">اسم ووصف الروشتة التي سيتم تكرارها</p>
+            </div>
+          </div>
+          <div class="cr-card__body">
+
+            <div class="cr-field">
+              <label class="cr-field__label" for="rx-name">
+                اسم الروشتة <span class="cr-field__req">*</span>
+              </label>
+              <input
+                id="rx-name"
+                [(ngModel)]="form.name"
+                name="name"
+                type="text"
+                placeholder="مثال: أدوية الضغط الشهرية"
+                class="cr-field__input"
+                autocomplete="off"
+              />
+            </div>
+
+            <div class="cr-field">
+              <label class="cr-field__label" for="rx-notes">
+                ملاحظات إضافية <span class="cr-field__opt">اختياري</span>
+              </label>
+              <textarea
+                id="rx-notes"
+                [(ngModel)]="form.notes"
+                name="notes"
+                rows="3"
+                placeholder="مثال: تناول أدوية الضغط بعد الإفطار، لا تُبدّل ببدائل"
+                class="cr-field__textarea"
+              ></textarea>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Section 2: صورة الروشتة -->
+        <div class="cr-card">
+          <div class="cr-card__head">
+            <span class="cr-card__icon cr-card__icon--blue"><i class="pi pi-image"></i></span>
+            <div>
+              <h2 class="cr-card__title">صورة الروشتة</h2>
+              <p class="cr-card__subtitle">ارفع صورة الروشتة أو ملف PDF لمساعدة النظام في التعرف على الأدوية</p>
+            </div>
+          </div>
+          <div class="cr-card__body">
+
+            <!-- Preview after upload -->
+            <div *ngIf="selectedFilePreview || existingImageUrl" class="cr-preview">
+              <a [href]="selectedFilePreview || existingImageUrl" target="_blank" class="cr-preview__img-link" aria-label="عرض الصورة بالحجم الكامل">
+                <img [src]="selectedFilePreview || existingImageUrl" alt="صورة الروشتة" class="cr-preview__img" />
+                <div class="cr-preview__overlay"><i class="pi pi-search-plus"></i></div>
+              </a>
+              <div class="cr-preview__meta">
+                <div class="cr-preview__file">
+                  <div class="cr-preview__file-icon"><i class="pi pi-image"></i></div>
+                  <div>
+                    <p class="cr-preview__file-name">{{ selectedFile?.name || "صورة الروشتة الحالية" }}</p>
+                    <p *ngIf="selectedFile" class="cr-preview__file-size">{{ (selectedFile!.size / 1024 / 1024 | number:"1.1-2") }} MB</p>
+                  </div>
+                </div>
+                <label class="cr-btn cr-btn--ghost cr-btn--sm" tabindex="0" role="button">
+                  <i class="pi pi-refresh"></i> استبدال
+                  <input type="file" (change)="onFileSelected($event)" accept="image/*,application/pdf" class="cr-file-hidden" />
+                </label>
+              </div>
+              <div *ngIf="isUploading" class="cr-progress">
+                <div class="cr-progress__track">
+                  <div class="cr-progress__fill" [style.width]="uploadProgress + '%'"></div>
+                </div>
+                <span class="cr-progress__label">جاري رفع الصورة... {{ uploadProgress }}%</span>
+              </div>
+            </div>
+
+            <!-- Dropzone (no file yet) -->
+            <label *ngIf="!selectedFilePreview && !existingImageUrl" class="cr-dropzone" tabindex="0" role="button" aria-label="رفع صورة الروشتة">
+              <input type="file" (change)="onFileSelected($event)" accept="image/*,application/pdf" class="cr-file-hidden" />
+              <div class="cr-dropzone__icon"><i class="pi pi-cloud-upload"></i></div>
+              <span class="cr-dropzone__primary">اسحب الملف هنا أو اضغط لاختيار ملف</span>
+              <span class="cr-dropzone__hint">PNG, JPG, PDF — حتى 10 MB</span>
+            </label>
+
+          </div>
+        </div>
+
+        <!-- Section 3: الجدول الزمني -->
+        <div class="cr-card">
+          <div class="cr-card__head">
+            <span class="cr-card__icon cr-card__icon--indigo"><i class="pi pi-calendar"></i></span>
+            <div>
+              <h2 class="cr-card__title">متى تريد استلام الأدوية؟</h2>
+              <p class="cr-card__subtitle">حدد فترة التكرار وتاريخ البداية لجدولة الطلبات</p>
+            </div>
+          </div>
+          <div class="cr-card__body">
+
+            <div class="cr-field">
+              <label class="cr-field__label">فترة التكرار <span class="cr-field__req">*</span></label>
+              <div class="cr-interval-grid">
+                <button *ngFor="let opt of intervalOptions" type="button"
+                  class="cr-interval-btn"
+                  [class.cr-interval-btn--active]="selectedIntervalValue === opt.value"
+                  (click)="selectedIntervalValue = opt.value; onIntervalChange()"
+                  [attr.aria-pressed]="selectedIntervalValue === opt.value">
+                  <i class="pi" [ngClass]="opt.icon"></i>
+                  <span>{{ opt.label }}</span>
+                  <span *ngIf="selectedIntervalValue === opt.value" class="cr-interval-btn__check"><i class="pi pi-check"></i></span>
+                </button>
+              </div>
+            </div>
+
+            <div *ngIf="selectedIntervalValue === 0" class="cr-custom-interval">
+              <span class="cr-custom-interval__pre">تكرار كل</span>
+              <input
+                [(ngModel)]="customInterval"
+                (ngModelChange)="onCustomIntervalChange()"
+                name="customInterval"
+                type="number" min="1" max="365"
+                placeholder="30"
+                class="cr-custom-interval__input"
+                aria-label="عدد الأيام"
+              />
+              <span class="cr-custom-interval__suf">يوم</span>
+            </div>
+
+            <div class="cr-dates-grid">
+              <div class="cr-field">
+                <label class="cr-field__label" for="rx-start">
+                  تاريخ بداية الروشتة <span class="cr-field__req">*</span>
+                </label>
+                <div class="cr-date-wrap">
+                  <i class="pi pi-calendar cr-date-wrap__icon"></i>
+                  <input id="rx-start" [(ngModel)]="form.startDate" name="startDate" type="date" [min]="minDate" class="cr-field__input cr-field__input--date" />
+                </div>
+                <p class="cr-field__helper">سيتم إنشاء أول طلب في هذا التاريخ</p>
+              </div>
+              <div class="cr-field">
+                <label class="cr-field__label" for="rx-end">
+                  تاريخ الانتهاء <span class="cr-field__opt">اختياري</span>
+                </label>
+                <div class="cr-date-wrap">
+                  <i class="pi pi-calendar cr-date-wrap__icon"></i>
+                  <input id="rx-end" [(ngModel)]="form.endDate" name="endDate" type="date" [min]="form.startDate || minDate" class="cr-field__input cr-field__input--date" />
+                </div>
+                <p class="cr-field__helper">اتركه فارغاً للاستمرار بلا نهاية</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Section 4: طريقة الاستلام -->
+        <div class="cr-card">
+          <div class="cr-card__head">
+            <span class="cr-card__icon cr-card__icon--teal"><i class="pi pi-truck"></i></span>
+            <div>
+              <h2 class="cr-card__title">طريقة الاستلام</h2>
+              <p class="cr-card__subtitle">كيف تفضل استلام أدويتك في كل دورة؟</p>
+            </div>
+          </div>
+          <div class="cr-card__body">
+
+            <div class="cr-fulfillment-grid">
+              <button type="button" class="cr-fulfill-card" [class.cr-fulfill-card--active]="form.fulfillmentMode === 'Delivery'" (click)="form.fulfillmentMode = 'Delivery'" aria-pressed="{{ form.fulfillmentMode === 'Delivery' }}">
+                <div class="cr-fulfill-card__icon"><i class="pi pi-truck"></i></div>
+                <div class="cr-fulfill-card__body">
+                  <span class="cr-fulfill-card__title">توصيل للمنزل</span>
+                  <span class="cr-fulfill-card__desc">توصيل الأدوية إلى عنوانك</span>
+                </div>
+                <div class="cr-fulfill-card__check"><i class="pi pi-check"></i></div>
+              </button>
+              <button type="button" class="cr-fulfill-card" [class.cr-fulfill-card--active]="form.fulfillmentMode === 'Pickup'" (click)="form.fulfillmentMode = 'Pickup'" aria-pressed="{{ form.fulfillmentMode === 'Pickup' }}">
+                <div class="cr-fulfill-card__icon"><i class="pi pi-shopping-bag"></i></div>
+                <div class="cr-fulfill-card__body">
+                  <span class="cr-fulfill-card__title">استلام من الصيدلية</span>
+                  <span class="cr-fulfill-card__desc">استلام الطلب من الصيدلية</span>
+                </div>
+                <div class="cr-fulfill-card__check"><i class="pi pi-check"></i></div>
+              </button>
+            </div>
+
+            <!-- Pharmacy Selection -->
+            <div class="cr-pharmacy-wrap">
+              <p class="cr-pharmacy-wrap__label">اختيار الصيدلية</p>
+
+              <!-- Smart Auto -->
+              <button type="button" class="cr-pharmacy-opt" [class.cr-pharmacy-opt--active]="!form.preferredBranchId" (click)="form.preferredBranchId = undefined" aria-pressed="{{ !form.preferredBranchId }}">
+                <div class="cr-pharmacy-opt__icon cr-pharmacy-opt__icon--smart"><i class="pi pi-bolt"></i></div>
+                <div class="cr-pharmacy-opt__body">
+                  <div class="cr-pharmacy-opt__name-row">
+                    <span class="cr-pharmacy-opt__name">الاختيار الذكي التلقائي</span>
+                    <span class="cr-pharmacy-opt__badge">موصى به</span>
+                  </div>
+                  <span class="cr-pharmacy-opt__desc">دع PharmaLink يختار أفضل صيدلية بناءً على توفر الأدوية والمسافة</span>
+                </div>
+                <div class="cr-pharmacy-opt__radio" [class.cr-pharmacy-opt__radio--on]="!form.preferredBranchId">
+                  <div class="cr-pharmacy-opt__dot"></div>
+                </div>
+              </button>
+
+              <!-- Manual pharmacies list -->
+              <div *ngIf="pharmacies.length > 0" class="cr-pharmacy-manual">
+                <p class="cr-pharmacy-manual__sep-label">أو اختر صيدلية يدوياً</p>
+                <div class="cr-pharmacy-search">
+                  <i class="pi pi-search cr-pharmacy-search__icon"></i>
+                  <input type="text" [(ngModel)]="pharmacySearchTerm" name="pharmacySearch" placeholder="ابحث عن صيدلية..." class="cr-pharmacy-search__input" aria-label="البحث عن صيدلية" />
+                </div>
+                <div class="cr-pharmacy-list">
+                  <p *ngIf="filteredPharmacies.length === 0" class="cr-pharmacy-empty">لا توجد صيدليات مطابقة للبحث</p>
+                  <button *ngFor="let ph of filteredPharmacies" type="button"
+                    class="cr-pharmacy-item"
+                    [class.cr-pharmacy-item--active]="form.preferredBranchId === ph.branchId"
+                    (click)="form.preferredBranchId = ph.branchId"
+                    [attr.aria-pressed]="form.preferredBranchId === ph.branchId">
+                    <div class="cr-pharmacy-item__icon" [class.cr-pharmacy-item__icon--on]="form.preferredBranchId === ph.branchId">
+                      <i class="pi pi-building"></i>
+                    </div>
+                    <div class="cr-pharmacy-item__body">
+                      <span class="cr-pharmacy-item__name">{{ ph.pharmacyName }}</span>
+                      <span class="cr-pharmacy-item__branch"><i class="pi pi-map-marker"></i> {{ ph.branchName }}</span>
+                    </div>
+                    <div class="cr-pharmacy-item__radio" [class.cr-pharmacy-item__radio--on]="form.preferredBranchId === ph.branchId">
+                      <div class="cr-pharmacy-item__dot"></div>
+                    </div>
+                  </button>
+                </div>
+              </div>
+
+              <div *ngIf="isLoadingData && pharmacies.length === 0" class="cr-pharmacy-loading">
+                <i class="pi pi-spin pi-spinner"></i>
+                <span>جاري تحميل الصيدليات القريبة...</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Section 5: إعدادات التأكيد -->
+        <div class="cr-card">
+          <div class="cr-card__head">
+            <span class="cr-card__icon cr-card__icon--amber"><i class="pi pi-shield"></i></span>
+            <div>
+              <h2 class="cr-card__title">إعدادات التأكيد</h2>
+              <p class="cr-card__subtitle">هل تريد مراجعة الطلب قبل إنشائه تلقائياً؟</p>
+            </div>
+          </div>
+          <div class="cr-card__body">
+            <div class="cr-confirm-row">
+              <i class="pi pi-bell cr-confirm-row__icon"></i>
+              <div class="cr-confirm-row__text">
+                <span class="cr-confirm-row__title">تأكيد الطلب قبل إنشائه</span>
+                <span class="cr-confirm-row__desc">
+                  {{ form.requireConfirmation ? "سيصلك إشعار قبل 24 ساعة لتأكيد كل طلب. إذا لم تستجب، يُنشأ الطلب تلقائياً." : "سيتم إنشاء الطلبات تلقائياً بدون أي تأكيد." }}
+                </span>
+              </div>
+              <button type="button"
+                class="cr-toggle"
+                [class.cr-toggle--on]="form.requireConfirmation"
+                (click)="form.requireConfirmation = !form.requireConfirmation"
+                role="switch"
+                [attr.aria-checked]="form.requireConfirmation"
+                aria-label="تفعيل تأكيد الطلب">
+                <span class="cr-toggle__thumb"></span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Error Banner -->
+        <div *ngIf="error" class="cr-error-banner" role="alert">
+          <i class="pi pi-exclamation-circle"></i>
+          <p>{{ error }}</p>
+        </div>
+
+        <!-- Bottom Actions (Desktop only) -->
+        <div class="cr-actions">
+          <a routerLink="/patient/prescriptions/recurring" class="cr-btn cr-btn--ghost cr-btn--lg">إلغاء</a>
+          <button type="submit" class="cr-btn cr-btn--primary cr-btn--lg" [disabled]="saving">
+            <i *ngIf="saving" class="pi pi-spin pi-spinner"></i>
+            <i *ngIf="!saving" class="pi pi-check-circle"></i>
+            {{ saving ? "جاري الحفظ..." : (editId ? "حفظ التعديلات" : "إنشاء الروشتة الدورية") }}
+          </button>
+        </div>
+
+      </div><!-- /cr-main-col -->
+
+      <!-- ═══════ SIDEBAR COLUMN ═══════ -->
+      <aside class="cr-sidebar">
+
+        <!-- Summary Card -->
+        <div class="cr-summary">
+          <div class="cr-summary__head">
+            <i class="pi pi-list-check cr-summary__head-icon"></i>
+            <h3 class="cr-summary__title">ملخص الروشتة</h3>
+          </div>
+          <div class="cr-summary__body">
+            <div class="cr-summary__row">
+              <span class="cr-summary__label">الاسم</span>
+              <span class="cr-summary__val" [class.cr-summary__val--empty]="!form.name?.trim()">
+                {{ form.name?.trim() || "لم يُدخل بعد" }}
+              </span>
+            </div>
+            <div class="cr-summary__row">
+              <span class="cr-summary__label">التكرار</span>
+              <span class="cr-summary__val">
+                <ng-container *ngIf="selectedIntervalValue === 0">كل {{ customInterval }} يوم</ng-container>
+                <ng-container *ngIf="selectedIntervalValue === 7">أسبوعياً</ng-container>
+                <ng-container *ngIf="selectedIntervalValue === 14">كل أسبوعين</ng-container>
+                <ng-container *ngIf="selectedIntervalValue === 30">شهرياً</ng-container>
+                <ng-container *ngIf="selectedIntervalValue === 90">كل 3 أشهر</ng-container>
+              </span>
+            </div>
+            <div class="cr-summary__row">
+              <span class="cr-summary__label">تاريخ البداية</span>
+              <span class="cr-summary__val" [class.cr-summary__val--empty]="!form.startDate">
+                {{ form.startDate || "لم يُحدد بعد" }}
+              </span>
+            </div>
+            <div class="cr-summary__row">
+              <span class="cr-summary__label">طريقة الاستلام</span>
+              <span class="cr-summary__val">{{ form.fulfillmentMode === "Delivery" ? "توصيل للمنزل" : "استلام من الصيدلية" }}</span>
+            </div>
+            <div class="cr-summary__row">
+              <span class="cr-summary__label">الصيدلية</span>
+              <span class="cr-summary__val">{{ form.preferredBranchId ? "صيدلية محددة" : "اختيار ذكي تلقائي" }}</span>
+            </div>
+            <div class="cr-summary__row">
+              <span class="cr-summary__label">التأكيد</span>
+              <span class="cr-summary__val">{{ form.requireConfirmation ? "قبل 24 ساعة" : "تلقائي" }}</span>
+            </div>
+          </div>
+          <div *ngIf="form.startDate" class="cr-next-order">
+            <div class="cr-next-order__label"><i class="pi pi-clock"></i> الطلب القادم</div>
+            <div class="cr-next-order__date">{{ form.startDate }}</div>
+            <p class="cr-next-order__note">سيتم إنشاء طلب الأدوية تلقائياً</p>
+          </div>
+        </div>
+
+        <!-- Sidebar Image Preview -->
+        <div *ngIf="selectedFilePreview || existingImageUrl" class="cr-sidebar-img">
+          <div class="cr-sidebar-img__head"><i class="pi pi-image"></i> صورة الروشتة</div>
+          <a [href]="selectedFilePreview || existingImageUrl" target="_blank" class="cr-sidebar-img__link" aria-label="عرض الصورة">
+            <img [src]="selectedFilePreview || existingImageUrl" alt="صورة الروشتة" class="cr-sidebar-img__img" />
+            <div class="cr-sidebar-img__overlay"><i class="pi pi-search-plus"></i></div>
+          </a>
+        </div>
+
+        <!-- Medicines Empty State -->
+        <div *ngIf="!selectedFilePreview && !existingImageUrl" class="cr-medicines-empty">
+          <i class="pi pi-inbox cr-medicines-empty__icon"></i>
+          <p class="cr-medicines-empty__title">لم تُضف الأدوية بعد</p>
+          <p class="cr-medicines-empty__desc">ارفع صورة الروشتة ليقوم النظام بالتعرف على الأدوية تلقائياً</p>
+        </div>
+
+        <!-- Tips -->
+        <div class="cr-tips">
+          <div class="cr-tips__head"><i class="pi pi-lightbulb"></i> نصائح مفيدة</div>
+          <ul class="cr-tips__list">
+            <li>ارفع صورة واضحة لضمان دقة استخراج الأدوية</li>
+            <li>حدد تاريخاً يتوافق مع موعد استهلاكك للأدوية</li>
+            <li>يمكنك تعديل الروشتة أو إيقافها في أي وقت</li>
+          </ul>
+        </div>
+
+      </aside>
+
+    </form>
+  </div>
+
+  <!-- STICKY MOBILE ACTIONS -->
+  <div *ngIf="!isLoading" class="cr-mobile-bar">
+    <a routerLink="/patient/prescriptions/recurring" class="cr-btn cr-btn--ghost cr-btn--md">إلغاء</a>
+    <button type="button" (click)="submit()" class="cr-btn cr-btn--primary cr-btn--md cr-btn--flex" [disabled]="saving">
+      <i *ngIf="saving" class="pi pi-spin pi-spinner"></i>
+      <i *ngIf="!saving" class="pi pi-check-circle"></i>
+      {{ saving ? "جاري الحفظ..." : (editId ? "حفظ التعديلات" : "إنشاء الروشتة") }}
+    </button>
+  </div>
+
+</div>
