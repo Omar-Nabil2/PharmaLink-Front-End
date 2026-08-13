@@ -59,6 +59,14 @@
               class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:outline-none focus:border-teal-400 focus:bg-white text-sm font-semibold text-slate-700 transition-all placeholder:text-slate-300 resize-none"></textarea>
           </div>
 
+          <!-- Prescription Image Viewer (Edit Mode) -->
+          <div class="flex flex-col gap-1.5" *ngIf="editId && existingImageUrl">
+            <label class="text-xs font-black text-slate-600">صورة الروشتة الحالية</label>
+            <a [href]="existingImageUrl" target="_blank" class="block rounded-xl overflow-hidden border border-slate-200 hover:border-teal-400 transition-all">
+              <img [src]="existingImageUrl" alt="صورة الروشتة" class="w-full h-32 object-cover hover:scale-105 transition-transform duration-300" />
+            </a>
+          </div>
+
           <!-- Prescription Image Upload -->
           <div class="flex flex-col gap-1.5" *ngIf="!editId">
             <label class="text-xs font-black text-slate-600">صورة الروشتة (اختياري)</label>

@@ -24,6 +24,7 @@ export interface RecurringDto {
   requireConfirmation: boolean;
   status: string;
   createdAt: string;
+  prescriptionImageUrl?: string;
   recentRuns: RecurringRunDto[];
 }
 

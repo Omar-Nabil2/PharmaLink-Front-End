@@ -22,6 +22,7 @@ export class CreateRecurring implements OnInit, OnDestroy {
   isLoading = false;
   saving = false;
   isUploading = false;
+  existingImageUrl: string | null = null;
   uploadProgress = 0;
   selectedFile: File | null = null;
   editId: string | null = null;
@@ -120,12 +121,14 @@ export class CreateRecurring implements OnInit, OnDestroy {
             this.uploadProgress = Math.round((100 * event.loaded) / (event.total || 1));
           } else if (event.type === HttpEventType.Response) {
             const prescriptionId = event.body?.id;
-            this.isUploading = false; this.cdr.detectChanges();
+            this.isUploading = false;
+  existingImageUrl: string | null = null; this.cdr.detectChanges();
             this.submitRecurring(prescriptionId);
           }
         },
         error: () => { this.cdr.detectChanges();
-          this.isUploading = false; this.cdr.detectChanges();
+          this.isUploading = false;
+  existingImageUrl: string | null = null; this.cdr.detectChanges();
           this.saving = false;
           this.error = 'فشل رفع صورة الروشتة. يرجى المحاولة مرة أخرى.';
         }
