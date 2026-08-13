@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Subject, takeUntil, finalize } from 'rxjs';
+import { Subject, takeUntil, finalize, BehaviorSubject } from 'rxjs';
 import { RemindersService, ReminderDto, CreateReminderRequest } from '../../../core/services/reminders.service';
 
 @Component({
@@ -14,7 +14,9 @@ import { RemindersService, ReminderDto, CreateReminderRequest } from '../../../c
 export class Reminders implements OnInit, OnDestroy {
   minDate = new Date().toISOString().split('T')[0];
 
-  reminders: ReminderDto[] = [];
+  private _reminders = new BehaviorSubject<ReminderDto[]>([]);
+  reminders$ = this._reminders.asObservable();
+
   isLoading = true;
   error: string | null = null;
   saving = false;
@@ -34,9 +36,13 @@ export class Reminders implements OnInit, OnDestroy {
     this.isLoading = true;
     this.error = null;
     this.svc.getAll().pipe(takeUntil(this.destroy$), finalize(() => this.isLoading = false)).subscribe({
-      next: (data) => this.reminders = data,
+      next: (data) => this._reminders.next(data),
       error: () => this.error = 'حدث خطأ أثناء تحميل المنبهات'
     });
+  }
+
+  get reminders(): ReminderDto[] {
+    return this._reminders.getValue();
   }
 
   openAdd() {
@@ -87,7 +93,12 @@ export class Reminders implements OnInit, OnDestroy {
 
   toggle(r: ReminderDto) {
     this.svc.toggle(r.id).pipe(takeUntil(this.destroy$)).subscribe({
-      next: () => r.isActive = !r.isActive,
+      next: () => {
+        const updated = this._reminders.getValue().map(x =>
+          x.id === r.id ? { ...x, isActive: !x.isActive } : x
+        );
+        this._reminders.next(updated);
+      },
       error: () => alert('حدث خطأ')
     });
   }
@@ -95,7 +106,7 @@ export class Reminders implements OnInit, OnDestroy {
   delete(r: ReminderDto) {
     if (!confirm(`هل تريد حذف منبه "${r.medicineName}"؟`)) return;
     this.svc.delete(r.id).pipe(takeUntil(this.destroy$)).subscribe({
-      next: () => this.reminders = this.reminders.filter(x => x.id !== r.id),
+      next: () => this._reminders.next(this._reminders.getValue().filter(x => x.id !== r.id)),
       error: () => alert('حدث خطأ أثناء الحذف')
     });
   }

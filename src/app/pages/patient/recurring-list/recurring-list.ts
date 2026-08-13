@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { Subject, takeUntil, finalize } from 'rxjs';
+import { Subject, takeUntil, finalize, BehaviorSubject } from 'rxjs';
 import { RecurringPrescriptionsService, RecurringDto } from '../../../core/services/recurring-prescriptions.service';
 
 @Component({
@@ -12,7 +12,9 @@ import { RecurringPrescriptionsService, RecurringDto } from '../../../core/servi
   styleUrl: './recurring-list.scss',
 })
 export class RecurringList implements OnInit, OnDestroy {
-  items: RecurringDto[] = [];
+  private _items = new BehaviorSubject<RecurringDto[]>([]);
+  items$ = this._items.asObservable();
+
   isLoading = true;
   error: string | null = null;
 
@@ -26,21 +28,31 @@ export class RecurringList implements OnInit, OnDestroy {
     this.isLoading = true;
     this.error = null;
     this.svc.getAll().pipe(takeUntil(this.destroy$), finalize(() => this.isLoading = false)).subscribe({
-      next: (data) => this.items = data,
+      next: (data) => this._items.next(data),
       error: () => this.error = 'حدث خطأ أثناء تحميل الروشتات الدورية'
     });
   }
 
   pause(item: RecurringDto) {
     this.svc.pause(item.id).pipe(takeUntil(this.destroy$)).subscribe({
-      next: () => item.status = 'Paused',
+      next: () => {
+        const updated = this._items.getValue().map(x =>
+          x.id === item.id ? { ...x, status: 'Paused' } : x
+        );
+        this._items.next(updated);
+      },
       error: () => alert('حدث خطأ')
     });
   }
 
   resume(item: RecurringDto) {
     this.svc.resume(item.id).pipe(takeUntil(this.destroy$)).subscribe({
-      next: () => item.status = 'Active',
+      next: () => {
+        const updated = this._items.getValue().map(x =>
+          x.id === item.id ? { ...x, status: 'Active' } : x
+        );
+        this._items.next(updated);
+      },
       error: () => alert('حدث خطأ')
     });
   }
@@ -48,7 +60,7 @@ export class RecurringList implements OnInit, OnDestroy {
   delete(item: RecurringDto) {
     if (!confirm(`هل تريد حذف "${item.name}"؟`)) return;
     this.svc.delete(item.id).pipe(takeUntil(this.destroy$)).subscribe({
-      next: () => this.items = this.items.filter(x => x.id !== item.id),
+      next: () => this._items.next(this._items.getValue().filter(x => x.id !== item.id)),
       error: () => alert('حدث خطأ أثناء الحذف')
     });
   }
