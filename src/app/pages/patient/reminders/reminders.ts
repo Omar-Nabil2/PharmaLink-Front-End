@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subject, takeUntil, finalize } from 'rxjs';
@@ -14,21 +14,6 @@ import { RemindersService, ReminderDto, CreateReminderRequest } from '../../../c
 export class Reminders implements OnInit, OnDestroy {
   minDate = new Date().toISOString().split('T')[0];
 
-  formatTime(time: string): string {
-    if (!time) return '';
-    const [h, m] = time.split(':');
-    let hour = parseInt(h, 10);
-    const suffix = hour >= 12 ? 'م' : 'ص';
-    if (hour === 0) hour = 12;
-    if (hour > 12) hour -= 12;
-    return `${hour}:${m} ${suffix}`;
-  }
-
-  formatDate(date: string): string {
-    if (!date) return 'مستمر';
-    return new Date(date).toLocaleDateString('ar-EG', { day: 'numeric', month: 'long', year: 'numeric' });
-  }
-
   reminders: ReminderDto[] = [];
   isLoading = true;
   error: string | null = null;
@@ -41,16 +26,16 @@ export class Reminders implements OnInit, OnDestroy {
 
   private destroy$ = new Subject<void>();
 
-  constructor(private svc: RemindersService, private cdr: ChangeDetectorRef) {}
+  constructor(private svc: RemindersService) {}
 
   ngOnInit() { this.load(); }
 
   load() {
     this.isLoading = true;
     this.error = null;
-    this.svc.getAll().pipe(takeUntil(this.destroy$), finalize(() => { this.isLoading = false; this.cdr.detectChanges(); })).subscribe({
-      next: (data) => { this.reminders = data; this.cdr.detectChanges(); },
-      error: () => { this.error = 'حدث خطأ أثناء تحميل المنبهات'; this.cdr.detectChanges(); }
+    this.svc.getAll().pipe(takeUntil(this.destroy$), finalize(() => this.isLoading = false)).subscribe({
+      next: (data) => this.reminders = data,
+      error: () => this.error = 'حدث خطأ أثناء تحميل المنبهات'
     });
   }
 
@@ -58,7 +43,6 @@ export class Reminders implements OnInit, OnDestroy {
     this.form = this.emptyForm();
     this.editingId = null;
     this.showDialog = true;
-    this.cdr.detectChanges();
   }
 
   openEdit(r: ReminderDto) {
@@ -74,13 +58,11 @@ export class Reminders implements OnInit, OnDestroy {
     };
     this.editingId = r.id;
     this.showDialog = true;
-    this.cdr.detectChanges();
   }
 
   closeDialog() {
     this.showDialog = false;
     this.editingId = null;
-    this.cdr.detectChanges();
   }
 
   addTime() {
@@ -97,15 +79,15 @@ export class Reminders implements OnInit, OnDestroy {
     const req$ = this.editingId
       ? this.svc.update(this.editingId, this.form)
       : this.svc.create(this.form);
-    req$.pipe(takeUntil(this.destroy$), finalize(() => { this.saving = false; this.cdr.detectChanges(); })).subscribe({
+    req$.pipe(takeUntil(this.destroy$), finalize(() => this.saving = false)).subscribe({
       next: () => { this.closeDialog(); this.load(); },
-      error: () => { alert('حدث خطأ أثناء الحفظ'); this.cdr.detectChanges(); }
+      error: () => alert('حدث خطأ أثناء الحفظ')
     });
   }
 
   toggle(r: ReminderDto) {
     this.svc.toggle(r.id).pipe(takeUntil(this.destroy$)).subscribe({
-      next: () => { r.isActive = !r.isActive; this.cdr.detectChanges(); },
+      next: () => r.isActive = !r.isActive,
       error: () => alert('حدث خطأ')
     });
   }
@@ -113,13 +95,24 @@ export class Reminders implements OnInit, OnDestroy {
   delete(r: ReminderDto) {
     if (!confirm(`هل تريد حذف منبه "${r.medicineName}"؟`)) return;
     this.svc.delete(r.id).pipe(takeUntil(this.destroy$)).subscribe({
-      next: () => { this.reminders = this.reminders.filter(x => x.id !== r.id); this.cdr.detectChanges(); },
+      next: () => this.reminders = this.reminders.filter(x => x.id !== r.id),
       error: () => alert('حدث خطأ أثناء الحذف')
     });
   }
 
-  formatTimes(times: string[]): string {
-    return times.join(' ، ');
+  formatTime(time: string): string {
+    if (!time) return '';
+    const [h, m] = time.split(':');
+    let hour = parseInt(h, 10);
+    const suffix = hour >= 12 ? 'م' : 'ص';
+    if (hour === 0) hour = 12;
+    if (hour > 12) hour -= 12;
+    return `${hour}:${m} ${suffix}`;
+  }
+
+  formatDate(date: string): string {
+    if (!date) return 'مستمر';
+    return new Date(date).toLocaleDateString('ar-EG', { day: 'numeric', month: 'long', year: 'numeric' });
   }
 
   getDaysRemaining(endDate?: string): string {

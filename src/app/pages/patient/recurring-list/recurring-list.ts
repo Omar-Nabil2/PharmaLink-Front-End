@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Subject, takeUntil, finalize } from 'rxjs';
@@ -12,40 +12,35 @@ import { RecurringPrescriptionsService, RecurringDto } from '../../../core/servi
   styleUrl: './recurring-list.scss',
 })
 export class RecurringList implements OnInit, OnDestroy {
-  formatDate(date: string): string {
-    if (!date) return '';
-    return new Date(date).toLocaleDateString('ar-EG', { day: 'numeric', month: 'long', year: 'numeric' });
-  }
-
   items: RecurringDto[] = [];
   isLoading = true;
   error: string | null = null;
 
   private destroy$ = new Subject<void>();
 
-  constructor(private svc: RecurringPrescriptionsService, private cdr: ChangeDetectorRef) {}
+  constructor(private svc: RecurringPrescriptionsService) {}
 
   ngOnInit() { this.load(); }
 
   load() {
     this.isLoading = true;
     this.error = null;
-    this.svc.getAll().pipe(takeUntil(this.destroy$), finalize(() => { this.isLoading = false; this.cdr.detectChanges(); })).subscribe({
-      next: (data) => { this.items = data; this.cdr.detectChanges(); },
-      error: () => { this.error = 'حدث خطأ أثناء تحميل الروشتات الدورية'; this.cdr.detectChanges(); }
+    this.svc.getAll().pipe(takeUntil(this.destroy$), finalize(() => this.isLoading = false)).subscribe({
+      next: (data) => this.items = data,
+      error: () => this.error = 'حدث خطأ أثناء تحميل الروشتات الدورية'
     });
   }
 
   pause(item: RecurringDto) {
     this.svc.pause(item.id).pipe(takeUntil(this.destroy$)).subscribe({
-      next: () => { item.status = 'Paused'; this.cdr.detectChanges(); },
+      next: () => item.status = 'Paused',
       error: () => alert('حدث خطأ')
     });
   }
 
   resume(item: RecurringDto) {
     this.svc.resume(item.id).pipe(takeUntil(this.destroy$)).subscribe({
-      next: () => { item.status = 'Active'; this.cdr.detectChanges(); },
+      next: () => item.status = 'Active',
       error: () => alert('حدث خطأ')
     });
   }
@@ -53,9 +48,14 @@ export class RecurringList implements OnInit, OnDestroy {
   delete(item: RecurringDto) {
     if (!confirm(`هل تريد حذف "${item.name}"؟`)) return;
     this.svc.delete(item.id).pipe(takeUntil(this.destroy$)).subscribe({
-      next: () => { this.items = this.items.filter(x => x.id !== item.id); this.cdr.detectChanges(); },
+      next: () => this.items = this.items.filter(x => x.id !== item.id),
       error: () => alert('حدث خطأ أثناء الحذف')
     });
+  }
+
+  formatDate(date: string): string {
+    if (!date) return '';
+    return new Date(date).toLocaleDateString('ar-EG', { day: 'numeric', month: 'long', year: 'numeric' });
   }
 
   getIntervalLabel(days: number): string {

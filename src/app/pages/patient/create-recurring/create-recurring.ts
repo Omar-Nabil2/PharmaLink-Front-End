@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
@@ -6,8 +6,6 @@ import { Subject, takeUntil, finalize } from 'rxjs';
 import { RecurringPrescriptionsService, RecurringDto } from '../../../core/services/recurring-prescriptions.service';
 import { PrescriptionService } from '../../../core/services/prescription.service';
 import { HttpEventType } from '@angular/common/http';
-
-interface BranchOption { id: string; name: string; }
 
 @Component({
   selector: 'app-create-recurring',
@@ -22,9 +20,9 @@ export class CreateRecurring implements OnInit, OnDestroy {
   isLoading = false;
   saving = false;
   isUploading = false;
-  existingImageUrl: string | null = null;
   uploadProgress = 0;
   selectedFile: File | null = null;
+  existingImageUrl: string | null = null;
   editId: string | null = null;
   error: string | null = null;
 
@@ -57,8 +55,7 @@ export class CreateRecurring implements OnInit, OnDestroy {
     private svc: RecurringPrescriptionsService,
     private prescriptionSvc: PrescriptionService,
     private router: Router,
-    private route: ActivatedRoute,
-    private cdr: ChangeDetectorRef
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit() {
@@ -68,7 +65,7 @@ export class CreateRecurring implements OnInit, OnDestroy {
 
   loadForEdit(id: string) {
     this.isLoading = true;
-    this.svc.getAll().pipe(takeUntil(this.destroy$), finalize(() => { this.cdr.detectChanges(); this.isLoading = false; this.cdr.detectChanges(); })).subscribe({
+    this.svc.getAll().pipe(takeUntil(this.destroy$), finalize(() => this.isLoading = false)).subscribe({
       next: (items) => {
         const item = items.find(x => x.id === id);
         if (!item) return;
@@ -81,10 +78,15 @@ export class CreateRecurring implements OnInit, OnDestroy {
         this.form.preferredBranchId = item.preferredBranchId;
         this.form.requireConfirmation = item.requireConfirmation;
         this.selectedIntervalValue = item.intervalDays;
-        if (![7,14,30,90].includes(item.intervalDays)) {
+        this.existingImageUrl = (item as any).prescriptionImageUrl || null;
+        if (![7, 14, 30, 90].includes(item.intervalDays)) {
           this.selectedIntervalValue = 0;
           this.customInterval = item.intervalDays;
         }
+      },
+      error: () => {
+        alert('حدث خطأ أثناء تحميل بيانات الروشتة الدورية');
+        this.router.navigate(['/patient/prescriptions/recurring']);
       }
     });
   }
@@ -115,6 +117,7 @@ export class CreateRecurring implements OnInit, OnDestroy {
 
     if (this.selectedFile && !this.editId) {
       this.isUploading = true;
+      this.uploadProgress = 0;
       this.prescriptionSvc.uploadPrescription(this.selectedFile).pipe(takeUntil(this.destroy$)).subscribe({
         next: (event: any) => {
           if (event.type === HttpEventType.UploadProgress) {
@@ -122,13 +125,11 @@ export class CreateRecurring implements OnInit, OnDestroy {
           } else if (event.type === HttpEventType.Response) {
             const prescriptionId = event.body?.id;
             this.isUploading = false;
-  existingImageUrl: string | null = null; this.cdr.detectChanges();
             this.submitRecurring(prescriptionId);
           }
         },
-        error: () => { this.cdr.detectChanges();
+        error: () => {
           this.isUploading = false;
-  existingImageUrl: string | null = null; this.cdr.detectChanges();
           this.saving = false;
           this.error = 'فشل رفع صورة الروشتة. يرجى المحاولة مرة أخرى.';
         }
