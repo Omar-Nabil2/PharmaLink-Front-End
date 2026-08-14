@@ -410,9 +410,17 @@
             <p class="type-body-sm text-mute">تلقى تنبيهات بمواعيد الأدوية وتحديثات الطلبات مباشرة على جهازك</p>
           </div>
         </div>
-        <button (click)="pushNotificationService.subscribeToNotifications()" class="btn-primary whitespace-nowrap px-6">
-          تفعيل الإشعارات
-        </button>
+        <ng-container *ngIf="pushNotificationService.subscription | async; else notSubscribed">
+          <button (click)="pushNotificationService.unsubscribeFromNotifications()" 
+                  class="btn-outline whitespace-nowrap px-6 text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300">
+            إيقاف الإشعارات
+          </button>
+        </ng-container>
+        <ng-template #notSubscribed>
+          <button (click)="pushNotificationService.subscribeToNotifications()" class="btn-primary whitespace-nowrap px-6">
+            تفعيل الإشعارات
+          </button>
+        </ng-template>
       </div>
     </div>
   </div>

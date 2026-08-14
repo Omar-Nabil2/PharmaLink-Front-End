@@ -4,6 +4,7 @@ import { SwPush } from '@angular/service-worker';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '@environments/environment';
 import { MessageService } from 'primeng/api';
+import { take } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -22,6 +23,14 @@ export class PushNotificationService {
         }
       });
     }
+  }
+
+  get subscription() {
+    return this.swPush.subscription;
+  }
+
+  get isEnabled() {
+    return this.swPush.isEnabled;
   }
 
   subscribeToNotifications(): void {
@@ -64,6 +73,29 @@ export class PushNotificationService {
         summary: 'تم الرفض',
         detail: 'تم رفض إذن إرسال الإشعارات أو حدث خطأ.'
       });
+    });
+  }
+
+  unsubscribeFromNotifications(): void {
+    if (!this.swPush.isEnabled) return;
+
+    this.swPush.subscription.pipe(take(1)).subscribe(sub => {
+      if (!sub) return;
+      
+      // Unsubscribe locally
+      this.swPush.unsubscribe()
+        .then(() => {
+          // Send request to backend to delete from DB
+          this.http.post(`${environment.baseUrl}/notifications/unsubscribe`, { endpoint: sub.endpoint }).subscribe({
+            next: () => {
+              this.messageService.add({ severity: 'info', summary: 'تم الإيقاف', detail: 'تم إيقاف الإشعارات بنجاح.' });
+            },
+            error: (err) => console.error('Error unsubscribing on backend', err)
+          });
+        })
+        .catch(err => {
+          console.error('Error unsubscribing locally', err);
+        });
     });
   }
 }
