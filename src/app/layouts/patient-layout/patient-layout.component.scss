@@ -1,1 +1,18 @@
 /* patient layout styles */
+.mobile-bottom-nav {
+  display: none !important;
+}
+
+/* Show only on touch devices (phones/tablets), not when resizing desktop browsers */
+@media (max-width: 768px) and (hover: none) and (pointer: coarse) {
+  .mobile-bottom-nav {
+    display: flex !important;
+  }
+}
+
+/* Add padding to main content when bottom nav is visible so it doesn't overlap content */
+@media (max-width: 768px) and (hover: none) and (pointer: coarse) {
+  main {
+    padding-bottom: 70px;
+  }
+}

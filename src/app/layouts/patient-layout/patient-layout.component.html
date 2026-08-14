@@ -201,8 +201,43 @@
 
   <!-- Sticky AI Assistant Button -->
   <a *ngIf="!isAiAssistantPage() && !menuOpen" routerLink="/patient/ai-assistant" 
-     class="fixed bottom-6 left-6 z-50 flex items-center justify-center w-14 h-14 bg-gradient-to-r from-teal-500 to-teal-700 text-white rounded-full shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+     class="fixed bottom-24 lg:bottom-6 left-6 z-50 flex items-center justify-center w-14 h-14 bg-gradient-to-r from-teal-500 to-teal-700 text-white rounded-full shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
      title="المساعد الذكي">
     <svg class="w-7 h-7" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A2.5 2.5 0 0 0 5 15.5 2.5 2.5 0 0 0 7.5 18 2.5 2.5 0 0 0 10 15.5 2.5 2.5 0 0 0 7.5 13m9 0a2.5 2.5 0 0 0-2.5 2.5 2.5 2.5 0 0 0 2.5 2.5 2.5 2.5 0 0 0 2.5-2.5 2.5 2.5 0 0 0-2.5-2.5z"/></svg>
   </a>
+
+  <!-- Mobile Bottom Navigation Bar (PWA) -->
+  <!-- [class.hidden]="menuOpen" ensures it hides when the top hamburger menu is opened -->
+  <nav [class.hidden]="menuOpen" class="mobile-bottom-nav fixed bottom-0 left-0 w-full bg-white border-t border-slate-200 justify-around items-center h-[70px] z-[45] pb-safe shadow-[0_-4px_10px_rgba(0,0,0,0.05)] rounded-t-2xl">
+    <a routerLink="/patient/dashboard" routerLinkActive="text-teal-600 scale-110" [routerLinkActiveOptions]="{exact: true}" class="flex flex-col items-center justify-center w-16 h-full text-slate-500 hover:text-teal-600 transition-all duration-300">
+      <i class="pi pi-home text-xl mb-1"></i>
+      <span class="text-[10px] font-bold">الرئيسية</span>
+    </a>
+    
+    <a routerLink="/patient/medicines" routerLinkActive="text-teal-600 scale-110" class="flex flex-col items-center justify-center w-16 h-full text-slate-500 hover:text-teal-600 transition-all duration-300">
+      <i class="pi pi-box text-xl mb-1"></i>
+      <span class="text-[10px] font-bold">الأدوية</span>
+    </a>
+
+    <!-- Center Floating Action Button (Scan) -->
+    <div class="relative w-16 h-full flex justify-center">
+      <a routerLink="/patient/medicine-image-scan" class="absolute -top-6 flex items-center justify-center w-14 h-14 bg-gradient-to-tr from-teal-500 to-teal-400 text-white rounded-full shadow-[0_8px_16px_rgba(13,148,136,0.4)] border-4 border-white hover:scale-105 transition-transform">
+        <i class="pi pi-camera text-xl"></i>
+      </a>
+    </div>
+
+    <a routerLink="/patient/prescriptions" routerLinkActive="text-teal-600 scale-110" class="flex flex-col items-center justify-center w-16 h-full text-slate-500 hover:text-teal-600 transition-all duration-300">
+      <i class="pi pi-file text-xl mb-1"></i>
+      <span class="text-[10px] font-bold">روشتات</span>
+    </a>
+
+    <a routerLink="/patient/cart" routerLinkActive="text-teal-600 scale-110" class="flex flex-col items-center justify-center w-16 h-full text-slate-500 hover:text-teal-600 transition-all duration-300 relative">
+      <div class="relative">
+        <i class="pi pi-shopping-cart text-xl mb-1"></i>
+        <span *ngIf="cartCount() > 0" class="absolute -top-2 -right-3 bg-red-500 text-white text-[9px] font-bold w-4 h-4 flex items-center justify-center rounded-full border-2 border-white shadow-sm">{{ cartCount() }}</span>
+      </div>
+      <span class="text-[10px] font-bold">السلة</span>
+    </a>
+  </nav>
+
 </div>
