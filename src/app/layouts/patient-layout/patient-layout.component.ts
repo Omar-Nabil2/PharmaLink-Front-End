@@ -68,18 +68,27 @@ export class PatientLayoutComponent implements OnInit {
         this.reminderSignalRService.connect(userId);
         this.reminderSignalRService.reminder$.subscribe(data => {
           Swal.fire({
-            title: '💊 حان موعد الدواء!',
+            title: '<strong style="color: #0d9488;">وقت الدواء! 💊</strong>',
             html: `
-              <div dir="rtl" style="font-size: 1.1rem; line-height: 1.8;">
-                <p>اسم الدواء: <strong style="color: #2196f3;">${data.medicineName}</strong></p>
-                ${data.dosage ? `<p>الجرعة: <strong>${data.dosage}</strong></p>` : ''}
-                ${data.notes ? `<p>ملاحظات: ${data.notes}</p>` : ''}
-                <p style="margin-top: 15px; font-size: 0.9rem; color: #666;">نتمنى لك دوام الصحة والعافية! 🌿</p>
+              <div dir="rtl" style="text-align: right; background: #f0fdfa; border: 1px solid #ccfbf1; border-radius: 12px; padding: 16px; margin-top: 10px;">
+                <p style="margin: 0 0 8px 0; font-size: 1.1rem; color: #0f172a;">الدواء: <strong style="color: #0d9488; font-size: 1.2rem;">${data.medicineName}</strong></p>
+                ${data.dosage ? `<p style="margin: 0 0 8px 0; color: #334155; font-size: 1rem;">الجرعة: <strong>${data.dosage}</strong></p>` : ''}
+                ${data.notes ? `<p style="margin: 0; color: #64748b; font-size: 0.9rem;">📝 ${data.notes}</p>` : ''}
               </div>
+              <p style="margin-top: 16px; font-size: 0.9rem; color: #64748b; text-align: center;">مع تمنياتنا لك بالشفاء العاجل 🌿</p>
             `,
             icon: 'info',
-            confirmButtonText: 'حسناً، تم',
-            confirmButtonColor: '#3085d6'
+            iconColor: '#0d9488',
+            confirmButtonText: 'تم تناول الدواء ✔️',
+            confirmButtonColor: '#0d9488',
+            showCancelButton: true,
+            cancelButtonText: 'تأجيل قليلاً',
+            cancelButtonColor: '#94a3b8',
+            customClass: {
+              popup: 'rounded-2xl',
+              confirmButton: 'rounded-xl font-bold px-6',
+              cancelButton: 'rounded-xl font-bold px-6'
+            }
           });
         });
       }
