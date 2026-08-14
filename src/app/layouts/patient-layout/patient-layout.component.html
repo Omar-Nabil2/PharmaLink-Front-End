@@ -3,6 +3,22 @@
   <!-- Global Click Outside Overlay (Covers the main content below the header) -->
   <div *ngIf="profileMenuOpen || menuOpen || alarmMenuOpen" class="fixed inset-0 z-40" (click)="profileMenuOpen = false; menuOpen = false; alarmMenuOpen = false"></div>
 
+  <!-- PWA Install Banner -->
+  <div *ngIf="pwaInstallService.promptSaved$ | async" class="bg-gradient-to-r from-teal-600 to-teal-800 text-white px-4 py-3 flex items-center justify-between shadow-md z-[60] relative">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center shrink-0 p-1">
+        <img src="/icons/icon-72x72.png" alt="App Icon" class="w-full h-full object-contain" onerror="this.src='/logo.png'">
+      </div>
+      <div>
+        <p class="font-bold text-sm leading-tight">تطبيق فارما لينك</p>
+        <p class="text-[11px] text-teal-100 mt-0.5">ثبّت التطبيق لتجربة أسرع وإشعارات أفضل</p>
+      </div>
+    </div>
+    <button (click)="pwaInstallService.installPwa()" class="bg-white text-teal-700 px-4 py-2 rounded-lg text-xs font-bold shadow hover:bg-gray-50 transition shrink-0">
+      تثبيت
+    </button>
+  </div>
+
   <header class="sticky top-0 z-50 bg-canvas/95 backdrop-blur border-b border-surface-pressed">
     <div class="w-full px-4 sm:px-6 lg:px-8">
       <div class="h-20 flex items-center justify-between gap-4">

@@ -6,6 +6,7 @@ import { ProfileService } from '@core/services/profile.service';
 import { CartService } from '@core/services/cart.service';
 import { environment } from '@environments/environment';
 import { MedicineReminderSignalrService } from '@core/services/medicine-reminder-signalr.service';
+import { PwaInstallService } from '@core/services/pwa-install.service';
 import Swal from 'sweetalert2';
 
 import { trigger, transition, style, query, animate } from '@angular/animations';
@@ -25,6 +26,7 @@ export class PatientLayoutComponent implements OnInit {
   private profileService = inject(ProfileService);
   private router = inject(Router);
   public cartService = inject(CartService);
+  public pwaInstallService = inject(PwaInstallService);
   private reminderSignalRService = inject(MedicineReminderSignalrService);
 
   cartCount$ = this.cartService.cartCount$;
