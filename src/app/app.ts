@@ -3,17 +3,20 @@ import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
 import { ToastModule } from 'primeng/toast';
 import { filter } from 'rxjs';
 
+import { PwaInstallService } from '@core/services/pwa-install.service';
+import { CommonModule } from '@angular/common';
+
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, ToastModule],
+  imports: [RouterOutlet, ToastModule, CommonModule],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
 export class App implements OnInit {
   title = 'Pharma Link';
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, public pwaInstall: PwaInstallService) {}
 
   ngOnInit() {
     this.router.events.pipe(
