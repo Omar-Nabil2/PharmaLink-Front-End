@@ -385,5 +385,34 @@
         </div>
       </div>
     </div>
+
+
+  <!-- App Settings Section -->
+  <div class="card-surface border border-surface-pressed overflow-hidden !p-0 mt-8 mb-4">
+    <div class="bg-canvas-soft px-6 py-4 border-b border-surface">
+      <div class="flex items-center gap-3">
+        <div class="bg-canvas text-ink p-2 rounded-full w-10 h-10 flex items-center justify-center">
+          <i class="pi pi-cog"></i>
+        </div>
+        <h2 class="type-display-sm">إعدادات التطبيق</h2>
+      </div>
+    </div>
+    
+    <div class="p-6">
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-50 border border-slate-100 rounded-2xl p-5">
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+            <i class="pi pi-bell text-xl"></i>
+          </div>
+          <div>
+            <h3 class="type-body-lg-strong text-ink mb-1">الإشعارات الفورية</h3>
+            <p class="type-body-sm text-mute">تلقى تنبيهات بمواعيد الأدوية وتحديثات الطلبات مباشرة على جهازك</p>
+          </div>
+        </div>
+        <button (click)="pushNotificationService.subscribeToNotifications()" class="btn-primary whitespace-nowrap px-6">
+          تفعيل الإشعارات
+        </button>
+      </div>
+    </div>
   </div>
 </div>

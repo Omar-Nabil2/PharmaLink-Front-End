@@ -100,4 +100,27 @@ export class DrugDetailsComponent implements OnInit {
       default: return 'success';
     }
   }
+
+  shareDrug(): void {
+    if (!this.drug) return;
+    
+    if (navigator.share) {
+      navigator.share({
+        title: `دواء ${this.drug.brandName}`,
+        text: `اكتشف هذا الدواء (${this.drug.brandName}) على فارما لينك:`,
+        url: window.location.href,
+      })
+      .then(() => console.log('تمت المشاركة بنجاح'))
+      .catch((error) => console.log('حدث خطأ في المشاركة', error));
+    } else {
+      // Fallback: Copy to clipboard
+      navigator.clipboard.writeText(window.location.href).then(() => {
+        this.messageService.add({
+          severity: 'info',
+          summary: 'تم النسخ',
+          detail: 'تم نسخ رابط الدواء للحافظة'
+        });
+      });
+    }
+  }
 }

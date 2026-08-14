@@ -37,5 +37,28 @@
       "type": "image/png",
       "purpose": "maskable"
     }
+  ],
+  "shortcuts": [
+    {
+      "name": "المساعد الذكي",
+      "short_name": "المساعد",
+      "description": "تحدث مع المساعد الذكي لفارما لينك",
+      "url": "/patient/ai-assistant",
+      "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "فحص دواء",
+      "short_name": "فحص دواء",
+      "description": "فحص الأدوية باستخدام الذكاء الاصطناعي",
+      "url": "/patient/image-search",
+      "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "سلة المشتريات",
+      "short_name": "السلة",
+      "description": "عرض سلة مشتريات الأدوية",
+      "url": "/patient/cart",
+      "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
+    }
   ]
 }

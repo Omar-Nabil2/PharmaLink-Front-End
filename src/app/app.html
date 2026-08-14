@@ -23,3 +23,11 @@
     </div>
   </div>
 </div>
+
+<!-- Offline Banner -->
+<div *ngIf="isOffline" class="fixed top-0 left-0 right-0 z-[99999] bg-red-600 text-white px-4 py-2 flex items-center justify-center shadow-md animate-fadein" dir="rtl">
+  <div class="flex items-center gap-2">
+    <i class="pi pi-wifi-slash text-lg"></i>
+    <span class="text-sm font-bold">أنت حالياً غير متصل بالإنترنت. يتم عرض بيانات مؤرشفة.</span>
+  </div>
+</div>

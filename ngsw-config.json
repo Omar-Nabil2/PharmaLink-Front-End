@@ -26,5 +26,20 @@
         ]
       }
     }
+  ],
+  "dataGroups": [
+    {
+      "name": "api-data",
+      "urls": [
+        "https://pharmalink.tryasp.net/api/v1/**",
+        "https://localhost:5001/api/v1/**"
+      ],
+      "cacheConfig": {
+        "maxSize": 100,
+        "maxAge": "1d",
+        "timeout": "5s",
+        "strategy": "freshness"
+      }
+    }
   ]
 }

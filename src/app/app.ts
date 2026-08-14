@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
 import { ToastModule } from 'primeng/toast';
 import { filter } from 'rxjs';
@@ -17,8 +17,13 @@ import { CommonModule } from '@angular/common';
 })
 export class App implements OnInit {
   title = 'Pharma Link';
+  isOffline = false;
 
   constructor(private router: Router, public pwaInstall: PwaInstallService, private swUpdate: SwUpdate) {
+    if (typeof window !== 'undefined') {
+      this.isOffline = !navigator.onLine;
+    }
+
     if (this.swUpdate.isEnabled) {
       this.swUpdate.versionUpdates.pipe(
         filter(evt => evt.type === 'VERSION_READY')
@@ -38,6 +43,16 @@ export class App implements OnInit {
         });
       });
     }
+  }
+
+  @HostListener('window:offline', ['$event'])
+  onOffline() {
+    this.isOffline = true;
+  }
+
+  @HostListener('window:online', ['$event'])
+  onOnline() {
+    this.isOffline = false;
   }
 
   ngOnInit() {

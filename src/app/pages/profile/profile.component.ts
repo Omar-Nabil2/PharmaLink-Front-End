@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { ProfileService } from '../../core/services/profile.service';
 import { environment } from '../../../environments/environment';
 import { ErrorHandlerService } from '../../core/services/error-handler.service';
+import { PushNotificationService } from '../../core/services/push-notification.service';
 // افترض إني ضفت DriverProfile ضمن الـ Interfaces بتاعتك
 import { GetPharmacyProfileResponse, PatientProfile, SystemAdminProfile, GetPharmacyAdminProfile, DriverProfile } from '../../core/interfaces/profile.interface';
 
@@ -31,6 +32,7 @@ export class ProfileComponent implements OnInit {
     private readonly profileService: ProfileService,
     private readonly errorHandler: ErrorHandlerService,
     private readonly cdr: ChangeDetectorRef,
+    public readonly pushNotificationService: PushNotificationService
   ) { }
 
   ngOnInit(): void {
