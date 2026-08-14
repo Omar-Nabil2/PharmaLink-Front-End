@@ -67,6 +67,12 @@ export class PatientLayoutComponent implements OnInit {
       if (userId) {
         this.reminderSignalRService.connect(userId);
         this.reminderSignalRService.reminder$.subscribe(data => {
+          
+          // Set app badge to 1 to notify the user visually on the home screen icon
+          if ('setAppBadge' in navigator) {
+            (navigator as any).setAppBadge(1).catch(console.error);
+          }
+
           Swal.fire({
             title: '<strong style="color: #0d9488;">وقت الدواء! 💊</strong>',
             html: `
@@ -84,6 +90,11 @@ export class PatientLayoutComponent implements OnInit {
             customClass: {
               popup: 'rounded-2xl',
               confirmButton: 'rounded-xl font-bold px-6'
+            }
+          }).then(() => {
+            // Clear the app badge once the user acknowledges the reminder
+            if ('clearAppBadge' in navigator) {
+              (navigator as any).clearAppBadge().catch(console.error);
             }
           });
         });
