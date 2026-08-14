@@ -1,4 +1,4 @@
-import { ApplicationConfig, LOCALE_ID, provideBrowserGlobalErrorListeners } from '@angular/core';
+import { ApplicationConfig, LOCALE_ID, provideBrowserGlobalErrorListeners, isDevMode } from '@angular/core';
 import { provideRouter, withInMemoryScrolling } from '@angular/router';
 import { registerLocaleData } from '@angular/common';
 import localeArEg from '@angular/common/locales/ar-EG';
@@ -11,6 +11,7 @@ import { MessageService } from 'primeng/api';
 import { authInterceptor } from '@core/interceptors/auth.interceptor';
 import { PharmaLinkPreset } from '@core/config/primeng-theme';
 import { provideAnimations } from '@angular/platform-browser/animations';
+import { provideServiceWorker } from '@angular/service-worker';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -32,6 +33,9 @@ export const appConfig: ApplicationConfig = {
       ripple: false,
       inputVariant: 'filled',
       overlayAppendTo: 'body',
-    }),
+    }), provideServiceWorker('ngsw-worker.js', {
+            enabled: !isDevMode(),
+            registrationStrategy: 'registerWhenStable:30000'
+          }),
   ],
 };
