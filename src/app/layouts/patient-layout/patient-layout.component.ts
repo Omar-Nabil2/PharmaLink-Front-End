@@ -79,15 +79,11 @@ export class PatientLayoutComponent implements OnInit {
             `,
             icon: 'info',
             iconColor: '#0d9488',
-            confirmButtonText: 'تم تناول الدواء ✔️',
+            confirmButtonText: 'حسناً، تم',
             confirmButtonColor: '#0d9488',
-            showCancelButton: true,
-            cancelButtonText: 'تأجيل قليلاً',
-            cancelButtonColor: '#94a3b8',
             customClass: {
               popup: 'rounded-2xl',
-              confirmButton: 'rounded-xl font-bold px-6',
-              cancelButton: 'rounded-xl font-bold px-6'
+              confirmButton: 'rounded-xl font-bold px-6'
             }
           });
         });
