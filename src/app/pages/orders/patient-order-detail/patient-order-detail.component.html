@@ -26,7 +26,7 @@
       <div>
         <div class="flex items-center gap-3 mb-2 flex-wrap">
           <span [class]="getStatusClass(order.orderStatus)" class="px-3 py-1 rounded-full text-xs font-semibold">
-            {{ getStatusText(order.orderStatus) }}
+            {{ getStatusText(order.orderStatus) | statusTranslate }}
           </span>
           <span class="text-gray-500 font-mono text-sm tracking-wider">{{ order.orderNumber }}</span>
           

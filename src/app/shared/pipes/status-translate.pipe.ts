@@ -11,7 +11,7 @@ const STATUS_ARABIC_MAP: Record<string, string> = {
   Pending: 'قيد الانتظار',
   Processing: 'جاري التجهيز',
   Shipped: 'جاري التوصيل',
-  PendingPrescriptionReview: 'مراجعة الروشتة',
+  PendingPrescriptionReview: 'بانتظار مراجعة الروشتة',
   PrescriptionRejected: 'روشتة مرفوضة',
   // ── Common delivery aliases ────────────────────────────────
   InDelivery: 'جاري التوصيل',

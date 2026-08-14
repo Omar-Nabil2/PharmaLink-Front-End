@@ -92,7 +92,7 @@
               <span class="text-xl font-black text-slate-800 font-mono tracking-widest break-all">#{{ order.orderNumber }}</span>
             </div>
             <span [class]="getStatusClass(order.orderStatus)" class="px-3 py-1.5 rounded-xl text-xs font-black shadow-sm whitespace-nowrap shrink-0">
-              {{ getStatusText(order.orderStatus) }}
+              {{ getStatusText(order.orderStatus) | statusTranslate }}
             </span>
           </div>
 

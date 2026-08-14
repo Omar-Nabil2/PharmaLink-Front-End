@@ -193,7 +193,7 @@
               <td>
                 <span [class]="getOrderStatusClass(order.orderStatus)">
                   <span class="status-dot"></span>
-                  {{ getOrderStatusLabel(order.orderStatus) }}
+                  {{ getOrderStatusLabel(order.orderStatus) | statusTranslate }}
                 </span>
               </td>
               <td>
@@ -318,7 +318,7 @@
                 <span class="detail-label">حالة الطلب</span>
                 <span [class]="getOrderStatusClass(selectedOrder.orderStatus)">
                   <span class="status-dot"></span>
-                  {{ getOrderStatusLabel(selectedOrder.orderStatus) }}
+                  {{ getOrderStatusLabel(selectedOrder.orderStatus) | statusTranslate }}
                 </span>
               </div>
               <div class="detail-item">

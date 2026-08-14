@@ -5,11 +5,12 @@ import { FormsModule } from '@angular/forms'; // 👈 إضافة FormsModule ل�
 import { Subject, takeUntil, finalize } from 'rxjs';
 import { OrderService } from '../../../core/services/order.service';
 import { PatientOrder, PatientOrdersFilter } from '../../../core/interfaces/order.interface';
+import { StatusTranslatePipe } from "../../../shared/pipes/status-translate.pipe";
 
 @Component({
   selector: 'app-patient-orders',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule], // 👈 إضافة FormsModule
+  imports: [CommonModule, RouterModule, FormsModule, StatusTranslatePipe], // 👈 إضافة FormsModule
   templateUrl: './patient-orders.component.html',
   styleUrls: ['./patient-orders.component.scss']
 })
