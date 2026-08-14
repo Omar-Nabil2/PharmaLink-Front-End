@@ -70,14 +70,14 @@ export class DrugDetailsComponent implements OnInit {
         this.addingToCart = false;
         this.messageService.add({
           severity: 'success',
-          summary: 'تمت الإضافة للكارت',
-          detail: `تم إضافة ${this.drug?.brandName} للكارت.`,
+          summary: 'تمت الإضافة للسله',
+          detail: `تم إضافة ${this.drug?.brandName} للسله.`,
         });
         this.cdr.detectChanges();
       },
       error: (err) => {
         this.addingToCart = false;
-        this.errorHandlerService.handleError(err, 'تعذر إضافة الدواء للكارت');
+        this.errorHandlerService.handleError(err, 'تعذر إضافة الدواء للسله');
         this.cdr.detectChanges();
       },
     });

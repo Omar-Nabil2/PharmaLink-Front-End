@@ -192,12 +192,12 @@ export class PatientPrescriptionDetailComponent implements OnInit, OnDestroy {
     this.reviewService.addSelectedMedicinesToCart(this.reviewId, Array.from(this.selectedMedicineIds)).subscribe({
       next: () => {
         this.isAddingToCart = false;
-        this.messageService.add({ severity: 'success', summary: 'تمت الإضافة', detail: 'تم إضافة الأدوية المختارة للكارت.' });
+        this.messageService.add({ severity: 'success', summary: 'تمت الإضافة', detail: 'تم إضافة الأدوية المختارة للسله.' });
         this.router.navigate(['/patient/cart']);
       },
       error: (err) => {
         this.isAddingToCart = false;
-        const detail = err?.error?.detail || err?.error?.message || 'تعذر إضافة الأدوية المختارة للكارت.';
+        const detail = err?.error?.detail || err?.error?.message || 'تعذر إضافة الأدوية المختارة للسله.';
         this.messageService.add({ severity: 'error', summary: 'لم تتم الإضافة', detail });
       }
     });

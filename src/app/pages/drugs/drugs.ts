@@ -281,14 +281,14 @@ export class DrugsComponent implements OnInit {
         this.addingDrugId = null;
         this.messageService.add({
           severity: 'success',
-          summary: 'تمت الإضافة للكارت',
-          detail: `تم إضافة ${drug.brandName} للكارت.`,
+          summary: 'تمت الإضافة للسله',
+          detail: `تم إضافة ${drug.brandName} للسله.`,
         });
         this.cdr.detectChanges();
       },
       error: (err) => {
         this.addingDrugId = null;
-        this.errorHandlerService.handleError(err, 'تعذر إضافة الدواء للكارت');
+        this.errorHandlerService.handleError(err, 'تعذر إضافة الدواء للسله');
         this.cdr.detectChanges();
       },
     });

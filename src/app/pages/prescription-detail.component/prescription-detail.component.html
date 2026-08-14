@@ -59,16 +59,16 @@
     </div>
 
     <div *ngIf="reviewDetail.processingStatus !== 'Processing' && reviewDetail.processingStatus !== 'Failed' && reviewDetail.processingStatus !== 'Rejected' && reviewDetail.status !== 'Approved'" class="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-amber-800 text-sm font-semibold">
-      الأدوية اتسجلت كمراجعة، ولسه مستنيين تأكيد الصيدلي قبل الإضافة للكارت.
+      الأدوية اتسجلت كمراجعة، ولسه مستنيين تأكيد الصيدلي قبل الإضافة للسله.
     </div>
 
     <div *ngIf="reviewDetail.status === 'Approved'" class="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-emerald-800 text-sm font-semibold flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-      <span>الصيدلي وافق على المراجعة. اختار الأدوية المتاحة أو البدائل المقترحة واضغط إضافة للكارت.</span>
+      <span>الصيدلي وافق على المراجعة. اختار الأدوية المتاحة أو البدائل المقترحة واضغط إضافة للسله.</span>
       <button type="button"
               class="px-5 py-2 rounded-lg bg-emerald-600 text-white font-bold text-sm hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed"
               [disabled]="selectedMedicineIds.size === 0 || isAddingToCart"
               (click)="addSelectedToCart()">
-        {{ isAddingToCart ? 'جاري الإضافة...' : 'إضافة المختار للكارت' }}
+        {{ isAddingToCart ? 'جاري الإضافة...' : 'إضافة المختار للسله' }}
       </button>
     </div>
 
