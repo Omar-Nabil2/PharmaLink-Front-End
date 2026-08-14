@@ -50,13 +50,13 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
   private readonly ngZone = inject(NgZone);
   // ── Tabs ──────────────────────────────────────────────────────────────────
   activeTab = signal<ActiveTab>('chat');
-  isSidebarOpen = signal<boolean>(true);
+  isSidebarOpen = signal<boolean>(typeof window !== 'undefined' ? window.innerWidth >= 768 : true);
 
 
 
   setTab(tab: ActiveTab): void {
     this.activeTab.set(tab);
-    // Optionally close sidebar on mobile when a tab is selected
+    // Automatically close sidebar on mobile when a tab is selected
     if (typeof window !== 'undefined' && window.innerWidth < 768) {
       this.isSidebarOpen.set(false);
     }

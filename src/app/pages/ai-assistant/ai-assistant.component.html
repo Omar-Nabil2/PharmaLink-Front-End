@@ -1,8 +1,11 @@
 <div class="flex flex-row w-full h-full bg-white relative overflow-hidden" dir="rtl">
 
   <!-- SIDEBAR -->
-  <div class="bg-slate-50 border-l border-gray-200 flex flex-col pt-4 shrink-0 shadow-sm z-20 transition-all duration-300 relative"
-       [ngClass]="isSidebarOpen() ? 'w-72 px-4' : 'w-[64px] sm:w-[84px] px-1 sm:px-2 items-center'">
+  <!-- On mobile, when closed it's hidden. When open it's absolute full screen. On desktop it's normal flex row. -->
+  <div class="bg-slate-50 border-l border-gray-200 flex flex-col pt-4 shrink-0 shadow-sm z-30 transition-all duration-300"
+       [ngClass]="[
+         isSidebarOpen() ? 'absolute md:relative inset-0 w-full md:w-72 px-4 h-full z-50' : 'hidden md:flex w-[64px] sm:w-[84px] px-1 sm:px-2 items-center relative h-full z-20'
+       ]">
     
     <!-- Header & Toggle -->
     <div class="flex items-center justify-between mb-8 mt-2 w-full" [ngClass]="!isSidebarOpen() ? 'flex-col gap-4' : 'px-2'">
@@ -18,11 +21,13 @@
         </div>
       </div>
       
-      <!-- Collapse Button -->
+      <!-- Collapse/Close Button -->
       <button class="text-gray-500 hover:text-gray-800 cursor-pointer p-2 rounded-lg hover:bg-gray-200 transition-colors shrink-0" 
               (click)="toggleSidebar()" [title]="isSidebarOpen() ? 'طي القائمة' : 'توسيع القائمة'">
         <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path *ngIf="isSidebarOpen()" stroke-linecap="round" stroke-linejoin="round" d="M13 5l7 7-7 7M5 5l7 7-7 7" style="transform: scaleX(-1); transform-origin: center;"/>
+          <!-- Show X icon on mobile when open, otherwise show collapse icon -->
+          <path *ngIf="isSidebarOpen()" stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" class="md:hidden" />
+          <path *ngIf="isSidebarOpen()" stroke-linecap="round" stroke-linejoin="round" d="M13 5l7 7-7 7M5 5l7 7-7 7" class="hidden md:block" style="transform: scaleX(-1); transform-origin: center;"/>
           <path *ngIf="!isSidebarOpen()" stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
         </svg>
       </button>
@@ -81,6 +86,21 @@
 
   <!-- MAIN CONTENT AREA -->
   <div class="flex-1 bg-white flex flex-col h-full overflow-hidden relative z-10">
+    
+    <!-- Mobile Header (Visible only on small screens) -->
+    <div class="md:hidden bg-white border-b border-gray-200 h-14 flex items-center px-4 shrink-0 shadow-sm z-10">
+      <button class="text-gray-500 hover:text-gray-800 p-2 -mr-2 rounded-lg" (click)="toggleSidebar()">
+        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
+      <div class="font-bold text-gray-800 mr-3 text-sm">
+        <span *ngIf="activeTab() === 'chat'">المحادثة مع الصيدلي</span>
+        <span *ngIf="activeTab() === 'drug-info'">معلومات الدواء</span>
+        <span *ngIf="activeTab() === 'interactions'">فحص التفاعلات</span>
+        <span *ngIf="activeTab() === 'history'">أرشيفي الذكي</span>
+      </div>
+    </div>
     
     <!-- CHAT TAB -->
     <div *ngIf="activeTab() === 'chat'" class="tab-content flex-1 flex flex-col w-full h-full bg-slate-50 relative overflow-hidden">
