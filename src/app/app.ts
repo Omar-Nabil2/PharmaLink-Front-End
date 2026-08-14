@@ -45,12 +45,12 @@ export class App implements OnInit {
     }
   }
 
-  @HostListener('window:offline', ['$event'])
+  @HostListener('window:offline')
   onOffline() {
     this.isOffline = true;
   }
 
-  @HostListener('window:online', ['$event'])
+  @HostListener('window:online')
   onOnline() {
     this.isOffline = false;
   }

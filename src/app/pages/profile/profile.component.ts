@@ -1,5 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ProfileService } from '../../core/services/profile.service';
 import { environment } from '../../../environments/environment';
@@ -11,7 +11,7 @@ import { GetPharmacyProfileResponse, PatientProfile, SystemAdminProfile, GetPhar
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterModule],
   templateUrl: './profile.component.html',
 })
 export class ProfileComponent implements OnInit {
