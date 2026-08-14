@@ -17,6 +17,7 @@
     <input type="file" 
            class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" 
            accept=".jpg,.jpeg,.png,.pdf"
+           capture="environment"
            (change)="onFileSelected($event)">
     <div class="text-teal-600 mb-3">
       <svg class="w-10 h-10 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
