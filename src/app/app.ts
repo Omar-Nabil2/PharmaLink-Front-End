@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
 import { ToastModule } from 'primeng/toast';
 import { filter } from 'rxjs';
+import { SwUpdate } from '@angular/service-worker';
+import Swal from 'sweetalert2';
 
 import { PwaInstallService } from '@core/services/pwa-install.service';
 import { CommonModule } from '@angular/common';
@@ -16,7 +18,27 @@ import { CommonModule } from '@angular/common';
 export class App implements OnInit {
   title = 'Pharma Link';
 
-  constructor(private router: Router, public pwaInstall: PwaInstallService) {}
+  constructor(private router: Router, public pwaInstall: PwaInstallService, private swUpdate: SwUpdate) {
+    if (this.swUpdate.isEnabled) {
+      this.swUpdate.versionUpdates.pipe(
+        filter(evt => evt.type === 'VERSION_READY')
+      ).subscribe(() => {
+        Swal.fire({
+          title: 'يوجد تحديث جديد!',
+          text: 'تم إصدار نسخة جديدة من التطبيق، اضغط لتحديث الصفحة.',
+          icon: 'info',
+          showCancelButton: true,
+          confirmButtonText: 'تحديث الآن',
+          cancelButtonText: 'لاحقاً',
+          confirmButtonColor: '#0d9488'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.reload();
+          }
+        });
+      });
+    }
+  }
 
   ngOnInit() {
     this.router.events.pipe(
