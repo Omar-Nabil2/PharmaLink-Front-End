@@ -234,7 +234,9 @@
     <a routerLink="/patient/cart" routerLinkActive="text-teal-600 scale-110" class="flex flex-col items-center justify-center w-16 h-full text-slate-500 hover:text-teal-600 transition-all duration-300 relative">
       <div class="relative">
         <i class="pi pi-shopping-cart text-xl mb-1"></i>
-        <span *ngIf="cartCount() > 0" class="absolute -top-2 -right-3 bg-red-500 text-white text-[9px] font-bold w-4 h-4 flex items-center justify-center rounded-full border-2 border-white shadow-sm">{{ cartCount() }}</span>
+        <ng-container *ngIf="cartCount$ | async as count">
+          <span *ngIf="count > 0" class="absolute -top-2 -right-3 bg-red-500 text-white text-[9px] font-bold w-4 h-4 flex items-center justify-center rounded-full border-2 border-white shadow-sm">{{ count }}</span>
+        </ng-container>
       </div>
       <span class="text-[10px] font-bold">السلة</span>
     </a>
