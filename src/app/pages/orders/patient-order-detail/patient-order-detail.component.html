@@ -136,12 +136,24 @@
 
     <!-- Pending Assignment Items (If any) -->
     <div *ngIf="order.pendingAssignmentItems && order.pendingAssignmentItems.length > 0" class="mb-8">
-      <h2 class="text-lg font-bold text-red-600 mb-4 flex items-center gap-2">
+      <h2 [class]="order.pendingAssignmentItems.every(item => item.itemStatus == 'Unavailable') ? 'text-lg font-bold text-red-600 mb-4 flex items-center gap-2' : 'text-lg font-bold text-amber-600 mb-4 flex items-center gap-2'">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-        أدوية جاري توفيرها ({{ order.pendingAssignmentItems.length }})
+        @if (order.pendingAssignmentItems.every(item => item.itemStatus == 'Unavailable')) {
+          أدوية لم يتم توفيرها ({{ order.pendingAssignmentItems.length }})
+        }
+        @else {
+          أدوية لم تتم مراجعة الروشتة الخاصة بها ({{ order.pendingAssignmentItems.length }})
+        }
       </h2>
-      <div class="bg-red-50/50 border border-red-100 rounded-xl p-4 shadow-sm">
-        <p class="text-sm text-red-600 mb-4 font-medium">هذه الأدوية لم يتم تخصيصها لصيدلية بعد وسيقوم النظام بتوفيرها في أقرب وقت.</p>
+      <div [class]="order.pendingAssignmentItems.every(item => item.itemStatus == 'Unavailable') ? 'bg-red-50/50 border border-red-100 rounded-xl p-4 shadow-sm' : 'bg-amber-50 border border-amber-200 rounded-xl p-4 shadow-sm'">
+        <p [class]="order.pendingAssignmentItems.every(item => item.itemStatus == 'Unavailable') ? 'text-sm text-red-600 mb-4 font-medium' : 'text-sm text-amber-600 mb-4 font-medium'">
+          @if (order.pendingAssignmentItems.every(item => item.itemStatus == 'Unavailable')) {
+            هذه الأدوية لم يتم تخصيصها لصيدلية بعد وسيقوم النظام بتوفيرها في أقرب وقت.
+          }
+          @else {
+            لم تتم مراجعة الروشتة الخاصة بهذه الأدوية بعد وسيقوم فريق المراجعة بفحصها في أقرب وقت.
+          }
+        </p>
         <div class="flex flex-col gap-3">
           <div *ngFor="let item of order.pendingAssignmentItems" class="bg-white/50 rounded-xl p-3 sm:p-4 border border-red-100/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
             <div class="flex items-start sm:items-center gap-3 flex-1 min-w-0">
@@ -156,8 +168,8 @@
             </div>
             
             <div class="flex items-center justify-between sm:justify-end gap-4 w-full sm:w-auto border-t border-red-100/30 sm:border-0 pt-2 sm:pt-0 mt-1 sm:mt-0">
-              <span class="text-sm font-bold text-gray-700 bg-red-50/50 px-3 py-1 rounded-lg border border-red-100/50">الكمية: {{ item.quantityNeeded }}</span>
-              <span class="text-xs px-2 py-1 bg-red-100 text-red-700 rounded-md font-medium shrink-0">
+              <span class="text-sm font-bold text-gray-700 bg-red-200/50 px-3 py-1 rounded-lg border border-red-100/50">الكمية: {{ item.quantityNeeded }}</span>
+              <span [class]="item.itemStatus == 'Unavailable' ? 'text-xs px-2 py-1 bg-red-100 text-red-700 rounded-md font-medium shrink-0' : 'bg-amber-100 text-amber-700 text-xs px-2 py-1 rounded-md font-medium shrink-0'">
                 {{ getItemStatusText(item.itemStatus) | statusTranslate }}
               </span>
             </div>
