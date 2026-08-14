@@ -5,6 +5,8 @@ import { AuthService } from '@core/services/auth.service';
 import { ProfileService } from '@core/services/profile.service';
 import { CartService } from '@core/services/cart.service';
 import { environment } from '@environments/environment';
+import { MedicineReminderSignalrService } from '@core/services/medicine-reminder-signalr.service';
+import Swal from 'sweetalert2';
 
 import { trigger, transition, style, query, animate } from '@angular/animations';
 import { routeTransitionAnimations } from '../../shared/animations/route.animations';
@@ -23,6 +25,7 @@ export class PatientLayoutComponent implements OnInit {
   private profileService = inject(ProfileService);
   private router = inject(Router);
   public cartService = inject(CartService);
+  private reminderSignalRService = inject(MedicineReminderSignalrService);
 
   cartCount$ = this.cartService.cartCount$;
 
@@ -57,6 +60,30 @@ export class PatientLayoutComponent implements OnInit {
     }
 
     if (this.authService.isLoggedIn()) {
+      // Start SignalR Reminder Connection
+      const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+      const userId = localStorage.getItem('userId') || userData.userId;
+      
+      if (userId) {
+        this.reminderSignalRService.connect(userId);
+        this.reminderSignalRService.reminder$.subscribe(data => {
+          Swal.fire({
+            title: '💊 حان موعد الدواء!',
+            html: `
+              <div dir="rtl" style="font-size: 1.1rem; line-height: 1.8;">
+                <p>اسم الدواء: <strong style="color: #2196f3;">${data.medicineName}</strong></p>
+                ${data.dosage ? `<p>الجرعة: <strong>${data.dosage}</strong></p>` : ''}
+                ${data.notes ? `<p>ملاحظات: ${data.notes}</p>` : ''}
+                <p style="margin-top: 15px; font-size: 0.9rem; color: #666;">نتمنى لك دوام الصحة والعافية! 🌿</p>
+              </div>
+            `,
+            icon: 'info',
+            confirmButtonText: 'حسناً، تم',
+            confirmButtonColor: '#3085d6'
+          });
+        });
+      }
+
       // Initialize cart count
       this.cartService.getCart().subscribe({ error: () => {} });
       
