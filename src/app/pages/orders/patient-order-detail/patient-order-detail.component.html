@@ -168,7 +168,7 @@
             </div>
             
             <div class="flex items-center justify-between sm:justify-end gap-4 w-full sm:w-auto border-t border-red-100/30 sm:border-0 pt-2 sm:pt-0 mt-1 sm:mt-0">
-              <span class="text-sm font-bold text-gray-700 bg-red-200/50 px-3 py-1 rounded-lg border border-red-100/50">الكمية: {{ item.quantityNeeded }}</span>
+              <span [class]="item.itemStatus == 'Unavailable' ? 'text-sm font-bold text-gray-700 bg-red-200/50 px-3 py-1 rounded-lg border border-red-100/50' : 'text-sm font-bold text-gray-700 bg-amber-200/50 px-3 py-1 rounded-lg border border-amber-100/50'">الكمية: {{ item.quantityNeeded }}</span>
               <span [class]="item.itemStatus == 'Unavailable' ? 'text-xs px-2 py-1 bg-red-100 text-red-700 rounded-md font-medium shrink-0' : 'bg-amber-100 text-amber-700 text-xs px-2 py-1 rounded-md font-medium shrink-0'">
                 {{ getItemStatusText(item.itemStatus) | statusTranslate }}
               </span>
