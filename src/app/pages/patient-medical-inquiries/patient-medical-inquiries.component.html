@@ -1,9 +1,9 @@
 <section class="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
   <div class="rounded-2xl border border-surface-pressed bg-white p-6 shadow-sm">
     <p class="mb-2 text-sm font-bold text-primary">استشارة صيدلي</p>
-    <h1 class="mb-3 text-3xl font-black text-ink">اسأل تيم المراجعة الطبية</h1>
+    <h1 class="mb-3 text-3xl font-black text-ink">اسأل فريق المراجعة الطبية</h1>
     <p class="mb-6 text-body">
-      اكتب استفسارك بوضوح، وتيم الصيادلة للمراجعة هيرد عليك من خلال نفس الصفحة.
+      اكتب استفسارك بوضوح، وفريق الصيادلة للمراجعة هيرد عليك من خلال نفس الصفحة.
     </p>
 
     <label class="mb-2 block text-sm font-bold text-ink">سؤالك</label>
@@ -50,12 +50,12 @@
 
             @if (inquiry.answer) {
               <div class="rounded-2xl bg-primary/10 p-4 text-ink">
-                <span class="mb-1 block text-xs font-black text-primary">رد تيم المراجعة</span>
+                <span class="mb-1 block text-xs font-black text-primary">رد فريق المراجعة</span>
                 {{ inquiry.answer }}
               </div>
             } @else {
               <p class="rounded-2xl bg-amber-50 p-4 text-sm font-semibold text-amber-700">
-                الاستفسار وصل، ومستني رد تيم المراجعة.
+                الاستفسار وصل، ومستني رد فريق المراجعة.
               </p>
             }
           </article>
