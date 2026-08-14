@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { SwPush } from '@angular/service-worker';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '@environments/environment';
@@ -11,8 +12,17 @@ export class PushNotificationService {
   constructor(
     private swPush: SwPush,
     private http: HttpClient,
-    private messageService: MessageService
-  ) {}
+    private messageService: MessageService,
+    private router: Router
+  ) {
+    if (this.swPush.isEnabled) {
+      this.swPush.notificationClicks.subscribe(({ action, notification }) => {
+        if (notification.data && notification.data.url) {
+          this.router.navigateByUrl(notification.data.url);
+        }
+      });
+    }
+  }
 
   subscribeToNotifications(): void {
     if (!this.swPush.isEnabled) {
