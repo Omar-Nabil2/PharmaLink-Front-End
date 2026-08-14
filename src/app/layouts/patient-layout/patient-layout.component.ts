@@ -4,13 +4,13 @@ import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/rou
 import { AuthService } from '@core/services/auth.service';
 import { ProfileService } from '@core/services/profile.service';
 import { CartService } from '@core/services/cart.service';
+import { PushNotificationService } from '@core/services/push-notification.service';
 import { environment } from '@environments/environment';
 import { MedicineReminderSignalrService } from '@core/services/medicine-reminder-signalr.service';
 import Swal from 'sweetalert2';
 
 import { trigger, transition, style, query, animate } from '@angular/animations';
 import { routeTransitionAnimations } from '../../shared/animations/route.animations';
-
 
 @Component({
   selector: 'app-patient-layout',
@@ -26,13 +26,13 @@ export class PatientLayoutComponent implements OnInit {
   private router = inject(Router);
   public cartService = inject(CartService);
   private reminderSignalRService = inject(MedicineReminderSignalrService);
+  private pushNotificationService = inject(PushNotificationService);
 
   cartCount$ = this.cartService.cartCount$;
 
   patientNavItems = [
     { label: 'الرئيسية', routerLink: '/patient/dashboard' },
     { label: 'الأدوية', routerLink: '/patient/drugs' },
-
     { label: 'روشتاتي', routerLink: '/patient/prescriptions' },
     { label: 'استشارة صيدلي', routerLink: '/patient/medical-inquiries' },
     { label: 'طلباتي', routerLink: '/patient/orders' },
@@ -60,6 +60,37 @@ export class PatientLayoutComponent implements OnInit {
     }
 
     if (this.authService.isLoggedIn()) {
+      // First visit permissions prompt
+      if (typeof window !== 'undefined') {
+        const hasPrompted = localStorage.getItem('hasPromptedPermissions');
+        if (!hasPrompted) {
+          setTimeout(() => {
+            Swal.fire({
+              title: 'تجربة أفضل 🌟',
+              text: 'لتقديم أفضل خدمة وتنبيهك بمواعيد الأدوية وتحديثات الطلبات، نرجو تفعيل الإشعارات والموقع الجغرافي.',
+              icon: 'info',
+              showCancelButton: true,
+              confirmButtonText: 'تفعيل الآن',
+              cancelButtonText: 'ليس الآن',
+              confirmButtonColor: '#0d9488',
+            }).then((result) => {
+              localStorage.setItem('hasPromptedPermissions', 'true');
+              if (result.isConfirmed) {
+                // Request Location
+                if ('geolocation' in navigator) {
+                  navigator.geolocation.getCurrentPosition(
+                    () => console.log('Location granted'),
+                    () => console.log('Location denied')
+                  );
+                }
+                // Request Notifications
+                this.pushNotificationService.subscribeToNotifications();
+              }
+            });
+          }, 3000);
+        }
+      }
+
       // Start SignalR Reminder Connection
       const userData = JSON.parse(localStorage.getItem('userData') || '{}');
       const userId = localStorage.getItem('userId') || userData.userId;
