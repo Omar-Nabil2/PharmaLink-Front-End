@@ -7,7 +7,6 @@ import { AuthService } from '../../../core/services/auth.service';
 import { ErrorHandlerService } from '../../../core/services/error-handler.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ErrorType } from '../../../core/interfaces/auth.interface';
-import { AppRole, UserAuthData } from '@core/enums/app-roles.constant';
 import { SocialAuthService, GoogleSigninButtonModule } from '@abacritt/angularx-social-login';
 import { Subscription } from 'rxjs';
 
@@ -42,11 +41,12 @@ export class Login implements OnInit, OnDestroy {
       password: ['', [Validators.required]],
     });
 
+    // Google Login Subscription
     this.authSubscription = this.socialAuthService.authState.subscribe((user) => {
       if (user && user.idToken) {
         this.isLoading = true;
         this.authService.googleLogin(user.idToken).subscribe({
-          next: (res) => this.handleSuccessfulLogin(res),
+          next: (res: any) => this.processGoogleLoginSuccess(res),
           error: (err: HttpErrorResponse) => {
             this.isLoading = false;
             this.errorHandlerService.handleError(err, 'فشل تسجيل الدخول بواسطة جوجل');
@@ -67,13 +67,16 @@ export class Login implements OnInit, OnDestroy {
     return this.loginForm.controls;
   }
 
+  // ---------------------------------------------------------
+  // Old Flow: Normal Email & Password Login
+  // ---------------------------------------------------------
   onSubmit(): void {
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
       this.messageService.add({
         severity: 'warn',
-        summary: 'تحقق من بيانات الدخول',
-        detail: 'عذراً! يرجى ملء البريد الإلكتروني وكلمة المرور بشكل صحيح.',
+        summary: 'Check Login Details',
+        detail: 'Oops! Please fill in your email and password correctly.',
       });
       return;
     }
@@ -82,7 +85,58 @@ export class Login implements OnInit, OnDestroy {
     const credentials = this.loginForm.value;
 
     this.authService.login(credentials).subscribe({
-      next: (res) => this.handleSuccessfulLogin(res),
+      next: (res: any) => {
+        try {
+          this.isLoading = false;
+
+          if (res.requiresPhoneVerification) {
+            // Case 1: Phone number not verified. Cache userId and redirect to verification.
+            if (typeof window !== 'undefined') {
+              localStorage.setItem('userId', res.userId);
+            }
+
+            this.messageService.add({
+              severity: 'info',
+              summary: 'Verification Required',
+              detail: 'Your phone number is not verified. Redirecting to OTP verification...',
+            });
+
+            setTimeout(() => {
+              this.router.navigate(['/auth/verify-otp']);
+            }, 1500);
+          } else {
+            // Case 2: Verification complete. Store credentials and log in.
+            if (typeof window !== 'undefined') {
+              if (res.accessToken) {
+                localStorage.setItem('accessToken', res.accessToken);
+                localStorage.setItem('token', res.accessToken); // Backward compatibility
+              }
+              if (res.refreshToken) localStorage.setItem('refreshToken', res.refreshToken);
+              localStorage.setItem('userId', res.userId);
+              if (res.fullName) localStorage.setItem('fullName', res.fullName);
+              if (res.email) localStorage.setItem('email', res.email);
+              if (res.roleName) localStorage.setItem('roleName', res.roleName);
+            }
+
+            // Trigger a global navbar storage check
+            window.dispatchEvent(new Event('storage'));
+
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Welcome Back',
+              detail: `Signed in successfully as ${res.fullName || 'User'}.`,
+            });
+
+            // Redirect to home
+            setTimeout(() => {
+              this.router.navigateByUrl(this.returnUrl);
+            }, 1000);
+          }
+        } catch (storageErr) {
+          this.isLoading = false;
+          console.error('[LoginStorageError]', storageErr);
+        }
+      },
       error: (err: HttpErrorResponse) => {
         try {
           this.isLoading = false;
@@ -106,7 +160,7 @@ export class Login implements OnInit, OnDestroy {
           }
 
           // Delegate to toast error handler
-          this.errorHandlerService.handleError(err, 'فشل تسجيل الدخول');
+          this.errorHandlerService.handleError(err, 'Sign In Failed');
         } catch (fatalErr) {
           this.isLoading = false;
           console.error('[LoginFatalError]', fatalErr);
@@ -115,22 +169,22 @@ export class Login implements OnInit, OnDestroy {
     });
   }
 
-  private handleSuccessfulLogin(res: any): void {
+  // ---------------------------------------------------------
+  // Isolated Flow: Google Login Success logic
+  // ---------------------------------------------------------
+  private processGoogleLoginSuccess(res: any): void {
     try {
       this.isLoading = false;
 
       if (res.requiresPhoneVerification) {
-        // Case 1: Phone number not verified. Cache userId and redirect to verification.
         if (typeof window !== 'undefined') {
           localStorage.setItem('userId', res.userId);
         }
-
         this.messageService.add({
           severity: 'info',
           summary: 'التحقق مطلوب',
           detail: 'رقم هاتفك غير موثق. جاري التوجيه للتحقق من رمز OTP...',
         });
-
         setTimeout(() => {
           this.router.navigate(['/auth/verify-otp']);
         }, 1500);
@@ -138,53 +192,30 @@ export class Login implements OnInit, OnDestroy {
         if (typeof window !== 'undefined') {
           if (res.accessToken) {
             localStorage.setItem('accessToken', res.accessToken);
-            localStorage.setItem('token', res.accessToken); // Keep for backward compatibility with SignalR and other components
+            localStorage.setItem('token', res.accessToken); // Backward compatibility
           }
-          if (res.refreshToken) {
-            localStorage.setItem('refreshToken', res.refreshToken);
-          }
-          if (res.userId) localStorage.setItem('userId', res.userId);
-          if (res.roleName) localStorage.setItem('roleName', res.roleName);
-          if (res.email) localStorage.setItem('email', res.email);
+          if (res.refreshToken) localStorage.setItem('refreshToken', res.refreshToken);
+          localStorage.setItem('userId', res.userId);
           if (res.fullName) localStorage.setItem('fullName', res.fullName);
-
-          const userData: UserAuthData = {
-            accessToken: res.accessToken || '',
-            refreshToken: res.refreshToken,
-            userId: res.userId,
-            email: res.email,
-            roleName: res.roleName,
-            fullName: res.fullName
-          };
-          localStorage.setItem('userData', JSON.stringify(userData));
-
-          this.authService.setCurrentUser(userData);
-
-          window.dispatchEvent(new Event('storage'));
-
-          this.messageService.add({
-            severity: 'success',
-            summary: 'مرحباً بعودتك',
-            detail: `تم تسجيل الدخول بنجاح كـ ${res.fullName || 'مستخدم'}.`,
-            life: 3000,
-          });
-
-          // Redirect to the original destination or role specific dashboard
-          setTimeout(() => {
-            let destination = this.returnUrl;
-
-            if (!destination || destination === '/') {
-              destination = this.authService.getDashboardPath();
-            }
-
-            console.log('Navigating to:', destination);
-            this.router.navigateByUrl(destination);
-          }, 1000);
+          if (res.email) localStorage.setItem('email', res.email);
+          if (res.roleName) localStorage.setItem('roleName', res.roleName);
         }
+
+        window.dispatchEvent(new Event('storage'));
+
+        this.messageService.add({
+          severity: 'success',
+          summary: 'مرحباً بعودتك',
+          detail: `تم تسجيل الدخول بواسطة جوجل بنجاح كـ ${res.fullName || 'مستخدم'}.`,
+        });
+
+        setTimeout(() => {
+          this.router.navigateByUrl(this.returnUrl);
+        }, 1000);
       }
     } catch (storageErr) {
       this.isLoading = false;
-      console.error('[LoginStorageError]', storageErr);
+      console.error('[GoogleLoginStorageError]', storageErr);
     }
   }
 }
