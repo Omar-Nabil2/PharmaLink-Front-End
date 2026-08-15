@@ -12,7 +12,7 @@ import { authInterceptor } from '@core/interceptors/auth.interceptor';
 import { PharmaLinkPreset } from '@core/config/primeng-theme';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideServiceWorker } from '@angular/service-worker';
-import { GoogleLoginProvider, SocialAuthServiceConfig } from '@abacritt/angularx-social-login';
+import { GoogleLoginProvider, SocialAuthServiceConfig, SOCIAL_AUTH_CONFIG } from '@abacritt/angularx-social-login';
 import { environment } from '@environments/environment';
 
 export const appConfig: ApplicationConfig = {
@@ -40,7 +40,7 @@ export const appConfig: ApplicationConfig = {
             registrationStrategy: 'registerWhenStable:30000'
           }),
     {
-      provide: 'SocialAuthServiceConfig',
+      provide: SOCIAL_AUTH_CONFIG,
       useValue: {
         autoLogin: false,
         providers: [
