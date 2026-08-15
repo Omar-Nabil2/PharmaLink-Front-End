@@ -137,6 +137,7 @@ export class Login implements OnInit, OnDestroy {
       } else {
         if (typeof window !== 'undefined') {
           localStorage.setItem('accessToken', res.token);
+          localStorage.setItem('token', res.token); // Keep for backward compatibility with SignalR and other components
           if (res.refreshToken) {
             localStorage.setItem('refreshToken', res.refreshToken);
           }
