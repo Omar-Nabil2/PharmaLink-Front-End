@@ -75,8 +75,8 @@ export class Login implements OnInit, OnDestroy {
       this.loginForm.markAllAsTouched();
       this.messageService.add({
         severity: 'warn',
-        summary: 'Check Login Details',
-        detail: 'Oops! Please fill in your email and password correctly.',
+        summary: 'تأكد من بيانات الدخول',
+        detail: 'عذراً! يرجى إدخال بريدك الإلكتروني وكلمة المرور بشكل صحيح.',
       });
       return;
     }
@@ -97,8 +97,8 @@ export class Login implements OnInit, OnDestroy {
 
             this.messageService.add({
               severity: 'info',
-              summary: 'Verification Required',
-              detail: 'Your phone number is not verified. Redirecting to OTP verification...',
+              summary: 'التحقق مطلوب',
+              detail: 'رقم هاتفك غير موثق. جاري التوجيه للتحقق من رمز OTP...',
             });
 
             setTimeout(() => {
@@ -133,8 +133,8 @@ export class Login implements OnInit, OnDestroy {
 
             this.messageService.add({
               severity: 'success',
-              summary: 'Welcome Back',
-              detail: `Signed in successfully as ${res.fullName || 'User'}.`,
+              summary: 'مرحباً بعودتك',
+              detail: `تم تسجيل الدخول بنجاح كـ ${res.fullName || 'مستخدم'}.`,
             });
 
             // Redirect to the correct dashboard based on role
@@ -174,7 +174,7 @@ export class Login implements OnInit, OnDestroy {
           }
 
           // Delegate to toast error handler
-          this.errorHandlerService.handleError(err, 'Sign In Failed');
+          this.errorHandlerService.handleError(err, 'فشل تسجيل الدخول');
         } catch (fatalErr) {
           this.isLoading = false;
           console.error('[LoginFatalError]', fatalErr);
