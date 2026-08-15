@@ -8,11 +8,12 @@ import { ErrorHandlerService } from '../../../core/services/error-handler.servic
 import { HttpErrorResponse } from '@angular/common/http';
 import { ErrorType } from '../../../core/interfaces/auth.interface';
 import { AppRole, UserAuthData } from '@core/enums/app-roles.constant';
+import { SocialAuthService, GoogleSigninButtonModule } from '@abacritt/angularx-social-login';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, GoogleSigninButtonModule],
   templateUrl: './login.html',
   styleUrl: './login.scss',
 })
@@ -29,6 +30,7 @@ export class Login implements OnInit {
     private readonly messageService: MessageService,
     private readonly router: Router,
     private readonly route: ActivatedRoute,
+    private readonly socialAuthService: SocialAuthService
   ) {}
 
   ngOnInit(): void {
@@ -36,6 +38,19 @@ export class Login implements OnInit {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required]],
+    });
+
+    this.socialAuthService.authState.subscribe((user) => {
+      if (user && user.idToken) {
+        this.isLoading = true;
+        this.authService.googleLogin(user.idToken).subscribe({
+          next: (res) => this.handleSuccessfulLogin(res),
+          error: (err: HttpErrorResponse) => {
+            this.isLoading = false;
+            this.errorHandlerService.handleError(err, 'فشل تسجيل الدخول بواسطة جوجل');
+          }
+        });
+      }
     });
   }
 
@@ -59,73 +74,7 @@ export class Login implements OnInit {
     const credentials = this.loginForm.value;
 
     this.authService.login(credentials).subscribe({
-      next: (res) => {
-        try {
-          this.isLoading = false;
-
-          if (res.requiresPhoneVerification) {
-            // Case 1: Phone number not verified. Cache userId and redirect to verification.
-            if (typeof window !== 'undefined') {
-              localStorage.setItem('userId', res.userId);
-            }
-
-            this.messageService.add({
-              severity: 'info',
-              summary: 'التحقق مطلوب',
-              detail: 'رقم هاتفك غير موثق. جاري التوجيه للتحقق من رمز OTP...',
-            });
-
-            setTimeout(() => {
-              this.router.navigate(['/auth/verify-otp']);
-            }, 1500);
-          } else {
-            if (typeof window !== 'undefined') {
-              if (res.accessToken) localStorage.setItem('accessToken', res.accessToken);
-              if (res.refreshToken) localStorage.setItem('refreshToken', res.refreshToken);
-              if (res.userId) localStorage.setItem('userId', res.userId);
-              if (res.fullName) localStorage.setItem('fullName', res.fullName);
-              if (res.email) localStorage.setItem('email', res.email);
-              if (res.roleName) localStorage.setItem('roleName', res.roleName);
-            }
-
-            // CRITICAL FIX: Update the AuthService Signal so the Guard knows we are logged in!
-            const userData: UserAuthData = {
-              accessToken: res.accessToken || '',
-              userId: res.userId,
-              fullName: res.fullName || '',
-              email: res.email || '',
-              roleName: res.roleName as AppRole,
-              refreshToken: res.refreshToken,
-            };
-            this.authService.setCurrentUser(userData);
-
-            window.dispatchEvent(new Event('storage'));
-
-            this.messageService.add({
-              severity: 'success',
-              summary: 'مرحباً بعودتك',
-              detail: `تم تسجيل الدخول بنجاح كـ ${res.fullName || 'مستخدم'}.`,
-              life: 3000, // 3000ms = 3 seconds. Add this line!
-            });
-
-            // Redirect to the original destination or role specific dashboard
-            setTimeout(() => {
-              let destination = this.returnUrl;
-
-              if (!destination || destination === '/') {
-                // FIX: Use the new helper to get the correct path
-                destination = this.authService.getDashboardPath();
-              }
-
-              console.log('Navigating to:', destination); // Keep this to debug
-              this.router.navigateByUrl(destination);
-            }, 1000);
-          }
-        } catch (storageErr) {
-          this.isLoading = false;
-          console.error('[LoginStorageError]', storageErr);
-        }
-      },
+      next: (res) => this.handleSuccessfulLogin(res),
       error: (err: HttpErrorResponse) => {
         try {
           this.isLoading = false;
@@ -157,4 +106,71 @@ export class Login implements OnInit {
       },
     });
   }
+
+  private handleSuccessfulLogin(res: any): void {
+    try {
+      this.isLoading = false;
+
+      if (res.requiresPhoneVerification) {
+        // Case 1: Phone number not verified. Cache userId and redirect to verification.
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('userId', res.userId);
+        }
+
+        this.messageService.add({
+          severity: 'info',
+          summary: 'التحقق مطلوب',
+          detail: 'رقم هاتفك غير موثق. جاري التوجيه للتحقق من رمز OTP...',
+        });
+
+        setTimeout(() => {
+          this.router.navigate(['/auth/verify-otp']);
+        }, 1500);
+      } else {
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('token', res.token);
+          if (res.refreshToken) {
+            localStorage.setItem('refreshToken', res.refreshToken);
+          }
+
+          const userData: UserAuthData = {
+            accessToken: res.token,
+            refreshToken: res.refreshToken,
+            userId: res.userId,
+            email: res.email,
+            roleName: res.role,
+            fullName: res.fullName
+          };
+          localStorage.setItem('userData', JSON.stringify(userData));
+
+          this.authService.setCurrentUser(userData);
+
+          window.dispatchEvent(new Event('storage'));
+
+          this.messageService.add({
+            severity: 'success',
+            summary: 'مرحباً بعودتك',
+            detail: `تم تسجيل الدخول بنجاح كـ ${res.fullName || 'مستخدم'}.`,
+            life: 3000,
+          });
+
+          // Redirect to the original destination or role specific dashboard
+          setTimeout(() => {
+            let destination = this.returnUrl;
+
+            if (!destination || destination === '/') {
+              destination = this.authService.getDashboardPath();
+            }
+
+            console.log('Navigating to:', destination);
+            this.router.navigateByUrl(destination);
+          }, 1000);
+        }
+      }
+    } catch (storageErr) {
+      this.isLoading = false;
+      console.error('[LoginStorageError]', storageErr);
+    }
+  }
 }
+

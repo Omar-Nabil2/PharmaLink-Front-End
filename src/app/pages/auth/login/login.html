@@ -67,6 +67,16 @@
     </button>
   </form>
 
+  <div class="relative flex items-center py-2">
+    <div class="flex-grow border-t border-line"></div>
+    <span class="flex-shrink-0 mx-4 text-mute text-xs font-medium">أو</span>
+    <div class="flex-grow border-t border-line"></div>
+  </div>
+
+  <div class="flex justify-center w-full">
+    <asl-google-signin-button type="standard" size="large" [width]="300"></asl-google-signin-button>
+  </div>
+
   <p class="type-body-sm text-body text-center">
     ليس لديك حساب؟
     <a routerLink="/auth/register" class="link-ink">إنشاء حساب</a>

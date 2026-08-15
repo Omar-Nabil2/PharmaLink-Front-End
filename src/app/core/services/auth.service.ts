@@ -173,6 +173,10 @@ export class AuthService {
     return this.http.post<LoginResponse>(`${this.localUrl}/Auth/login`, data);
   }
 
+  googleLogin(idToken: string): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${this.localUrl}/Auth/google-login`, { idToken });
+  }
+
   refreshToken(data: { token: string; refreshToken: string }): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${this.localUrl}/Auth/refresh`, data);
   }
