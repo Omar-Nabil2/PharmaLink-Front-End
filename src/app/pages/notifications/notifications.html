@@ -2,44 +2,44 @@
   <!-- Top Header -->
   <div class="mb-8 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
     <div>
-      <h1 class="type-display-xl text-ink">مركز الإشعارات</h1>
-      <p class="type-body-md text-body mt-2">
+      <h1 class="text-3xl font-black text-slate-900">مركز الإشعارات</h1>
+      <p class="text-sm font-medium text-slate-500 mt-2">
         تابع أحدث التنبيهات، وحالة طلباتك، ورسائل النظام الخاصة بك.
       </p>
     </div>
     <div class="flex items-center gap-3 self-start flex-wrap">
-      <button *ngIf="unreadCount > 0" (click)="markAllAsRead()" class="btn-outline inline-flex gap-2">
+      <button *ngIf="unreadCount > 0" (click)="markAllAsRead()" class="btn-outline inline-flex gap-2 text-sm font-bold">
         <i class="pi pi-check-circle"></i>
         <span>تحديد الكل كمقروء</span>
       </button>
     </div>
   </div>
 
-  <div class="surface-card p-6 shadow-1 border-round-xl border border-line">
+  <div class="bg-white p-6 md:p-8 shadow-sm rounded-2xl border border-surface-pressed">
     <!-- Empty State -->
-    <div *ngIf="notifications.length === 0" class="py-12 text-center">
-      <div class="w-24 h-24 bg-surface-100 rounded-full flex items-center justify-center mx-auto mb-4 border border-line">
-        <i class="pi pi-bell text-5xl text-surface-400"></i>
+    <div *ngIf="notifications.length === 0" class="py-16 text-center">
+      <div class="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-5 border border-surface-pressed">
+        <i class="pi pi-bell text-5xl text-slate-300"></i>
       </div>
-      <h3 class="type-display-sm text-ink mb-2">لا توجد إشعارات حالياً</h3>
-      <p class="type-body-md text-body">ستظهر جميع الإشعارات والتنبيهات الخاصة بك هنا.</p>
+      <h3 class="text-xl font-bold text-slate-900 mb-2">لا توجد إشعارات حالياً</h3>
+      <p class="text-sm text-slate-500">ستظهر جميع الإشعارات والتنبيهات الخاصة بك هنا.</p>
     </div>
 
     <!-- Notifications List -->
     <div class="flex flex-col gap-3">
       <div *ngFor="let notification of notifications" 
            (click)="clickNotification(notification)"
-           class="p-4 border-round-lg border transition-colors cursor-pointer relative flex flex-col sm:flex-row sm:items-start gap-4"
+           class="p-4 md:p-5 rounded-xl border transition-colors cursor-pointer relative flex flex-col sm:flex-row sm:items-start gap-4 overflow-hidden"
            [ngClass]="{
-             'bg-surface-0 border-line hover:bg-surface-50': notification.isRead,
-             'bg-primary-50 border-primary-100 hover:bg-primary-100': !notification.isRead
+             'bg-white border-surface-pressed hover:bg-slate-50': notification.isRead || notification.IsRead,
+             'bg-teal-50 border-teal-100 hover:bg-teal-100/70 shadow-sm': !notification.isRead && !notification.IsRead
            }">
            
         <!-- Icon -->
         <div class="flex-shrink-0">
-          <div class="w-3rem h-3rem border-round-full flex items-center justify-center surface-0 shadow-1"
+          <div class="w-12 h-12 rounded-full flex items-center justify-center bg-white shadow-sm border border-slate-100"
                [ngClass]="{
-                 'text-primary-600': (notification.type || notification.Type) === 'System' || !(notification.type || notification.Type),
+                 'text-teal-600': (notification.type || notification.Type) === 'System' || !(notification.type || notification.Type),
                  'text-blue-600': (notification.type || notification.Type) === 'Order',
                  'text-amber-600': (notification.type || notification.Type) === 'Reminder'
                }">
@@ -52,33 +52,33 @@
         </div>
 
         <!-- Content -->
-        <div class="flex-1 min-w-0">
+        <div class="flex-1 min-w-0 pt-1">
           <div class="flex items-center justify-between mb-1">
-            <h4 class="text-lg m-0" [ngClass]="{'font-bold text-primary-900': !notification.isRead && !notification.IsRead, 'font-semibold text-ink': notification.isRead || notification.IsRead}">
+            <h4 class="text-base md:text-lg m-0" [ngClass]="{'font-bold text-teal-900': !notification.isRead && !notification.IsRead, 'font-bold text-slate-800': notification.isRead || notification.IsRead}">
               {{ notification.title || notification.Title }}
             </h4>
           </div>
-          <p class="m-0 mt-2 type-body-sm" [ngClass]="{'text-primary-800 font-medium': !notification.isRead && !notification.IsRead, 'text-body': notification.isRead || notification.IsRead}">
+          <p class="m-0 mt-2 text-sm leading-relaxed" [ngClass]="{'text-teal-800 font-medium': !notification.isRead && !notification.IsRead, 'text-slate-500 font-medium': notification.isRead || notification.IsRead}">
             {{ notification.message || notification.Message }}
           </p>
-          <div class="mt-3 flex items-center gap-2 text-sm text-surface-500">
-            <i class="pi pi-clock text-xs"></i>
+          <div class="mt-3 flex items-center gap-2 text-xs font-bold text-slate-400">
+            <i class="pi pi-clock"></i>
             <span>{{ (notification.createdAt || notification.CreatedAt) | date:'short' }}</span>
           </div>
         </div>
 
         <!-- Action / Indicator -->
-        <div class="flex items-center justify-end sm:justify-start gap-3 pl-2">
+        <div class="flex items-center justify-end sm:justify-start gap-3 pl-2 sm:pt-2">
           <button *ngIf="!notification.isRead && !notification.IsRead" 
                   (click)="markAsRead(notification, $event)" 
-                  class="p-link p-2 border-round-full text-surface-400 hover:text-primary-600 hover:bg-primary-50 transition-colors"
+                  class="p-2 rounded-full text-teal-500 hover:text-teal-700 hover:bg-teal-100 transition-colors focus:outline-none flex items-center justify-center"
                   title="تحديد كمقروء">
-            <i class="pi pi-check-circle text-2xl"></i>
+            <i class="pi pi-check-circle text-xl"></i>
           </button>
         </div>
         
         <!-- Unread indicator edge -->
-        <div *ngIf="!notification.isRead && !notification.IsRead" class="absolute top-0 right-0 w-1rem h-full bg-primary-500" style="border-radius: 0 8px 8px 0;"></div>
+        <div *ngIf="!notification.isRead && !notification.IsRead" class="absolute top-0 right-0 w-1 h-full bg-teal-500"></div>
       </div>
     </div>
   </div>
