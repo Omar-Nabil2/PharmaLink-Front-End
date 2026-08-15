@@ -1,76 +1,9 @@
 <div class="relative">
   <!-- Trigger Button -->
-  <button (click)="toggle()" class="relative w-10 h-10 rounded-full bg-slate-50 text-slate-600 flex items-center justify-center hover:bg-slate-100 transition border border-slate-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-teal-500">
+  <button (click)="goToNotifications()" class="relative w-10 h-10 rounded-full bg-slate-50 text-slate-600 flex items-center justify-center hover:bg-slate-100 transition border border-slate-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-teal-500" title="الإشعارات">
     <i class="pi pi-bell text-xl"></i>
     <span *ngIf="unreadCount > 0" class="absolute -top-1 -right-1 w-5 h-5 flex items-center justify-center bg-red-500 text-white text-xs font-bold rounded-full">
       {{ unreadCount > 99 ? '99+' : unreadCount }}
     </span>
   </button>
-
-  <!-- Dropdown -->
-  <div *ngIf="isOpen" class="absolute left-0 lg:-left-2 mt-2 w-80 sm:w-96 bg-white rounded-xl shadow-lg border border-slate-100 overflow-hidden z-50">
-    <!-- Header -->
-    <div class="px-4 py-3 border-b border-slate-100 flex items-center justify-between bg-slate-50">
-      <h3 class="font-bold text-slate-800">الإشعارات</h3>
-      <button *ngIf="unreadCount > 0" (click)="markAllAsRead()" class="text-xs text-teal-600 hover:text-teal-800 font-medium transition flex items-center gap-1">
-        <i class="pi pi-check text-[10px]"></i>
-        تحديد الكل كمقروء
-      </button>
-    </div>
-
-    <!-- Notifications List -->
-    <div class="max-h-96 overflow-y-auto">
-      <div *ngIf="notifications.length === 0" class="p-8 text-center text-slate-500">
-        <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-3">
-          <i class="pi pi-bell text-3xl text-slate-300"></i>
-        </div>
-        <p class="text-sm">لا توجد إشعارات حالياً</p>
-      </div>
-
-      <div *ngFor="let notification of notifications" 
-           (click)="clickNotification(notification)"
-           class="p-4 border-b border-slate-50 hover:bg-slate-50 transition cursor-pointer relative group"
-           [ngClass]="{'bg-blue-50/30': !notification.isRead}">
-        <div class="flex items-start gap-3">
-          <div class="flex-shrink-0 mt-1">
-            <div class="w-8 h-8 rounded-full flex items-center justify-center"
-                 [ngClass]="{
-                   'bg-teal-100 text-teal-600': notification.type === 'System' || !notification.type,
-                   'bg-blue-100 text-blue-600': notification.type === 'Order',
-                   'bg-amber-100 text-amber-600': notification.type === 'Reminder'
-                 }">
-              <i class="pi" [ngClass]="{
-                'pi-info-circle': notification.type === 'System' || !notification.type,
-                'pi-shopping-bag': notification.type === 'Order',
-                'pi-clock': notification.type === 'Reminder'
-              }"></i>
-            </div>
-          </div>
-          <div class="flex-1 min-w-0">
-            <div class="flex items-center justify-between mb-1">
-              <h4 class="text-sm font-semibold text-slate-800 truncate pr-4" [ngClass]="{'font-bold text-slate-900': !notification.isRead}">
-                {{ notification.title }}
-              </h4>
-              <span class="text-xs text-slate-500 whitespace-nowrap mr-2">
-                {{ notification.createdAt | date:'shortTime' }}
-              </span>
-            </div>
-            <p class="text-sm text-slate-600 line-clamp-2" [ngClass]="{'text-slate-700': !notification.isRead}">
-              {{ notification.message }}
-            </p>
-          </div>
-        </div>
-        
-        <!-- Mark as read button (visible on hover) -->
-        <button *ngIf="!notification.isRead" 
-                (click)="markAsRead(notification, $event)" 
-                class="absolute top-4 right-4 p-1 rounded-full text-slate-400 hover:text-teal-600 hover:bg-teal-50 opacity-0 group-hover:opacity-100 transition focus:outline-none"
-                title="تحديد كمقروء">
-          <i class="pi pi-check-circle"></i>
-        </button>
-        <!-- Unread dot -->
-        <div *ngIf="!notification.isRead" class="absolute top-1/2 -translate-y-1/2 right-3 w-2 h-2 rounded-full bg-teal-500 group-hover:opacity-0 transition"></div>
-      </div>
-    </div>
-  </div>
 </div>

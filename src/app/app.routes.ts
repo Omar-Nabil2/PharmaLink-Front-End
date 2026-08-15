@@ -288,6 +288,11 @@ export const routes: Routes = [
             (m) => m.AccessDeniedComponent,
           ),
       },
+            {
+        path: 'notifications',
+        loadComponent: () =>
+          import('./pages/notifications/notifications').then((m) => m.Notifications),
+      },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
       {
         path: '**',
@@ -394,6 +399,11 @@ export const routes: Routes = [
             (m) => m.AccessDeniedComponent,
           ),
       },
+            {
+        path: 'notifications',
+        loadComponent: () =>
+          import('./pages/notifications/notifications').then((m) => m.Notifications),
+      },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
       {
         path: '**',
@@ -499,6 +509,11 @@ export const routes: Routes = [
             (m) => m.AccessDeniedComponent,
           ),
       },
+            {
+        path: 'notifications',
+        loadComponent: () =>
+          import('./pages/notifications/notifications').then((m) => m.Notifications),
+      },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
       {
         path: '**',
@@ -563,6 +578,11 @@ export const routes: Routes = [
           import('./pages/errors/access-denied/access-denied.component').then(
             (m) => m.AccessDeniedComponent,
           ),
+      },
+            {
+        path: 'notifications',
+        loadComponent: () =>
+          import('./pages/notifications/notifications').then((m) => m.Notifications),
       },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
       {
@@ -687,6 +707,11 @@ export const routes: Routes = [
             (m) => m.AccessDeniedComponent,
           ),
       },
+            {
+        path: 'notifications',
+        loadComponent: () =>
+          import('./pages/notifications/notifications').then((m) => m.Notifications),
+      },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
       {
         path: '**',
@@ -734,6 +759,11 @@ export const routes: Routes = [
       {
         path: 'history',
         component: DriverHistoryComponent,
+      },
+            {
+        path: 'notifications',
+        loadComponent: () =>
+          import('./pages/notifications/notifications').then((m) => m.Notifications),
       },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
       {
@@ -868,6 +898,11 @@ export const routes: Routes = [
             (m) => m.AccessDeniedComponent,
           ),
       },
+            {
+        path: 'notifications',
+        loadComponent: () =>
+          import('./pages/notifications/notifications').then((m) => m.Notifications),
+      },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
       {
         path: '**',
@@ -894,3 +929,4 @@ export const routes: Routes = [
     ],
   },
 ];
+

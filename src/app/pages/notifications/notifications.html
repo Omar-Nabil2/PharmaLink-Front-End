@@ -1,0 +1,83 @@
+<div class="p-4 sm:p-8 max-w-4xl mx-auto space-y-6">
+  <!-- Header -->
+  <div class="flex items-center justify-between mb-6">
+    <div class="flex items-center gap-3">
+      <div class="w-12 h-12 rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center">
+        <i class="pi pi-bell text-2xl"></i>
+      </div>
+      <div>
+        <h2 class="type-display-md text-slate-800">مركز الإشعارات</h2>
+        <p class="type-body-sm text-slate-500">لديك <span class="font-bold text-teal-600">{{unreadCount}}</span> إشعار غير مقروء</p>
+      </div>
+    </div>
+    
+    <button *ngIf="unreadCount > 0" (click)="markAllAsRead()" class="btn-outline">
+      <i class="pi pi-check"></i>
+      <span>تحديد الكل كمقروء</span>
+    </button>
+  </div>
+
+  <!-- Content -->
+  <div class="bg-white rounded-2xl border border-line shadow-sm overflow-hidden">
+    <div *ngIf="notifications.length === 0" class="p-12 text-center">
+      <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
+        <i class="pi pi-bell text-4xl text-slate-300"></i>
+      </div>
+      <h3 class="type-display-sm text-slate-800 mb-2">لا توجد إشعارات حالياً</h3>
+      <p class="type-body-sm text-slate-500">ستظهر جميع الإشعارات والتنبيهات الخاصة بك هنا.</p>
+    </div>
+
+    <div class="divide-y divide-line">
+      <div *ngFor="let notification of notifications" 
+           (click)="clickNotification(notification)"
+           class="p-4 sm:p-6 hover:bg-slate-50 transition-colors cursor-pointer relative group flex flex-col sm:flex-row sm:items-start gap-4"
+           [ngClass]="{'bg-blue-50/20': !notification.isRead}">
+           
+        <div class="flex items-center gap-4 flex-1">
+          <div class="flex-shrink-0">
+            <div class="w-12 h-12 rounded-full flex items-center justify-center"
+                 [ngClass]="{
+                   'bg-teal-100 text-teal-600': notification.type === 'System' || !notification.type,
+                   'bg-blue-100 text-blue-600': notification.type === 'Order',
+                   'bg-amber-100 text-amber-600': notification.type === 'Reminder'
+                 }">
+              <i class="pi text-xl" [ngClass]="{
+                'pi-info-circle': notification.type === 'System' || !notification.type,
+                'pi-shopping-bag': notification.type === 'Order',
+                'pi-clock': notification.type === 'Reminder'
+              }"></i>
+            </div>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between mb-1">
+              <h4 class="text-base font-semibold text-slate-800" [ngClass]="{'font-bold text-slate-900': !notification.isRead}">
+                {{ notification.title }}
+              </h4>
+              <span class="text-sm text-slate-500 whitespace-nowrap block sm:hidden">
+                {{ notification.createdAt | date:'shortTime' }}
+              </span>
+            </div>
+            <p class="text-sm text-slate-600" [ngClass]="{'text-slate-700': !notification.isRead}">
+              {{ notification.message }}
+            </p>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-end sm:justify-between sm:flex-col gap-2 sm:gap-4 sm:min-w-[120px]">
+          <span class="text-sm text-slate-500 whitespace-nowrap hidden sm:block text-left w-full">
+            {{ notification.createdAt | date:'short' }}
+          </span>
+          <button *ngIf="!notification.isRead" 
+                  (click)="markAsRead(notification, $event)" 
+                  class="p-2 rounded-full text-slate-400 hover:text-teal-600 hover:bg-teal-50 sm:opacity-0 group-hover:opacity-100 transition focus:outline-none"
+                  title="تحديد كمقروء">
+            <i class="pi pi-check-circle text-xl"></i>
+          </button>
+        </div>
+        
+        <!-- Unread indicator edge -->
+        <div *ngIf="!notification.isRead" class="absolute top-0 right-0 w-1 h-full bg-teal-500 rounded-r-md"></div>
+      </div>
+    </div>
+  </div>
+</div>

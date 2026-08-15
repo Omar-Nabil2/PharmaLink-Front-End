@@ -1,7 +1,8 @@
-import { Component, inject, OnInit, HostListener, ElementRef } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { PushNotificationService } from '@core/services/push-notification.service';
+import { AuthService } from '@core/services/auth.service';
 
 @Component({
   selector: 'app-notification-center',
@@ -12,66 +13,30 @@ import { PushNotificationService } from '@core/services/push-notification.servic
 export class NotificationCenterComponent implements OnInit {
   pushService = inject(PushNotificationService);
   router = inject(Router);
-  el = inject(ElementRef);
+  authService = inject(AuthService);
   
-  notifications: any[] = [];
   unreadCount = 0;
-  isOpen = false;
 
   ngOnInit() {
-    this.fetchNotifications();
+    // Initial fetch to get unread count
+    this.pushService.getNotifications().subscribe(data => {
+      this.unreadCount = data.filter(n => !n.isRead).length;
+    });
+
+    // Listen to new live notifications to increment unread count
     this.pushService.liveNotifications$.subscribe(notification => {
-      this.notifications.unshift(notification);
       this.unreadCount++;
     });
   }
 
-  fetchNotifications() {
-    this.pushService.getNotifications().subscribe(data => {
-      this.notifications = data;
-      this.unreadCount = data.filter(n => !n.isRead).length;
-    });
-  }
-
-  toggle() {
-    this.isOpen = !this.isOpen;
-    if (this.isOpen) {
-      this.fetchNotifications();
-    }
-  }
-
-  markAsRead(notification: any, event: Event) {
-    event.stopPropagation();
-    if (!notification.isRead) {
-      notification.isRead = true;
-      this.unreadCount = Math.max(0, this.unreadCount - 1);
-      this.pushService.markAsRead(notification.id).subscribe();
-    }
-  }
-
-  clickNotification(notification: any) {
-    if (!notification.isRead) {
-      notification.isRead = true;
-      this.unreadCount = Math.max(0, this.unreadCount - 1);
-      this.pushService.markAsRead(notification.id).subscribe();
-    }
+  goToNotifications() {
+    const dashboardPath = this.authService.getDashboardPath();
+    const roleBase = dashboardPath.split('/')[1]; // e.g. 'admin' from '/admin/dashboard'
     
-    if (notification.url) {
-      this.isOpen = false;
-      this.router.navigateByUrl(notification.url);
-    }
-  }
-
-  markAllAsRead() {
-    this.notifications.forEach(n => n.isRead = true);
-    this.unreadCount = 0;
-    this.pushService.markAllAsRead().subscribe();
-  }
-
-  @HostListener('document:click', ['$event'])
-  onClickOutside(event: Event) {
-    if (!this.el.nativeElement.contains(event.target)) {
-      this.isOpen = false;
+    if (roleBase) {
+      this.router.navigate([`/${roleBase}/notifications`]);
+    } else {
+      this.router.navigate(['/notifications']);
     }
   }
 }
