@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -9,6 +9,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ErrorType } from '../../../core/interfaces/auth.interface';
 import { AppRole, UserAuthData } from '@core/enums/app-roles.constant';
 import { SocialAuthService, GoogleSigninButtonModule } from '@abacritt/angularx-social-login';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -17,11 +18,12 @@ import { SocialAuthService, GoogleSigninButtonModule } from '@abacritt/angularx-
   templateUrl: './login.html',
   styleUrl: './login.scss',
 })
-export class Login implements OnInit {
+export class Login implements OnInit, OnDestroy {
   loginForm!: FormGroup;
   isLoading = false;
   showPassword = false;
   private returnUrl = '/';
+  private authSubscription!: Subscription;
 
   constructor(
     private readonly fb: FormBuilder,
@@ -40,7 +42,7 @@ export class Login implements OnInit {
       password: ['', [Validators.required]],
     });
 
-    this.socialAuthService.authState.subscribe((user) => {
+    this.authSubscription = this.socialAuthService.authState.subscribe((user) => {
       if (user && user.idToken) {
         this.isLoading = true;
         this.authService.googleLogin(user.idToken).subscribe({
@@ -52,6 +54,12 @@ export class Login implements OnInit {
         });
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    if (this.authSubscription) {
+      this.authSubscription.unsubscribe();
+    }
   }
 
   // Helper getter for form controls
@@ -128,7 +136,7 @@ export class Login implements OnInit {
         }, 1500);
       } else {
         if (typeof window !== 'undefined') {
-          localStorage.setItem('token', res.token);
+          localStorage.setItem('accessToken', res.token);
           if (res.refreshToken) {
             localStorage.setItem('refreshToken', res.refreshToken);
           }
