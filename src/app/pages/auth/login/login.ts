@@ -116,6 +116,16 @@ export class Login implements OnInit, OnDestroy {
               if (res.fullName) localStorage.setItem('fullName', res.fullName);
               if (res.email) localStorage.setItem('email', res.email);
               if (res.roleName) localStorage.setItem('roleName', res.roleName);
+
+              // Crucial: Update AuthService state so that guards can evaluate correctly immediately
+              this.authService.setCurrentUser({
+                accessToken: res.accessToken || '',
+                refreshToken: res.refreshToken,
+                userId: res.userId,
+                fullName: res.fullName,
+                email: res.email,
+                roleName: res.roleName,
+              });
             }
 
             // Trigger a global navbar storage check
@@ -127,9 +137,13 @@ export class Login implements OnInit, OnDestroy {
               detail: `Signed in successfully as ${res.fullName || 'User'}.`,
             });
 
-            // Redirect to home
+            // Redirect to the correct dashboard based on role
             setTimeout(() => {
-              this.router.navigateByUrl(this.returnUrl);
+              let destination = this.returnUrl;
+              if (!destination || destination === '/') {
+                destination = this.authService.getDashboardPath();
+              }
+              this.router.navigateByUrl(destination);
             }, 1000);
           }
         } catch (storageErr) {
@@ -199,6 +213,16 @@ export class Login implements OnInit, OnDestroy {
           if (res.fullName) localStorage.setItem('fullName', res.fullName);
           if (res.email) localStorage.setItem('email', res.email);
           if (res.roleName) localStorage.setItem('roleName', res.roleName);
+
+          // Crucial: Update AuthService state so that guards can evaluate correctly immediately
+          this.authService.setCurrentUser({
+            accessToken: res.accessToken || '',
+            refreshToken: res.refreshToken,
+            userId: res.userId,
+            fullName: res.fullName,
+            email: res.email,
+            roleName: res.roleName,
+          });
         }
 
         window.dispatchEvent(new Event('storage'));
@@ -210,7 +234,11 @@ export class Login implements OnInit, OnDestroy {
         });
 
         setTimeout(() => {
-          this.router.navigateByUrl(this.returnUrl);
+          let destination = this.returnUrl;
+          if (!destination || destination === '/') {
+            destination = this.authService.getDashboardPath();
+          }
+          this.router.navigateByUrl(destination);
         }, 1000);
       }
     } catch (storageErr) {
