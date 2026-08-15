@@ -6,7 +6,7 @@ import localeArEg from '@angular/common/locales/ar-EG';
 registerLocaleData(localeArEg);
 import { routes } from './app.routes';
 import { providePrimeNG } from 'primeng/config';
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { provideHttpClient, withInterceptors, withFetch } from '@angular/common/http';
 import { MessageService } from 'primeng/api';
 import { authInterceptor } from '@core/interceptors/auth.interceptor';
 import { PharmaLinkPreset } from '@core/config/primeng-theme';
@@ -21,7 +21,7 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     { provide: LOCALE_ID, useValue: 'ar-EG' },
     provideRouter(routes, withInMemoryScrolling({ scrollPositionRestoration: 'top' })),
-    provideHttpClient(withInterceptors([authInterceptor])),
+    provideHttpClient(withFetch(), withInterceptors([authInterceptor])),
     MessageService,
     providePrimeNG({
       theme: {

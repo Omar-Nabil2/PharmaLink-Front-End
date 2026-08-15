@@ -33,6 +33,10 @@ export class AuthService {
   userRole = computed(() => this.currentUserSignal()?.roleName ?? null);
 
   private loadUserFromStorage(): UserAuthData | null {
+    if (typeof window === 'undefined') {
+      return null;
+    }
+
     const storedData = localStorage.getItem('userData');
     if (storedData) {
       return JSON.parse(storedData) as UserAuthData;
