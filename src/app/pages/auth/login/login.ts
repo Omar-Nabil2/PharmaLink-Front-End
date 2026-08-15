@@ -143,6 +143,10 @@ export class Login implements OnInit, OnDestroy {
           if (res.refreshToken) {
             localStorage.setItem('refreshToken', res.refreshToken);
           }
+          if (res.userId) localStorage.setItem('userId', res.userId);
+          if (res.roleName) localStorage.setItem('roleName', res.roleName);
+          if (res.email) localStorage.setItem('email', res.email);
+          if (res.fullName) localStorage.setItem('fullName', res.fullName);
 
           const userData: UserAuthData = {
             accessToken: res.accessToken || '',
