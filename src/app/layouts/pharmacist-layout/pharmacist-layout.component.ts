@@ -4,6 +4,7 @@ import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } fro
 import { filter } from 'rxjs';
 import { AuthService } from '@core/services/auth.service';
 import { routeTransitionAnimations } from '../../shared/animations/route.animations';
+import { NotificationCenterComponent } from '../../shared/components/notification-center/notification-center.component';
 
 export interface SidebarItem {
   label: string;
@@ -15,7 +16,7 @@ export interface SidebarItem {
   selector: 'app-pharmacist-layout',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, NotificationCenterComponent],
   templateUrl: './pharmacist-layout.component.html',
   styleUrl: './pharmacist-layout.component.scss',
   animations: [routeTransitionAnimations]

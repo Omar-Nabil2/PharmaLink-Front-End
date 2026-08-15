@@ -6,12 +6,13 @@ import { filter } from 'rxjs';
 import { AuthService } from '@core/services/auth.service';
 import { ReviewTeamProfileService } from '@core/services/review-team-profile.service';
 import { routeTransitionAnimations } from '../../shared/animations/route.animations';
+import { NotificationCenterComponent } from '../../shared/components/notification-center/notification-center.component';
 
 @Component({
   selector: 'app-review-team-layout',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive, NotificationCenterComponent],
   templateUrl: './review-team-layout.component.html',
   styleUrl: './review-team-layout.component.scss',
   animations: [routeTransitionAnimations]

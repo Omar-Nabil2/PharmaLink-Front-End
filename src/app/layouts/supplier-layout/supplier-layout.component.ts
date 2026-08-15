@@ -4,6 +4,7 @@ import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } fro
 import { filter } from 'rxjs';
 import { AuthService } from '@core/services/auth.service';
 import { routeTransitionAnimations } from '../../shared/animations/route.animations';
+import { NotificationCenterComponent } from '../../shared/components/notification-center/notification-center.component';
 
 interface SupplierNavItem {
     label: string;
@@ -15,7 +16,7 @@ interface SupplierNavItem {
     selector: 'app-supplier-layout',
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [RouterOutlet, RouterLink, RouterLinkActive],
+    imports: [RouterOutlet, RouterLink, RouterLinkActive, NotificationCenterComponent],
     templateUrl: './supplier-layout.component.html', // استخدم نفس الـ HTML بتاع الـ Owner مع تغيير النصوص
     styleUrl: './supplier-layout.component.scss',
     animations: [routeTransitionAnimations]

@@ -5,6 +5,7 @@ import { filter } from 'rxjs';
 import { AuthService } from '@core/services/auth.service';
 import { routeTransitionAnimations } from '../../shared/animations/route.animations';
 import { CommonModule } from '@angular/common';
+import { NotificationCenterComponent } from '../../shared/components/notification-center/notification-center.component';
 
 export interface SidebarItem {
   label: string;
@@ -16,7 +17,7 @@ export interface SidebarItem {
   selector: 'app-driver-layout',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, CommonModule],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, CommonModule, NotificationCenterComponent],
   templateUrl: './driver-layout.component.html',
   styleUrl: './driver-layout.component.scss',
   animations: [routeTransitionAnimations]

@@ -1,9 +1,12 @@
 import Swal from "sweetalert2";
-import { Component, OnInit, OnDestroy } from "@angular/core";
+import { Component, OnInit, OnDestroy, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { Subject, takeUntil, finalize, BehaviorSubject } from "rxjs";
 import { RemindersService, ReminderDto, CreateReminderRequest } from "../../../core/services/reminders.service";
+import { ActivatedRoute, Router } from "@angular/router";
+import { HttpClient } from "@angular/common/http";
+import { environment } from "../../../../environments/environment";
 
 @Component({
   selector: "app-reminders",
@@ -29,9 +32,50 @@ export class Reminders implements OnInit, OnDestroy {
 
   private destroy$ = new Subject<void>();
 
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private http = inject(HttpClient);
+
   constructor(private svc: RemindersService) {}
 
-  ngOnInit() { this.load(); }
+  ngOnInit() { 
+    this.load(); 
+    this.route.queryParams.subscribe(params => {
+      const action = params['action'];
+      const id = params['id'];
+      if (action && id) {
+        this.processAction(action, id);
+      }
+    });
+  }
+
+  processAction(action: string, logId: string) {
+    if (action === 'take') {
+      // Typically, you'd have an endpoint to mark the log as taken
+      Swal.fire({
+        title: 'تم',
+        text: 'تم تسجيل أخذ الجرعة بنجاح.',
+        icon: 'success',
+        confirmButtonText: 'حسناً',
+        confirmButtonColor: '#0ea5e9'
+      });
+    } else if (action === 'snooze') {
+      Swal.fire({
+        title: 'تأجيل',
+        text: 'تم تأجيل التذكير لمدة 15 دقيقة.',
+        icon: 'info',
+        confirmButtonText: 'حسناً',
+        confirmButtonColor: '#0ea5e9'
+      });
+    }
+    
+    // Clear query params
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { action: null, id: null },
+      queryParamsHandling: 'merge'
+    });
+  }
 
   load() {
     this.isLoading = true;

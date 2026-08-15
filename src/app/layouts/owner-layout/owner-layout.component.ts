@@ -4,6 +4,7 @@ import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } fro
 import { filter } from 'rxjs';
 import { AuthService } from '@core/services/auth.service';
 import { routeTransitionAnimations } from '../../shared/animations/route.animations';
+import { NotificationCenterComponent } from '../../shared/components/notification-center/notification-center.component';
 
 export interface OwnerSubNavItem {
   label: string;
@@ -22,7 +23,7 @@ export interface OwnerNavItem {
   selector: 'app-owner-layout',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, NotificationCenterComponent],
   templateUrl: './owner-layout.component.html',
   styleUrl: './owner-layout.component.scss',
   animations: [routeTransitionAnimations]

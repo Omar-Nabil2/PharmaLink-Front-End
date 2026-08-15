@@ -1,15 +1,23 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { SwPush } from '@angular/service-worker';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '@environments/environment';
 import { MessageService } from 'primeng/api';
-import { take } from 'rxjs';
+import { take, Subject } from 'rxjs';
+import * as signalR from '@microsoft/signalr';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PushNotificationService {
+  private hubConnection: signalR.HubConnection | null = null;
+  private liveNotificationSubject = new Subject<any>();
+  public liveNotifications$ = this.liveNotificationSubject.asObservable();
+  
+  private authService = inject(AuthService);
+
   constructor(
     private swPush: SwPush,
     private http: HttpClient,
@@ -23,6 +31,34 @@ export class PushNotificationService {
         }
       });
     }
+
+    this.initSignalR();
+  }
+
+  private initSignalR() {
+    const userId = this.authService.currentUser()?.userId;
+    if (!userId) return;
+
+    this.hubConnection = new signalR.HubConnectionBuilder()
+      .withUrl(`${environment.baseUrl.replace('/api/v1', '')}/hubs/notification?userId=${userId}`)
+      .withAutomaticReconnect()
+      .build();
+
+    this.hubConnection.on('ReceiveNotification', (notification) => {
+      // Show toast
+      this.messageService.add({
+        severity: 'info',
+        summary: notification.title,
+        detail: notification.message,
+        life: 5000
+      });
+      // Broadcast for NotificationCenterComponent to update its list
+      this.liveNotificationSubject.next(notification);
+    });
+
+    this.hubConnection.start()
+      .then(() => console.log('SignalR NotificationHub connected'))
+      .catch(err => console.error('Error while starting SignalR connection:', err));
   }
 
   get subscription() {
@@ -97,5 +133,17 @@ export class PushNotificationService {
           console.error('Error unsubscribing locally', err);
         });
     });
+  }
+
+  getNotifications() {
+    return this.http.get<any[]>(`${environment.baseUrl}/notifications`);
+  }
+
+  markAsRead(id: string) {
+    return this.http.put(`${environment.baseUrl}/notifications/${id}/read`, {});
+  }
+
+  markAllAsRead() {
+    return this.http.put(`${environment.baseUrl}/notifications/read-all`, {});
   }
 }

@@ -7,6 +7,7 @@ import { CartService } from '@core/services/cart.service';
 import { PushNotificationService } from '@core/services/push-notification.service';
 import { environment } from '@environments/environment';
 import { MedicineReminderSignalrService } from '@core/services/medicine-reminder-signalr.service';
+import { NotificationCenterComponent } from '../../shared/components/notification-center/notification-center.component';
 import Swal from 'sweetalert2';
 
 import { trigger, transition, style, query, animate } from '@angular/animations';
@@ -15,7 +16,7 @@ import { routeTransitionAnimations } from '../../shared/animations/route.animati
 @Component({
   selector: 'app-patient-layout',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive, RouterOutlet],
+  imports: [CommonModule, RouterLink, RouterLinkActive, RouterOutlet, NotificationCenterComponent],
   templateUrl: './patient-layout.component.html',
   styleUrl: './patient-layout.component.scss',
   animations: [routeTransitionAnimations]
