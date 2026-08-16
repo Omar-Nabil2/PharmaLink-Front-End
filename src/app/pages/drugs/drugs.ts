@@ -72,7 +72,6 @@ export class DrugsComponent implements OnInit {
     this.loadCategories();
 
     this.searchInput$.pipe(debounceTime(400), distinctUntilChanged()).subscribe((term) => {
-      this.searchTerm = term;
       this.pageNumber = 1;
       
       if (term.trim().length > 0) {
@@ -187,6 +186,7 @@ export class DrugsComponent implements OnInit {
 
 
   onSearchChange(value: string): void {
+    this.searchTerm = value;
     this.searchInput$.next(value);
   }
 
