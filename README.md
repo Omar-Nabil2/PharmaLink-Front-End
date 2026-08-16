@@ -2,6 +2,10 @@
 
 PharmaLink is a healthcare order and fulfillment platform. This repository contains the Angular front-end for the MVP and is designed around the database model below: patients register, save addresses, browse orders, and platform and pharmacist users manage inventory and fulfillment.
 
+🔗 Backend Repository: [PharmaLink-Back-End](https://github.com/Shady-Mo/PharmaLink)
+
+🚀 Live Demo: [PharmaLink Vercel App](https://pharma-link-front-end.vercel.app/)
+
 ## Project Goal"# PharmaLink" 
 # PharmaLink Front-End
 

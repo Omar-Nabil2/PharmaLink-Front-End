@@ -59,6 +59,7 @@ export interface AdminOrderDetailDTO {
   deliveryAddress: string;
   hasPrescription?: boolean;
   prescriptionId?: string;
+  prescriptionImageUrl?: string;
   items: AdminOrderItemDTO[];
   fulfillmentLegs: AdminOrderLegDTO[];
 }

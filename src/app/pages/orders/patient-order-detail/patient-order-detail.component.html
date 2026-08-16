@@ -57,7 +57,7 @@
     </div>
 
     <!-- AI Reasoning Section -->
-    <div *ngIf="order.aiRoutingDescription" class="mb-8">
+    <div *ngIf="order.aiRoutingDescription && order.orderStatus !== 'Cancelled'" class="mb-8">
       <h2 class="text-lg font-bold text-teal-800 mb-4 flex items-center gap-2">
         <svg class="w-5 h-5 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
         خطة توفير الطلب (الذكاء الاصطناعي)
@@ -68,10 +68,10 @@
     </div>
 
     <!-- Fulfillment Details -->
-    <div class="mb-8">
+    <div class="mb-8" *ngIf="order.orderStatus !== 'Cancelled' && order.fulfillmentLegs && order.fulfillmentLegs.length > 0">
       <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
         <svg class="w-5 h-5 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
-        الأدوية الموفرة ({{ order.fulfillmentLegs?.length || 0 }} فروع)
+        الأدوية الموفرة ({{ order.fulfillmentLegs.length }} فروع)
       </h2>
 
       <!-- Fulfillment Legs -->
@@ -134,28 +134,18 @@
       </div>
     </div>
 
-    <!-- Pending Assignment Items (If any) -->
-    <div *ngIf="order.pendingAssignmentItems && order.pendingAssignmentItems.length > 0" class="mb-8">
-      <h2 [class]="order.pendingAssignmentItems.every(item => item.itemStatus == 'Unavailable') ? 'text-lg font-bold text-red-600 mb-4 flex items-center gap-2' : 'text-lg font-bold text-amber-600 mb-4 flex items-center gap-2'">
+    <!-- If Order is Cancelled, show all items in Red Theme -->
+    <div *ngIf="order.orderStatus === 'Cancelled' && allOrderItems.length > 0" class="mb-8">
+      <h2 class="text-lg font-bold text-red-600 mb-4 flex items-center gap-2">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-        @if (order.pendingAssignmentItems.every(item => item.itemStatus == 'Unavailable')) {
-          أدوية لم يتم توفيرها ({{ order.pendingAssignmentItems.length }})
-        }
-        @else {
-          أدوية لم تتم مراجعة الروشتة الخاصة بها ({{ order.pendingAssignmentItems.length }})
-        }
+        {{ isSystemCancelledDueToUnavailability ? 'أدوية لم يتم توفيرها (' + allOrderItems.length + ')' : 'أدوية الطلب الملغى (' + allOrderItems.length + ')' }}
       </h2>
-      <div [class]="order.pendingAssignmentItems.every(item => item.itemStatus == 'Unavailable') ? 'bg-red-50/50 border border-red-100 rounded-xl p-4 shadow-sm' : 'bg-amber-50 border border-amber-200 rounded-xl p-4 shadow-sm'">
-        <p [class]="order.pendingAssignmentItems.every(item => item.itemStatus == 'Unavailable') ? 'text-sm text-red-600 mb-4 font-medium' : 'text-sm text-amber-600 mb-4 font-medium'">
-          @if (order.pendingAssignmentItems.every(item => item.itemStatus == 'Unavailable')) {
-            هذه الأدوية لم يتم تخصيصها لصيدلية بعد وسيقوم النظام بتوفيرها في أقرب وقت.
-          }
-          @else {
-            لم تتم مراجعة الروشتة الخاصة بهذه الأدوية بعد وسيقوم فريق المراجعة بفحصها في أقرب وقت.
-          }
+      <div class="bg-red-50/50 border border-red-100 rounded-xl p-4 shadow-sm">
+        <p class="text-sm text-red-600 mb-4 font-medium">
+          {{ isSystemCancelledDueToUnavailability ? 'نعتذر، لم نتمكن من توفير هذه الأدوية في أي صيدلية قريبة، لذا تم إلغاء الطلب.' : 'هذا الطلب تم إلغاؤه ولن يتم توفير هذه الأدوية.' }}
         </p>
         <div class="flex flex-col gap-3">
-          <div *ngFor="let item of order.pendingAssignmentItems" class="bg-white/50 rounded-xl p-3 sm:p-4 border border-red-100/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+          <div *ngFor="let item of allOrderItems" class="bg-white/50 rounded-xl p-3 sm:p-4 border border-red-100/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
             <div class="flex items-start sm:items-center gap-3 flex-1 min-w-0">
               <div class="w-12 h-12 bg-white border border-red-100 rounded-lg flex items-center justify-center shrink-0 overflow-hidden p-1">
                 <img *ngIf="item.imageUrl" [src]="item.imageUrl" [alt]="item.drugName" class="w-full h-full object-contain mix-blend-multiply" onerror="this.src='assets/images/placeholder-drug.png'">
@@ -168,15 +158,86 @@
             </div>
             
             <div class="flex items-center justify-between sm:justify-end gap-4 w-full sm:w-auto border-t border-red-100/30 sm:border-0 pt-2 sm:pt-0 mt-1 sm:mt-0">
-              <span [class]="item.itemStatus == 'Unavailable' ? 'text-sm font-bold text-gray-700 bg-red-200/50 px-3 py-1 rounded-lg border border-red-100/50' : 'text-sm font-bold text-gray-700 bg-amber-200/50 px-3 py-1 rounded-lg border border-amber-100/50'">الكمية: {{ item.quantityNeeded }}</span>
-              <span [class]="item.itemStatus == 'Unavailable' ? 'text-xs px-2 py-1 bg-red-100 text-red-700 rounded-md font-medium shrink-0' : 'bg-amber-100 text-amber-700 text-xs px-2 py-1 rounded-md font-medium shrink-0'">
-                {{ getItemStatusText(item.itemStatus) | statusTranslate }}
+              <span class="text-sm font-bold text-gray-700 bg-red-200/50 px-3 py-1 rounded-lg border border-red-100/50">الكمية: {{ item.quantityNeeded || item.quantity }}</span>
+              <span class="text-xs px-2 py-1 bg-red-100 text-red-700 rounded-md font-medium shrink-0">
+                ملغى
               </span>
             </div>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- If Order is NOT Cancelled, show normal pending blocks -->
+    <ng-container *ngIf="order.orderStatus !== 'Cancelled'">
+      <!-- Prescription Review Items (Amber Theme) -->
+      <div *ngIf="prescriptionReviewItems.length > 0" class="mb-8">
+        <h2 class="text-lg font-bold text-amber-600 mb-4 flex items-center gap-2">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          أدوية لم تتم مراجعة الروشتة الخاصة بها ({{ prescriptionReviewItems.length }})
+        </h2>
+        <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 shadow-sm">
+          <p class="text-sm text-amber-600 mb-4 font-medium">
+            لم تتم مراجعة الروشتة الخاصة بهذه الأدوية بعد وسيقوم فريق المراجعة بفحصها في أقرب وقت.
+          </p>
+          <div class="flex flex-col gap-3">
+            <div *ngFor="let item of prescriptionReviewItems" class="bg-white/50 rounded-xl p-3 sm:p-4 border border-amber-100/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+              <div class="flex items-start sm:items-center gap-3 flex-1 min-w-0">
+                <div class="w-12 h-12 bg-white border border-amber-100 rounded-lg flex items-center justify-center shrink-0 overflow-hidden p-1">
+                  <img *ngIf="item.imageUrl" [src]="item.imageUrl" [alt]="item.drugName" class="w-full h-full object-contain mix-blend-multiply" onerror="this.src='assets/images/placeholder-drug.png'">
+                  <svg *ngIf="!item.imageUrl" class="w-5 h-5 text-amber-300 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547l-2.46 2.46a2.62 2.62 0 103.705 3.705l2.46-2.46a2 2 0 00.548-1.022l.477-2.387a6 6 0 00-.517-3.86l-.159-.318a6 6 0 01-.517-3.86l.38-1.93a2 2 0 00-.547-1.806l-2.46-2.46a2.62 2.62 0 013.705-3.705l2.46 2.46a2 2 0 001.022.548l2.387.477a6 6 0 003.86-.517l.318-.159a6 6 0 013.86-.517l1.93.38a2 2 0 001.806.547l2.46 2.46a2.62 2.62 0 11-3.705 3.705l-2.46-2.46z"></path></svg>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="font-bold text-gray-900 text-sm sm:text-base leading-tight">{{ item.arabicName ? item.arabicName : item.drugName }}</p>
+                  <p *ngIf="item.arabicName && item.drugName" class="text-[11px] text-gray-500 mt-0.5 font-medium tracking-wide uppercase truncate" dir="ltr" style="text-align: right;">{{ item.drugName }}</p>
+                </div>
+              </div>
+              
+              <div class="flex items-center justify-between sm:justify-end gap-4 w-full sm:w-auto border-t border-amber-100/30 sm:border-0 pt-2 sm:pt-0 mt-1 sm:mt-0">
+                <span class="text-sm font-bold text-gray-700 bg-amber-200/50 px-3 py-1 rounded-lg border border-amber-100/50">الكمية: {{ item.quantityNeeded }}</span>
+                <span class="bg-amber-100 text-amber-700 text-xs px-2 py-1 rounded-md font-medium shrink-0">
+                  {{ getItemStatusText(item.itemStatus) | statusTranslate }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Unavailable Items (Red Theme) -->
+      <div *ngIf="unavailableItems.length > 0" class="mb-8">
+        <h2 class="text-lg font-bold text-red-600 mb-4 flex items-center gap-2">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          أدوية لم يتم توفيرها ({{ unavailableItems.length }})
+        </h2>
+        <div class="bg-red-50/50 border border-red-100 rounded-xl p-4 shadow-sm">
+          <p class="text-sm text-red-600 mb-4 font-medium">
+            هذه الأدوية لم يتم تخصيصها لصيدلية بعد وسيقوم النظام بتوفيرها في أقرب وقت.
+          </p>
+          <div class="flex flex-col gap-3">
+            <div *ngFor="let item of unavailableItems" class="bg-white/50 rounded-xl p-3 sm:p-4 border border-red-100/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+              <div class="flex items-start sm:items-center gap-3 flex-1 min-w-0">
+                <div class="w-12 h-12 bg-white border border-red-100 rounded-lg flex items-center justify-center shrink-0 overflow-hidden p-1">
+                  <img *ngIf="item.imageUrl" [src]="item.imageUrl" [alt]="item.drugName" class="w-full h-full object-contain mix-blend-multiply" onerror="this.src='assets/images/placeholder-drug.png'">
+                  <svg *ngIf="!item.imageUrl" class="w-5 h-5 text-red-300 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547l-2.46 2.46a2.62 2.62 0 103.705 3.705l2.46-2.46a2 2 0 00.548-1.022l.477-2.387a6 6 0 00-.517-3.86l-.159-.318a6 6 0 01-.517-3.86l.38-1.93a2 2 0 00-.547-1.806l-2.46-2.46a2.62 2.62 0 013.705-3.705l2.46 2.46a2 2 0 001.022.548l2.387.477a6 6 0 003.86-.517l.318-.159a6 6 0 013.86-.517l1.93.38a2 2 0 001.806.547l2.46 2.46a2.62 2.62 0 11-3.705 3.705l-2.46-2.46z"></path></svg>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="font-bold text-gray-900 text-sm sm:text-base leading-tight">{{ item.arabicName ? item.arabicName : item.drugName }}</p>
+                  <p *ngIf="item.arabicName && item.drugName" class="text-[11px] text-gray-500 mt-0.5 font-medium tracking-wide uppercase truncate" dir="ltr" style="text-align: right;">{{ item.drugName }}</p>
+                </div>
+              </div>
+              
+              <div class="flex items-center justify-between sm:justify-end gap-4 w-full sm:w-auto border-t border-red-100/30 sm:border-0 pt-2 sm:pt-0 mt-1 sm:mt-0">
+                <span class="text-sm font-bold text-gray-700 bg-red-200/50 px-3 py-1 rounded-lg border border-red-100/50">الكمية: {{ item.quantityNeeded }}</span>
+                <span class="text-xs px-2 py-1 bg-red-100 text-red-700 rounded-md font-medium shrink-0">
+                  {{ getItemStatusText(item.itemStatus) | statusTranslate }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
 
   </div>
 </div>

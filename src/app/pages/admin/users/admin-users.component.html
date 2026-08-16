@@ -171,41 +171,18 @@
 
     <!-- Pagination -->
     @if (users().length > 0) {
-      <div class="px-6 py-4 border-t border-border flex items-center justify-between">
-        <p class="text-sm text-muted-foreground">
+      <div class="px-6 py-4 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4">
+        <p class="text-sm text-muted-foreground whitespace-nowrap">
           إجمالي المستخدمين: <span class="font-medium text-foreground">{{ totalCount() }}</span>
         </p>
-        <div class="flex items-center gap-2">
-          <button
-            (click)="changePage(filter().pageNumber - 1)"
-            [disabled]="!hasPreviousPage()"
-            class="p-2 rounded-lg border border-border hover:bg-muted disabled:opacity-50 disabled:hover:bg-transparent transition-colors"
-          >
-            <i class="pi pi-chevron-right text-xs"></i>
-          </button>
-          
-          <div class="flex items-center gap-1">
-            @for (page of pagesArray(); track page) {
-              <button
-                (click)="changePage(page)"
-                class="min-w-[32px] h-8 flex items-center justify-center rounded-lg text-sm font-medium transition-colors"
-                [class.bg-[#007671]]="page === filter().pageNumber"
-                [class.text-white]="page === filter().pageNumber"
-                [class.hover:bg-muted]="page !== filter().pageNumber"
-              >
-                {{ page }}
-              </button>
-            }
-          </div>
-
-          <button
-            (click)="changePage(filter().pageNumber + 1)"
-            [disabled]="!hasNextPage()"
-            class="p-2 rounded-lg border border-border hover:bg-muted disabled:opacity-50 disabled:hover:bg-transparent transition-colors"
-          >
-            <i class="pi pi-chevron-left text-xs"></i>
-          </button>
-        </div>
+        <p-paginator
+          [rows]="filter().pageSize"
+          [totalRecords]="totalCount()"
+          [first]="(filter().pageNumber - 1) * filter().pageSize"
+          [rowsPerPageOptions]="[10, 20, 50]"
+          (onPageChange)="onPageChange($event)"
+          styleClass="!bg-transparent !border-0 !shadow-none !p-0">
+        </p-paginator>
       </div>
     }
   </div>

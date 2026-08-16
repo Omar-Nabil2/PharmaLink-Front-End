@@ -5,6 +5,7 @@ import { MessageService, ConfirmationService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DialogModule } from 'primeng/dialog';
+import { PaginatorModule } from 'primeng/paginator';
 import Swal from 'sweetalert2';
 
 import { AdminUsersService } from './admin-users.service';
@@ -13,7 +14,7 @@ import { AdminUserDto, AdminUserFilterDto, UserStatus, PaginatedList } from './a
 @Component({
   selector: 'app-admin-users',
   standalone: true,
-  imports: [CommonModule, FormsModule, ToastModule, ConfirmDialogModule, DialogModule],
+  imports: [CommonModule, FormsModule, ToastModule, ConfirmDialogModule, DialogModule, PaginatorModule],
   providers: [MessageService, ConfirmationService],
   templateUrl: './admin-users.component.html'
 })
@@ -101,6 +102,14 @@ export class AdminUsersComponent implements OnInit {
     if (newPage >= 1 && newPage <= this.totalPages()) {
       this.updateFilter({ pageNumber: newPage });
     }
+  }
+
+  onPageChange(event: any) {
+    // event.first = index of first record
+    // event.rows = number of rows to display in new page
+    // event.page = index of new page (0-based)
+    const newPage = (event.page || 0) + 1;
+    this.updateFilter({ pageNumber: newPage, pageSize: event.rows });
   }
 
   private updateFilter(partial: Partial<AdminUserFilterDto>) {

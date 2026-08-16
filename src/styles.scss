@@ -99,6 +99,8 @@
   ::placeholder {
     color: var(--color-mute);
   }
+
+
 }
 
 @layer components {
@@ -459,19 +461,35 @@ main.ng-animating ~ app-footer {
 /* Adjust paginator buttons for mobile to fit on one line */
 @media screen and (max-width: 768px) {
     .p-paginator {
-        gap: 0.1rem !important;
-        padding: 0 !important;
+        gap: 0.25rem !important;
+        padding: 0.5rem !important;
+        justify-content: center !important;
+        flex-wrap: wrap !important;
     }
+
+    .p-paginator .p-dropdown,
+    .p-paginator .p-paginator-rpp-options {
+        margin: 0 0.5rem !important;
+    }
+
     .p-paginator .p-paginator-first,
     .p-paginator .p-paginator-prev,
     .p-paginator .p-paginator-next,
     .p-paginator .p-paginator-last,
     .p-paginator .p-paginator-pages .p-paginator-page {
-        min-width: 2rem !important;
-        height: 2.25rem !important;
+        min-width: 1.9rem !important;
+        height: 1.9rem !important;
         margin: 0 !important;
         padding: 0 !important;
+        border-radius: 50% !important;
     }
+}
+
+/* Change PrimeNG selected paginator button color */
+body .p-paginator [aria-current="page"],
+body .p-paginator [data-p-active="true"] {
+    background-color: var(--color-primary) !important;
+    color: var(--color-on-primary) !important;
 }
 
 @import 'leaflet/dist/leaflet.css';
