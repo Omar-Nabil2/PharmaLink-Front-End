@@ -467,11 +467,18 @@ main.ng-animating ~ app-footer {
     .p-paginator .p-paginator-next,
     .p-paginator .p-paginator-last,
     .p-paginator .p-paginator-pages .p-paginator-page {
-        min-width: 2rem !important;
-        height: 2.25rem !important;
+        min-width: 1.9rem !important;
+        height: 1.9rem !important;
         margin: 0 !important;
         padding: 0 !important;
     }
+}
+
+/* Change PrimeNG selected paginator button color */
+body .p-paginator [aria-current="page"],
+body .p-paginator [data-p-active="true"] {
+    background-color: var(--color-primary) !important;
+    color: var(--color-on-primary) !important;
 }
 
 @import 'leaflet/dist/leaflet.css';

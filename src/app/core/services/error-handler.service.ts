@@ -15,16 +15,16 @@ export class ErrorHandlerService {
    */
   parseError(error: any): ParsedError {
     let type = ErrorType.UnknownError;
-    let title = 'Something went wrong';
-    let message = 'An unexpected error occurred. Please try again.';
+    let title = 'حدث خطأ ما';
+    let message = 'حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى.';
     let errors: any = null;
 
     if (error instanceof HttpErrorResponse) {
       if (error.status === 0) {
         type = ErrorType.ConnectionError;
-        title = 'Connection Failed';
+        title = 'فشل الاتصال';
         message =
-          "We're having trouble reaching our servers. Check your internet connection or try again shortly.";
+          'نواجه مشكلة في الوصول إلى خوادمنا. تحقق من اتصالك بالإنترنت أو حاول مرة أخرى بعد قليل.';
       } else {
         // Attempt to parse string errors (in case headers or interceptors didn't parse JSON)
         let errorBody = error.error;
@@ -50,7 +50,7 @@ export class ErrorHandlerService {
             // Treat access errors without a custom code/message block as UserError
             type = ErrorType.UserError;
             title =
-              errorBody.title || (error.status === 401 ? 'Sign In Required' : 'Access Denied');
+              errorBody.title || (error.status === 401 ? 'تسجيل الدخول مطلوب' : 'تم رفض الوصول');
 
             if (errorBody.detail) {
               message = errorBody.detail;
@@ -63,13 +63,13 @@ export class ErrorHandlerService {
             } else {
               message =
                 error.status === 401
-                  ? 'Please sign in first so we can verify who you are.'
-                  : "It looks like you don't have access to do that. Please contact support if you think this is a mistake.";
+                  ? 'يرجى تسجيل الدخول أولاً حتى نتمكن من التحقق من هويتك.'
+                  : 'يبدو أنه ليس لديك صلاحية للقيام بذلك. يرجى الاتصال بالدعم إذا كنت تعتقد أن هذا خطأ.';
             }
           } else if (errorBody.errors) {
             // Schema 1: Validation
             type = ErrorType.ValidationError;
-            title = errorBody.title || 'Check Form Details';
+            title = errorBody.title || 'تحقق من تفاصيل النموذج';
 
             const errorList: string[] = [];
             Object.keys(errorBody.errors).forEach((key) => {
@@ -84,14 +84,14 @@ export class ErrorHandlerService {
             message =
               errorList.length > 0
                 ? errorList[0]
-                : 'Some form details are incorrect. Please verify and try again.';
+                : 'بعض تفاصيل النموذج غير صحيحة. يرجى التحقق والمحاولة مرة أخرى.';
           } else {
             // Schema 3: General HTTP / Server error (500, 503 with no errors block, etc.)
             if (error.status >= 500) {
               type = ErrorType.ServerOrAccessError;
-              title = 'Server Busy';
+              title = 'الخادم مشغول';
               message =
-                'Our servers are experiencing issues right now. We are working on it—please try again soon!';
+                'تواجه خوادمنا مشاكل في الوقت الحالي. نحن نعمل على حلها - يرجى المحاولة مرة أخرى قريباً!';
             } else {
               type = ErrorType.UnknownError;
               title = errorBody.title || title;
@@ -102,11 +102,11 @@ export class ErrorHandlerService {
           // Fallback if server returned no body at all
           if (isAccessError) {
             type = ErrorType.UserError;
-            title = error.status === 401 ? 'Sign In Required' : 'Access Denied';
+            title = error.status === 401 ? 'تسجيل الدخول مطلوب' : 'تم رفض الوصول';
             message =
               error.status === 401
-                ? 'Please sign in first so we can verify who you are.'
-                : "It looks like you don't have access to do that. Please contact support if you think this is a mistake.";
+                ? 'يرجى تسجيل الدخول أولاً حتى نتمكن من التحقق من هويتك.'
+                : 'يبدو أنه ليس لديك صلاحية للقيام بذلك. يرجى الاتصال بالدعم إذا كنت تعتقد أن هذا خطأ.';
           } else {
             message = error.message || message;
           }
