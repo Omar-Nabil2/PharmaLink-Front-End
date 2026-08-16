@@ -362,6 +362,16 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'ai',
+        redirectTo: 'prescription-analytics',
+        pathMatch: 'full',
+      },
+      {
+        path: 'ai-assistant',
+        redirectTo: 'prescription-analytics',
+        pathMatch: 'full',
+      },
+      {
         path: 'prescription-analytics',
         loadComponent: () =>
           import('./pages/pharmacist/prescription-analytics/prescription-analytics.component').then(
@@ -652,6 +662,20 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./pages/pharmacy-admin/pharmacists/pharmacist-detail/pharmacist-detail.component').then(
             (m) => m.PharmacistDetailComponent,
+          ),
+      },
+      {
+        path: 'ai',
+        loadComponent: () =>
+          import('./pages/pharmacy-admin/owner-ai-assistant/owner-ai-assistant.component').then(
+            (m) => m.OwnerAiAssistantComponent,
+          ),
+      },
+      {
+        path: 'ai-assistant',
+        loadComponent: () =>
+          import('./pages/pharmacy-admin/owner-ai-assistant/owner-ai-assistant.component').then(
+            (m) => m.OwnerAiAssistantComponent,
           ),
       },
       {

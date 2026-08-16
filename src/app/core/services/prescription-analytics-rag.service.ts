@@ -10,14 +10,21 @@ import {
 @Injectable({ providedIn: 'root' })
 export class PrescriptionAnalyticsRagService {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = `${environment.baseUrl}/ai/prescription-analytics`;
+  private readonly apiUrl = `${environment.baseUrl}/prescription-analytics`;
 
   queryAnalytics(
     request: PrescriptionAnalyticsRagRequest,
   ): Observable<PrescriptionAnalyticsRagResponse> {
     return this.http.post<PrescriptionAnalyticsRagResponse>(
-      `${this.apiUrl}/query`,
+      `${this.apiUrl}/ask`,
       request,
+    );
+  }
+
+  reindex(): Observable<{ queuedCount: number }> {
+    return this.http.post<{ queuedCount: number }>(
+      `${this.apiUrl}/reindex`,
+      {},
     );
   }
 }
