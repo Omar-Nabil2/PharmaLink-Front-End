@@ -198,14 +198,6 @@ export class CheckoutComponent implements OnInit {
   }
 
   selectPaymentMethod(method: 'cod' | 'card'): void {
-    if (method === 'card') {
-      this.messageService.add({
-        severity: 'info',
-        summary: 'قريباً',
-        detail: 'الدفع بالبطاقة غير متاح حالياً، يرجى استخدام الدفع عند الاستلام.',
-      });
-      return;
-    }
     this.paymentMethod = method;
   }
 
@@ -267,10 +259,12 @@ export class CheckoutComponent implements OnInit {
     this.orderService.createOrder({
       deliveryAddressId: this.selectedAddressId,
       fulfillmentMode: this.fulfillmentMode,
-      temporaryPrescriptionId: this.temporaryPrescriptionId ?? undefined
+      temporaryPrescriptionId: this.temporaryPrescriptionId ?? undefined,
+      paymentMethod: this.paymentMethod === 'card' ? 2 : 1
     }).subscribe({
       next: (order: OrderCreatedResponse) => {
         this.createdOrder = order;
+
         this.cartService.updateCartCount(0); // Update local cart icon immediately
         this.cartService.getCart().subscribe({ error: () => {} }); // Sync with backend
 
@@ -317,6 +311,10 @@ export class CheckoutComponent implements OnInit {
   }
 
   submitOrder(): void {
+    if (this.createdOrder?.paymentUrl) {
+      window.location.href = this.createdOrder.paymentUrl;
+      return;
+    }
     // Order is already created, just show the success modal
     this.showPreviewModal = false;
     this.showSuccessModal = true;

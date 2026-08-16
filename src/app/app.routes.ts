@@ -216,6 +216,14 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/checkout/checkout').then((m) => m.CheckoutComponent),
       },
       {
+        path: 'checkout/payment/success',
+        loadComponent: () => import('./pages/checkout/payment-success/payment-success').then((m) => m.PaymentSuccessComponent),
+      },
+      {
+        path: 'checkout/payment/cancel',
+        loadComponent: () => import('./pages/checkout/payment-cancel/payment-cancel').then((m) => m.PaymentCancelComponent),
+      },
+      {
         path: 'orders',
         loadComponent: () =>
           import('./pages/orders/patient-orders/patient-orders.component').then(

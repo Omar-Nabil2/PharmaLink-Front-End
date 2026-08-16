@@ -7,6 +7,7 @@ export interface CreateOrderRequest {
     deliveryAddressId: string;
     fulfillmentMode: FulfillmentMode;
     temporaryPrescriptionId?: string;
+    paymentMethod: number;
 }
 
 export interface OrderItemLine {
@@ -39,6 +40,7 @@ export interface OrderCreatedResponse {
     orderId: string;
     status: OrderStatus;
     message: string;
+    paymentUrl?: string;
     strategy?: string;
     isFullyFulfilled?: boolean;
     totalDistanceKm?: number;
