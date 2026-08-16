@@ -100,36 +100,7 @@
     color: var(--color-mute);
   }
 
-  /* Custom Scrollbar for Desktop (devices with mouse/pointer) */
-  @media (hover: hover) and (pointer: fine) {
-    ::-webkit-scrollbar {
-      width: 10px;
-      height: 10px;
-    }
 
-    ::-webkit-scrollbar-track {
-      background-color: var(--color-canvas-soft);
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background-color: var(--color-primary);
-      border-radius: 2px;
-      box-shadow: 0 0 20px 50px var(--color-primary);
-    }
-  }
-
-  /* Hide scrollbar completely on touch/mobile devices (PWA) */
-  @media (hover: none) and (pointer: coarse) {
-    ::-webkit-scrollbar {
-      display: none;
-      width: 0;
-      height: 0;
-    }
-    * {
-      scrollbar-width: none; /* Firefox */
-      -ms-overflow-style: none; /* IE/Edge */
-    }
-  }
 }
 
 @layer components {
