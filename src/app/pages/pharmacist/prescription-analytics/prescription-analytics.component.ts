@@ -1,7 +1,6 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  DestroyRef,
   computed,
   inject,
   signal,
@@ -14,23 +13,17 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
-import { CardModule } from 'primeng/card';
 import { ChartModule } from 'primeng/chart';
 import { TableModule } from 'primeng/table';
-import { BadgeModule } from 'primeng/badge';
+import { DialogModule } from 'primeng/dialog';
 import { TooltipModule } from 'primeng/tooltip';
-import { AutoCompleteModule } from 'primeng/autocomplete';
+import { environment } from '@environments/environment';
 import { PrescriptionAnalyticsRagService } from '@core/services/prescription-analytics-rag.service';
-import { SearchService } from '@core/services/search.service';
-import { PharmacyBranchSearchDTO } from '@pages/inventory/search.model';
 import {
   PrescriptionAnalyticsRagRequest,
   PrescriptionAnalyticsRagResponse,
-  ShortageWarning,
-  UrgencyLevel,
+  PrescriptionAnalyticsSource,
+  PrescribedDrugMetric,
 } from '@core/models/prescription-analytics-rag.model';
 
 @Component({
@@ -41,66 +34,37 @@ import {
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    CardModule,
     ChartModule,
     TableModule,
-    BadgeModule,
+    DialogModule,
     TooltipModule,
-    AutoCompleteModule,
   ],
   templateUrl: './prescription-analytics.component.html',
   styleUrl: './prescription-analytics.component.scss',
 })
 export class PrescriptionAnalyticsComponent {
   private readonly ragService = inject(PrescriptionAnalyticsRagService);
-  private readonly searchService = inject(SearchService);
-  private readonly destroyRef = inject(DestroyRef);
   private readonly fb = inject(FormBuilder);
 
   readonly isLoading = signal(false);
   readonly hasError = signal(false);
   readonly errorMessage = signal('');
   readonly result = signal<PrescriptionAnalyticsRagResponse | null>(null);
-  readonly showAdvanced = signal(false);
-
-  // ── Async Branch Lookup (mirrors Owner Dashboard / Inventory branch selector) ──
-  readonly branchFilterSuggestions = signal<PharmacyBranchSearchDTO[]>([]);
-  readonly selectedBranchFilter = signal<PharmacyBranchSearchDTO | null>(null);
-  private readonly branchFilterQuery$ = new Subject<string>();
+  readonly selectedImage = signal<string | null>(null);
+  readonly isImageModalOpen = signal(false);
 
   readonly form: FormGroup = this.fb.group({
-    question: ['', [Validators.required, Validators.minLength(5)]],
-    branchId: [''],
-    city: [''],
-    governorate: [''],
-    startDate: [''],
-    endDate: [''],
+    question: ['', [Validators.required, Validators.minLength(3)]],
   });
 
-  constructor() {
-    this.branchFilterQuery$
-      .pipe(
-        debounceTime(300),
-        distinctUntilChanged(),
-        switchMap((term) => this.searchService.searchBranches(term)),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe((results) => this.branchFilterSuggestions.set(results ?? []));
-  }
-
-  onBranchFilterSearch(query: string): void {
-    this.branchFilterQuery$.next(query ?? '');
-  }
-
-  onBranchFilterSelected(branch: PharmacyBranchSearchDTO): void {
-    this.selectedBranchFilter.set(branch);
-    this.form.patchValue({ branchId: branch.branchId });
-  }
-
-  onBranchFilterCleared(): void {
-    this.selectedBranchFilter.set(null);
-    this.form.patchValue({ branchId: '' });
-  }
+  // Quick-prompt suggestions in Native Egyptian Arabic
+  readonly suggestions = [
+    'إيه أكتر أدوية السكر اللي اطلبت الفترة الأخيرة؟',
+    'إيه أكتر المضادات الحيوية الواردة في الروشتات في شبرا الخيمة؟',
+    'إيه أكتر أدوية الضغط والمعدة اللي اتكررت في الروشتات؟',
+    'إيه أكتر أدوية الأطفال والمكملات اللي اطلبت في القليوبية؟',
+    'أكتر الفيتامينات وأدوية العظام اللي اتكتبت مؤخراً إيه؟',
+  ];
 
   // ── Computed chart data ──────────────────────────────────────────────────
 
@@ -153,9 +117,7 @@ export class PrescriptionAnalyticsComponent {
   };
 
   readonly categoriesChartData = computed(() => {
-    const allCats = this.result()?.mostRequestedCategories ?? [];
-    const activeCats = allCats.filter((c) => c.count > 0);
-    const cats = activeCats.length > 0 ? activeCats : allCats;
+    const cats = this.result()?.mostRequestedCategories ?? [];
 
     return {
       labels: cats.map((c) => `${c.categoryName} (${c.percentage}%)`),
@@ -176,7 +138,7 @@ export class PrescriptionAnalyticsComponent {
     maintainAspectRatio: false,
     layout: {
       padding: {
-        top: 20,
+        top: 15,
         bottom: 10,
         left: 10,
         right: 10,
@@ -187,7 +149,7 @@ export class PrescriptionAnalyticsComponent {
         position: 'bottom' as const,
         labels: {
           font: { family: 'Tajawal', size: 12 },
-          padding: 16,
+          padding: 14,
           usePointStyle: true,
           pointStyle: 'circle',
         },
@@ -199,11 +161,9 @@ export class PrescriptionAnalyticsComponent {
         titleFont: { family: 'Tajawal', size: 12 },
         callbacks: {
           label: (ctx: any) => {
-            const allCats = this.result()?.mostRequestedCategories ?? [];
-            const activeCats = allCats.filter((c) => c.count > 0);
-            const cats = activeCats.length > 0 ? activeCats : allCats;
+            const cats = this.result()?.mostRequestedCategories ?? [];
             const item = cats[ctx.dataIndex];
-            return item ? ` ${item.categoryName}: ${item.count} أصناف (${item.percentage}%)` : '';
+            return item ? ` ${item.categoryName}: ${item.count} روشتات (${item.percentage}%)` : '';
           },
         },
       },
@@ -213,26 +173,14 @@ export class PrescriptionAnalyticsComponent {
 
   // ── Actions ──────────────────────────────────────────────────────────────
 
-  toggleAdvanced(): void {
-    this.showAdvanced.update((v) => !v);
-  }
-
   submit(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }
 
-    const raw = this.form.value;
-    const selectedBranch = this.selectedBranchFilter();
-
     const request: PrescriptionAnalyticsRagRequest = {
-      question: raw.question.trim(),
-      branchId: selectedBranch?.branchId || raw.branchId?.trim() || null,
-      city: raw.city?.trim() || null,
-      governorate: raw.governorate?.trim() || null,
-      startDate: raw.startDate || null,
-      endDate: raw.endDate || null,
+      question: this.form.value.question.trim(),
     };
 
     this.isLoading.set(true);
@@ -247,7 +195,9 @@ export class PrescriptionAnalyticsComponent {
       error: (err) => {
         this.hasError.set(true);
         this.errorMessage.set(
-          err?.error?.message ?? 'حدث خطأ أثناء معالجة الطلب. يرجى المحاولة مرة أخرى.',
+          err?.error?.error ??
+          err?.error?.message ??
+          'حدث خطأ أثناء معالجة الطلب. يرجى المحاولة مرة أخرى.',
         );
         this.isLoading.set(false);
       },
@@ -256,61 +206,62 @@ export class PrescriptionAnalyticsComponent {
 
   reset(): void {
     this.form.reset();
-    this.selectedBranchFilter.set(null);
     this.result.set(null);
     this.hasError.set(false);
   }
 
-  // ── Helpers ──────────────────────────────────────────────────────────────
-
-  getUrgencyConfig(level: UrgencyLevel): {
-    class: string;
-    icon: string;
-    label: string;
-  } {
-    const map: Record<UrgencyLevel, { class: string; icon: string; label: string }> = {
-      Critical: { class: 'urgency-critical', icon: 'pi pi-exclamation-triangle', label: 'حرج' },
-      High: { class: 'urgency-high', icon: 'pi pi-arrow-up', label: 'مرتفع' },
-      Medium: { class: 'urgency-medium', icon: 'pi pi-info-circle', label: 'متوسط' },
-    };
-    return map[level] ?? map['Medium'];
-  }
-
-  hasResults(): boolean {
-    const r = this.result();
-    return !!r && r.totalPrescriptionsAnalyzed > 0;
-  }
-
-  hasNoData(): boolean {
-    const r = this.result();
-    return !!r && r.usedProvider === 'NoData';
-  }
-
-  formatScore(score: number): string {
-    return (score * 100).toFixed(1) + '%';
-  }
-
-  trackByDrug(_: number, d: { medicineName: string }): string {
-    return d.medicineName;
-  }
-
-  trackByWarning(_: number, w: ShortageWarning): string {
-    return w.drugName;
+  applySuggestion(text: string): void {
+    this.form.get('question')?.setValue(text);
   }
 
   get questionCtrl() {
     return this.form.get('question');
   }
 
-  // Quick-prompt suggestions
-  readonly suggestions = [
-    'ما هي أكثر أدوية السكر طلباً خلال الشهر الماضي؟',
-    'ما أكثر أدوية الأطفال المرفوعة في الروشتات؟',
-    'ما هي المضادات الحيوية الأكثر وصفاً في الفترة الأخيرة؟',
-    'أدوية ضغط الدم الأكثر طلباً هذا الأسبوع؟',
-  ];
+  hasResults(): boolean {
+    const r = this.result();
+    return !!r && (r.totalPrescriptionsAnalyzed > 0 || r.sources.length > 0);
+  }
 
-  applySuggestion(text: string): void {
-    this.form.get('question')?.setValue(text);
+  hasNoMatches(): boolean {
+    const r = this.result();
+    return !!r && (!r.hasMatches || (r.totalPrescriptionsAnalyzed === 0 && r.sources.length === 0));
+  }
+
+  formatScore(score: number): string {
+    return (score * 100).toFixed(1) + '%';
+  }
+
+  getShortId(guid: string): string {
+    if (!guid) return '';
+    return guid.substring(0, 8);
+  }
+
+  getImageUrl(path: string | undefined | null): string {
+    if (!path) return '';
+    if (path.startsWith('http')) return path;
+    const serverUrl = environment.baseUrl.replace('/api/v1', '');
+    return `${serverUrl}/${path.replace(/^\//, '')}`;
+  }
+
+  openImageModal(url: string): void {
+    const fullUrl = this.getImageUrl(url);
+    if (fullUrl) {
+      this.selectedImage.set(fullUrl);
+      this.isImageModalOpen.set(true);
+    }
+  }
+
+  closeImageModal(): void {
+    this.isImageModalOpen.set(false);
+    this.selectedImage.set(null);
+  }
+
+  trackByDrug(_: number, d: PrescribedDrugMetric): string {
+    return d.medicineName;
+  }
+
+  trackBySource(_: number, source: PrescriptionAnalyticsSource): string {
+    return source.prescriptionId;
   }
 }

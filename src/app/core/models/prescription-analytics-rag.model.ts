@@ -1,57 +1,53 @@
 export interface PrescriptionAnalyticsRagRequest {
   question: string;
-  branchId?: string | null;
-  city?: string | null;
-  governorate?: string | null;
-  startDate?: string | null;
-  endDate?: string | null;
 }
 
 export interface PrescribedDrugMetric {
   medicineName: string;
-  genericName?: string;
+  category?: string;
   mentionCount: number;
   totalQuantity: number;
   percentage: number;
-  isPediatric: boolean;
-  trend: 'up' | 'stable' | 'down';
 }
 
 export interface CategoryMetric {
   categoryName: string;
   count: number;
   percentage: number;
-  colorHint: string;
+  colorHint?: string;
 }
 
-export type UrgencyLevel = 'Critical' | 'High' | 'Medium';
-
-export interface ShortageWarning {
-  drugName: string;
-  highDemandReason: string;
-  availableStock: number;
-  recommendation: string;
-  urgencyLevel: UrgencyLevel;
+export interface PrescriptionAnalyticsMedicine {
+  prescriptionReviewMedicineId: string;
+  medicineName: string;
+  strength?: string | null;
+  dosageForm?: string | null;
+  dose?: string | null;
+  frequency?: string | null;
+  quantity: number;
+  matchedDrugId?: string | null;
+  suggestedAlternativeDrugId?: string | null;
+  canBeAddedToCart: boolean;
 }
 
-export interface PrescriptionRef {
-  prescriptionReviewId: string;
-  city: string;
-  governorate: string;
-  createdAt: string;
-  similarityScore: number;
+export interface PrescriptionAnalyticsSource {
+  prescriptionId: string;
+  doctorName?: string | null;
+  specialty?: string | null;
+  clinicOrHospital?: string | null;
+  visitDate: string;
+  diagnosisNotes?: string | null;
+  patientAddress?: string | null;
+  imageUrl: string;
+  relevanceScore: number;
+  medicines: PrescriptionAnalyticsMedicine[];
 }
 
 export interface PrescriptionAnalyticsRagResponse {
   answer: string;
+  sources: PrescriptionAnalyticsSource[];
+  hasMatches: boolean;
   totalPrescriptionsAnalyzed: number;
   topPrescribedDrugs: PrescribedDrugMetric[];
   mostRequestedCategories: CategoryMetric[];
-  shortageWarnings: ShortageWarning[];
-  demandForecastingInsights: string[];
-  matchedPrescriptions: PrescriptionRef[];
-  analysisScope: string;
-  analysisTimeRange: string;
-  usedProvider: string;
-  executionTimeMs: number;
 }

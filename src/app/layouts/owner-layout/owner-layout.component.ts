@@ -68,7 +68,12 @@ export class OwnerLayoutComponent {
   }
 
   toggleAiMenu(): void {
-    this.isAiMenuExpanded.update((val) => !val);
+    if (this.collapsed()) {
+      this.collapsed.set(false);
+      this.isAiMenuExpanded.set(true);
+    } else {
+      this.isAiMenuExpanded.update((val) => !val);
+    }
   }
 
   readonly navItems: OwnerNavItem[] = [
