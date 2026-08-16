@@ -17,6 +17,7 @@ export class PatientOrderDetailComponent implements OnInit, OnDestroy {
   order: PatientOrder | null = null;
   isLoading = true;
   error: string | null = null;
+  isSystemCancelledDueToUnavailability = false;
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -65,6 +66,31 @@ export class PatientOrderDetailComponent implements OnInit, OnDestroy {
             orderNumber: order.orderNumber || `ORD-${order.orderId.substring(0, 8).toUpperCase()}`,
             createdAt: order.createdAt ? (order.createdAt.endsWith('Z') ? order.createdAt : order.createdAt + 'Z') : new Date().toISOString()
           };
+
+          const hasLegs = this.order.fulfillmentLegs && this.order.fulfillmentLegs.length > 0;
+          const hasPending = this.order.pendingAssignmentItems && this.order.pendingAssignmentItems.length > 0;
+          this.isSystemCancelledDueToUnavailability = false;
+          
+          if (!hasLegs && hasPending && this.order.orderStatus !== 'Cancelled') {
+            const allUnavailable = this.order.pendingAssignmentItems.every(item => item.itemStatus === 'Unavailable' || item.itemStatus === 'Cancelled');
+            if (allUnavailable) {
+              this.order.orderStatus = 'Cancelled';
+              this.isSystemCancelledDueToUnavailability = true;
+            }
+          }
+
+          if (this.order.orderStatus === 'Cancelled' && !this.isSystemCancelledDueToUnavailability) {
+            // This is a user-cancelled order, force all items to be cancelled
+            if (this.order.pendingAssignmentItems) {
+              this.order.pendingAssignmentItems.forEach(item => item.itemStatus = 'Cancelled');
+            }
+            if (this.order.fulfillmentLegs) {
+              this.order.fulfillmentLegs.forEach(leg => {
+                if (leg.items) leg.items.forEach(item => item.itemStatus = 'Cancelled');
+              });
+            }
+          }
+
           this.isLoading = false;
           this.cdr.detectChanges();
         });
@@ -115,6 +141,7 @@ export class PatientOrderDetailComponent implements OnInit, OnDestroy {
     switch(status) {
       case 'Awarded': return 'متوفر';
       case 'Unavailable': return 'غير متوفر';
+      case 'Cancelled': return 'ملغى';
       default: return status;
     }
   }
@@ -125,6 +152,21 @@ export class PatientOrderDetailComponent implements OnInit, OnDestroy {
 
   get prescriptionReviewItems() {
     return this.order?.pendingAssignmentItems?.filter(item => item.itemStatus !== 'Unavailable' && item.itemStatus !== 'Cancelled') || [];
+  }
+
+  get allOrderItems() {
+    let items: any[] = [];
+    if (this.order?.pendingAssignmentItems) {
+      items = [...this.order.pendingAssignmentItems];
+    }
+    if (this.order?.fulfillmentLegs) {
+      this.order.fulfillmentLegs.forEach(leg => {
+        if (leg.items) {
+          items = [...items, ...leg.items];
+        }
+      });
+    }
+    return items;
   }
 
   ngOnDestroy(): void {

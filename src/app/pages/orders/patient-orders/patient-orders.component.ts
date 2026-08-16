@@ -76,8 +76,20 @@ export class PatientOrdersComponent implements OnInit, OnDestroy {
             });
           }
 
+          let forcedStatus = order.orderStatus;
+          const hasLegs = order.fulfillmentLegs && order.fulfillmentLegs.length > 0;
+          const hasPending = order.pendingAssignmentItems && order.pendingAssignmentItems.length > 0;
+          
+          if (!hasLegs && hasPending) {
+            const allUnavailable = order.pendingAssignmentItems.every(item => item.itemStatus === 'Unavailable' || item.itemStatus === 'Cancelled');
+            if (allUnavailable) {
+              forcedStatus = 'Cancelled';
+            }
+          }
+
           return {
             ...order,
+            orderStatus: forcedStatus,
             totalAmount: availableTotal > 0 ? availableTotal : (order.fulfillmentLegs?.length ? 0 : order.totalAmount),
             orderNumber: order.orderNumber || `ORD-${order.orderId?.substring(0, 8).toUpperCase()}`,
             createdAt: order.createdAt ? (order.createdAt.endsWith('Z') ? order.createdAt : order.createdAt + 'Z') : new Date().toISOString()
