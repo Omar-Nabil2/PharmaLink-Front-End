@@ -119,6 +119,14 @@ export class PatientOrderDetailComponent implements OnInit, OnDestroy {
     }
   }
 
+  get unavailableItems() {
+    return this.order?.pendingAssignmentItems?.filter(item => item.itemStatus === 'Unavailable' || item.itemStatus === 'Cancelled') || [];
+  }
+
+  get prescriptionReviewItems() {
+    return this.order?.pendingAssignmentItems?.filter(item => item.itemStatus !== 'Unavailable' && item.itemStatus !== 'Cancelled') || [];
+  }
+
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
