@@ -97,16 +97,10 @@ export class AdminOrderDetailComponent implements OnInit, OnDestroy {
     this.adminOrdersService.getOrderDetails(this.orderId()).subscribe({
       next: (res) => {
         this.order.set(res);
-        if (res.prescriptionId) {
-          this.prescriptionService.getPrescriptionFile(res.prescriptionId).subscribe({
-            next: (blob) => {
-              const reader = new FileReader();
-              reader.onload = (e) => {
-                this.prescriptionImageUrl.set(e.target?.result as string);
-              };
-              reader.readAsDataURL(blob);
-            }
-          });
+        if (res.prescriptionImageUrl) {
+          this.prescriptionImageUrl.set(res.prescriptionImageUrl);
+        } else {
+          this.prescriptionImageUrl.set(null);
         }
         this.isLoading.set(false);
       },
@@ -146,6 +140,10 @@ export class AdminOrderDetailComponent implements OnInit, OnDestroy {
   }
 
   viewPrescription(id?: string): void {
+    if (this.prescriptionImageUrl()) {
+      window.open(this.prescriptionImageUrl()!, '_blank');
+      return;
+    }
     if (!id) return;
     this.prescriptionService.getPrescriptionFile(id).subscribe({
       next: (blob) => {
