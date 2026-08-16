@@ -9,7 +9,7 @@ import {
   signal,
   effect,
   ChangeDetectorRef,
-  NgZone
+  NgZone,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AiAssistantService } from '@core/services/ai-assistant.service';
@@ -28,7 +28,11 @@ import {
 import { DatePipe } from '@angular/common';
 import { PrescriptionReviewService } from '@core/services/prescription-review.service';
 import { PrescriptionHistoryService } from '@core/services/prescription-history.service';
-import { PrescriptionHistoryAnswer, PrescriptionHistoryMedicine, PrescriptionHistorySource } from '@core/interfaces/prescription-history.interface';
+import {
+  PrescriptionHistoryAnswer,
+  PrescriptionHistoryMedicine,
+  PrescriptionHistorySource,
+} from '@core/interfaces/prescription-history.interface';
 
 type ActiveTab = 'chat' | 'drug-info' | 'interactions' | 'history';
 
@@ -51,8 +55,6 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
   // ── Tabs ──────────────────────────────────────────────────────────────────
   activeTab = signal<ActiveTab>('chat');
   isSidebarOpen = signal<boolean>(typeof window !== 'undefined' ? window.innerWidth >= 768 : true);
-
-
 
   setTab(tab: ActiveTab): void {
     this.activeTab.set(tab);
@@ -78,7 +80,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
     effect(() => {
       // Auto-save to localStorage whenever messages change
       if (typeof window !== 'undefined') {
-        const msgsToSave = this.messages().filter(m => !m.isError && !m.isStreaming);
+        const msgsToSave = this.messages().filter((m) => !m.isError && !m.isStreaming);
         localStorage.setItem('ai_chat_history', JSON.stringify(msgsToSave));
       }
     });
@@ -96,7 +98,8 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
     return [
       {
         role: 'assistant',
-        content: 'مرحباً! أنا دكتور زياد 👨‍⚕️ (الصيدلي الذكي الخاص بفارما لينك)\nيمكنني مساعدتك في:\n• معلومات الأدوية\n• تفاعلات الأدوية\n• الجرعات والتحذيرات\n\nاسألني أي سؤال عن الأدوية!',
+        content:
+          'مرحباً! أنا دكتور زياد 👨‍⚕️ (الصيدلي الذكي الخاص بفارما لينك)\nيمكنني مساعدتك في:\n• معلومات الأدوية\n• تفاعلات الأدوية\n• الجرعات والتحذيرات\n\nاسألني أي سؤال عن الأدوية!',
       },
     ];
   }
@@ -133,20 +136,23 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
       const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
       let fullReply = '';
       let displayedReply = '';
-      
+
       const typeInterval = setInterval(() => {
         if (displayedReply.length < fullReply.length) {
           const diff = fullReply.length - displayedReply.length;
-          
+
           // Smooth out typing: 1 char usually, up to 5 chars if there's a huge backlog.
           let charsToAdd = 1;
           if (diff > 20) charsToAdd = 2;
           if (diff > 50) charsToAdd = 3;
           if (diff > 100) charsToAdd = 4;
           if (diff > 200) charsToAdd = 5;
-          
-          displayedReply += fullReply.slice(displayedReply.length, displayedReply.length + charsToAdd);
-          
+
+          displayedReply += fullReply.slice(
+            displayedReply.length,
+            displayedReply.length + charsToAdd,
+          );
+
           const current = this.messages();
           const updated = [...current];
           updated[placeholderIdx] = {
@@ -163,11 +169,11 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
       for await (const chunk of this.service.chatStream(text, history, token)) {
         fullReply += chunk;
       }
-      
+
       while (displayedReply.length < fullReply.length) {
-        await new Promise(r => setTimeout(r, 50));
+        await new Promise((r) => setTimeout(r, 50));
       }
-      
+
       clearInterval(typeInterval);
 
       // Mark streaming done
@@ -184,7 +190,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
       // Fall back to non-streaming
       try {
         const history2 = updatedMsgs
-          .filter(m => !m.isError)
+          .filter((m) => !m.isError)
           .map((m) => ({ role: m.role, content: m.content }));
         this.service.chat(text, history2).subscribe({
           next: (res) => {
@@ -248,7 +254,8 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
     this.messages.set([
       {
         role: 'assistant',
-        content: 'مرحباً! أنا دكتور زياد 👨‍⚕️ (الصيدلي الذكي الخاص بفارما لينك)\nيمكنني مساعدتك في:\n• معلومات الأدوية\n• تفاعلات الأدوية\n• الجرعات والتحذيرات\n\nاسألني أي سؤال عن الأدوية!',
+        content:
+          'مرحباً! أنا دكتور زياد 👨‍⚕️ (الصيدلي الذكي الخاص بفارما لينك)\nيمكنني مساعدتك في:\n• معلومات الأدوية\n• تفاعلات الأدوية\n• الجرعات والتحذيرات\n\nاسألني أي سؤال عن الأدوية!',
       },
     ]);
   }
@@ -258,7 +265,7 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
       if (this.chatScroll?.nativeElement) {
         this.chatScroll.nativeElement.scrollTo({
           top: this.chatScroll.nativeElement.scrollHeight,
-          behavior: 'smooth'
+          behavior: 'smooth',
         });
       }
     }, 50);
@@ -283,7 +290,11 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
   interactionSuggestions = signal<MedicineSearchDTO[]>([]);
 
   // ── History Tab (أرشيفي الذكي) ─────────────────────────────────────────────
-  readonly historySuggestions = ['أنا أخدت مسكن إيه قبل كده؟', 'هاتلي روشتة دكتور العظام.', 'اسم دكتور الجلدية اللي رحتله الصيف اللي فات إيه؟'];
+  readonly historySuggestions = [
+    'أنا أخدت مسكن إيه قبل كده؟',
+    'هاتلي روشتة دكتور العظام.',
+    'اسم دكتور الجلدية اللي رحتله الصيف اللي فات إيه؟',
+  ];
   historyQuestion = '';
   historyResult = signal<PrescriptionHistoryAnswer | null>(null);
   historyLoading = signal(false);
@@ -292,83 +303,104 @@ export class AiAssistantComponent implements OnInit, OnDestroy {
   addingReviewId = signal<string | null>(null);
   private readonly selectedMedicineIds = signal<Record<string, string[]>>({});
 
-askHistory(): void {
-  const q = this.historyQuestion.trim();
-  if (!q || this.historyLoading()) return;
+  askHistory(): void {
+    const q = this.historyQuestion.trim();
+    if (!q || this.historyLoading()) return;
 
-  this.failedImageIds.set(new Set());
-  this.historyLoading.set(true); 
-  this.historyError.set(''); 
-  this.historyNotice.set(''); 
-  this.historyResult.set(null); 
-  this.selectedMedicineIds.set({});
+    this.failedImageIds.set(new Set());
+    this.historyLoading.set(true);
+    this.historyError.set('');
+    this.historyNotice.set('');
+    this.historyResult.set(null);
+    this.selectedMedicineIds.set({});
 
-  this.historyService.ask(q).subscribe({
-    next: result => { 
-      // إجبار أنجولار على تنفيذ تحديث الـ Signals داخل الـ Zone
-      this.ngZone.run(() => {
-        this.historyResult.set(result); 
-        this.historyLoading.set(false); 
-      });
-    },
-    error: error => { 
-      this.ngZone.run(() => {
-        this.historyError.set(error?.error?.message || 'تعذر البحث في أرشيف الروشتات الآن. حاول مرة أخرى.'); 
-        this.historyLoading.set(false); 
-      });
-    },
-  });
-}
-
-  useHistorySuggestion(q: string): void { 
-    this.historyQuestion = q; 
-    this.askHistory(); 
+    this.historyService.ask(q).subscribe({
+      next: (result) => {
+        // إجبار أنجولار على تنفيذ تحديث الـ Signals داخل الـ Zone
+        this.ngZone.run(() => {
+          this.historyResult.set(result);
+          this.historyLoading.set(false);
+        });
+      },
+      error: (error) => {
+        this.ngZone.run(() => {
+          this.historyError.set(
+            error?.error?.message || 'تعذر البحث في أرشيف الروشتات الآن. حاول مرة أخرى.',
+          );
+          this.historyLoading.set(false);
+        });
+      },
+    });
   }
 
-  onHistoryQuestionKeydown(event: KeyboardEvent): void { 
-    if (event.key === 'Enter' && !event.shiftKey) { 
-      event.preventDefault(); 
-      this.askHistory(); 
-    } 
+  useHistorySuggestion(q: string): void {
+    this.historyQuestion = q;
+    this.askHistory();
   }
 
-  toggleHistoryMedicine(source: PrescriptionHistorySource, medicine: PrescriptionHistoryMedicine): void {
+  onHistoryQuestionKeydown(event: KeyboardEvent): void {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      this.askHistory();
+    }
+  }
+
+  toggleHistoryMedicine(
+    source: PrescriptionHistorySource,
+    medicine: PrescriptionHistoryMedicine,
+  ): void {
     if (!medicine.canBeAddedToCart) return;
     const selected = new Set(this.selectedMedicineIds()[source.prescriptionId] || []);
-    selected.has(medicine.prescriptionReviewMedicineId) 
-      ? selected.delete(medicine.prescriptionReviewMedicineId) 
+    selected.has(medicine.prescriptionReviewMedicineId)
+      ? selected.delete(medicine.prescriptionReviewMedicineId)
       : selected.add(medicine.prescriptionReviewMedicineId);
-    this.selectedMedicineIds.set({ ...this.selectedMedicineIds(), [source.prescriptionId]: [...selected] });
+    this.selectedMedicineIds.set({
+      ...this.selectedMedicineIds(),
+      [source.prescriptionId]: [...selected],
+    });
   }
 
-  isHistorySelected(source: PrescriptionHistorySource, medicine: PrescriptionHistoryMedicine): boolean { 
-    return (this.selectedMedicineIds()[source.prescriptionId] || []).includes(medicine.prescriptionReviewMedicineId); 
+  isHistorySelected(
+    source: PrescriptionHistorySource,
+    medicine: PrescriptionHistoryMedicine,
+  ): boolean {
+    return (this.selectedMedicineIds()[source.prescriptionId] || []).includes(
+      medicine.prescriptionReviewMedicineId,
+    );
   }
 
-  historySelectedCount(source: PrescriptionHistorySource): number { 
-    return (this.selectedMedicineIds()[source.prescriptionId] || []).length; 
+  historySelectedCount(source: PrescriptionHistorySource): number {
+    return (this.selectedMedicineIds()[source.prescriptionId] || []).length;
   }
 
   addHistorySelectedToCart(source: PrescriptionHistorySource): void {
     const selectedIds = this.selectedMedicineIds()[source.prescriptionId] || [];
     if (!selectedIds.length || this.addingReviewId()) return;
-    this.addingReviewId.set(source.prescriptionId); 
+    this.addingReviewId.set(source.prescriptionId);
     this.historyNotice.set('');
-    this.prescriptionService.addSelectedMedicinesToCart(source.prescriptionId, selectedIds).subscribe({
-      next: () => { 
-        this.historyNotice.set('تمت إضافة الأدوية المختارة إلى السلة.'); 
-        this.selectedMedicineIds.set({ ...this.selectedMedicineIds(), [source.prescriptionId]: [] }); 
-        this.addingReviewId.set(null); 
-      },
-      error: error => { 
-        this.historyError.set(error?.error?.detail || error?.error?.message || 'تعذر إضافة الأدوية إلى السلة.'); 
-        this.addingReviewId.set(null); 
-      },
-    });
+    this.prescriptionService
+      .addSelectedMedicinesToCart(source.prescriptionId, selectedIds)
+      .subscribe({
+        next: () => {
+          this.historyNotice.set('تمت إضافة الأدوية المختارة إلى السلة.');
+          this.selectedMedicineIds.set({
+            ...this.selectedMedicineIds(),
+            [source.prescriptionId]: [],
+          });
+          this.addingReviewId.set(null);
+        },
+        error: (error) => {
+          this.historyError.set(
+            error?.error?.detail || error?.error?.message || 'تعذر إضافة الأدوية إلى السلة.',
+          );
+          this.addingReviewId.set(null);
+        },
+      });
   }
 
   trackByPrescription = (_: number, item: PrescriptionHistorySource) => item.prescriptionId;
-  trackByMedicine = (_: number, item: PrescriptionHistoryMedicine) => item.prescriptionReviewMedicineId;
+  trackByMedicine = (_: number, item: PrescriptionHistoryMedicine) =>
+    item.prescriptionReviewMedicineId;
 
   ngOnInit(): void {}
 
@@ -387,7 +419,7 @@ askHistory(): void {
       error: () => {
         this.drugSuggestions.set([]);
         this.interactionSuggestions.set([]);
-      }
+      },
     });
   }
 
@@ -405,7 +437,10 @@ askHistory(): void {
   }
 
   searchDrug(): void {
-    const name = typeof this.drugSearchQuery === 'string' ? this.drugSearchQuery.trim() : (this.drugSearchQuery?.name || '');
+    const name =
+      typeof this.drugSearchQuery === 'string'
+        ? this.drugSearchQuery.trim()
+        : this.drugSearchQuery?.name || '';
     if (!name) return;
 
     this.isDrugLoading.set(true);
@@ -419,7 +454,8 @@ askHistory(): void {
         this.isDrugLoading.set(false);
       },
       error: (err) => {
-        const msg = err?.error?.message || err?.error?.detail || 'لم يتم العثور على معلومات هذا الدواء.';
+        const msg =
+          err?.error?.message || err?.error?.detail || 'لم يتم العثور على معلومات هذا الدواء.';
         this.drugError.set(msg);
         this.isDrugLoading.set(false);
       },
@@ -439,9 +475,11 @@ askHistory(): void {
     return !!this.expandedSections()[section];
   }
 
-
   addDrugChip(): void {
-    const name = typeof this.drugChipInput === 'string' ? this.drugChipInput.trim() : (this.drugChipInput?.name || '');
+    const name =
+      typeof this.drugChipInput === 'string'
+        ? this.drugChipInput.trim()
+        : this.drugChipInput?.name || '';
     if (!name) return;
     if (this.drugChips().includes(name)) {
       this.drugChipInput = '';
@@ -539,40 +577,40 @@ askHistory(): void {
     return marked.parse(content, { async: false }) as string;
   }
   // أضف Set لتخزين المعرفات للصور التي فشل تحميلها
-// تحويل المتغير إلى Signal ليكون تفاعلياً تلقائياً مع Angular
-failedImageIds = signal<Set<string | number>>(new Set());
+  // تحويل المتغير إلى Signal ليكون تفاعلياً تلقائياً مع Angular
+  failedImageIds = signal<Set<string | number>>(new Set());
 
-onImageError(id: string | number): void {
-  this.ngZone.run(() => {
-    this.failedImageIds.update(set => {
-      const updated = new Set(set);
-      updated.add(id);
-      return updated;
+  onImageError(id: string | number): void {
+    this.ngZone.run(() => {
+      this.failedImageIds.update((set) => {
+        const updated = new Set(set);
+        updated.add(id);
+        return updated;
+      });
     });
-  });
-}
-
-isImageFailed(id: string | number): boolean {
-  return this.failedImageIds().has(id);
-}
-getImageUrl(path: string | undefined | null): string {
-  if (!path) return '';
-  
-  // إذا كان الرابط كاملاً بالفعل
-  if (path.startsWith('http://') || path.startsWith('https://')) {
-    return path;
   }
 
-  try {
-    // التأكد من استخراج النطاق سواء كانت المعرفة apiUrl أو baseUrl
-    const envUrl = environment.baseUrl || (environment as any).baseUrl;
-    const baseUrl = new URL(envUrl).origin;
-    const cleanPath = path.startsWith('/') ? path : `/${path}`;
-
-    return `${baseUrl}${cleanPath}`;
-  } catch {
-    return path;
+  isImageFailed(id: string | number): boolean {
+    return this.failedImageIds().has(id);
   }
-}
+  getImageUrl(path: string | undefined | null): string {
+    if (!path) return '';
+
+    // إذا كان الرابط كاملاً بالفعل
+    if (path.startsWith('http://') || path.startsWith('https://')) {
+      return path;
+    }
+
+    try {
+      // التأكد من استخراج النطاق سواء كانت المعرفة apiUrl أو baseUrl
+      const envUrl = environment.baseUrl || (environment as any).baseUrl;
+      const baseUrl = new URL(envUrl).origin;
+      const cleanPath = path.startsWith('/') ? path : `/${path}`;
+
+      return `${baseUrl}${cleanPath}`;
+    } catch {
+      return path;
+    }
+  }
   ngOnDestroy(): void {}
 }
