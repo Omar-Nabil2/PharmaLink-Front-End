@@ -459,9 +459,17 @@ main.ng-animating ~ app-footer {
 /* Adjust paginator buttons for mobile to fit on one line */
 @media screen and (max-width: 768px) {
     .p-paginator {
-        gap: 0.1rem !important;
-        padding: 0 !important;
+        gap: 0.25rem !important;
+        padding: 0.5rem !important;
+        justify-content: center !important;
+        flex-wrap: wrap !important;
     }
+
+    .p-paginator .p-dropdown,
+    .p-paginator .p-paginator-rpp-options {
+        margin: 0 0.5rem !important;
+    }
+
     .p-paginator .p-paginator-first,
     .p-paginator .p-paginator-prev,
     .p-paginator .p-paginator-next,
@@ -471,6 +479,7 @@ main.ng-animating ~ app-footer {
         height: 1.9rem !important;
         margin: 0 !important;
         padding: 0 !important;
+        border-radius: 50% !important;
     }
 }
 
